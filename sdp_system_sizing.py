@@ -23,6 +23,7 @@ out his system sizing analysis into csv file (for ease of repeatability).
 """
 
 import sys
+import csv as seesv
 from IPython.display import display, Markdown
 
 # This requires you to have the sdp-par-model code on your machine; append it
@@ -34,25 +35,73 @@ from sdp_par_model import reports, config
 from sdp_par_model.parameters.definitions import Telescopes, Pipelines, \
 	Constants, HPSOs
 
-csv = reports.read_csv("/home/rwb/github/sdp-par-model/data/csv/2019-06-20"
-					   "-2998d59_pipelines.csv")
+# df = csv.read_csv(
+# 	"/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_hpsos.csv"
+# )
 
 # TODO MOVE THESE INTO DICTIONARY FOR EASIER ACCESS WITH PANDAS DATAFRAME
-keys = [
-	"| HPSO | Time [%] | Tobs [h] | Ingest [Pflop/s] | RCAL [Pflop/s] | FastImg"
-	+ "|[Pflop/s] | ICAL [Pflop/s] "
-	+ "| DPrepA [Pflop/s] | DPrepB [Pflop/s] | DPrepC [Pflop/s] "
-	+ "| DPrepD [Pflop/s] "
-	+ "| Total RT [Pflop/s] | Total Batch [Pflop/s] | Total [Pflop/s] | "
+keys = {
+	'hpso': "HPSO", 'time': "Time [%]", 'tobs': " Tobs [h]",
+	'ingest': "Ingest [Pflop/s]",
+	'rcal': "RCAL [Pflop/s]",
+	'fastimg': "FastImg [Pflop/s]",
+	'ical': "ICAL [Pflop/s]",
+	'dprepa': "DPrepA [Pflop/s]",
+	'dprepb': "DPrepB [Pflop/s]",
+	'dprepc': "DPrepC [Pflop/s]",
+	'dprepd': "DPrepD [Pflop/s]",
+	'totalrt': "Total RT [Pflop/s]",
+	'totalbatch': "Total Batch [Pflop/s]",
+	'total': " Total [Pflop/s"
+}
+
+# test = df[keys['hpso']]
+
+pipelines = [
+	Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
+	Pipelines.ICAL, Pipelines.DPrepA, Pipelines.DPrepB,
+	Pipelines.DPrepC, Pipelines.DPrepD
 ]
+csv = reports.read_csv(
+	"/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_hpsos.csv"
+)
+csv = reports.strip_csv(csv)
+
+
+def lookup(name, hpso):
+	return {
+		pipeline: float(
+			reports.lookup_csv(
+				csv,
+				config.PipelineConfig(
+					hpso=hpso,
+					pipeline=pipeline
+				).describe(),
+				name
+			)
+		)
+		for pipeline in HPSOs.hpso_pipelines[hpso]
+	}
+
+
+total_time = {
+	tel: sum(
+		[
+			lookup('Total Time', hpso).get(Pipelines.Ingest)
+			for hpso in HPSOs.all_hpsos if HPSOs.hpso_telescopes[hpso] == tel
+		]
+	)
+	for tel in Telescopes.available_teles
+}
 
 
 def make_compute_table(tel):
-	table = [
-		"| HPSO | Time [%] | Tobs [h] | Ingest [Pflop/s] | RCAL [Pflop/s] | FastImg [Pflop/s] | ICAL [Pflop/s] " +
-		"| DPrepA [Pflop/s] | DPrepB [Pflop/s] | DPrepC [Pflop/s] | DPrepD [Pflop/s] " +
-		"| Total RT [Pflop/s] | Total Batch [Pflop/s] | Total [Pflop/s] | "]
-	table.append("-".join("|" * table[0].count('|')))
+	csv_data = [[
+		"HPSO", "Time [%]", "Tobs [h]", "Ingest [Pflop/s]", "RCAL [Pflop/s]",
+		"FastImg [Pflop/s]", "ICAL [Pflop/s] ", "DPrepA [Pflop/s]",
+		"DPrepB [Pflop/s]", "DPrepC [Pflop/s]", "DPrepD [Pflop/s]",
+		"Total RT [Pflop/s]", "Total Batch [Pflop/s]", "Total [Pflop/s] "
+	]]
 	flop_sum = {pip: 0 for pip in Pipelines.available_pipelines}
 	pips = [Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
 			Pipelines.ICAL, Pipelines.DPrepA, Pipelines.DPrepB,
@@ -71,21 +120,66 @@ def make_compute_table(tel):
 			flop_sum[pip] += time_frac * rate
 		flops_strs = ["{:.2f}".format(flops[pip]) if pip in flops else '-' for
 					  pip in pips]
-		table.append(
-			"|{}|{:.1f}|{:.1f}|{}|{}|{}|{}|{}|{}|{}|{}|{:.2f}|{:.2f}|{:.2f}|".format(
-				hpso, time_frac * 100, Tobs / 3600, *flops_strs, Rflop_rt,
-					  Rflop - Rflop_rt, Rflop))
-	table.append(
-		"| **Average** | - | - | {:.2f}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|".format(
-			*[flop_sum.get(pip, 0) for pip in pips],
-			sum([Rflop for pip, Rflop in flop_sum.items() if
-				 pip in Pipelines.realtime]),
-			sum([Rflop for pip, Rflop in flop_sum.items() if
-				 pip not in Pipelines.realtime]),
-			sum(flop_sum.values())))
-	return "\n".join(table)
+
+		csv_data.append([hpso, time_frac * 100, Tobs / 3600, *flops_strs,
+						 Rflop_rt,
+						 Rflop - Rflop_rt, Rflop])
+	return csv_data
 
 
+tables = {}
 for tel in Telescopes.available_teles:
-	#     display(Markdown("##### {}:\n\n".format(tel) + make_compute_table(tel)))
-	make_compute_table(tel)
+	csvdata = make_compute_table(tel)
+	filename = '{}_COMPUTE.csv'.format(tel)
+	with open(filename, 'w', newline='') as csvfile:
+		for row in csvdata:
+			writer = seesv.writer(csvfile, delimiter=',')
+			writer.writerow(row)
+
+data = [
+	[
+		"Telescope", "Pipeline", "Data Rate [Gbit/s]",
+		"Daily Growth [TB/day]",
+		"Yearly Growth [PB/year]", "5-year Growth [PB/(5 year)]"
+	]
+]
+total_data_rate = 0
+for tel in Telescopes.available_teles:
+	def mk_projection(rate):
+		day_rate = rate * 3601 * 24 / 8 / 1000  # TB/day
+		year_rate = day_rate * 365 / 1000  # PB/year
+		return [rate, day_rate, year_rate, 5 * year_rate]
+
+
+	subtotal_data_rate = 0
+	for pip in Pipelines.all:
+		data_rate = 0
+		for hpso in HPSOs.all_hpsos:
+			if HPSOs.hpso_telescopes[hpso] == tel and pip in \
+					HPSOs.hpso_pipelines[hpso]:
+				Texp = lookup('Total Time', hpso).get(Pipelines.Ingest, 0)
+				Tobs = lookup('Observation Time', hpso).get(Pipelines.Ingest, 0)
+				Mout = lookup('Output size', hpso).get(pip)
+				Rout = 8000 * Mout / Tobs
+				time_frac = Texp / total_time[tel]
+				data_rate += Rout * time_frac
+		if data_rate > 0:
+			tmp = [tel, pip] + (mk_projection(data_rate))
+			data.append(tmp)
+			subtotal_data_rate += data_rate;
+			total_data_rate += data_rate
+	row = [tel] + mk_projection(subtotal_data_rate)
+	data.append(row)
+	filename = '{}_DATA.csv'.format(tel)
+	with open(filename, 'w', newline='') as csvfile:
+		for row in data:
+			writer = seesv.writer(csvfile, delimiter=',')
+			writer.writerow(row)
+
+# display(Markdown("\n".join(table)))
+# for x in data:
+# 	print(data)
+# # for l in generated_csv:
+# 	for x in generated_csv:
+# 		print(x)
+# print(generated_csv)

@@ -22,4 +22,28 @@ import pandas as pd
 
 FILENAME = 'hpso_compute_low.csv'
 csv = pd.read_csv(FILENAME)
-x = ['HPSO']
+compute_keys = {
+	'hpso': "HPSO",
+	'time': "Time [%]",
+	'tobs': " Tobs [h]",
+	'ingest': "Ingest [Pflop/s]",
+	'rcal': "RCAL [Pflop/s]",
+	'fastimg': "FastImg [Pflop/s]",
+	'ical': "ICAL [Pflop/s]",
+	'dprepa': "DPrepA [Pflop/s]",
+	'dprepb': "DPrepB [Pflop/s]",
+	'dprepc': "DPrepC [Pflop/s]",
+	'dprepd': "DPrepD [Pflop/s]",
+	'totalrt': "Total RT [Pflop/s]",
+	'totalbatch': "Total Batch [Pflop/s]",
+	'total': " Total [Pflop/s"
+}
+
+data_keys = {
+	'telescope': "Telescope ",
+	'pipeline': "Pipeline ",
+	'datarate': "Data Rate [Gbit/s]",
+	'dailygrowth': "Daily Growth [TB/day]",
+	'yearlygrowth': "Yearly Growth [PB/year]",
+	'five_yeargrowth': "5-year Growth [PB/(5 year)]"
+}
