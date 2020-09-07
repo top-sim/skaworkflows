@@ -68,6 +68,8 @@ csv = reports.read_csv(
 csv = reports.strip_csv(csv)
 
 
+# TODO need to invlude 'TotalBuffer ingest rate'
+
 def lookup(name, hpso):
 	return {
 		pipeline: float(
@@ -97,10 +99,12 @@ total_time = {
 
 def make_compute_table(tel):
 	csv_data = [[
-		"HPSO", "Time [%]", "Tobs [h]", "Ingest [Pflop/s]", "RCAL [Pflop/s]",
-		"FastImg [Pflop/s]", "ICAL [Pflop/s] ", "DPrepA [Pflop/s]",
+		"HPSO",'Stations', "Time [%]", "Tobs [h]", "Ingest [Pflop/s]", "RCAL ["
+																"Pflop/s]",
+		"FastImg [Pflop/s]", "ICAL [Pflop/s]", "DPrepA [Pflop/s]",
 		"DPrepB [Pflop/s]", "DPrepC [Pflop/s]", "DPrepD [Pflop/s]",
-		"Total RT [Pflop/s]", "Total Batch [Pflop/s]", "Total [Pflop/s] "
+		"Total RT [Pflop/s]", "Total Batch [Pflop/s]", "Total [Pflop/s]",
+		""
 	]]
 	flop_sum = {pip: 0 for pip in Pipelines.available_pipelines}
 	pips = [Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
@@ -109,6 +113,7 @@ def make_compute_table(tel):
 	for hpso in sorted(HPSOs.all_hpsos):
 		if HPSOs.hpso_telescopes[hpso] != tel:
 			continue
+		Stations = lookup('Stations/antennas', hpso).get(Pipelines.Ingest,0)
 		Tobs = lookup('Observation Time', hpso).get(Pipelines.Ingest, 0)
 		Texp = lookup('Total Time', hpso).get(Pipelines.Ingest, 0)
 		flops = lookup('Total Compute Requirement', hpso)
@@ -121,7 +126,8 @@ def make_compute_table(tel):
 		flops_strs = ["{:.2f}".format(flops[pip]) if pip in flops else '-' for
 					  pip in pips]
 
-		csv_data.append([hpso, time_frac * 100, Tobs / 3600, *flops_strs,
+		csv_data.append([hpso,Stations, time_frac * 100, Tobs / 3600,
+						 *flops_strs,
 						 Rflop_rt,
 						 Rflop - Rflop_rt, Rflop])
 	return csv_data
@@ -176,10 +182,3 @@ for tel in Telescopes.available_teles:
 			writer = seesv.writer(csvfile, delimiter=',')
 			writer.writerow(row)
 
-# display(Markdown("\n".join(table)))
-# for x in data:
-# 	print(data)
-# # for l in generated_csv:
-# 	for x in generated_csv:
-# 		print(x)
-# print(generated_csv)
