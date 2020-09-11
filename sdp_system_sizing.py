@@ -71,19 +71,21 @@ csv = reports.strip_csv(csv)
 # TODO need to invlude 'TotalBuffer ingest rate'
 
 def lookup(name, hpso):
-	return {
-		pipeline: float(
-			reports.lookup_csv(
-				csv,
-				config.PipelineConfig(
-					hpso=hpso,
-					pipeline=pipeline
-				).describe(),
-				name
-			)
+	retval = {}
+	for pipeline in HPSOs.hpso_pipelines[hpso]:
+		val = reports.lookup_csv(
+			csv,
+			config.PipelineConfig(
+				hpso=hpso,
+				pipeline=pipeline
+			).describe(),
+			name
 		)
-		for pipeline in HPSOs.hpso_pipelines[hpso]
-	}
+		if val == '(undefined)':
+			val = 0
+		retval[pipeline] = float(val)
+
+	return retval
 
 
 total_time = {
@@ -99,12 +101,12 @@ total_time = {
 
 def make_compute_table(tel):
 	csv_data = [[
-		"HPSO",'Stations', "Time [%]", "Tobs [h]", "Ingest [Pflop/s]", "RCAL ["
-																"Pflop/s]",
+		"HPSO", 'Stations', "Time [%]", "Tobs [h]", "Ingest [Pflop/s]", "RCAL ["
+																		"Pflop/s]",
 		"FastImg [Pflop/s]", "ICAL [Pflop/s]", "DPrepA [Pflop/s]",
 		"DPrepB [Pflop/s]", "DPrepC [Pflop/s]", "DPrepD [Pflop/s]",
 		"Total RT [Pflop/s]", "Total Batch [Pflop/s]", "Total [Pflop/s]",
-		""
+		"Ingest Rate [TB/s]"
 	]]
 	flop_sum = {pip: 0 for pip in Pipelines.available_pipelines}
 	pips = [Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
@@ -113,10 +115,15 @@ def make_compute_table(tel):
 	for hpso in sorted(HPSOs.all_hpsos):
 		if HPSOs.hpso_telescopes[hpso] != tel:
 			continue
-		Stations = lookup('Stations/antennas', hpso).get(Pipelines.Ingest,0)
+		Stations = lookup('Stations/antennas', hpso).get(Pipelines.Ingest, 0)
 		Tobs = lookup('Observation Time', hpso).get(Pipelines.Ingest, 0)
 		Texp = lookup('Total Time', hpso).get(Pipelines.Ingest, 0)
 		flops = lookup('Total Compute Requirement', hpso)
+		ingest_rate = lookup('Total buffer ingest rate', hpso).get(
+			Pipelines.Ingest
+		)
+
+
 		Rflop = sum(flops.values())
 		Rflop_rt = sum([Rflop for pip, Rflop in flops.items() if
 						pip in Pipelines.realtime])
@@ -126,10 +133,10 @@ def make_compute_table(tel):
 		flops_strs = ["{:.2f}".format(flops[pip]) if pip in flops else '-' for
 					  pip in pips]
 
-		csv_data.append([hpso,Stations, time_frac * 100, Tobs / 3600,
+		csv_data.append([hpso, Stations, time_frac * 100, Tobs / 3600,
 						 *flops_strs,
 						 Rflop_rt,
-						 Rflop - Rflop_rt, Rflop])
+						 Rflop - Rflop_rt, Rflop, ingest_rate])
 	return csv_data
 
 
@@ -149,6 +156,7 @@ data = [
 		"Yearly Growth [PB/year]", "5-year Growth [PB/(5 year)]"
 	]
 ]
+
 total_data_rate = 0
 for tel in Telescopes.available_teles:
 	def mk_projection(rate):
@@ -172,7 +180,7 @@ for tel in Telescopes.available_teles:
 		if data_rate > 0:
 			tmp = [tel, pip] + (mk_projection(data_rate))
 			data.append(tmp)
-			subtotal_data_rate += data_rate;
+			subtotal_data_rate += data_rate
 			total_data_rate += data_rate
 	row = [tel] + mk_projection(subtotal_data_rate)
 	data.append(row)
@@ -181,4 +189,3 @@ for tel in Telescopes.available_teles:
 		for row in data:
 			writer = seesv.writer(csvfile, delimiter=',')
 			writer.writerow(row)
-

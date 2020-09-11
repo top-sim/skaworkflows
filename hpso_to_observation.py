@@ -17,8 +17,16 @@
 HPSO observation information is stored in a csv file.
 
 Use pandas to read in the information
+
+
+Important to make disctincctions between Pipeline information and HPSO
+information
+	- HPSO information is useful for Ingest/Real-time data and compute
+	- Pipeline information is how we get the workflow runtime
+		- Multiple-pipelines per HPSO
 """
 import json
+import random
 import pandas as pd
 
 compute_keys = {
@@ -36,7 +44,8 @@ compute_keys = {
 	'dprepd': "DPrepD [Pflop/s]",
 	'totalrt': "Total RT [Pflop/s]",
 	'totalbatch': "Total Batch [Pflop/s]",
-	'total': "Total [Pflop/s]"
+	'total': "Total [Pflop/s]",
+	'ingest_rate': 'Ingest Rate [TB/s]'
 }
 
 compute_units = {
@@ -54,7 +63,8 @@ compute_units = {
 	'dprepd': "Pflop/s",
 	'totalrt': "Pflop/s",
 	'totalbatch': "Pflop/s",
-	'total': "Pflop/s"
+	'total': "Pflop/s",
+	'ingest_rate': "TB/s"
 }
 
 # Keys for DATA csv
@@ -86,7 +96,7 @@ def convert_systemsizing_csv_to_dict(csv_file):
 	return observations
 
 
-def observation_plan(hpso_list, per_hpso_count, system_sizing):
+def create_observation_plan(hpso_list, per_hpso_count):
 	"""
 	Given a sequence of HPSOs that are present in the system sizing
 	dictionary, generate a plan. of observations from which we can create
@@ -100,14 +110,26 @@ def observation_plan(hpso_list, per_hpso_count, system_sizing):
 	per_hpso_count : list()
 		A list of Integers that describes how many of each HPSO is in the plan
 
-	system_sizing : dict()
-		A dictionary containing the system sizing values for the current set
-		of HPSOs and the corresponding plan.
 
 	Returns
 	-------
+	plan : list()
+		A list of strings that details the order of HPSOs that will be running
+		for a given plan. These HPSOs will be derived from what is in the
+		provided system-sizing dictionary.
 
+		These strings are HPSOs - we need to link them to a pipeline as well
+		(RCAL/Ingest we can consume together as 'real-time' pipelines,
+		and so promote these as the range of compute required for real-time
+		execution).
 	"""
+	pipelines = ['dprepa','dprepb','dprepc','dprepd']
+	plan = []
+	for hpso in hpso_list:
+		for count in per_hpso_count:
+			tmp = (hpso, random.choice(pipelines))
+			plan.append(tmp)
+	return plan
 
 
 def construct_telescope_config_from_observation_plan(observations):
@@ -167,6 +189,10 @@ def construct_telescope_config_from_observation_plan(observations):
 
 if __name__ == '__main__':
 	observations = convert_systemsizing_csv_to_dict('SKA1_Low_COMPUTE.csv')
+	hpso_list = [obs['hpso'][0] for obs in observations]
+	hpso_frequency = [2, 1, 3, 0, 2]
+	plan = create_observation_plan(hpso_list, hpso_frequency)
+
 	config = construct_telescope_config_from_observation_plan(observations)
 	filename = 'config.json'
 	with open(filename, 'w') as jfile:
