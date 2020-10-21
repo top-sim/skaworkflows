@@ -24,7 +24,6 @@ out his system sizing analysis into csv file (for ease of repeatability).
 
 import sys
 import csv as seesv
-from IPython.display import display, Markdown
 
 # This requires you to have the sdp-par-model code on your machine; append it
 # to your path
@@ -70,7 +69,7 @@ csv = reports.strip_csv(csv)
 
 # TODO need to invlude 'TotalBuffer ingest rate'
 
-def lookup(name, hpso):
+def lookup(name, hpso): 
 	retval = {}
 	for pipeline in HPSOs.hpso_pipelines[hpso]:
 		val = reports.lookup_csv(
