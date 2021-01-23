@@ -28,6 +28,7 @@ information
 """
 import json
 import random
+import itertools
 import pandas as pd
 
 compute_keys = {
@@ -78,6 +79,20 @@ data_keys = {
     'five_yeargrowth': "5-year Growth [PB/(5 year)]"
 }
 
+hpso_constraints_exclude = {
+    'hpso4': ['dprepa','dprepb','dprepc', 'dprepd'],  # Pulsar
+    'hpso5': ['dprepa','dprepb','dprepc', 'dprepd'],  # Pulsar
+    'hpso18': ['dprepa','dprepb','dprepc', 'dprepd'],  # Transients (FRB)
+    'hpso32': ['dprepa','dprepc', 'dprepd']  # Cosmology (Gravity)
+}
+
+pipeline_constraints = {
+    'dprepc': ['dprepa']
+}
+
+# Pulsars do not require imaging pipelines
+pulsars = ['hpso4a', 'hpso5a']
+
 
 def convert_systemsizing_csv_to_dict(csv_file):
     csv = pd.read_csv(csv_file)
@@ -97,11 +112,21 @@ def convert_systemsizing_csv_to_dict(csv_file):
     return observations
 
 
-def create_observation_plan(hpso_list, per_hpso_count):
+def create_observation_plan(observations, per_hpso_count):
     """
     Given a sequence of HPSOs that are present in the system sizing
     dictionary, generate a plan. of observations from which we can create
     telescope config.
+
+    #TODO Re-read this section below
+    The idea here is that we have our hpso_count, which is the frequency of
+    that HPSOs within the mid-term schedule. From this, we determine the
+    pipeline that we associate with that observation; there will be ingest
+    pipelines and then processing pipelines. The mid-term plan is (
+    eventually) only going to represent observations + pipelines.
+    Observations that have multiple pipelines associated with them will be
+    represented as two observations, one with a length >0, and the rest
+    without. These will then reference the same data that's been produced.
 
     Parameters
     ----------
@@ -124,8 +149,24 @@ def create_observation_plan(hpso_list, per_hpso_count):
         and so promote these as the range of compute required for real-time
         execution).
     """
-    pipelines = ['dprepa','dprepb','dprepc','dprepd']
+
+
+
+    hpso_list = [obs['hpso'][0] for obs in observations]
+
+    pipelines = ['dprepa', 'dprepb', 'dprepc', 'dprepd']
     plan = []
+
+    constraints = {
+
+    }
+
+    # TODO use this approach to generate the pipeline plan as it is more
+    #  efficient
+    # final = []
+    # for i, count in enumerate(plan):
+    #     final.extend([observations[i]['hpso']] * count)
+
     for hpso in hpso_list:
         for count in per_hpso_count:
             tmp = (hpso, random.choice(pipelines))
@@ -133,7 +174,7 @@ def create_observation_plan(hpso_list, per_hpso_count):
     return plan
 
 
-def construct_telescope_config_from_observation_plan(observations):
+def construct_telescope_config_from_observation_plan(observations, plan):
     """
     Based on a simplified dictionaries built from the System Sizing for the
     SDP, this function builds a mid-term plan based on the HPSO sizes.
@@ -166,6 +207,11 @@ def construct_telescope_config_from_observation_plan(observations):
       }
     }
 
+    Paremeters
+    ----------
+    observations: list
+        list of dictionaries, each dictionary storing a HPSO
+
     Returns
     -------
     config : dict()
@@ -174,7 +220,6 @@ def construct_telescope_config_from_observation_plan(observations):
 
     """
     # Find max number of arrays:
-
     max_stations, unit = max([x['stations'] for x in observations])
     pipelines = [x['hpso'] for x in observations]
     config = {
@@ -193,8 +238,9 @@ if __name__ == '__main__':
     hpso_list = [obs['hpso'][0] for obs in observations]
     hpso_frequency = [2, 1, 3, 0, 2]
     plan = create_observation_plan(hpso_list, hpso_frequency)
-    
-    config = construct_telescope_config_from_observation_plan(observations)
+
+    config = construct_telescope_config_from_observation_plan(observations,
+                                                              plan)
     filename = 'json/config.json'
     with open(filename, 'w') as jfile:
-        json.dumps(jfile, indent=4)
+        json.dump(config, jfile, indent=4)

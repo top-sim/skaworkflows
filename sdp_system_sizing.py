@@ -159,7 +159,7 @@ data = [
 total_data_rate = 0
 for tel in Telescopes.available_teles:
 	def mk_projection(rate):
-		day_rate = rate * 3601 * 24 / 8 / 1000  # TB/day
+		day_rate = rate * 3600 * 24 / 8 / 1000  # TB/day
 		year_rate = day_rate * 365 / 1000  # PB/year
 		return [rate, day_rate, year_rate, 5 * year_rate]
 
