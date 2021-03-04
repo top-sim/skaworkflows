@@ -100,19 +100,12 @@ def convert_systemsizing_csv_to_dict(csv_file):
     # Keys for COMPUTE csv
     reverse_keys = {v: k for k, v in compute_keys.items()}
 
-    df = csv.rename(columns=reverse_keys)
+    df_updated_keys = csv.rename(columns=reverse_keys)
 
-    observations = [dict(x._asdict()) for x in df.itertuples(index=False)]
-    for observation in observations:
-        for key in observation:
-            v = observation.get(key)
-            tmp = (v, compute_units[key])
-            observation[key] = tmp
-
-    return observations
+    return df_updated_keys
 
 
-def create_observation_plan(observations, per_hpso_count):
+def create_observation_plan(dataframe, per_hpso_count):
     """
     Given a sequence of HPSOs that are present in the system sizing
     dictionary, generate a plan. of observations from which we can create
@@ -130,8 +123,9 @@ def create_observation_plan(observations, per_hpso_count):
 
     Parameters
     ----------
-    hpso_list : list()
-        A list of strings describing the HPSOs that are to be placed in the plan
+    dataframe : pandas.DataFrame
+        A dataframe describing the potential HPSOs that are to be placed in
+        the plan
 
     per_hpso_count : list()
         A list of Integers that describes how many of each HPSO is in the plan
@@ -150,27 +144,19 @@ def create_observation_plan(observations, per_hpso_count):
         execution).
     """
 
-
-
-    hpso_list = [obs['hpso'][0] for obs in observations]
-
-    pipelines = ['dprepa', 'dprepb', 'dprepc', 'dprepd']
     plan = []
 
     constraints = {
 
     }
 
-    # TODO use this approach to generate the pipeline plan as it is more
-    #  efficient
-    # final = []
-    # for i, count in enumerate(plan):
-    #     final.extend([observations[i]['hpso']] * count)
 
-    for hpso in hpso_list:
+
+    size = len(dataframe)
+    for i in range(size):
         for count in per_hpso_count:
-            tmp = (hpso, random.choice(pipelines))
-            plan.append(tmp)
+            plan.extend([dataframe.iloc[i]]*count)
+
     return plan
 
 
@@ -234,13 +220,16 @@ def construct_telescope_config_from_observation_plan(observations, plan):
 
 
 if __name__ == '__main__':
-    observations = convert_systemsizing_csv_to_dict('csv/SKA1_Low_COMPUTE.csv')
-    hpso_list = [obs['hpso'][0] for obs in observations]
-    hpso_frequency = [2, 1, 3, 0, 2]
-    plan = create_observation_plan(hpso_list, hpso_frequency)
+    df_system_sizing = convert_systemsizing_csv_to_dict(
+        'csv/SKA1_Low_COMPUTE.csv'
+    )
+    df_pipeline_products = pd.read_csv('SKA1_Low_PipelineProducts.csv')
+    hpso_frequency = [2, 1, 3, 0, 0]
+    final_plan = create_observation_plan(df_system_sizing, hpso_frequency)
 
-    config = construct_telescope_config_from_observation_plan(observations,
-                                                              plan)
+    config = construct_telescope_config_from_observation_plan(
+        df_system_sizing,final_plan
+    )
     filename = 'json/config.json'
     with open(filename, 'w') as jfile:
         json.dump(config, jfile, indent=4)
