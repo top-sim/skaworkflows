@@ -22,7 +22,7 @@ calculation of the compute associated with these models.
 
 import pandas as pd
 
-PIPELINE_DATA_CSV = "SKA1_Low_PipelineProducts.csv"
+PIPELINE_DATA_CSV = "csv/SKA1_Low_PipelineProducts.csv"
 
 def generate_cost_per_product(workflow, product):
     """

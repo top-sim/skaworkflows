@@ -23,6 +23,7 @@ out his system sizing analysis into csv file (for ease of repeatability).
 """
 
 import sys
+import re
 import pandas as pd
 import csv as seesv
 
@@ -90,8 +91,85 @@ pipelines = [
 csv = reports.read_csv(
     "/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_hpsos.csv"
 )
+
+df_csv = pd.read_csv(
+    "/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_hpsos.csv"
+)
+df_pipelines = pd.read_csv(
+    "/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_pipelines.csv"
+)
 csv = reports.strip_csv(csv)
 
+df_csv = df_csv.set_index('Unnamed: 0')
+
+# everything we want is derived from the pandas dataframe
+# Strip modifiers from rows
+_convert_old = re.compile('(\d\d)(\w)?(DPrep.|ICAL)')
+_convert_old_max = re.compile('max_([\w_]+)_(spectral|continuum)')
+def _strip_modifiers(head, do_it=True):
+
+    # Pipeline renamings
+    head = head.replace('Fast_Img', Pipelines.FastImg)
+
+    # Does it match the old HPSO naming scheme? Convert
+    m = _convert_old.match(head)
+    if m:
+        hpso = m.group(1)
+        if m.group(2) is not None:
+            hpso += m.group(2).lower()
+        head = "hpso%s (%s)" % (hpso, m.group(3))
+    m = _convert_old_max.match(head)
+    if m:
+        band = m.group(1)
+        if band == 'Band5_MID':
+            band = 'mid_band5a_1'
+        pipeline = ('DPrepC' if m.group(2) == 'spectral' else 'DPrepA')
+        head = 'max_%s (%s)' % (band, pipeline)
+
+    head = head.lower()
+    if do_it:
+        return re.sub('\[[^\]]*\]', '', head).strip(' ')
+    return head
+
+def lookup_csv(results, column_name, row_name,
+               ignore_units=True, ignore_modifiers=True):
+    """
+    Lookup a value in a CSV table
+
+    :param results: CSV table as returned by read_csv
+    :param column_name: Column (pipeline/HPSO name) to look up
+    :param row_name: Row (parameter name) to look up
+    :param ignore_units: Ignore units when matching rows (say, [s])
+    :param ignore_modifiers: Ignore modifiers when matching columns (say, [blcoal])
+    :returns: Value if found, None otherwise
+    """
+
+    # Strip names
+    row_name = _strip_modifiers(row_name, ignore_units)
+    column_name = _strip_modifiers(column_name, ignore_modifiers)
+
+    # Lookup table? Short-cut
+    if isinstance(results, dict):
+        row = results.get(row_name)
+        if row is None:
+            return None
+        return row.get(column_name)
+
+    for row_name2, row in results:
+
+        # Right row?
+        if row_name != _strip_modifiers(row_name2, ignore_units):
+            continue
+
+        # Find column
+        for column_name2, val in row:
+            if column_name != _strip_modifiers(column_name2, ignore_modifiers):
+                continue
+
+            # Found!
+            return val
+
+    return None
 
 # TODO need to invlude 'TotalBuffer ingest rate'
 
@@ -197,7 +275,7 @@ def make_pipeline_csv(tel):
         df.insert(0,'hpso',newcol)
         gldf = gldf.append(df)
 
-    return gldf.to_csv('{}_PipelineProducts.csv'.format(tel))
+    return gldf.to_csv('csv/{}_PipelineProducts.csv'.format(tel))
 
 
 if __name__ == '__main__':
@@ -205,7 +283,7 @@ if __name__ == '__main__':
     tables = {}
     for tel in Telescopes.available_teles:
         csvdata = make_compute_table(tel)
-        filename = '{}_COMPUTE.csv'.format(tel)
+        filename = 'csv/{}_COMPUTE.csv'.format(tel)
         with open(filename, 'w', newline='') as csvfile:
             for row in csvdata:
                 writer = seesv.writer(csvfile, delimiter=',')
@@ -250,7 +328,7 @@ if __name__ == '__main__':
                 total_data_rate += data_rate
         row = [tel] + mk_projection(subtotal_data_rate)
         data.append(row)
-        filename = '{}_DATA.csv'.format(tel)
+        filename = 'csv/{}_DATA.csv'.format(tel)
         with open(filename, 'w', newline='') as csvfile:
             for row in data:
                 writer = seesv.writer(csvfile, delimiter=',')
