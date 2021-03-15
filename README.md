@@ -9,3 +9,12 @@ by the SDP Parametric model into a mid-term Observation Schedule, for use
  `hpso_to_observation.py` then takes this CSV output and converts it to a
   JSON file in the `observations.json` format required by the TOpSim
    simulator.  
+   
+
+
+# Generating HPSO data
+
+The HPSO data described in the sdp-par-model is exported from the code into CSV
+files using the `sdp_par_model.reports` code. An example of this is used in
+the `notebooks/SKA1_Export.ipynb` notebook in the sdp-par-model repository. 
+

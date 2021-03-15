@@ -25,14 +25,12 @@ out his system sizing analysis into csv file (for ease of repeatability).
 import sys
 import re
 import pandas as pd
-import csv as seesv
 
 # This requires you to have the sdp-par-model code on your machine; append it
 # to your path
 
-
 # TODO MOVE THESE INTO DICTIONARY FOR EASIER ACCESS WITH PANDAS DATAFRAME
-keys = {
+KEYS = {
     'hpso': "HPSO", 'time': "Time [%]", 'tobs': " Tobs [h]",
     'ingest': "Ingest [Pflop/s]",
     'rcal': "RCAL [Pflop/s]",
@@ -73,15 +71,124 @@ PRODUCTS = [
 ]
 
 # test = df[keys['hpso']]
+realtime = ["Ingest", "RCAL", "FastImg"]
 
 df_csv = pd.read_csv(
-    "/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_hpsos.csv"
+    "/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_hpsos.csv",
+    index_col=0
 )
-df_pipelines = pd.read_csv(
-    "/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_pipelines.csv"
-)
+# df_pipelines = pd.read_csv(
+#     "/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_pipelines.csv"
+# )
 
-df_csv = df_csv.set_index('Unnamed: 0')
+HPSO_SKA_LOW = [
+    'hpso01',
+    'hpso02a',
+    'hpso02b',
+    'hpso04a',
+    'hpso05a'
+]
+HPSO_SKA_MID = [
+    'hpso04b',
+    'hpso04c',
+    'hpso05b',
+    'hpso13',
+    'hpso14',
+    'hpso15',
+    'hpso18',
+    'hpso22',
+    'hpso27and33',
+    'hpso32',
+    'hpso37a',
+    'hpso37b',
+    'hpso37c',
+    'hpso38a',
+    'hpso38b'
+]
+realtime = ['Ingest', 'RCAL', 'FastImg']
+
+ska_low = df_csv.T[df_csv.T['Telescope'] == "SKA1_Low"].T
+
+hpso_data = [
+    "HPSO", 'Stations', "Total Time [s]", "Tobs [h]", "Ingest [Pflop/s]",
+    "RCAL [Pflop/s]",
+    "FastImg [Pflop/s]", "ICAL [Pflop/s]", "DPrepA [Pflop/s]",
+    "DPrepB [Pflop/s]", "DPrepC [Pflop/s]", "DPrepD [Pflop/s]",
+    "Total RT [Pflop/s]", "Total Batch [Pflop/s]", "Total [Pflop/s]",
+    "Ingest Rate [TB/s]"
+]
+hpso_dict = {header:[] for header in hpso_data}
+df_hpso_low = pd.DataFrame(data=hpso_dict)
+
+
+def translate_sdp_hpso_reports_to_dataframe(csv_path):
+    """
+    From the output produced by SDP system sizing reports, produce a dataframe
+    that collates necessary information.
+
+    Parameters
+    ----------
+    csv_path : str
+        The path to the sdp-par-model report (ensure it is the "hpso" report)
+
+    We are mimicking the results of the SKA1_System_Sizing notebook in the
+    sdp-par-model; the intention is, due to our use of Pandas in our analysis
+    and pipeline construction, to use it to generate our intermediary data
+    selection.
+
+    Additionally, it is useful to remove ourselves from the functions that
+    are used in the notebook, as they hide a lot of functionality. Pandas
+    makes the data selection and compiling much more explicit, and is (
+    hopefully) more accessible to those accessing this codebase.
+
+    Returns
+    -------
+    final_data_frame : pd.DataFrame object
+        A collation of HPSOs, split between Both SKA_LOW and SKA_Mid telescope
+    """
+    df_csv = pd.read_csv(
+        "/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_hpsos.csv",
+        index_col=0
+    )
+
+
+for i, hpso in enumerate(HPSO_SKA_LOW):
+    stations = None
+    flops = []
+    t_exp = 0
+    t_obs = 0
+    ingest_rate = 0
+    df_hpso_low.loc[i, ['HPSO']] = hpso
+    rt_flop_total = 0
+    rflop_total = 0
+    for x in list(ska_low.columns):
+        if hpso in x:
+            if 'Ingest' in x:
+                stations = int(ska_low.loc[['Stations/antennas'], x])
+                df_hpso_low.loc[i,['Stations']] = stations
+                t_obs = int(ska_low.loc[['Observation Time [s]'], x])
+                df_hpso_low.loc[i, "Tobs [h]"] = t_obs / 3600
+                t_exp = int(ska_low.loc[['Total Time [s]'], x])
+                df_hpso_low.loc[i, "Total Time [s]"] = t_exp
+                ingest_rate = float(
+                    ska_low.loc[['Total buffer ingest rate [TeraBytes/s]'], x]
+                )
+                df_hpso_low.loc[i, "Ingest Rate [TB/s]"] = ingest_rate
+            compute = float(
+                ska_low.loc[['Total Compute Requirement [PetaFLOP/s]'], x]
+            )
+            pipeline_name = f"{x.strip(hpso).strip('[]').strip('( )')}"
+            if pipeline_name in realtime:
+                rt_flop_total += compute
+            rflop_total += compute
+            col_str = f"{pipeline_name} [Pflop/s]"
+            df_hpso_low.loc[i, col_str] = compute
+        df_hpso_low.loc[i, "Total RT [Pflop/s]"] = rt_flop_total
+        df_hpso_low.loc[i, "Total Batch [Pflop/s]"] = rflop_total - rt_flop_total
+        df_hpso_low.loc[i, "Total [Pflop/s"] = rflop_total
+        # flops.append((x, compute))
+
+ska_mid = df_csv.T[df_csv.T['Telescope'] == "SKA1_Mid"].T
 
 
 def make_compute_table(tel):
@@ -108,8 +215,6 @@ def make_compute_table(tel):
     #         Pipelines.Ingest
     #     )
     #
-    #
-    #
     #     Rflop = sum(flops.values())
     #     Rflop_rt = sum([Rflop for pip, Rflop in flops.items() if
     #                     pip in Pipelines.realtime])
@@ -124,6 +229,7 @@ def make_compute_table(tel):
     #                      Rflop_rt,
     #                      Rflop - Rflop_rt, Rflop, ingest_rate])
     return csv_data
+
 
 def make_pipeline_csv(tel):
     # pipeline_csv = [[]]
@@ -144,7 +250,7 @@ def make_pipeline_csv(tel):
     #     hpso_pipeline_products[hpso] = pipeline_products
     #
     # # Construct a dataframe
-    # gldf = pd.DataFrame()
+    gldf = pd.DataFrame()
     # for hpso in hpso_pipeline_products:
     #     df = pd.DataFrame(hpso_pipeline_products[hpso])
     #     newcol = [hpso for x in range(0, len(df))]
@@ -152,7 +258,6 @@ def make_pipeline_csv(tel):
     #     gldf = gldf.append(df)
 
     return gldf.to_csv('csv/{}_PipelineProducts.csv'.format(tel))
-
 
 # if __name__ == '__main__':
 #
