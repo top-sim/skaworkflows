@@ -71,7 +71,6 @@ PRODUCTS = [
 ]
 
 # test = df[keys['hpso']]
-realtime = ["Ingest", "RCAL", "FastImg"]
 
 df_csv = pd.read_csv(
     "/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_hpsos.csv",
@@ -105,7 +104,13 @@ HPSO_SKA_MID = [
     'hpso38a',
     'hpso38b'
 ]
-realtime = ['Ingest', 'RCAL', 'FastImg']
+
+SKA_PIPELINES = {
+    "SKA1_Low": HPSO_SKA_LOW,
+    "SKA1_Mid": HPSO_SKA_MID
+}
+
+REALTIME = ['Ingest', 'RCAL', 'FastImg']
 
 ska_low = df_csv.T[df_csv.T['Telescope'] == "SKA1_Low"].T
 
@@ -151,6 +156,10 @@ def translate_sdp_hpso_reports_to_dataframe(csv_path):
         index_col=0
     )
 
+    telescope_ids = ["SKA1_Low", "SKA1_Mid"]
+    for telescope in telescope_ids:
+        df_ska = df_csv.T[df_csv.T['Telescope'] == telescope].T
+
 
 for i, hpso in enumerate(HPSO_SKA_LOW):
     stations = None
@@ -178,7 +187,7 @@ for i, hpso in enumerate(HPSO_SKA_LOW):
                 ska_low.loc[['Total Compute Requirement [PetaFLOP/s]'], x]
             )
             pipeline_name = f"{x.strip(hpso).strip('[]').strip('( )')}"
-            if pipeline_name in realtime:
+            if pipeline_name in REALTIME:
                 rt_flop_total += compute
             rflop_total += compute
             col_str = f"{pipeline_name} [Pflop/s]"
@@ -217,7 +226,7 @@ def make_compute_table(tel):
     #
     #     Rflop = sum(flops.values())
     #     Rflop_rt = sum([Rflop for pip, Rflop in flops.items() if
-    #                     pip in Pipelines.realtime])
+    #                     pip in Pipelines.REALTIME])
     #     time_frac = Texp / total_time[tel]
     #     for pip, rate in flops.items():
     #         flop_sum[pip] += time_frac * rate
