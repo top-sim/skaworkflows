@@ -221,7 +221,7 @@ def construct_telescope_config_from_observation_plan(observations, plan):
 
 if __name__ == '__main__':
     df_system_sizing = convert_systemsizing_csv_to_dict(
-        'csv/SKA1_Low_COMPUTE.csv'
+        'tests/data/SKA1_Low_COMPUTE.csv'
     )
     df_pipeline_products = pd.read_csv('SKA1_Low_PipelineProducts.csv')
     hpso_frequency = [2, 1, 3, 0, 0]
