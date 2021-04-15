@@ -151,7 +151,6 @@ def create_observation_plan(dataframe, per_hpso_count):
     }
 
 
-
     size = len(dataframe)
     for i in range(size):
         for count in per_hpso_count:
