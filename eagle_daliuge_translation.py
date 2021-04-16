@@ -226,3 +226,18 @@ def _add_generated_values_to_graph(
         translated_graph.edges[edge]['data_size'] = edge_dict[edge]
 
     return translated_graph
+
+
+if __name__ == '__main__':
+    with open('eagle/sdp_continuum_tests.json') as jf:
+        continuum = json.load(jf)
+
+    ecounter = {}
+    for element in continuum:
+        if 'outputs' in element.keys():
+            if element['nm'] in ecounter:
+                ecounter[element['nm']] += 1
+            else:
+                ecounter[element['nm']] = 1
+
+    print(ecounter)

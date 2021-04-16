@@ -43,28 +43,28 @@ KEYS = {
 }
 
 PRODUCTS = [
-    "-> Image Spectral Fitting ",
+    "-> Image Spectral Fitting",
     "-> IFFT",
     "-> Reprojection Predict",
     "-> Reprojection",
-    "-> Subtract Image Component ",
-    "-> Phase Rotation Predict ",
+    "-> Subtract Image Component",
+    "-> Phase Rotation Predict",
     "-> Degrid",
-    "-> Visibility Weighting ",
-    "-> Phase Rotation ",
-    "-> Identify Component ",
-    "-> Gridding Kernel Update ",
-    "-> Subtract Visibility ",
-    "-> Source Find ",
-    "-> Correct ",
-    "-> DFT ",
-    "-> Solv",
-    "-> Flag ",
+    "-> Visibility Weighting",
+    "-> Phase Rotation",
+    "-> Identify Component",
+    "-> Gridding Kernel Update",
+    "-> Subtract Visibility",
+    "-> Source Find",
+    "-> Correct",
+    "-> DFT",
+    "-> Solve",
+    "-> Flag",
     "-> Average",
     "-> Receive",
     "-> Demix",
     "-> FFT",
-    "-> Grid ",
+    "-> Grid",
     "-> Degridding Kernel Update"
 ]
 
@@ -93,16 +93,24 @@ HPSO_SKA_MID = [
     'hpso38b'
 ]
 
+PIPELINES = [
+    "Ingest",
+    "RCAL",
+    "FastImg",
+    "ICAL",
+    "DPrepA",
+    "DPrepB",
+    "DPrepC",
+    "DPrepD",
+]
 TELESCOPE_IDS = ["SKA1_Low", "SKA1_Mid"]
 
-SKA_PIPELINES = {
+SKA_HPSOS = {
     "SKA1_Low": HPSO_SKA_LOW,
     "SKA1_Mid": HPSO_SKA_MID
 }
 
 REALTIME = ['Ingest', 'RCAL', 'FastImg']
-
-
 
 
 def translate_sdp_hpso_reports_to_dataframe(csv_path):
@@ -144,13 +152,13 @@ def translate_sdp_hpso_reports_to_dataframe(csv_path):
     ]
     # hpso_dict = {header: [] for header in hpso_data}
     # df_hpso = pd.DataFrame(data=hpso_dict)
-    final_dict = {telescope:None for telescope in TELESCOPE_IDS}
+    final_dict = {telescope: None for telescope in TELESCOPE_IDS}
     retval = None
     for telescope in TELESCOPE_IDS:
         df_ska = df_csv.T[df_csv.T['Telescope'] == telescope].T
         hpso_dict = {header: [] for header in hpso_data}
         df_hpso = pd.DataFrame(data=hpso_dict)
-        for i, hpso in enumerate(SKA_PIPELINES[telescope]):
+        for i, hpso in enumerate(SKA_HPSOS[telescope]):
             df_hpso.loc[i, ['HPSO']] = hpso
             rt_flop_total = 0
             rflop_total = 0
@@ -166,14 +174,14 @@ def translate_sdp_hpso_reports_to_dataframe(csv_path):
                         t_exp = int(df_ska.loc[['Total Time [s]'], x])
                         df_hpso.loc[i, "Total Time [s]"] = t_exp
                         ingest_rate = df_ska.loc[
-                                ['Total buffer ingest rate [TeraBytes/s]'], x
-                            ]
+                            ['Total buffer ingest rate [TeraBytes/s]'], x
+                        ]
                         df_hpso.loc[i, "Ingest Rate [TB/s]"] = float(
                             ingest_rate
                         )
                     compute = df_ska.loc[
-                            ['Total Compute Requirement [PetaFLOP/s]'], x
-                        ]
+                        ['Total Compute Requirement [PetaFLOP/s]'], x
+                    ]
                     compute = float(compute)
                     # Realtime computing is all the 'Ingest' compute pipelines
                     pipeline_name = f"{x.strip(hpso).strip('[]').strip('( )')}"
@@ -192,7 +200,7 @@ def translate_sdp_hpso_reports_to_dataframe(csv_path):
                 ] = rflop_total - rt_flop_total
                 df_hpso.loc[i, "Total [Pflop/s"] = rflop_total
 
-        final_dict[telescope]=df_hpso
+        final_dict[telescope] = df_hpso
 
     return final_dict
 
@@ -222,7 +230,7 @@ def translate_sdp_data_reports_do_dataframe(csv_path):
         dictionary with Pandas data frames for each telescope
     -------
     """
-    final_data = {telescope:None for telescope in TELESCOPE_IDS}
+    final_data = {telescope: None for telescope in TELESCOPE_IDS}
     data = [[
         "Telescope", "Pipeline",
         "Data Rate [Gbit/s]",
@@ -238,15 +246,17 @@ def translate_sdp_data_reports_do_dataframe(csv_path):
     for tel in TELESCOPE_IDS:
         total_data_rate = 0
         df_ska = df_csv.T[df_csv.T['Telescope'] == tel].T
-        for i, hpso in enumerate(SKA_PIPELINES[tel]):
+        for i, hpso in enumerate(SKA_HPSOS[tel]):
             subtotal_data_rate = 0
             for pip in Pipelines.all:
                 data_rate = 0
                 for hpso in HPSOs.all_hpsos:
                     if HPSOs.hpso_telescopes[hpso] == tel and pip in \
                             HPSOs.hpso_pipelines[hpso]:
-                        Texp = lookup('Total Time', hpso).get(Pipelines.Ingest, 0)
-                        Tobs = lookup('Observation Time', hpso).get(Pipelines.Ingest, 0)
+                        Texp = lookup('Total Time', hpso).get(Pipelines.Ingest,
+                                                              0)
+                        Tobs = lookup('Observation Time', hpso).get(
+                            Pipelines.Ingest, 0)
                         Mout = lookup('Output size', hpso).get(pip)
                         Rout = 8000 * Mout / Tobs
                         time_frac = Texp / total_time[tel]
@@ -266,97 +276,53 @@ def translate_sdp_data_reports_do_dataframe(csv_path):
 
     return final_data
 
-def make_pipeline_csv(tel):
-    # pipeline_csv = [[]]
-    # hpso_pipeline_products = {}
-    # pips = [Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
-    #         Pipelines.ICAL, Pipelines.DPrepA, Pipelines.DPrepB,
-    #         Pipelines.DPrepC, Pipelines.DPrepD, ]
-    # for hpso in sorted(HPSOs.all_hpsos):
-    #     pipeline_products = {}
-    #
-    #     if HPSOs.hpso_telescopes[hpso] != tel:
-    #         continue
-    #     for product in PRODUCTS:
-    #         tmp = lookup(product, hpso)
-    #         product_name = product.lstrip('-> ')
-    #         pipeline_products[product_name] = tmp
-    #
-    #     hpso_pipeline_products[hpso] = pipeline_products
-    #
-    # # Construct a dataframe
-    gldf = pd.DataFrame()
-    # for hpso in hpso_pipeline_products:
-    #     df = pd.DataFrame(hpso_pipeline_products[hpso])
-    #     newcol = [hpso for x in range(0, len(df))]
-    #     df.insert(0,'hpso',newcol)
-    #     gldf = gldf.append(df)
 
-    return gldf.to_csv('csv/{}_PipelineProducts.csv'.format(tel))
+def make_pipeline_csv(csv_path):
+    df_csv = pd.read_csv(
+        csv_path,
+        index_col=0
+    )
+
+    final_dict = {}
+    for telescope in TELESCOPE_IDS:
+        df_ska = (df_csv.T[df_csv.T['Telescope'] == telescope].T).fillna(-1)
+        pipeline_df = pd.DataFrame()
+        for hpso in sorted(SKA_HPSOS[telescope]):
+            pipeline_products = {}
+            for pipeline in PIPELINES:
+                pipeline_overview ={}
+                if f'{hpso} ({pipeline}) []' in df_ska.columns:
+                    column = df_ska[f'{hpso} ({pipeline}) []']
+                else:
+                    continue
+                for product in PRODUCTS:
+                    entry = column.loc[[f'{product} [PetaFLOP/s]']]
+                    if entry[0] is ' ' or '':
+                        pipeline_overview[product] = -1
+                    else:
+                        pipeline_overview[product] = float(entry)
+                pipeline_products[pipeline] = pipeline_overview
+
+            df = pd.DataFrame(pipeline_products).T
+            newcol = [hpso for x in range(0, len(df))]
+            df.insert(0, 'hpso', newcol)
+            pipeline_df = pipeline_df.append(df)
+        final_dict[telescope] = pipeline_df
+
+    return final_dict
 
 
 if __name__ == '__main__':
+    path = (f"/home/rwb/github/sdp-par-model/"
+            + f"data/csv/2019-06-20-2998d59_hpsos.csv")
+    #
+    # df_dict = translate_sdp_hpso_reports_to_dataframe(
+    #     path
+    # )
+    #
+    # tel = TELESCOPE_IDS[0]
+    # df_dict[tel].to_csv(f'csv/{tel}_compute_pandas.csv')
 
-    df_dict = translate_sdp_hpso_reports_to_dataframe(
-        "/home/rwb/github/sdp-par-model/data/csv/2019-06-20-2998d59_hpsos.csv"
-    )
-
+    pipeline = make_pipeline_csv(path)
     tel = TELESCOPE_IDS[0]
-    df_dict[tel].to_csv(f'csv/{tel}_compute_pandas.csv')
-
-
-
-#
-#     tables = {}
-#     for tel in Telescopes.available_teles:
-#         csvdata = make_compute_table(tel)
-#         filename = 'csv/{}_COMPUTE.csv'.format(tel)
-#         with open(filename, 'w', newline='') as csvfile:
-#             for row in csvdata:
-#                 writer = seesv.writer(csvfile, delimiter=',')
-#                 writer.writerow(row)
-#
-#     data = [
-#         [
-#             "Telescope", "Pipeline", "Data Rate [Gbit/s]",
-#             "Daily Growth [TB/day]",
-#             "Yearly Growth [PB/year]", "5-year Growth [PB/(5 year)]"
-#         ]
-#     ]
-#
-#     for tel in Telescopes.available_teles:
-#          make_pipeline_csv(tel)
-#
-#
-#     total_data_rate = 0
-#     for tel in Telescopes.available_teles:
-#         def mk_projection(rate):
-#             day_rate = rate * 3600 * 24 / 8 / 1000  # TB/day
-#             year_rate = day_rate * 365 / 1000  # PB/year
-#             return [rate, day_rate, year_rate, 5 * year_rate]
-#
-#
-#         subtotal_data_rate = 0
-#         for pip in Pipelines.all:
-#             data_rate = 0
-#             for hpso in HPSOs.all_hpsos:
-#                 if HPSOs.hpso_telescopes[hpso] == tel and pip in \
-#                         HPSOs.hpso_pipelines[hpso]:
-#                     Texp = lookup('Total Time', hpso).get(Pipelines.Ingest, 0)
-#                     Tobs = lookup('Observation Time', hpso).get(Pipelines.Ingest, 0)
-#                     Mout = lookup('Output size', hpso).get(pip)
-#                     Rout = 8000 * Mout / Tobs
-#                     time_frac = Texp / total_time[tel]
-#                     data_rate += Rout * time_frac
-#             if data_rate > 0:
-#                 tmp = [tel, pip] + (mk_projection(data_rate))
-#                 data.append(tmp)
-#                 subtotal_data_rate += data_rate
-#                 total_data_rate += data_rate
-#         row = [tel] + mk_projection(subtotal_data_rate)
-#         data.append(row)
-#         filename = 'csv/{}_DATA.csv'.format(tel)
-#         with open(filename, 'w', newline='') as csvfile:
-#             for row in data:
-#                 writer = seesv.writer(csvfile, delimiter=',')
-#                 writer.writerow(row)
+    pipeline[tel].to_csv(f'csv/{tel}_hpso_pandas.csv')
