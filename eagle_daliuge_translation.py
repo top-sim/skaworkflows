@@ -23,16 +23,6 @@ import networkx as nx
 
 import utils.shadowgen.generator as generator
 
-EAGLE_EXT = ".input"
-EAGLE_GRAPH = 'test/data/shadowgen/SDPContinuumPipelineNoOuter.input'
-CHANNELS = 10
-CHANNEL_SUFFIX = "_channels-{0}".format(CHANNELS)
-SEED = 20
-MEAN = 5000
-UNIFORM_RANGE = 500
-MULTIPLIER = 1
-CCR = 0.5
-
 
 def edit_channels(graph_name, suffix, extension):
     f = open(graph_name, 'r')

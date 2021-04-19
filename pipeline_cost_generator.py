@@ -19,12 +19,22 @@ pipeline components are what makes up our different pipelines (e.g. continuum
 imaging pipeline, spectral etc.). The parametric model provides us with a
 calculation of the compute associated with these models.
 """
-
+import json
 import pandas as pd
 
-PIPELINE_DATA_CSV = "csv/SKA1_Low_PipelineProducts.csv"
+WORKFLOW = "eagle/sdp_continuum_tests.json"
+PIPELINE_DATA_CSV = "csv/SKA1_Low_hpso_pandas.csv"
 
-def generate_cost_per_product(workflow, product):
+
+class SI:
+    kilo = 10 ** 3
+    mega = 10 ** 6
+    giga = 10 ** 9
+    tera = 10 ** 12
+    peta = 10 ** 15
+
+
+def generate_cost_per_product(workflow, product_table, hpso, pipeline):
     """
     Produce a cost value per node within the workflow graph for the given
     product.
@@ -42,17 +52,96 @@ def generate_cost_per_product(workflow, product):
 
     Parameters
     ----------
-    workflow
-    product
+    workflow : dictionary of the JSON graph we are focusing on
+    product_table : pd.DataFrame
+        Pandas dataframe containing the components
+    hpso : str
+        the HPSO we are generating.
 
     Returns
     -------
 
-
-
     """
 
+    ignore_components = [
+        'UpdateGSM', 'UpdateLSM', 'FinishMinorCycle', 'BeginMinorCycle'
+    ]
+
+    total_product_costs = {}
+    for element in workflow:
+        # Name of task in DALiuGE workflow is 'nm'
+        if 'outputs' in element.keys():
+            name = element['nm']
+            if name not in total_product_costs:
+                if name in ignore_components:
+                    # These are not 'products' that take compute time
+                    total_product_costs[name] = 0
+                else:
+                    df = product_table[['Pipeline', 'hpso', name]]
+                    df = df[(df['Pipeline'] == pipeline) & (df['hpso'] == hpso)]
+                    value = float(df[name])
+                    total_product_costs[name] = value
+
+    return total_product_costs
+
+
+def assign_costs_to_workflow(workflow, costs, observation):
+    """
+    For a given set of costs, calculate the amount per-task in the workflow
+    is necessary.
+    Parameters
+    ----------
+    workflow : dictionary
+        Dictionary representation of JSON object that is converted from EAGLE
+        LGT through DALiuGE
+    costs : dict
+        product-compute costs (petaflops/s) pairs for each component in the
+        workflow
+    observation : dict
+        This is a list of requirements associated with the observation,
+        which we use to determine the amount of compute associated with it
+        e.g. length (max 5 hours), number of baselines (max 512) etc.
+
+    Notes
+    -----
+    The idea is that for a given component (e.g. Grid) there is a set compute
+
+    Returns
+    -------
+
+    """
+    final_workflow = []
+    ecounter = {}
+
+    # count prevalence of each component in the workflow
+    for element in workflow:
+        if 'outputs' in element.keys():
+            if element['nm'] in ecounter:
+                ecounter[element['nm']] += 1
+            else:
+                ecounter[element['nm']] = 1
+
+    for element in workflow:
+        if 'outputs' in element.keys():
+            name = element['nm']
+            if name in ecounter:
+                if costs[name] == -1:
+                    continue
+                else:
+                    individual_cost = costs[name] / ecounter[name] * SI.peta
+                    element['tw'] = individual_cost
+                    final_workflow.append(element)
+        else:
+            final_workflow.append(element)
+
+
+    return final_workflow
 
 if __name__ == '__main__':
     df_pipeline = pd.read_csv(PIPELINE_DATA_CSV)
-
+    with open(WORKFLOW) as f:
+        workflow = json.load(f)
+    hpso = 'hpso01'
+    pipeline = 'DPrepA'
+    costs = generate_cost_per_product(workflow, df_pipeline, hpso, pipeline)
+    graph = assign_costs_to_workflow(workflow, costs, None)

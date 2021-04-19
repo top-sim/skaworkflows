@@ -630,7 +630,7 @@
             ],
             "streaming": false,
             "subject": null,
-            "text": "Subtract"
+            "text": "Subtract Image Component"
         },
         {
             "canHaveInputs": true,
@@ -699,7 +699,7 @@
             ],
             "streaming": false,
             "subject": null,
-            "text": "DeGrid"
+            "text": "Degrid"
         },
         {
             "canHaveInputs": true,
@@ -768,7 +768,7 @@
             ],
             "streaming": false,
             "subject": null,
-            "text": "Subtract"
+            "text": "Subtract Visibility"
         },
         {
             "canHaveInputs": true,
@@ -975,7 +975,7 @@
             ],
             "streaming": false,
             "subject": null,
-            "text": "subtractComponentImagePlane"
+            "text": "Subtract Image Component"
         },
         {
             "canHaveInputs": true,
@@ -1172,7 +1172,7 @@
             ],
             "streaming": false,
             "subject": null,
-            "text": "CalibrationSourceFinder"
+            "text": "Source Find"
         },
         {
             "canHaveInputs": true,
@@ -1379,7 +1379,7 @@
             ],
             "streaming": false,
             "subject": null,
-            "text": "Predict"
+            "text": "Phase Rotation Predict"
         },
         {
             "canHaveInputs": true,
@@ -1439,7 +1439,7 @@
             ],
             "streaming": false,
             "subject": null,
-            "text": "Predict"
+            "text": "Reprojection Predict"
         },
         {
             "canHaveInputs": true,
@@ -1500,7 +1500,7 @@
             ],
             "streaming": false,
             "subject": null,
-            "text": "Compute"
+            "text": "Correct"
         },
         {
             "canHaveInputs": true,
@@ -1776,7 +1776,7 @@
             ],
             "streaming": false,
             "subject": null,
-            "text": "ImagePlanSpectral"
+            "text": "Image Spectral Fitting"
         },
         {
             "canHaveInputs": true,
