@@ -206,7 +206,6 @@ def translate_sdp_hpso_reports_to_dataframe(csv_path):
 
 
 def make_pipeline_csv(csv_path):
-
     """
     Produce a Pandas DataFrame of data product calculations that replicate
     the approach taken in the SDP parametric model
@@ -238,7 +237,7 @@ def make_pipeline_csv(csv_path):
         for hpso in sorted(SKA_HPSOS[telescope]):
             pipeline_products = {}
             for pipeline in PIPELINES:
-                pipeline_overview ={}
+                pipeline_overview = {}
                 if f'{hpso} ({pipeline}) []' in df_ska.columns:
                     column = df_ska[f'{hpso} ({pipeline}) []']
                 else:
@@ -255,7 +254,7 @@ def make_pipeline_csv(csv_path):
             df.index.name = 'Pipeline'
             newcol = [hpso for x in range(0, len(df))]
             df.insert(0, 'hpso', newcol)
-            pipeline_df = pipeline_df.append(df,sort=False)
+            pipeline_df = pipeline_df.append(df, sort=False)
         final_dict[telescope] = pipeline_df
 
     return final_dict

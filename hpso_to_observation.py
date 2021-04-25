@@ -31,6 +31,37 @@ import random
 import itertools
 import pandas as pd
 
+
+class Observation:
+    """
+    Helper-class to store information for when generating observation schedule
+
+    Parameters:
+    -----------
+    count : int
+        The number of the observations wanted in the schedule
+    hpso : str
+        The high-priority science project the observation is associated with
+    duration : int
+        The duration of the observation
+    pipeline : str
+        The imaging pipeline to process the observation data
+    """
+
+    def __init__(self, count, hpso, demand, duration, pipeline):
+        self.count = count
+        self.hpso = hpso
+        self.demand = demand
+        self.duration = duration
+        self.pipeline = pipeline
+
+    def unroll_observations(self):
+        obslist = []
+        for i in range(self.count):
+            obslist.append(self)
+        return obslist
+
+
 compute_keys = {
     'hpso': "HPSO",
     'time': "Time [%]",
@@ -80,10 +111,10 @@ data_keys = {
 }
 
 hpso_constraints_exclude = {
-    'hpso4': ['dprepa','dprepb','dprepc', 'dprepd'],  # Pulsar
-    'hpso5': ['dprepa','dprepb','dprepc', 'dprepd'],  # Pulsar
-    'hpso18': ['dprepa','dprepb','dprepc', 'dprepd'],  # Transients (FRB)
-    'hpso32': ['dprepa','dprepc', 'dprepd']  # Cosmology (Gravity)
+    'hpso4': ['dprepa', 'dprepb', 'dprepc', 'dprepd'],  # Pulsar
+    'hpso5': ['dprepa', 'dprepb', 'dprepc', 'dprepd'],  # Pulsar
+    'hpso18': ['dprepa', 'dprepb', 'dprepc', 'dprepd'],  # Transients (FRB)
+    'hpso32': ['dprepa', 'dprepc', 'dprepd']  # Cosmology (Gravity)
 }
 
 pipeline_constraints = {
@@ -105,21 +136,12 @@ def convert_systemsizing_csv_to_dict(csv_file):
     return df_updated_keys
 
 
-def create_observation_plan(dataframe, per_hpso_count):
+def create_observation_plan(observations, max_telescope_usage):
     """
     Given a sequence of HPSOs that are present in the system sizing
     dictionary, generate a plan. of observations from which we can create
     telescope config.
 
-    #TODO Re-read this section below
-    The idea here is that we have our hpso_count, which is the frequency of
-    that HPSOs within the mid-term schedule. From this, we determine the
-    pipeline that we associate with that observation; there will be ingest
-    pipelines and then processing pipelines. The mid-term plan is (
-    eventually) only going to represent observations + pipelines.
-    Observations that have multiple pipelines associated with them will be
-    represented as two observations, one with a length >0, and the rest
-    without. These will then reference the same data that's been produced.
 
     Parameters
     ----------
@@ -129,6 +151,27 @@ def create_observation_plan(dataframe, per_hpso_count):
 
     per_hpso_count : list()
         A list of Integers that describes how many of each HPSO is in the plan
+
+    max_telescope_usage: float
+        The maximum percentage of the telescope to be occupied at any given
+        time. For some simulations, it may be necessary to only 'simulate' a
+        smaller demand on the telescope.
+
+    Notes
+    -----
+    Observation scheduling is normally a challenging process and quite
+    bespoke. The observation schedules we generate are therefore going to be
+    made according to the following heuristic:
+
+        * Start with the largest observation in the list
+            * This is tie broken on duration
+        * If there are any more observations that fit on the telescope at the
+        the same time, we add these to the plan too.
+        * The longest observation should be followed by at least one small
+        observation
+        * observations that are small are selected until they reach the limit
+        * at least 2 smaller observed until the next larger observations are
+        selected
 
 
     Returns
@@ -145,18 +188,65 @@ def create_observation_plan(dataframe, per_hpso_count):
     """
 
     plan = []
-
-    constraints = {
-
-    }
-
-
-    size = len(dataframe)
-    for i in range(size):
-        for count in per_hpso_count:
-            plan.extend([dataframe.iloc[i]]*count)
+    # current_end = 0
+    # TODO Store a list of tuples; tuple is start, end, usage segment.
+    # Looping to fill up telescope resources as much as possible.
+    # Want plan =[(0,60,32,'hpso01','dprepa'),(60,-1,0)]
+    current_start = 0
+    current_tel_usage = 0
+    loop_count = 0
+    plan = [(0, -1, 0, '', '')]
+    while observations:
+        observations = sorted(
+            observations, key=lambda obs: (obs.demand, obs.duration)
+        )
+        if loop_count % len(observations) == 0:
+            start, finish, demand, hpso, pipeline = plan[-1]
+            largest = observations[-1]
+            if finish == -1:  # Then we are the first with this time
+                plan.pop()
+                plan.append(create_observation_plan_tuple(largest, start))
+                current_tel_usage += largest.demand
+                observations.remove(largest)
+                loop_count += 1
+            else:  # We have to check the telescope capacity
+                if current_tel_usage + largest.demand > max_telescope_usage:
+                    loop_count += 1
+                    continue
+                else:
+                    plan.append((create_observation_plan_tuple(largest, start)))
+                    current_tel_usage += largest.demand
+                    observations.remove(largest)
+                    loop_count += 1
+        else:  # we are not looking to add the largest:
+            start, finish, demand, hpso, pipeline = plan[-1]
+            if finish == -1:
+                plan.pop()
+            # See if we can squeeze in a few observations
+            for observation in observations:
+                if (current_tel_usage + observation.demand
+                        <= max_telescope_usage):
+                    plan.append(create_observation_plan_tuple(observation,
+                                                              start))
+                    current_tel_usage += observation.demand
+                    observations.remove(observation)
+                    loop_count += 1
+            start, finish, demand, hpso, pipeline = plan[-1]
+            next_time_frame = (finish, -1, 0, '', '')
+            current_tel_usage = 0
+            plan.append(next_time_frame)
 
     return plan
+
+
+def create_observation_plan_tuple(observation, start):
+    start = start
+    finish = start + observation.duration
+    hpso = observation.hpso
+    pipeline = observation.pipeline
+    demand = observation.demand
+    tup = (start, finish, demand, hpso, pipeline)
+    return tup
 
 
 def construct_telescope_config_from_observation_plan(observations, plan):
@@ -220,14 +310,14 @@ def construct_telescope_config_from_observation_plan(observations, plan):
 
 if __name__ == '__main__':
     df_system_sizing = convert_systemsizing_csv_to_dict(
-        'tests/data/SKA1_Low_COMPUTE.csv'
+        'csv/SKA1_Low_hpso_pandas.csv'
     )
     df_pipeline_products = pd.read_csv('SKA1_Low_PipelineProducts.csv')
     hpso_frequency = [2, 1, 3, 0, 0]
     final_plan = create_observation_plan(df_system_sizing, hpso_frequency)
 
     config = construct_telescope_config_from_observation_plan(
-        df_system_sizing,final_plan
+        df_system_sizing, final_plan
     )
     filename = 'json/config.json'
     with open(filename, 'w') as jfile:
