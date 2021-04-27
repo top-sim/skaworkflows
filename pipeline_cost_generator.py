@@ -85,7 +85,7 @@ def generate_cost_per_product(workflow, product_table, hpso, pipeline):
     return total_product_costs
 
 
-def assign_costs_to_workflow(workflow, costs, observation):
+def assign_costs_to_workflow(workflow, costs, observation,system_sizing):
     """
     For a given set of costs, calculate the amount per-task in the workflow
     is necessary.
@@ -110,6 +110,7 @@ def assign_costs_to_workflow(workflow, costs, observation):
     -------
 
     """
+
     final_workflow = []
     ecounter = {}
 

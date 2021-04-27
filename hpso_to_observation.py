@@ -27,9 +27,18 @@ information
         - Multiple-pipelines per HPSO
 """
 import json
+import math
 import random
 import itertools
 import pandas as pd
+
+
+class SI:
+    kilo = 10 ** 3
+    mega = 10 ** 6
+    giga = 10 ** 9
+    tera = 10 ** 12
+    peta = 10 ** 15
 
 
 class Observation:
@@ -48,12 +57,13 @@ class Observation:
         The imaging pipeline to process the observation data
     """
 
-    def __init__(self, count, hpso, demand, duration, pipeline):
+    def __init__(self, count, hpso, demand, duration, pipeline, channels):
         self.count = count
         self.hpso = hpso
         self.demand = demand
         self.duration = duration
         self.pipeline = pipeline
+        self.channels = channels
 
     def unroll_observations(self):
         obslist = []
@@ -189,7 +199,6 @@ def create_observation_plan(observations, max_telescope_usage):
 
     plan = []
     # current_end = 0
-    # TODO Store a list of tuples; tuple is start, end, usage segment.
     # Looping to fill up telescope resources as much as possible.
     # Want plan =[(0,60,32,'hpso01','dprepa'),(60,-1,0)]
     current_start = 0
@@ -201,7 +210,7 @@ def create_observation_plan(observations, max_telescope_usage):
             observations, key=lambda obs: (obs.demand, obs.duration)
         )
         if loop_count % len(observations) == 0:
-            start, finish, demand, hpso, pipeline = plan[-1]
+            start, finish, demand, hpso, pipeline, channels = plan[-1]
             largest = observations[-1]
             if finish == -1:  # Then we are the first with this time
                 plan.pop()
@@ -219,7 +228,7 @@ def create_observation_plan(observations, max_telescope_usage):
                     observations.remove(largest)
                     loop_count += 1
         else:  # we are not looking to add the largest:
-            start, finish, demand, hpso, pipeline = plan[-1]
+            start, finish, demand, hpso, pipeline, channels = plan[-1]
             if finish == -1:
                 plan.pop()
             # See if we can squeeze in a few observations
@@ -231,7 +240,7 @@ def create_observation_plan(observations, max_telescope_usage):
                     current_tel_usage += observation.demand
                     observations.remove(observation)
                     loop_count += 1
-            start, finish, demand, hpso, pipeline = plan[-1]
+            start, finish, demand, hpso, pipeline, channels = plan[-1]
             next_time_frame = (finish, -1, 0, '', '')
             current_tel_usage = 0
             plan.append(next_time_frame)
@@ -245,11 +254,14 @@ def create_observation_plan_tuple(observation, start):
     hpso = observation.hpso
     pipeline = observation.pipeline
     demand = observation.demand
-    tup = (start, finish, demand, hpso, pipeline)
+    channels = observation.channels
+    tup = (start, finish, demand, hpso, pipeline, channels)
     return tup
 
 
-def construct_telescope_config_from_observation_plan(observations, plan):
+def construct_telescope_config_from_observation_plan(plan,
+                                                     max_telescope_usage,
+                                                     cluster, system_sizing):
     """
     Based on a simplified dictionaries built from the System Sizing for the
     SDP, this function builds a mid-term plan based on the HPSO sizes.
@@ -284,8 +296,9 @@ def construct_telescope_config_from_observation_plan(observations, plan):
 
     Paremeters
     ----------
-    observations: list
-        list of dictionaries, each dictionary storing a HPSO
+    plan: list
+        list of observation tuples, in the form
+            (start, finish, telescope demand, hpso, pipeline, channels).
 
     Returns
     -------
@@ -294,18 +307,69 @@ def construct_telescope_config_from_observation_plan(observations, plan):
         configure a Telescope (see topsim.core.telescope.Telescope).
 
     """
-    # Find max number of arrays:
-    max_stations, unit = max([x['stations'] for x in observations])
-    pipelines = [x['hpso'] for x in observations]
-    config = {
-        'telescope': {
-            'total_arrays': max_stations
-        },
-        'observations': [
+    # Calculate expected ingest rate and demand for the observation
+    for observation in plan:
+        start, finish, demand, hpso, pipeline, channels = observation
+        max_stations = system_sizing[
+            system_sizing['HPSO'] == 'hpso01'
+            ]['Stations']
+        tel_pecentage = demand / float(max_stations)
+        max_ingest = system_sizing[
+            system_sizing['HPSO'] == 'hpso01'
+            ]['Ingest [Pflop/s]']
+        # Calculate the ingest for this size of observation, where ingest is
+        # in Petaflops
+        observation_ingest = tel_pecentage * (float(max_ingest) * SI.peta)
+        ingest_cluster_demand = _find_ingest_demand(cluster, observation_ingest)
+        max_buffer_ingest = system_sizing[
+            system_sizing['HPSO'] == 'hpso01'
+            ]['Ingest Rate [TB/s]']
+        ingest_buffer_rate = tel_pecentage
 
-        ]
-    }
+        # pipelines = [x['hpso'] for x in observations]
+    # config = {
+    #     'telescope': {
+    #         'total_arrays': max_stations
+    #     },
+    #     'observations': [
+    #
+    #     ]
+    # }
+    config = []
     return config
+
+
+def _find_ingest_demand(cluster, ingest_flops):
+    """
+    Get the average compute over teh CPUs in the cluster and determine the
+    number of resources necessary for the current ingest_flops
+
+    "cluster": {
+        "header": {
+            "time": "false",
+            "generator": "hpconfig",
+            "architecture": {
+                "cpu": {
+                    "XeonIvyBridge": 50,
+                    "XeonSandyBridge": 100
+                },
+                "gpu": {
+                    "NvidiaKepler": 64
+                }
+            }
+        },
+
+    """
+    arch = cluster['cluster']['header']['architecture']
+    cpus = arch['cpu'].keys()
+    m = 0
+
+    for cpu in cpus:
+        m += cluster['cluster']['system']['resources'][f'{cpu}_m0'][
+            'flops']
+    sys_average = m / len(cpus)
+    num_machines = math.ceil(ingest_flops / sys_average)
+    return num_machines
 
 
 if __name__ == '__main__':
