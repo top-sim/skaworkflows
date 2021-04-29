@@ -128,6 +128,7 @@ def _daliuge_to_nx(input_file):
                     continue
                 unrolled_nx.add_node(val['oid'])
                 unrolled_nx.nodes[val['oid']]['nm'] = val['nm']
+                unrolled_nx.nodes[val['oid']]['comp'] = val['tw']
 
         edgedict = {}
         for val in graphdict:
@@ -222,6 +223,7 @@ if __name__ == '__main__':
     with open('eagle/sdp_continuum_tests.json') as jf:
         continuum = json.load(jf)
 
+    _daliuge_to_nx('eagle/sdp_continuum_tests.json')
     ecounter = {}
     for element in continuum:
         if 'outputs' in element.keys():

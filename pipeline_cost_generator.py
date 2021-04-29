@@ -25,6 +25,10 @@ import pandas as pd
 WORKFLOW = "eagle/sdp_continuum_tests.json"
 PIPELINE_DATA_CSV = "csv/SKA1_Low_hpso_pandas.csv"
 
+PIPELINE_WORKFLOW = {
+    "dprepa": '"eagle/SDPContinuumPipelineNoOuter_Maj10-Min10.graph"'
+}
+
 
 class SI:
     kilo = 10 ** 3
@@ -85,7 +89,7 @@ def generate_cost_per_product(workflow, product_table, hpso, pipeline):
     return total_product_costs
 
 
-def assign_costs_to_workflow(workflow, costs, observation,system_sizing):
+def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
     """
     For a given set of costs, calculate the amount per-task in the workflow
     is necessary.
@@ -135,8 +139,8 @@ def assign_costs_to_workflow(workflow, costs, observation,system_sizing):
         else:
             final_workflow.append(element)
 
-
     return final_workflow
+
 
 if __name__ == '__main__':
     df_pipeline = pd.read_csv(PIPELINE_DATA_CSV)
@@ -145,4 +149,4 @@ if __name__ == '__main__':
     hpso = 'hpso01'
     pipeline = 'DPrepA'
     costs = generate_cost_per_product(workflow, df_pipeline, hpso, pipeline)
-    graph = assign_costs_to_workflow(workflow, costs, None)
+    graph = assign_costs_to_workflow(workflow, costs, None, None)

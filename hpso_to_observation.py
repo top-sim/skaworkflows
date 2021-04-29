@@ -28,6 +28,7 @@ information
 """
 import json
 import math
+import time
 import random
 import itertools
 import pandas as pd
@@ -308,8 +309,13 @@ def construct_telescope_config_from_observation_plan(plan,
 
     """
     # Calculate expected ingest rate and demand for the observation
-    for observation in plan:
+    observation_list = []
+    pipelines = {
+        "pipelines" : {}
+    }
+    for i, observation in enumerate(plan):
         start, finish, demand, hpso, pipeline, channels = observation
+        workflow_path = ''
         max_stations = system_sizing[
             system_sizing['HPSO'] == 'hpso01'
             ]['Stations']
@@ -324,7 +330,17 @@ def construct_telescope_config_from_observation_plan(plan,
         max_buffer_ingest = system_sizing[
             system_sizing['HPSO'] == 'hpso01'
             ]['Ingest Rate [TB/s]']
-        ingest_buffer_rate = tel_pecentage
+        ingest_buffer_rate = tel_pecentage * max_buffer_ingest
+        workflow_path = _generate_workflow_from_observation(pipeline)
+        tmp_dict = {
+            'name': f"{hpso}-{i}",
+            'start':start,
+            'finish':finish,
+            'demand': demand,
+            'workflow': workflow_path,
+            'type':pipeline,
+            'data_product_rate': ingest_buffer_rate
+        }
 
         # pipelines = [x['hpso'] for x in observations]
     # config = {
@@ -337,6 +353,20 @@ def construct_telescope_config_from_observation_plan(plan,
     # }
     config = []
     return config
+
+def _generate_workflow_from_observation(pipeline):
+    """
+    Given a pipeline and observation specification, generate a workflow file
+    and return the path name
+    Parameters
+    ----------
+    pipeline
+
+    Returns
+    -------
+
+    """
+
 
 
 def _find_ingest_demand(cluster, ingest_flops):
