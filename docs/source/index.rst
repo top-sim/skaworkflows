@@ -24,10 +24,3 @@ Template produced by the `EAGLE <https://eagle.icrar.org/>`_ online graph editor
 The source coderepository is found under the
 http://github/top-sim/ organisation. 
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

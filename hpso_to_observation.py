@@ -403,9 +403,6 @@ def _find_ingest_demand(cluster, ingest_flops):
 
 
 if __name__ == '__main__':
-    df_system_sizing = convert_systemsizing_csv_to_dict(
-        'csv/SKA1_Low_hpso_pandas.csv'
-    )
     df_pipeline_products = pd.read_csv('SKA1_Low_PipelineProducts.csv')
     hpso_frequency = [2, 1, 3, 0, 0]
     final_plan = create_observation_plan(df_system_sizing, hpso_frequency)
