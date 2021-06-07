@@ -1,0 +1,4286 @@
+{
+    "linkDataArray": [
+        {
+            "from": -2,
+            "fromPort": "b8b2d818-616a-4bbd-afa8-756b538e3571",
+            "loop_aware": "0",
+            "to": -5,
+            "toPort": "d6d14a31-39de-410f-b56f-87fe76c61362"
+        },
+        {
+            "from": -5,
+            "fromPort": "68de886a-3c83-498b-ac8e-647cc650f957",
+            "loop_aware": "0",
+            "to": -23,
+            "toPort": "4fdf3e84-d9a0-4334-a10b-cceeead8c095"
+        },
+        {
+            "from": -23,
+            "fromPort": "bebdc294-ddd1-47b3-8582-53305883e687",
+            "loop_aware": "0",
+            "to": -8,
+            "toPort": "d9009125-9d01-4503-a302-62c93ea3ec9c"
+        },
+        {
+            "from": -8,
+            "fromPort": "c6480eb8-c7dd-4f83-a89b-aede2643b3e0",
+            "loop_aware": "0",
+            "to": -30,
+            "toPort": "b1782733-345f-4c7b-a7a9-5460696d9bb2"
+        },
+        {
+            "from": -30,
+            "fromPort": "b1ae00d1-c044-4da5-96ba-dc421a3d73ea",
+            "loop_aware": "0",
+            "to": -11,
+            "toPort": "b0fa471e-cf5f-40ab-b8b5-6e8a585d9301"
+        },
+        {
+            "from": -11,
+            "fromPort": "da98d8a1-fed3-445b-9804-51c0a72e3a2b",
+            "loop_aware": "0",
+            "to": -31,
+            "toPort": "9e8df206-ff9c-4695-91fa-4b73b253e9ef"
+        },
+        {
+            "from": -6,
+            "fromPort": "82bb3f22-b25f-4b6e-bd41-b8e596e9bc88",
+            "loop_aware": "0",
+            "to": -32,
+            "toPort": "6c1c1d3b-9e11-4458-b483-91517457d19c"
+        },
+        {
+            "from": -33,
+            "fromPort": "5f96c831-dc5f-42a0-9311-8af71bde3b7e",
+            "loop_aware": "0",
+            "to": -4,
+            "toPort": "bdb4b14f-1c1f-4636-95ed-3c087201b126"
+        },
+        {
+            "from": -4,
+            "fromPort": "bafe9ab0-7f63-44c9-97d4-fe960f4e3dc5",
+            "loop_aware": "0",
+            "to": -26,
+            "toPort": "c00d7542-1803-46fb-b758-16b75e14ca2e"
+        },
+        {
+            "from": -14,
+            "fromPort": "56e8061a-4b48-4eab-bd82-56572545a998",
+            "loop_aware": "0",
+            "to": -37,
+            "toPort": "8fa7a5e7-ef27-4a66-b062-af503b185b1b"
+        },
+        {
+            "from": -38,
+            "fromPort": "c1ea6a62-e1b3-4e4c-9a32-428f338ca0c4",
+            "loop_aware": "0",
+            "to": -16,
+            "toPort": "21def1e7-5171-4fa3-90aa-1d7cceaa8c37"
+        },
+        {
+            "from": -16,
+            "fromPort": "f426dc8f-5447-450b-b25a-4c7ed5f32494",
+            "loop_aware": "0",
+            "to": -39,
+            "toPort": "40b4ffe0-960e-442e-9009-b9dd6abebd8f"
+        },
+        {
+            "from": -39,
+            "fromPort": "ea16e692-6d64-4ca4-bed3-06da92d82f43",
+            "loop_aware": "0",
+            "to": -10,
+            "toPort": "5ca7c21a-3a86-45b6-be01-a25c71f22c48"
+        },
+        {
+            "from": -12,
+            "fromPort": "567db69e-219b-4648-ae0f-cdc814cf3510",
+            "loop_aware": "0",
+            "to": -40,
+            "toPort": "2c359c1d-5181-4392-a7a6-05ee68998df3"
+        },
+        {
+            "from": -40,
+            "fromPort": "6adf2260-f698-46b0-8481-499deeec9414",
+            "loop_aware": "0",
+            "to": -14,
+            "toPort": "b16cd9c2-d490-4954-8a05-9573277fc59b"
+        },
+        {
+            "from": -10,
+            "fromPort": "9d16bfa8-2baf-4235-82a0-304944209614",
+            "loop_aware": "0",
+            "to": -36,
+            "toPort": "5616fa3d-76bc-421f-a168-44381df9e6f2"
+        },
+        {
+            "from": -13,
+            "fromPort": "a5209afa-0c50-49cf-bc72-6fdc5827cf45",
+            "loop_aware": "0",
+            "to": -41,
+            "toPort": "23925694-e9a9-4182-bf2d-294b0ba7c12d"
+        },
+        {
+            "from": -27,
+            "fromPort": "48744cd0-405d-4918-a5db-d7c15872054f",
+            "loop_aware": "0",
+            "to": -20,
+            "toPort": "2973644b-6e1a-4496-af4b-31f5cf3f674c"
+        },
+        {
+            "from": -20,
+            "fromPort": "71665222-0d2a-435e-a5f0-da1b62169c7e",
+            "loop_aware": "0",
+            "to": -42,
+            "toPort": "75462347-f9e9-4e96-85c8-a3051cf77c6a"
+        },
+        {
+            "from": -42,
+            "fromPort": "fc697d8d-12a4-4dbe-b952-bdda5c505e0d",
+            "loop_aware": "0",
+            "to": -28,
+            "toPort": "a782bc96-3e25-41b0-8b9c-207d9e1fa0a6"
+        },
+        {
+            "from": -28,
+            "fromPort": "a7409048-8387-4cc0-9f0e-a75e459747db",
+            "loop_aware": "0",
+            "to": -43,
+            "toPort": "5d18023f-1e8c-4b7f-b532-4467dcc54772"
+        },
+        {
+            "from": -43,
+            "fromPort": "7ef63957-6b8f-4848-b556-4c5e91aed0c1",
+            "loop_aware": "0",
+            "to": -17,
+            "toPort": "ac24319d-e747-480f-ad6f-a596ae6529c8"
+        },
+        {
+            "from": -17,
+            "fromPort": "c03e1d80-11a7-4471-a8c2-6ac502b9c7dc",
+            "loop_aware": "0",
+            "to": -29,
+            "toPort": "85e8eb48-c826-41d2-83c1-25398b94d9eb"
+        },
+        {
+            "from": -29,
+            "fromPort": "84b865c8-901b-4425-96d8-528d4b0a3a10",
+            "loop_aware": "0",
+            "to": -24,
+            "toPort": "99686221-fa3b-4475-a14c-6a1128c62602"
+        },
+        {
+            "from": -24,
+            "fromPort": "4c4d6c25-4398-4d63-b607-96babce9e10a",
+            "loop_aware": "0",
+            "to": -44,
+            "toPort": "dc837007-faa5-402f-914e-634879aee22b"
+        },
+        {
+            "from": -44,
+            "fromPort": "423b85a8-3dae-414f-a277-f50d57a686b9",
+            "loop_aware": "0",
+            "to": -25,
+            "toPort": "f60e7f0d-907f-431c-9be4-581a6c845962"
+        },
+        {
+            "from": -1,
+            "fromPort": "537f6c79-7b34-4e24-ba3e-e54586fbb0f9",
+            "loop_aware": "0",
+            "to": -3,
+            "toPort": "5c21776b-e6b0-43a3-af17-81b737b9259a"
+        },
+        {
+            "from": -25,
+            "fromPort": "bbae8e98-44a7-45ea-8b37-78563eb33e6d",
+            "loop_aware": "0",
+            "to": -18,
+            "toPort": "a40453cf-0828-4854-a0d5-60a9e7893349"
+        },
+        {
+            "from": -18,
+            "fromPort": "7f7f84cd-4f6e-4ae8-8700-31471fdb3440",
+            "loop_aware": "0",
+            "to": -1,
+            "toPort": "03a1cc06-630c-4b38-a6f5-d877f617c2b8"
+        },
+        {
+            "from": -26,
+            "fromPort": "93b3ac8f-91bf-4c5e-9a5d-e25d73ecdb6f",
+            "loop_aware": "0",
+            "to": -12,
+            "toPort": "abd167c8-325f-4890-a194-5a3e6dbe1043"
+        },
+        {
+            "from": -36,
+            "fromPort": "b290e1b9-8205-4e12-8910-208b9ea58f4c",
+            "loop_aware": "0",
+            "to": -28,
+            "toPort": "a782bc96-3e25-41b0-8b9c-207d9e1fa0a6"
+        },
+        {
+            "from": -26,
+            "fromPort": "93b3ac8f-91bf-4c5e-9a5d-e25d73ecdb6f",
+            "loop_aware": "0",
+            "to": -13,
+            "toPort": "de4a4d11-e55e-4f2e-93ef-72f65d5991fb"
+        },
+        {
+            "from": -37,
+            "fromPort": "37c7019e-7acb-41d9-85ac-d25d85fa5949",
+            "loop_aware": "0",
+            "to": -15,
+            "toPort": "9a65f69b-d322-4d17-996c-481d568550c6"
+        },
+        {
+            "from": -15,
+            "fromPort": "89fbbab5-d430-4412-818b-4d1b63cb6033",
+            "loop_aware": "0",
+            "to": -38,
+            "toPort": "df51bed8-5795-4891-a3f3-8075813206f9"
+        },
+        {
+            "from": -41,
+            "fromPort": "68e64afb-2833-42ad-b5f4-161bd2029854",
+            "loop_aware": "0",
+            "to": -19,
+            "toPort": "6ed54ecd-d6f0-42b7-bf07-283701d87137"
+        },
+        {
+            "from": -19,
+            "fromPort": "4a0f1201-1dbc-4cf6-855c-e074748b52e4",
+            "loop_aware": "0",
+            "to": -27,
+            "toPort": "af095d26-be16-4840-8d5a-e405f1491939"
+        },
+        {
+            "from": -31,
+            "fromPort": "81b6d648-fe02-4ac0-86aa-2038e72e7125",
+            "loop_aware": "0",
+            "to": -9,
+            "toPort": "8e88f1f0-454b-41f2-9e2d-568609d472cc"
+        },
+        {
+            "from": -32,
+            "fromPort": "5ae2605c-4793-4108-8017-63a8e16d689e",
+            "loop_aware": "0",
+            "to": -9,
+            "toPort": "8e88f1f0-454b-41f2-9e2d-568609d472cc"
+        },
+        {
+            "from": -9,
+            "fromPort": "588fca28-a900-42b5-b47d-98b2fd400e45",
+            "loop_aware": "0",
+            "to": -45,
+            "toPort": "45aad63f-7cca-4f2a-8a5c-a2d274b903d1"
+        },
+        {
+            "from": -45,
+            "fromPort": "218c1585-dc00-4af6-aee6-567c087eadcd",
+            "loop_aware": "0",
+            "to": -4,
+            "toPort": "bdb4b14f-1c1f-4636-95ed-3c087201b126"
+        }
+    ],
+    "modelData": {
+        "eagleCommitHash": "9dffb2c3f02e3f230247356191a5ca4e8e2c11a1",
+        "eagleVersion": "v3.0.4",
+        "filePath": "eagle_lgt.graph",
+        "fileType": "graph",
+        "git_url": "",
+        "readonly": true,
+        "repo": "",
+        "repoBranch": "",
+        "repoService": "Unknown",
+        "schemaVersion": "OJS",
+        "sha": ""
+    },
+    "nodeDataArray": [
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "File",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "check_filepath_exists",
+                    "readonly": false,
+                    "text": "Check file path exists",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "filepath",
+                    "readonly": false,
+                    "text": "File path",
+                    "type": "Unknown",
+                    "value": ""
+                },
+                {
+                    "description": "",
+                    "name": "dirname",
+                    "readonly": false,
+                    "text": "Directory name",
+                    "type": "Unknown",
+                    "value": ""
+                }
+            ],
+            "flipPorts": false,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [],
+            "isData": true,
+            "isGroup": false,
+            "key": -2,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "3f0341f9-8ed4-4768-8b6b-5f9baafe4001",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "b8b2d818-616a-4bbd-afa8-756b538e3571",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "InputDataFromIngest",
+            "width": 200,
+            "x": -310,
+            "y": 31
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "check_filepath_exists",
+                    "readonly": false,
+                    "text": "Check file path exists",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "filepath",
+                    "readonly": false,
+                    "text": "File path",
+                    "type": "Unknown",
+                    "value": ""
+                },
+                {
+                    "description": "",
+                    "name": "dirname",
+                    "readonly": false,
+                    "text": "Directory name",
+                    "type": "Unknown",
+                    "value": ""
+                }
+            ],
+            "flipPorts": false,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "5c21776b-e6b0-43a3-af17-81b737b9259a",
+                    "IdText": "output",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -3,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "GSM",
+            "width": 200,
+            "x": 2876,
+            "y": 1434
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "03a1cc06-630c-4b38-a6f5-d877f617c2b8",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -1,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "537f6c79-7b34-4e24-ba3e-e54586fbb0f9",
+                    "IdText": "output",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "UpdateGSM",
+            "width": 200,
+            "x": 2013.4198303326714,
+            "y": 1533.9601762352925
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "d9009125-9d01-4503-a302-62c93ea3ec9c",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -8,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "c6480eb8-c7dd-4f83-a89b-aede2643b3e0",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Solve",
+            "width": 200,
+            "x": 604.8972085730301,
+            "y": 335.96017623529224
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "5ca7c21a-3a86-45b6-be01-a25c71f22c48",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -10,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "9d16bfa8-2baf-4235-82a0-304944209614",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Grid",
+            "width": 200,
+            "x": 1863.94245209231,
+            "y": 760.3572176729517
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "b16cd9c2-d490-4954-8a05-9573277fc59b",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -14,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "56e8061a-4b48-4eab-bd82-56572545a998",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Degrid",
+            "width": 200,
+            "x": 770.2240634438481,
+            "y": 757.1863938316912
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "21def1e7-5171-4fa3-90aa-1d7cceaa8c37",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -16,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "f426dc8f-5447-450b-b25a-4c7ed5f32494",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Flag",
+            "width": 200,
+            "x": 1517.368212261182,
+            "y": 763.274993028426
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -22,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "2973644b-6e1a-4496-af4b-31f5cf3f674c",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -20,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "71665222-0d2a-435e-a5f0-da1b62169c7e",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Subtract Image Component",
+            "width": 200,
+            "x": 1404.9424520923105,
+            "y": 1148.3572176729524
+        },
+        {
+            "canHaveInputs": false,
+            "canHaveOutputs": false,
+            "category": "Loop",
+            "categoryType": "Group",
+            "collapsed": false,
+            "color": "#512E5F",
+            "description": "Placeholder 'loop' description",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": -7,
+            "exitApplicationName": "event",
+            "exitApplicationType": "None",
+            "expanded": true,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "num_of_iter",
+                    "readonly": false,
+                    "text": "Number loops",
+                    "type": "Unknown",
+                    "value": "1"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 800.0000000000002,
+            "inputAppFields": [],
+            "inputApplicationType": "Unknown",
+            "inputLocalPorts": [
+                {
+                    "Id": "cf66a28c-e1d5-4568-9bd8-645216eead0c",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "inputPorts": [
+                {
+                    "Id": "cca8ad7e-5fcc-46fa-bf59-0871479fd3f6",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "baf142fd-05ed-4fab-9e28-d5162e73e081",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": true,
+            "key": -21,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [
+                {
+                    "Id": "208df7a1-baf9-41da-89fd-038061146cbd",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "outputPorts": [
+                {
+                    "Id": "12cb0caa-2272-4586-ba2b-913e9b571530",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "9143d73b-b0e1-4ede-8713-73681803fcbd",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "MajorCycle",
+            "width": 1899.9999999999995,
+            "x": 269.20376297213045,
+            "y": 647.3572176729513
+        },
+        {
+            "canHaveInputs": false,
+            "canHaveOutputs": false,
+            "category": "Loop",
+            "categoryType": "Group",
+            "collapsed": false,
+            "color": "#512E5F",
+            "description": "Placeholder 'loop' description",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": -34,
+            "exitApplicationName": "event",
+            "exitApplicationType": "None",
+            "expanded": true,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "num_of_iter",
+                    "readonly": false,
+                    "text": "Number loops",
+                    "type": "Unknown",
+                    "value": "1"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 410.79814061690774,
+            "inputAppFields": [],
+            "inputApplicationType": "Unknown",
+            "inputLocalPorts": [
+                {
+                    "Id": "cf66a28c-e1d5-4568-9bd8-645216eead0c",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "inputPorts": [
+                {
+                    "Id": "cca8ad7e-5fcc-46fa-bf59-0871479fd3f6",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": true,
+            "key": -22,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [
+                {
+                    "Id": "208df7a1-baf9-41da-89fd-038061146cbd",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "outputPorts": [
+                {
+                    "Id": "12cb0caa-2272-4586-ba2b-913e9b571530",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "MInorCycle",
+            "width": 1105.6737335183204,
+            "x": 614.9424520923102,
+            "y": 959.3572176729512
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "99686221-fa3b-4475-a14c-6a1128c62602",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -24,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "4c4d6c25-4398-4d63-b607-96babce9e10a",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Source Find",
+            "width": 200,
+            "x": 1139.2037629721306,
+            "y": 1585.1762435958328
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "f60e7f0d-907f-431c-9be4-581a6c845962",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -25,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "bbae8e98-44a7-45ea-8b37-78563eb33e6d",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "UpdateLSM",
+            "width": 200,
+            "x": 1593.4198303326705,
+            "y": 1561.9601762352925
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "3445ea1d-e0c2-4ae1-962d-781eabe0ec42",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "a782bc96-3e25-41b0-8b9c-207d9e1fa0a6",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -28,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "d9549463-528f-4276-b7f6-4b5f13d1eedb",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "a7409048-8387-4cc0-9f0e-a75e459747db",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "FinishMinorCycle",
+            "width": 200,
+            "x": 1852.94245209231,
+            "y": 988.3572176729512
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "c02630c4-0863-4679-84ab-c58784af5d15",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "d6d14a31-39de-410f-b56f-87fe76c61362",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -5,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "d5c22486-2c72-4cdf-b77c-46813587ec45",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "68de886a-3c83-498b-ac8e-647cc650f957",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Phase Rotation Predict",
+            "width": 200,
+            "x": 154.41983033267044,
+            "y": 334.96017623529224
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [],
+            "isData": false,
+            "isGroup": false,
+            "key": -6,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "d5c22486-2c72-4cdf-b77c-46813587ec45",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "82bb3f22-b25f-4b6e-bd41-b8e596e9bc88",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Reprojection Predict",
+            "width": 200,
+            "x": 970.6358976932103,
+            "y": 181.9601762352922
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "b0fa471e-cf5f-40ab-b8b5-6e8a585d9301",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -11,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "da98d8a1-fed3-445b-9804-51c0a72e3a2b",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Correct",
+            "width": 200,
+            "x": 1109.0929754618526,
+            "y": 349.8244456774529
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": true,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "feaed519-83e7-48a1-aa25-c9fc91291091",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "bdb4b14f-1c1f-4636-95ed-3c087201b126",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -4,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "2828b754-6eb3-4551-8529-08d836ebf03e",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "bafe9ab0-7f63-44c9-97d4-fe960f4e3dc5",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Flag",
+            "width": 200,
+            "x": 1559.164892197037,
+            "y": 507.2362799268151
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "feaed519-83e7-48a1-aa25-c9fc91291091",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "abd167c8-325f-4890-a194-5a3e6dbe1043",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -12,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "2828b754-6eb3-4551-8529-08d836ebf03e",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "567db69e-219b-4648-ae0f-cdc814cf3510",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "BeginMinorCycle",
+            "width": 200,
+            "x": 430.1132759335708,
+            "y": 820.5280415142117
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -22,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "feaed519-83e7-48a1-aa25-c9fc91291091",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "de4a4d11-e55e-4f2e-93ef-72f65d5991fb",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -13,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "2828b754-6eb3-4551-8529-08d836ebf03e",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "a5209afa-0c50-49cf-bc72-6fdc5827cf45",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "FFT",
+            "width": 200,
+            "x": 717.9424520923101,
+            "y": 1081.357217672952
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "Unknown",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "feaed519-83e7-48a1-aa25-c9fc91291091",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "ac24319d-e747-480f-ad6f-a596ae6529c8",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -17,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "2828b754-6eb3-4551-8529-08d836ebf03e",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "c03e1d80-11a7-4471-a8c2-6ac502b9c7dc",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Image Spectral Fitting",
+            "width": 200,
+            "x": 656.4198303326702,
+            "y": 1553.9601762352925
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "4fdf3e84-d9a0-4334-a10b-cceeead8c095",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -23,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "bebdc294-ddd1-47b3-8582-53305883e687",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 402.1585194528508,
+            "y": 341.6988653554723
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "File",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                },
+                {
+                    "description": "",
+                    "name": "check_filepath_exists",
+                    "readonly": false,
+                    "text": "Check file path exists",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "filepath",
+                    "readonly": false,
+                    "text": "File path",
+                    "type": "Unknown",
+                    "value": ""
+                },
+                {
+                    "description": "",
+                    "name": "dirname",
+                    "readonly": false,
+                    "text": "Directory name",
+                    "type": "Unknown",
+                    "value": ""
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "9b5dcb30-781f-4b9e-80d4-f6f98f94b32b",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "b1782733-345f-4c7b-a7a9-5460696d9bb2",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -30,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "cd0245b7-7332-4067-8429-7bf4e76a805c",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "b1ae00d1-c044-4da5-96ba-dc421a3d73ea",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 831.6358976932102,
+            "y": 340.22148711511227
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "9e8df206-ff9c-4695-91fa-4b73b253e9ef",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -31,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "81b6d648-fe02-4ac0-86aa-2038e72e7125",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1265.3745868133908,
+            "y": 333.34706743709273
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "6c1c1d3b-9e11-4458-b483-91517457d19c",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -32,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "5ae2605c-4793-4108-8017-63a8e16d689e",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1282.022788895011,
+            "y": 191.6185285527716
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": true,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "0bf33fa4-97e3-42e7-a5a2-2216b8a67778",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -33,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "5f96c831-dc5f-42a0-9311-8af71bde3b7e",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1993.2333485955353,
+            "y": 518.7386012147366
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": true,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "c00d7542-1803-46fb-b758-16b75e14ca2e",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -26,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "93b3ac8f-91bf-4c5e-9a5d-e25d73ecdb6f",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 675.6093313065271,
+            "y": 503.3462902583643
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "8fa7a5e7-ef27-4a66-b062-af503b185b1b",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -37,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "37c7019e-7acb-41d9-85ac-d25d85fa5949",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 941.2443639155672,
+            "y": 904.5982280810533
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "df51bed8-5795-4891-a3f3-8075813206f9",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -38,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "c1ea6a62-e1b3-4e4c-9a32-428f338ca0c4",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1339.4050375209679,
+            "y": 763.0257202262894
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "40b4ffe0-960e-442e-9009-b9dd6abebd8f",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -39,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "ea16e692-6d64-4ca4-bed3-06da92d82f43",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1695.314550482408,
+            "y": 769.5030984666496
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "2c359c1d-5181-4392-a7a6-05ee68998df3",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -40,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "6adf2260-f698-46b0-8481-499deeec9414",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 711.2037629721301,
+            "y": 900.357217672951
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "5616fa3d-76bc-421f-a168-44381df9e6f2",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -36,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "b290e1b9-8205-4e12-8910-208b9ea58f4c",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1926.2037629721306,
+            "y": 870.3572176729507
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -22,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "23925694-e9a9-4182-bf2d-294b0ba7c12d",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -41,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "68e64afb-2833-42ad-b5f4-161bd2029854",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 737.5813690222428,
+            "y": 1225.517891278354
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -22,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "af095d26-be16-4840-8d5a-e405f1491939",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -27,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "48744cd0-405d-4918-a5db-d7c15872054f",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1232.9424520923105,
+            "y": 1222.357217672952
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "1"
+                }
+            ],
+            "flipPorts": false,
+            "group": -22,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "75462347-f9e9-4e96-85c8-a3051cf77c6a",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -42,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "fc697d8d-12a4-4dbe-b952-bdda5c505e0d",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1762.94245209231,
+            "y": 1161.3572176729524
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "1"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "5d18023f-1e8c-4b7f-b532-4467dcc54772",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -43,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "7ef63957-6b8f-4848-b556-4c5e91aed0c1",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1897.2037629721306,
+            "y": 1309.357217672952
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "85e8eb48-c826-41d2-83c1-25398b94d9eb",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -29,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "84b865c8-901b-4425-96d8-528d4b0a3a10",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 883.41983033267,
+            "y": 1555.9601762352925
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "0"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "dc837007-faa5-402f-914e-634879aee22b",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -44,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "423b85a8-3dae-414f-a277-f50d57a686b9",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1376.4198303326705,
+            "y": 1581.9601762352925
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "File",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Unknown",
+                    "value": "5"
+                },
+                {
+                    "description": "",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "check_filepath_exists",
+                    "readonly": false,
+                    "text": "Check file path exists",
+                    "type": "Unknown",
+                    "value": "1"
+                },
+                {
+                    "description": "",
+                    "name": "filepath",
+                    "readonly": false,
+                    "text": "File path",
+                    "type": "Unknown",
+                    "value": ""
+                },
+                {
+                    "description": "",
+                    "name": "dirname",
+                    "readonly": false,
+                    "text": "Directory name",
+                    "type": "Unknown",
+                    "value": ""
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "9b5dcb30-781f-4b9e-80d4-f6f98f94b32b",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "a40453cf-0828-4854-a0d5-60a9e7893349",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -18,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "cd0245b7-7332-4067-8429-7bf4e76a805c",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                },
+                {
+                    "Id": "7f7f84cd-4f6e-4ae8-8700-31471fdb3440",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": true,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1797.419830332671,
+            "y": 1563.9601762352925
+        },
+        {
+            "canHaveInputs": false,
+            "canHaveOutputs": false,
+            "category": "Scatter",
+            "categoryType": "Group",
+            "collapsed": false,
+            "color": "#DDAD00",
+            "description": "Placeholder 'scatter' description",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": true,
+            "fields": [
+                {
+                    "description": "The number of outputs generated by this construct",
+                    "name": "num_of_copies",
+                    "readonly": false,
+                    "text": "Number of copies",
+                    "type": "Integer",
+                    "value": 16
+                },
+                {
+                    "description": "The axis used to split the input into multiple outputs",
+                    "name": "scatter_axis",
+                    "readonly": false,
+                    "text": "Scatter axis",
+                    "type": "String",
+                    "value": "frequency"
+                }
+            ],
+            "flipPorts": false,
+            "height": 1648,
+            "inputAppFields": [
+                {
+                    "description": "Estimate of execution time (in seconds) for this application.",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Float",
+                    "value": 5
+                },
+                {
+                    "description": "Number of CPUs used for this application.",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Integer",
+                    "value": 1
+                },
+                {
+                    "description": "Is this node the start of a group?",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Boolean",
+                    "value": false
+                },
+                {
+                    "description": "The python class that implements this application",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "String",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "inputApplicationKey": -46,
+            "inputApplicationName": "Python App",
+            "inputApplicationType": "PythonApp",
+            "inputLocalPorts": [],
+            "inputPorts": [],
+            "isData": false,
+            "isGroup": true,
+            "key": -35,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [],
+            "readonly": false,
+            "selected": true,
+            "showPorts": true,
+            "streaming": false,
+            "subject": null,
+            "text": "Scatter",
+            "width": 2492,
+            "x": 72.41983033267046,
+            "y": 81.96017623529241
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "Estimate of execution time (in seconds) for this application.",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Float",
+                    "value": 5
+                },
+                {
+                    "description": "Number of CPUs used for this application.",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Integer",
+                    "value": 1
+                },
+                {
+                    "description": "Is this node the start of a group?",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Boolean",
+                    "value": false
+                },
+                {
+                    "description": "The python class that implements this application",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "String",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -21,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "9a65f69b-d322-4d17-996c-481d568550c6",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -15,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "89fbbab5-d430-4412-818b-4d1b63cb6033",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": false,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Subtract",
+            "width": 200,
+            "x": 1063.582658090622,
+            "y": 778.0092851516868
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "Estimate of execution time (in seconds) for this application.",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Float",
+                    "value": 5
+                },
+                {
+                    "description": "Number of CPUs used for this application.",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Integer",
+                    "value": 1
+                },
+                {
+                    "description": "Is this node the start of a group?",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Boolean",
+                    "value": false
+                },
+                {
+                    "description": "The python class that implements this application",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "String",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -22,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "6ed54ecd-d6f0-42b7-bf07-283701d87137",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -19,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "4a0f1201-1dbc-4cf6-855c-e074748b52e4",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": false,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Identify Component",
+            "width": 200,
+            "x": 992.6980881767439,
+            "y": 1240.6917154325574
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "PythonApp",
+            "categoryType": "Application",
+            "collapsed": false,
+            "color": "#3498DB",
+            "description": "An application component in the form of a Python app",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "Estimate of execution time (in seconds) for this application.",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Float",
+                    "value": 5
+                },
+                {
+                    "description": "Number of CPUs used for this application.",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Integer",
+                    "value": 1
+                },
+                {
+                    "description": "Is this node the start of a group?",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Boolean",
+                    "value": false
+                },
+                {
+                    "description": "The python class that implements this application",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "String",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "8e88f1f0-454b-41f2-9e2d-568609d472cc",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": false,
+            "key": -9,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "588fca28-a900-42b5-b47d-98b2fd400e45",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": false,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Subtract",
+            "width": 200,
+            "x": 1515.4562126844696,
+            "y": 234.0701865668416
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "Estimated size of the data contained in this node",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Float",
+                    "value": 5
+                },
+                {
+                    "description": "Is this node the end of a group?",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Boolean",
+                    "value": false
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "45aad63f-7cca-4f2a-8a5c-a2d274b903d1",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -45,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "218c1585-dc00-4af6-aee6-567c087eadcd",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": false,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "relationship",
+            "width": 200,
+            "x": 1819.8475344700112,
+            "y": 353.26634204502784
+        }
+    ]
+}

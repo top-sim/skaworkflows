@@ -16,24 +16,32 @@
 import unittest
 import random
 import json
+import os
 
 import pandas as pd
 
-from hpso_to_observation import Observation
-from hpso_to_observation import SI
-from hpso_to_observation import \
+from pipelines.hpso_to_observation import Observation
+from pipelines.hpso_to_observation import SI
+from pipelines.hpso_to_observation import \
     convert_systemsizing_csv_to_dict, create_observation_plan, \
-    construct_telescope_config_from_observation_plan, \
-    _find_ingest_demand
+    construct_telescope_config_from_observation_plan
 
-SKA_LOW_SYSTEM = 'csv/SKA1_Low_compute_pandas.csv'
+
+DATA_DIR = 'data/parametric_model'
+LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
+
+TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low_long.csv'
+COMPONENT_SYSTEM_SIZING = None
 CLUSTER = 'tests/PawseyGalaxy_nd_1619058732.json'
+
+EAGLE_LGT = 'tests/data/eagle_lgt.graph'
+
 
 class TestObservationUnroll(unittest.TestCase):
 
     def setUp(self):
-        self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa',256)
-        self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa',256)
+        self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa',256,'long')
+        self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa',256,'long')
 
     def test_unroll_observations(self):
         unroll_list = [self.obs1 for x in range(self.obs1.count)]
@@ -45,10 +53,10 @@ class TestObservationPlanGeneration(unittest.TestCase):
     def setUp(self):
         # low_compute_data = "csv/SKA1_Low_COMPUTE.csv"
         # self.observations = convert_systemsizing_csv_to_dict(low_compute_data)
-        self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa', 256)
-        self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa', 256)
-        self.obs3 = Observation(3, 'hpso1', 32, 30, 'drepa', 256)
-        self.system_sizing = pd.read_csv(SKA_LOW_SYSTEM)
+        self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa', 256, 'long')
+        self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa', 128, 'long')
+        self.obs3 = Observation(3, 'hpso1', 32, 30, 'drepa', 256, 'long')
+        self.system_sizing = pd.read_csv(LONG)
         self.max_telescope_usage = 32  # 1/16th of the telescope
 
     def test_create_observation_plan_notiebreaks(self):
@@ -73,40 +81,34 @@ class TestObservationPlanGeneration(unittest.TestCase):
         self.assertTrue(plan[0], [(0, 30, self.obs1)])
         self.assertTrue(plan[1], self.obs2)
 
-    def test_create_observation_plan_tiebreaker(self):
-        """
-        Make sure the hpos with the longest time goes first regardless of
-        their order in the list
-        Returns
-        -------
-
-        """
-        self.assertTrue(False)
-
 
 class TestObservationTopSimTranslation(unittest.TestCase):
 
     def setUp(self):
-        self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa', 256)
-        self.system_sizing = pd.read_csv(SKA_LOW_SYSTEM)
+        self.obs1 = Observation(
+            count=2, hpso='hpso01', demand=32,
+            duration=60, pipeline='dprepa', channels=256,
+            baseline='long'
+        )
         with open(CLUSTER) as jf:
             self.cluster = json.load(jf)
         self.max_telescope_usage = 32  # 1/16th of telescope
         self.plan = [
-            (0, 60, 32, 'hpso01', 'dprepa', 256),
-            (60, 120, 32, 'hpso01', 'dprepa', 256)
+            (0, 60, 32, 'hpso01', 'dprepa', 256, 'long'),
+            (60, 120, 32, 'hpso01', 'dprepa', 256, 'long')
         ]
 
     def test_sizing_calculations(self):
+
         obslist = construct_telescope_config_from_observation_plan(
-            self.plan,self.cluster, self.max_telescope_usage,
-            self.system_sizing)
+            self.plan, TOTAL_SYSTEM_SIZING
+        )
+        # The number of channels is 256; this is half the number of max
+        # channels, so we would expect the size to be half of the stored data
+        # rate in the SDP report.
+        self.assertAlmostEqual(0.316214, obslist[0]['data_product_rate'], 6)
 
-        self.assertAlmostEqual(0.028689, obslist[0]['data_product_rate'], 6)
 
-    def test_ingest_demand_calc(self):
-        max_ingest = self.system_sizing[
-            self.system_sizing['HPSO'] == 'hpso01'
-            ]['Ingest [Pflop/s]']
-        ingest_flops = 32/512 * (float(max_ingest) * SI.peta)
-        self.assertEqual(123, _find_ingest_demand(self.cluster, ingest_flops))
+# Count the number of shared items between two dictionaries - this will help
+# us test the JSON files produced during translation.
+# shared_items = {k: x[k] for k in x if k in y and x[k] == y[k]}

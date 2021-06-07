@@ -20,6 +20,7 @@ imaging pipeline, spectral etc.). The parametric model provides us with a
 calculation of the compute associated with these models.
 """
 import json
+import math
 import pandas as pd
 
 WORKFLOW = "eagle/sdp_continuum_tests.json"
@@ -37,6 +38,22 @@ class SI:
     tera = 10 ** 12
     peta = 10 ** 15
 
+
+def generate_workflow_from_observation(observation):
+    """
+    Given a pipeline and observation specification, generate a workflow file
+    and return the path name
+    Parameters
+    ----------
+    observation : dict
+        Dictionary of observation data, including duration
+
+    Returns
+    -------
+            'type':pipeline,
+
+    """
+    return None
 
 def generate_cost_per_product(workflow, product_table, hpso, pipeline):
     """
@@ -57,10 +74,16 @@ def generate_cost_per_product(workflow, product_table, hpso, pipeline):
     Parameters
     ----------
     workflow : dictionary of the JSON graph we are focusing on
+
     product_table : pd.DataFrame
         Pandas dataframe containing the components
+
     hpso : str
         the HPSO we are generating.
+
+    cluster: str
+        path to the cluster specification required of the observation.
+
 
     Returns
     -------
@@ -114,9 +137,22 @@ def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
     -------
 
     """
+    pipelines = {
+        "pipelines": {}
+    }
+
+    # generate pipeline total ingest costs:
+    max_ingest = system_sizing[
+        system_sizing['HPSO'] == 'hpso01'
+        ]['Total Compute Requirement [PetaFLOP/s]']
+    observation_ingest = tel_pecentage * (float(max_ingest) * SI.peta)
+    tel_pecentage = channels / float(MAX_CHANNELS)
+
+    ingest_cluster_demand = _find_ingest_demand(cluster, observation_ingest)
 
     final_workflow = []
     ecounter = {}
+
 
     # count prevalence of each component in the workflow
     for element in workflow:
@@ -140,6 +176,38 @@ def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
             final_workflow.append(element)
 
     return final_workflow
+
+def _find_ingest_demand(cluster, ingest_flops):
+    """
+    Get the average compute over teh CPUs in the cluster and determine the
+    number of resources necessary for the current ingest_flops
+
+    "cluster": {
+        "header": {
+            "time": "false",
+            "generator": "hpconfig",
+            "architecture": {
+                "cpu": {
+                    "XeonIvyBridge": 50,
+                    "XeonSandyBridge": 100
+                },
+                "gpu": {
+                    "NvidiaKepler": 64
+                }
+            }
+        },
+
+    """
+    arch = cluster['cluster']['header']['architecture']
+    cpus = arch['cpu'].keys()
+    m = 0
+
+    for cpu in cpus:
+        m += cluster['cluster']['system']['resources'][f'{cpu}_m0'][
+            'flops']
+    sys_average = m / len(cpus)
+    num_machines = math.ceil(ingest_flops / sys_average)
+    return num_machines
 
 
 if __name__ == '__main__':

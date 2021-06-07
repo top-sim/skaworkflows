@@ -28,10 +28,14 @@ information
 """
 import json
 import math
-import time
-import random
-import itertools
 import pandas as pd
+from enum import Enum
+
+
+class Baselines(Enum):
+    short = 4062.5
+    mid = 32500
+    long = 65000
 
 
 class SI:
@@ -40,6 +44,11 @@ class SI:
     giga = 10 ** 9
     tera = 10 ** 12
     peta = 10 ** 15
+
+
+# These are 'binned' channels, by dividing the number of real channels by 64.
+MAX_CHANNELS = 512
+MAX_TEL_DEMAND = 256
 
 
 class Observation:
@@ -53,18 +62,28 @@ class Observation:
     hpso : str
         The high-priority science project the observation is associated with
     duration : int
-        The duration of the observation
+        The duration of the observation in minutes
     pipeline : str
         The imaging pipeline to process the observation data
+    channels : int
+        The nunber of averaged channels expected to make up a workflow
+    baseline: str
+        The length of the baseline used in observation. See Baselines Enum
+        class.
     """
 
-    def __init__(self, count, hpso, demand, duration, pipeline, channels):
+    def __init__(
+            self,
+            count, hpso, demand, duration,
+            pipeline, channels, baseline
+    ):
         self.count = count
         self.hpso = hpso
         self.demand = demand
         self.duration = duration
         self.pipeline = pipeline
         self.channels = channels
+        self.baseline = Baselines[baseline]
 
     def unroll_observations(self):
         obslist = []
@@ -205,13 +224,14 @@ def create_observation_plan(observations, max_telescope_usage):
     current_start = 0
     current_tel_usage = 0
     loop_count = 0
-    plan = [(0, -1, 0, '', '')]
+    # start, finish, demand, hpso, pipeline, channels, baseline
+    plan = [(0, -1, 0, '', '', 0, '')]
     while observations:
         observations = sorted(
-            observations, key=lambda obs: (obs.demand, obs.duration)
+            observations, key=lambda obs: (obs.baseline.value, obs.channels)
         )
         if loop_count % len(observations) == 0:
-            start, finish, demand, hpso, pipeline, channels = plan[-1]
+            start, finish, demand, hpso, pipeline, channels, baseline = plan[-1]
             largest = observations[-1]
             if finish == -1:  # Then we are the first with this time
                 plan.pop()
@@ -229,7 +249,7 @@ def create_observation_plan(observations, max_telescope_usage):
                     observations.remove(largest)
                     loop_count += 1
         else:  # we are not looking to add the largest:
-            start, finish, demand, hpso, pipeline, channels = plan[-1]
+            start, finish, demand, hpso, pipeline, channels, baseline = plan[-1]
             if finish == -1:
                 plan.pop()
             # See if we can squeeze in a few observations
@@ -241,8 +261,8 @@ def create_observation_plan(observations, max_telescope_usage):
                     current_tel_usage += observation.demand
                     observations.remove(observation)
                     loop_count += 1
-            start, finish, demand, hpso, pipeline, channels = plan[-1]
-            next_time_frame = (finish, -1, 0, '', '')
+            start, finish, demand, hpso, pipeline, channels, baseline = plan[-1]
+            next_time_frame = (finish, -1, 0, '', '', 0, '')
             current_tel_usage = 0
             plan.append(next_time_frame)
 
@@ -256,30 +276,37 @@ def create_observation_plan_tuple(observation, start):
     pipeline = observation.pipeline
     demand = observation.demand
     channels = observation.channels
-    tup = (start, finish, demand, hpso, pipeline, channels)
+    baseline = observation.baseline
+    tup = (start, finish, demand, hpso, pipeline, channels, baseline)
     return tup
 
 
-def construct_telescope_config_from_observation_plan(plan,
-                                                     max_telescope_usage,
-                                                     cluster, system_sizing):
+def construct_telescope_config_from_observation_plan(
+        plan, total_system_sizing
+):
     """
     Based on a simplified dictionaries built from the System Sizing for the
     SDP, this function builds a mid-term plan based on the HPSO sizes.
 
-    The structure of an observation.json file takes the following:
 
+    Paremeters
+    ----------
+    plan: list
+        list of observation tuples, in the form
+            (start, finish, telescope demand, hpso, pipeline, channels).
+    total_system_sizing : csv
+        This is the system sizing that contains total system costs. It is
+        from this that we get the ingest rate for the selected HPSO.
+
+    Notes
+    -----
+
+    The structure of an observation.json file takes the following:
     {
       "telescope": {
         "total_arrays": # This is adapted from the maximum number of
         'stations' in the system_sizing csv.
 
-        "pipelines": {
-            # Pipelines are taken from the HPSOs that are outlined in the plan;
-            "pipeline_name": {
-               "demand": demand is taken from 'totalrt', which is the total
-               Real-time compute required for the observation (in PFlops/s).
-            }
         }
         "observations": [
             # a list of observations in the order of the 'plan'
@@ -288,18 +315,10 @@ def construct_telescope_config_from_observation_plan(plan,
             observation start time
             "duration": Tobs, from system sizing
             "demand": this is the number of stations it requires
-            "workflow": where the workflow file is stored
-            "type": what pipeline it is
             "data_product_rate": This is
         ]
       }
     }
-
-    Paremeters
-    ----------
-    plan: list
-        list of observation tuples, in the form
-            (start, finish, telescope demand, hpso, pipeline, channels).
 
     Returns
     -------
@@ -308,65 +327,168 @@ def construct_telescope_config_from_observation_plan(plan,
         configure a Telescope (see topsim.core.telescope.Telescope).
 
     """
+
     # Calculate expected ingest rate and demand for the observation
     observation_list = []
-    pipelines = {
-        "pipelines" : {}
-    }
+    system_sizing = pd.read_csv(total_system_sizing)
     for i, observation in enumerate(plan):
-        start, finish, demand, hpso, pipeline, channels = observation
-        workflow_path = ''
-        max_stations = system_sizing[
-            system_sizing['HPSO'] == 'hpso01'
-            ]['Stations']
-        tel_pecentage = demand / float(max_stations)
-        max_ingest = system_sizing[
-            system_sizing['HPSO'] == 'hpso01'
-            ]['Ingest [Pflop/s]']
+        start, finish, demand, hpso, pipeline, channels, baseline = observation
+        tel_pecentage = channels / float(MAX_CHANNELS)
         # Calculate the ingest for this size of observation, where ingest is
         # in Petaflops
-        observation_ingest = tel_pecentage * (float(max_ingest) * SI.peta)
-        ingest_cluster_demand = _find_ingest_demand(cluster, observation_ingest)
-        max_buffer_ingest = system_sizing[
-            system_sizing['HPSO'] == 'hpso01'
-            ]['Ingest Rate [TB/s]']
+        max_buffer_ingest = float(system_sizing[
+                                      system_sizing['HPSO'] == 'hpso01'
+                                      ]['Ingest [Pflop/s]'])
         ingest_buffer_rate = tel_pecentage * max_buffer_ingest
-        workflow_path = _generate_workflow_from_observation(pipeline)
+
         tmp_dict = {
             'name': f"{hpso}-{i}",
-            'start':start,
-            'finish':finish,
+            'start': start,
             'demand': demand,
-            'workflow': workflow_path,
-            'type':pipeline,
             'data_product_rate': ingest_buffer_rate
         }
+        observation_list.append(tmp_dict)
 
-        # pipelines = [x['hpso'] for x in observations]
-    # config = {
-    #     'telescope': {
-    #         'total_arrays': max_stations
-    #     },
-    #     'observations': [
-    #
-    #     ]
-    # }
-    config = []
-    return config
+    return observation_list
 
-def _generate_workflow_from_observation(pipeline):
+
+def generate_workflow_from_observation(observation):
     """
     Given a pipeline and observation specification, generate a workflow file
     and return the path name
     Parameters
     ----------
-    pipeline
+    observation : dict
+        Dictionary of observation data, including duration
+
+    Returns
+    -------
+            'type':pipeline,
+
+    """
+    return None
+
+
+def generate_cost_per_product(workflow, product_table, hpso, pipeline):
+    """
+    Produce a cost value per node within the workflow graph for the given
+    product.
+
+    For a given workflow, there will be a product from the HPSO (e.g. Grid,
+    Subtract Image etc.) which, based on the SDP Parametric Model,
+    has a value which is the total expected PFLOP/s expected for that
+    component over the lifetime of the workflow.
+
+    As per sdp-par-model.parameters.equations., we know
+    the PFlop/s is generated by dividing by o.Tobs (the observation time in
+    seconds). From this we can back-calculate total FLOPS/product for the
+    entire workflow, and then divide this based on the number of
+    product-tasks we have within the workflow.
+
+    Parameters
+    ----------
+    workflow : dictionary of the JSON graph we are focusing on
+
+    product_table : pd.DataFrame
+        Pandas dataframe containing the components
+
+    hpso : str
+        the HPSO we are generating.
+
+    cluster: str
+        path to the cluster specification required of the observation.
+
 
     Returns
     -------
 
     """
 
+    ignore_components = [
+        'UpdateGSM', 'UpdateLSM', 'FinishMinorCycle', 'BeginMinorCycle'
+    ]
+
+    total_product_costs = {}
+    for element in workflow:
+        # Name of task in DALiuGE workflow is 'nm'
+        if 'outputs' in element.keys():
+            name = element['nm']
+            if name not in total_product_costs:
+                if name in ignore_components:
+                    # These are not 'products' that take compute time
+                    total_product_costs[name] = 0
+                else:
+                    df = product_table[['Pipeline', 'hpso', name]]
+                    df = df[(df['Pipeline'] == pipeline) & (df['hpso'] == hpso)]
+                    value = float(df[name])
+                    total_product_costs[name] = value
+
+    return total_product_costs
+
+
+def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
+    """
+    For a given set of costs, calculate the amount per-task in the workflow
+    is necessary.
+    Parameters
+    ----------
+    workflow : dictionary
+        Dictionary representation of JSON object that is converted from EAGLE
+        LGT through DALiuGE
+    costs : dict
+        product-compute costs (petaflops/s) pairs for each component in the
+        workflow
+    observation : dict
+        This is a list of requirements associated with the observation,
+        which we use to determine the amount of compute associated with it
+        e.g. length (max 5 hours), number of baselines (max 512) etc.
+
+    Notes
+    -----
+    The idea is that for a given component (e.g. Grid) there is a set compute
+
+    Returns
+    -------
+
+    """
+    pipelines = {
+        "pipelines": {}
+    }
+
+    # generate pipeline total ingest costs:
+    max_ingest = system_sizing[
+        system_sizing['HPSO'] == 'hpso01'
+        ]['Total Compute Requirement [PetaFLOP/s]']
+    observation_ingest = tel_pecentage * (float(max_ingest) * SI.peta)
+    tel_pecentage = channels / float(MAX_CHANNELS)
+
+    ingest_cluster_demand = _find_ingest_demand(cluster, observation_ingest)
+
+    final_workflow = []
+    ecounter = {}
+
+    # count prevalence of each component in the workflow
+    for element in workflow:
+        if 'outputs' in element.keys():
+            if element['nm'] in ecounter:
+                ecounter[element['nm']] += 1
+            else:
+                ecounter[element['nm']] = 1
+
+    for element in workflow:
+        if 'outputs' in element.keys():
+            name = element['nm']
+            if name in ecounter:
+                if costs[name] == -1:
+                    continue
+                else:
+                    individual_cost = costs[name] / ecounter[name] * SI.peta
+                    element['tw'] = individual_cost
+                    final_workflow.append(element)
+        else:
+            final_workflow.append(element)
+
+    return final_workflow
 
 
 def _find_ingest_demand(cluster, ingest_flops):
@@ -401,15 +523,5 @@ def _find_ingest_demand(cluster, ingest_flops):
     num_machines = math.ceil(ingest_flops / sys_average)
     return num_machines
 
-
-if __name__ == '__main__':
-    df_pipeline_products = pd.read_csv('SKA1_Low_PipelineProducts.csv')
-    hpso_frequency = [2, 1, 3, 0, 0]
-    final_plan = create_observation_plan(df_system_sizing, hpso_frequency)
-
-    config = construct_telescope_config_from_observation_plan(
-        df_system_sizing, final_plan
-    )
-    filename = 'json/config.json'
-    with open(filename, 'w') as jfile:
-        json.dump(config, jfile, indent=4)
+def compile_observations_and_workflows():
+    pass

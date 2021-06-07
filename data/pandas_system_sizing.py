@@ -22,10 +22,9 @@ this is just a quick script that takes his notebook code and uses it to spit
 out his system sizing analysis into csv file (for ease of repeatability).
 """
 
-import sys
-import re
+import os
+import logging
 import pandas as pd
-import argparse
 
 KEYS = {
     'hpso': "HPSO", 'time': "Time [%]", 'tobs': " Tobs [h]",
@@ -112,8 +111,10 @@ SKA_HPSOS = {
 
 REALTIME = ['Ingest', 'RCAL', 'FastImg']
 
+BASELINE_LENGTHS = {'short': 4062.5, 'mid': 32500, 'long': 65000}
 
-def translate_sdp_hpso_reports_to_dataframe(csv_path):
+
+def csv_to_pandas_total_compute(csv_path):
     """
     From the output produced by SDP system sizing reports, produce a dataframe
     that collates necessary information.
@@ -169,9 +170,9 @@ def translate_sdp_hpso_reports_to_dataframe(csv_path):
                     if 'Ingest' in x:
                         stations = int(df_ska.loc[['Stations/antennas'], x])
                         df_hpso.loc[i, ['Stations']] = stations
-                        t_obs = int(df_ska.loc[['Observation Time [s]'], x])
+                        t_obs = float(df_ska.loc[['Observation Time [s]'], x])
                         df_hpso.loc[i, "Tobs [h]"] = t_obs / 3600
-                        t_exp = int(df_ska.loc[['Total Time [s]'], x])
+                        t_exp = float(df_ska.loc[['Total Time [s]'], x])
                         df_hpso.loc[i, "Total Time [s]"] = t_exp
                         ingest_rate = df_ska.loc[
                             ['Total buffer ingest rate [TeraBytes/s]'], x
@@ -205,7 +206,7 @@ def translate_sdp_hpso_reports_to_dataframe(csv_path):
     return final_dict
 
 
-def make_pipeline_csv(csv_path):
+def csv_to_pandas_pipeline_components(csv_path, baseline='long'):
     """
     Produce a Pandas DataFrame of data product calculations that replicate
     the approach taken in the SDP parametric model
@@ -213,11 +214,18 @@ def make_pipeline_csv(csv_path):
     The intention here is to (again) reduce the reliance on helper methods in
     the sdp-par-model repository. We use standard pandas functions to
     interrogate the data and copy it into dataframes. This means the output
-    format may be converted to any pandas-viable format
+    format may be converted to any pandas-viable format.
 
     Parameters
     ----------
     csv_path
+
+
+    Notes
+    -----
+    Our system sizing separates telescopes (LOW and MID), so for each 1
+    (one) system report (for Short, Mid, and Long baseline lengths) there
+    are 2 (two) pandas-compatible reports.
 
     Returns
     final_data : dict
@@ -238,17 +246,27 @@ def make_pipeline_csv(csv_path):
             pipeline_products = {}
             for pipeline in PIPELINES:
                 pipeline_overview = {}
-                if f'{hpso} ({pipeline}) []' in df_ska.columns:
-                    column = df_ska[f'{hpso} ({pipeline}) []']
+                pipeline_data_overview = {}
+                max_str = '[]'
+                if baseline != 'long':
+                    max_str = f'[Bmax={BASELINE_LENGTHS[baseline]}]'
+                if f'{hpso} ({pipeline}) {max_str}' in df_ska.columns:
+                    column = df_ska[f'{hpso} ({pipeline}) {max_str}']
                 else:
                     continue
                 for product in PRODUCTS:
-                    entry = column.loc[[f'-> {product} [PetaFLOP/s]']]
-                    if entry[0] is ' ' or '':
+                    compute_entry = column.loc[[f'-> {product} [PetaFLOP/s]']]
+                    data_entry = column.loc[[f'-> {product} [Tera/s]']]
+                    if compute_entry[0] is ' ' or '':
                         pipeline_overview[product] = -1
                     else:
-                        pipeline_overview[product] = float(entry)
+                        pipeline_overview[product] = float(compute_entry)
+                    if data_entry[0] is ' ' or '':
+                        pipeline_data_overview[product] = -1
+                    else:
+                        pipeline_data_overview[product] = float(data_entry)
                 pipeline_products[pipeline] = pipeline_overview
+                pipeline_products[f'{pipeline}_data'] = pipeline_data_overview
 
             df = pd.DataFrame(pipeline_products).T
             df.index.name = 'Pipeline'
@@ -260,17 +278,34 @@ def make_pipeline_csv(csv_path):
     return final_dict
 
 
+logging.basicConfig(level="INFO")
+LOGGER = logging.getLogger()
 if __name__ == '__main__':
-    path = (f"/home/rwb/github/sdp-par-model/"
-            + f"data/csv/2019-06-20-2998d59_hpsos.csv")
-    #
-    # df_dict = translate_sdp_hpso_reports_to_dataframe(
-    #     path
-    # )
-    #
-    # tel = TELESCOPE_IDS[0]
-    # df_dict[tel].to_csv(f'csv/{tel}_compute_pandas.csv')
+    # System sizing for each baseline:
+    data_dir = f'data/parametric_model/'
+    files = os.listdir(data_dir)
+    LOGGER.info(f'Searching {data_dir} for sdp-par-model reports...')
+    for baseline in files:
+        length = baseline.split("_")[1]
+        total_dict = csv_to_pandas_total_compute(
+            f'{data_dir}/{baseline}',
+        )
+        pipe_dict = csv_to_pandas_pipeline_components(
+            f'{data_dir}/{baseline}', length
+        )
+        for telescope in total_dict:
+            fn = f'data/pandas_sizing/total_compute_{telescope}_{length}.csv'
+            LOGGER.info(f'Writing Total Compute CSV to {fn}')
+            total_dict[telescope].to_csv(fn)
+            fn = (f'data/pandas_sizing/component_compute_{telescope}_'
+                + f'{length}.csv')
+            LOGGER.info(f'Writing Pipeline Compute CSV to {fn}')
+            pipe_dict[telescope].to_csv(fn)
 
-    pipeline = make_pipeline_csv(path)
-    tel = TELESCOPE_IDS[0]
-    pipeline[tel].to_csv(f'csv/{tel}_hpso_pandas.csv')
+    LOGGER.info("Final Output data in data/pandas_sizing/:")
+    for file in os.listdir('data/pandas_sizing'):
+        LOGGER.info(file)
+    LOGGER.info("Pandas system sizing translation complete")
+
+
+

@@ -10,6 +10,7 @@ TopSim Pipelines
    :maxdepth: 2
    :caption: Contents:
 
+   observations
 
 This set of pages describes the processes underlying the generation of TopSim
 configuration files and pipelines. These pipelines form the basis of
