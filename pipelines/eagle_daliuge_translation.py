@@ -18,7 +18,6 @@ import json
 import random
 import logging
 
-
 import networkx as nx
 
 
@@ -96,7 +95,7 @@ def json_to_topsim(daliuge_json, output_file):
     jgraph = {
         "header": {
             "time": False,
-            },
+        },
         'graph': nx.readwrite.node_link_data(unrolled_nx)
     }
 
@@ -137,7 +136,6 @@ def _add_generated_values_to_graph(
     mapping = dict(zip(translated_graph, new))
     translated_graph = nx.relabel_nodes(translated_graph, mapping)
 
-
     return translated_graph
 
 
@@ -146,8 +144,12 @@ def _daliuge_to_nx(dlg_json):
 
     Take a daliuge json file and read it into a NetworkX
 
-    :param input_file: the DALiuGE file we are translating
-    :return: A NetworkX DiGraph.
+    dlg_json: the DALiuGE file we are translating
+
+    Returns
+    -------
+    unrolled_nx : networkx.DiGraph
+        Directed graph representation of Physical Graph Template
 
     Notes
     -----
@@ -158,51 +160,31 @@ def _daliuge_to_nx(dlg_json):
     """
     with open(dlg_json) as f:
         dlg_json_dict = json.load(f)
-    # Storing the nodes and edges from the unrolled DALiuGE input
     unrolled_nx = nx.DiGraph()
+    labels = {}
+    node_list = []
+    edge_list = []
+    size = len(dlg_json_dict)
+    pop = [x for x in range(0, size)]
+    for element in dlg_json_dict:
+        if 'app' in element.keys():
+            oid = element['oid']
+            label = element['nm']
+            index = random.randint(0, size - 1)
+            val = pop.pop(index)
+            size -= 1
+            labels[oid] = f"{element['nm']}_{val}"
+            # el = (element['oid'], {"label": element['nm']})
+            node_list.append(labels[oid])
 
-    # There is something about the simple.SleepApp that is a bug
-    # in the old DALiuGE Translator
-    for val in dlg_json_dict:
-        if 'app' in val.keys():
-            if val['app'] == "dlg.apps.simple.SleepApp":
-                continue
-            unrolled_nx.add_node(val['oid'])
-            unrolled_nx.nodes[val['oid']]['nm'] = val['nm']
-            unrolled_nx.nodes[val['oid']]['comp'] = val['tw']
-
-    edgedict = {}
-    for val in dlg_json_dict:
-        if 'producers' in val.keys():
-            edgedict[val['oid']] = {'producers': [], 'consumers': []}
-            edgedict[val['oid']]['producers'] = val['producers']
-        if 'consumers' in val.keys():
-            if val['oid'] in edgedict:
-                edgedict[val['oid']]['consumers'] = val['consumers']
-            else:
-                edgedict[val['oid']] = {
-                    'producers': [], 'consumers': val['consumers']
-                }
-
-    # We do this after all producer/consumers have been added, so we can add
-    # the edges between each of them.
-    for val in dlg_json_dict:
-        if 'app' in val.keys():
-            # There is a known bug in DALiuGE about this.
-            if val['app'] == "dlg.apps.simple.SleepApp":
-                continue
-        if 'outputs' in val:
-            for output in val['outputs']:
-                for consumer in edgedict[output]['consumers']:
-                    unrolled_nx.add_edge(val['oid'], consumer)
-        if 'inputs' in val:
-            for inputs in val['inputs']:
-                for producer in edgedict[inputs]['producers']:
-                    unrolled_nx.add_edge(producer, val['oid'])
-
-    for node in unrolled_nx.nodes():
-        unrolled_nx.nodes[node]['label'] = unrolled_nx.nodes[node]['nm']
-
+    for element in dlg_json_dict:
+        if 'storage' in element.keys():
+            if 'producers' in element and 'consumers' in element:
+                for u in element['producers']:
+                    for v in element['consumers']:
+                        edge_list.append((labels[u], labels[v]))
+    unrolled_nx.add_nodes_from(node_list)
+    unrolled_nx.add_edges_from(edge_list)
     return unrolled_nx
 
 
@@ -231,6 +213,7 @@ LOGGER = logging.getLogger(__name__)
 if __name__ == '__main__':
     LOGGER.info("Generating test data and unrolling")
     res = unroll_logical_graph(
-        'tests/data/eagle_lgt.graph', 'tests/data/daliuge_pgt.json'
+        'tests/data/eagle_lgt_scatter.graph',
+        'tests/data/daliuge_pgt_scatter.json'
     )
     LOGGER.info(f"Test PGT generated at: {res}")

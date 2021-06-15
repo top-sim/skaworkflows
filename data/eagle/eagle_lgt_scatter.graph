@@ -1,13 +1,6 @@
 {
     "linkDataArray": [
         {
-            "from": -2,
-            "fromPort": "b8b2d818-616a-4bbd-afa8-756b538e3571",
-            "loop_aware": "0",
-            "to": -5,
-            "toPort": "d6d14a31-39de-410f-b56f-87fe76c61362"
-        },
-        {
             "from": -5,
             "fromPort": "68de886a-3c83-498b-ac8e-647cc650f957",
             "loop_aware": "0",
@@ -183,13 +176,6 @@
             "toPort": "f60e7f0d-907f-431c-9be4-581a6c845962"
         },
         {
-            "from": -1,
-            "fromPort": "537f6c79-7b34-4e24-ba3e-e54586fbb0f9",
-            "loop_aware": "0",
-            "to": -3,
-            "toPort": "5c21776b-e6b0-43a3-af17-81b737b9259a"
-        },
-        {
             "from": -25,
             "fromPort": "bbae8e98-44a7-45ea-8b37-78563eb33e6d",
             "loop_aware": "0",
@@ -279,15 +265,50 @@
             "loop_aware": "0",
             "to": -4,
             "toPort": "bdb4b14f-1c1f-4636-95ed-3c087201b126"
+        },
+        {
+            "from": -2,
+            "fromPort": "3f0341f9-8ed4-4768-8b6b-5f9baafe4001",
+            "loop_aware": "0",
+            "to": -35,
+            "toPort": "a4a56071-4a24-4c89-99b4-faac7bd56dc7"
+        },
+        {
+            "from": -35,
+            "fromPort": "bcefb502-da72-40ef-b6d4-512501f26134",
+            "loop_aware": "0",
+            "to": -48,
+            "toPort": "bc44545f-3079-4670-8165-015c92f9c88b"
+        },
+        {
+            "from": -48,
+            "fromPort": "d1b09419-e04b-4857-b815-f707e1532dec",
+            "loop_aware": "0",
+            "to": -5,
+            "toPort": "c02630c4-0863-4679-84ab-c58784af5d15"
+        },
+        {
+            "from": -1,
+            "fromPort": "537f6c79-7b34-4e24-ba3e-e54586fbb0f9",
+            "loop_aware": "0",
+            "to": -50,
+            "toPort": "62aa20a8-c2f4-4722-a706-f7e07610e6fa"
+        },
+        {
+            "from": -50,
+            "fromPort": "1c1f88c3-0bf1-4025-b77c-b47b8ebbe643",
+            "loop_aware": "0",
+            "to": -49,
+            "toPort": "f4de5de5-4a86-4fee-9ade-2e14d66108de"
         }
     ],
     "modelData": {
         "eagleCommitHash": "9dffb2c3f02e3f230247356191a5ca4e8e2c11a1",
         "eagleVersion": "v3.0.4",
-        "filePath": "eagle_lgt.graph",
+        "filePath": "eagle_lgt_scatter.graph",
         "fileType": "graph",
         "git_url": "",
-        "readonly": true,
+        "readonly": false,
         "repo": "",
         "repoBranch": "",
         "repoService": "Unknown",
@@ -381,7 +402,7 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
@@ -389,97 +410,7 @@
             "text": "InputDataFromIngest",
             "width": 200,
             "x": 0,
-            "y": 31
-        },
-        {
-            "canHaveInputs": true,
-            "canHaveOutputs": true,
-            "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
-            "description": "",
-            "drawOrderHint": 0,
-            "exitAppFields": [],
-            "exitApplicationKey": null,
-            "exitApplicationName": "",
-            "exitApplicationType": "None",
-            "expanded": false,
-            "fields": [
-                {
-                    "description": "",
-                    "name": "data_volume",
-                    "readonly": false,
-                    "text": "Data volume",
-                    "type": "Unknown",
-                    "value": "5"
-                },
-                {
-                    "description": "",
-                    "name": "group_end",
-                    "readonly": false,
-                    "text": "Group end",
-                    "type": "Unknown",
-                    "value": "0"
-                },
-                {
-                    "description": "",
-                    "name": "check_filepath_exists",
-                    "readonly": false,
-                    "text": "Check file path exists",
-                    "type": "Unknown",
-                    "value": "1"
-                },
-                {
-                    "description": "",
-                    "name": "filepath",
-                    "readonly": false,
-                    "text": "File path",
-                    "type": "Unknown",
-                    "value": ""
-                },
-                {
-                    "description": "",
-                    "name": "dirname",
-                    "readonly": false,
-                    "text": "Directory name",
-                    "type": "Unknown",
-                    "value": ""
-                }
-            ],
-            "flipPorts": false,
-            "height": 200,
-            "inputAppFields": [],
-            "inputApplicationKey": null,
-            "inputApplicationName": "",
-            "inputApplicationType": "None",
-            "inputLocalPorts": [],
-            "inputPorts": [
-                {
-                    "Id": "5c21776b-e6b0-43a3-af17-81b737b9259a",
-                    "IdText": "output",
-                    "event": false,
-                    "type": "Unknown"
-                }
-            ],
-            "isData": true,
-            "isGroup": false,
-            "key": -3,
-            "outputAppFields": [],
-            "outputApplicationKey": null,
-            "outputApplicationName": "",
-            "outputApplicationType": "None",
-            "outputLocalPorts": [],
-            "outputPorts": [],
-            "readonly": true,
-            "selected": false,
-            "showPorts": false,
-            "streaming": false,
-            "subject": null,
-            "text": "GSM",
-            "width": 200,
-            "x": 3186,
-            "y": 1434
+            "y": 0
         },
         {
             "canHaveInputs": true,
@@ -573,15 +504,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "UpdateGSM",
             "width": 200,
-            "x": 2323.419830332671,
-            "y": 1533.9601762352925
+            "x": 2625.6616337774185,
+            "y": 1344.3699075367608
         },
         {
             "canHaveInputs": true,
@@ -669,15 +600,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Solve",
             "width": 200,
-            "x": 914.8972085730301,
-            "y": 335.96017623529224
+            "x": 1216.1390120177766,
+            "y": 147.3699075367607
         },
         {
             "canHaveInputs": true,
@@ -771,15 +702,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Grid",
             "width": 200,
-            "x": 2173.9424520923103,
-            "y": 760.3572176729517
+            "x": 2462.366807192554,
+            "y": 584.4936665094599
         },
         {
             "canHaveInputs": true,
@@ -873,15 +804,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Degrid",
             "width": 200,
-            "x": 1080.224063443848,
-            "y": 757.1863938316912
+            "x": 1349.8950924776696,
+            "y": 557.1583933791479
         },
         {
             "canHaveInputs": true,
@@ -975,15 +906,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Flag",
             "width": 200,
-            "x": 1827.368212261182,
-            "y": 763.274993028426
+            "x": 2115.7925673614272,
+            "y": 587.4114418649342
         },
         {
             "canHaveInputs": true,
@@ -1077,15 +1008,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Subtract Image Component",
             "width": 200,
-            "x": 1714.9424520923105,
-            "y": 1148.3572176729524
+            "x": 1974.146741790361,
+            "y": 978.9870143766152
         },
         {
             "canHaveInputs": false,
@@ -1169,15 +1100,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "MajorCycle",
             "width": 1899.9999999999995,
-            "x": 579.2037629721304,
-            "y": 647.3572176729513
+            "x": 867.628118072374,
+            "y": 471.49366650945956
         },
         {
             "canHaveInputs": false,
@@ -1200,7 +1131,7 @@
                     "readonly": false,
                     "text": "Number loops",
                     "type": "Unknown",
-                    "value": "1"
+                    "value": "2"
                 }
             ],
             "flipPorts": false,
@@ -1249,15 +1180,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "MInorCycle",
             "width": 1105.6737335183204,
-            "x": 924.9424520923102,
-            "y": 959.3572176729512
+            "x": 1184.1467417903596,
+            "y": 789.9870143766142
         },
         {
             "canHaveInputs": true,
@@ -1351,15 +1282,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Source Find",
             "width": 200,
-            "x": 1449.2037629721306,
-            "y": 1585.1762435958328
+            "x": 1750.4455664168777,
+            "y": 1396.5859748973012
         },
         {
             "canHaveInputs": true,
@@ -1453,15 +1384,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "UpdateLSM",
             "width": 200,
-            "x": 1903.4198303326705,
-            "y": 1561.9601762352925
+            "x": 2204.661633777417,
+            "y": 1373.3699075367608
         },
         {
             "canHaveInputs": true,
@@ -1555,15 +1486,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
-            "text": "FinishMinorCycle",
+            "text": "FinishMajorCycle",
             "width": 200,
-            "x": 2162.9424520923103,
-            "y": 988.3572176729512
+            "x": 2461.366807192554,
+            "y": 866.4936665094598
         },
         {
             "canHaveInputs": true,
@@ -1657,15 +1588,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Phase Rotation Predict",
             "width": 200,
-            "x": 463.4198303326705,
-            "y": 330.96017623529224
+            "x": 800.4130258629407,
+            "y": 172.47634297720174
         },
         {
             "canHaveInputs": true,
@@ -1746,15 +1677,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Reprojection Predict",
             "width": 200,
-            "x": 1280.6358976932102,
-            "y": 181.9601762352922
+            "x": 1581.877701137957,
+            "y": -6.630092463239521
         },
         {
             "canHaveInputs": true,
@@ -1836,15 +1767,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Correct",
             "width": 200,
-            "x": 1419.0929754618526,
-            "y": 349.8244456774529
+            "x": 1720.3347789065997,
+            "y": 161.23417697892125
         },
         {
             "canHaveInputs": true,
@@ -1938,15 +1869,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Flag",
             "width": 200,
-            "x": 1869.164892197037,
-            "y": 507.2362799268151
+            "x": 2170.406695641784,
+            "y": 318.64601122828344
         },
         {
             "canHaveInputs": true,
@@ -1955,7 +1886,7 @@
             "categoryType": "Application",
             "collapsed": false,
             "color": "#3498DB",
-            "description": "An application component in the form of a Python app",
+            "description": "Placeholder to being major cycle",
             "drawOrderHint": 0,
             "exitAppFields": [],
             "exitApplicationKey": null,
@@ -2040,15 +1971,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
-            "text": "BeginMinorCycle",
+            "text": "BeginMajorCycle",
             "width": 200,
-            "x": 740.1132759335708,
-            "y": 820.5280415142117
+            "x": 1006.7286888542487,
+            "y": 575.4021131010744
         },
         {
             "canHaveInputs": true,
@@ -2142,15 +2073,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "FFT",
             "width": 200,
-            "x": 1027.94245209231,
-            "y": 1081.357217672952
+            "x": 1287.1467417903596,
+            "y": 911.9870143766148
         },
         {
             "canHaveInputs": true,
@@ -2244,15 +2175,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "Image Spectral Fitting",
             "width": 200,
-            "x": 966.4198303326702,
-            "y": 1553.9601762352925
+            "x": 1267.6616337774167,
+            "y": 1365.3699075367608
         },
         {
             "canHaveInputs": true,
@@ -2330,15 +2261,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 712.1585194528508,
-            "y": 341.6988653554723
+            "x": 1013.4003228975971,
+            "y": 153.10859665694068
         },
         {
             "canHaveInputs": true,
@@ -2440,15 +2371,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1141.6358976932102,
-            "y": 340.22148711511227
+            "x": 1442.8777011379566,
+            "y": 151.63121841658074
         },
         {
             "canHaveInputs": true,
@@ -2526,15 +2457,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1575.3745868133908,
-            "y": 333.34706743709273
+            "x": 1876.616390258138,
+            "y": 144.7567987385611
         },
         {
             "canHaveInputs": true,
@@ -2612,15 +2543,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1592.022788895011,
-            "y": 191.6185285527716
+            "x": 1893.264592339758,
+            "y": 3.028259854239991
         },
         {
             "canHaveInputs": true,
@@ -2698,15 +2629,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2303.233348595535,
-            "y": 518.7386012147366
+            "x": 2604.4751520402824,
+            "y": 330.14833251620496
         },
         {
             "canHaveInputs": true,
@@ -2784,15 +2715,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 985.6093313065271,
-            "y": 503.3462902583643
+            "x": 1286.8511347512735,
+            "y": 314.7560215598327
         },
         {
             "canHaveInputs": true,
@@ -2870,15 +2801,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1251.2443639155672,
-            "y": 904.5982280810533
+            "x": 1539.6687190158113,
+            "y": 728.7346769175618
         },
         {
             "canHaveInputs": true,
@@ -2956,15 +2887,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1649.4050375209679,
-            "y": 763.0257202262894
+            "x": 1937.8293926212123,
+            "y": 587.1621690627976
         },
         {
             "canHaveInputs": true,
@@ -3042,15 +2973,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2005.314550482408,
-            "y": 769.5030984666496
+            "x": 2293.7389055826516,
+            "y": 593.6395473031578
         },
         {
             "canHaveInputs": true,
@@ -3128,15 +3059,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1021.2037629721301,
-            "y": 900.357217672951
+            "x": 1187.3367332409682,
+            "y": 675.7935575058023
         },
         {
             "canHaveInputs": true,
@@ -3214,15 +3145,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2236.203762972131,
-            "y": 870.3572176729507
+            "x": 2524.628118072374,
+            "y": 694.493666509459
         },
         {
             "canHaveInputs": true,
@@ -3300,15 +3231,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1047.5813690222428,
-            "y": 1225.517891278354
+            "x": 1306.7856587202923,
+            "y": 1056.147687982017
         },
         {
             "canHaveInputs": true,
@@ -3386,15 +3317,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1542.9424520923105,
-            "y": 1222.357217672952
+            "x": 1802.1467417903605,
+            "y": 1052.9870143766148
         },
         {
             "canHaveInputs": true,
@@ -3472,15 +3403,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2072.9424520923103,
-            "y": 1161.3572176729524
+            "x": 2332.1467417903596,
+            "y": 991.9870143766152
         },
         {
             "canHaveInputs": true,
@@ -3558,15 +3489,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2207.203762972131,
-            "y": 1309.357217672952
+            "x": 2495.6281180723745,
+            "y": 1133.4936665094606
         },
         {
             "canHaveInputs": true,
@@ -3644,15 +3575,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1193.41983033267,
-            "y": 1555.9601762352925
+            "x": 1494.6616337774167,
+            "y": 1367.3699075367608
         },
         {
             "canHaveInputs": true,
@@ -3730,15 +3661,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1686.4198303326705,
-            "y": 1581.9601762352925
+            "x": 1987.6616337774176,
+            "y": 1393.3699075367608
         },
         {
             "canHaveInputs": true,
@@ -3840,15 +3771,15 @@
                     "type": "Unknown"
                 }
             ],
-            "readonly": true,
+            "readonly": false,
             "selected": false,
             "showPorts": false,
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2107.419830332671,
-            "y": 1563.9601762352925
+            "x": 2408.6616337774185,
+            "y": 1375.3699075367608
         },
         {
             "canHaveInputs": false,
@@ -3921,8 +3852,22 @@
             "inputApplicationKey": -46,
             "inputApplicationName": "Python App",
             "inputApplicationType": "PythonApp",
-            "inputLocalPorts": [],
-            "inputPorts": [],
+            "inputLocalPorts": [
+                {
+                    "Id": "bcefb502-da72-40ef-b6d4-512501f26134",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "inputPorts": [
+                {
+                    "Id": "a4a56071-4a24-4c89-99b4-faac7bd56dc7",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
             "isData": false,
             "isGroup": true,
             "key": -35,
@@ -3939,8 +3884,8 @@
             "subject": null,
             "text": "FrequencySplit",
             "width": 2492,
-            "x": 382.4198303326705,
-            "y": 81.96017623529241
+            "x": 683.6616337774167,
+            "y": -106.6300924632393
         },
         {
             "canHaveInputs": true,
@@ -4029,8 +3974,8 @@
             "subject": null,
             "text": "Subtract",
             "width": 200,
-            "x": 1373.582658090622,
-            "y": 778.0092851516868
+            "x": 1670.0070131908665,
+            "y": 588.1457339881949
         },
         {
             "canHaveInputs": true,
@@ -4119,8 +4064,8 @@
             "subject": null,
             "text": "Identify Component",
             "width": 200,
-            "x": 1302.698088176744,
-            "y": 1240.6917154325574
+            "x": 1561.9023778747937,
+            "y": 1071.3215121362205
         },
         {
             "canHaveInputs": true,
@@ -4209,8 +4154,8 @@
             "subject": null,
             "text": "Subtract",
             "width": 200,
-            "x": 1825.4562126844696,
-            "y": 234.0701865668416
+            "x": 2126.698016129217,
+            "y": 45.47991786830994
         },
         {
             "canHaveInputs": true,
@@ -4283,8 +4228,255 @@
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2129.847534470011,
-            "y": 353.26634204502784
+            "x": 2431.0893379147583,
+            "y": 164.6760733464963
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "Estimated size of the data contained in this node",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Float",
+                    "value": 5
+                },
+                {
+                    "description": "Is this node the end of a group?",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Boolean",
+                    "value": false
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "bc44545f-3079-4670-8165-015c92f9c88b",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -48,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "d1b09419-e04b-4857-b815-f707e1532dec",
+                    "IdText": "event",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": false,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "event",
+            "width": 200,
+            "x": 778.7295480132165,
+            "y": 17.86990753676048
+        },
+        {
+            "canHaveInputs": false,
+            "canHaveOutputs": false,
+            "category": "Gather",
+            "categoryType": "Group",
+            "collapsed": false,
+            "color": "#D35400",
+            "description": "Placeholder 'gather' description",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "The number of inputs that will be gathered together by this construct.",
+                    "name": "num_of_inputs",
+                    "readonly": false,
+                    "text": "Number of inputs",
+                    "type": "Integer",
+                    "value": 2
+                },
+                {
+                    "description": "The axis by which to gather the inputs together",
+                    "name": "gather_axis",
+                    "readonly": false,
+                    "text": "Gather axis",
+                    "type": "String",
+                    "value": "frequency"
+                }
+            ],
+            "flipPorts": false,
+            "height": 200,
+            "inputAppFields": [
+                {
+                    "description": "Estimate of execution time (in seconds) for this application.",
+                    "name": "execution_time",
+                    "readonly": false,
+                    "text": "Execution time",
+                    "type": "Float",
+                    "value": 5
+                },
+                {
+                    "description": "Number of CPUs used for this application.",
+                    "name": "num_cpus",
+                    "readonly": false,
+                    "text": "Num CPUs",
+                    "type": "Integer",
+                    "value": 1
+                },
+                {
+                    "description": "Is this node the start of a group?",
+                    "name": "group_start",
+                    "readonly": false,
+                    "text": "Group start",
+                    "type": "Boolean",
+                    "value": false
+                },
+                {
+                    "description": "The python class that implements this application",
+                    "name": "appclass",
+                    "readonly": false,
+                    "text": "Appclass",
+                    "type": "String",
+                    "value": "test.graphsRepository"
+                }
+            ],
+            "inputApplicationKey": -51,
+            "inputApplicationName": "Python App",
+            "inputApplicationType": "PythonApp",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "f4de5de5-4a86-4fee-9ade-2e14d66108de",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": false,
+            "isGroup": true,
+            "key": -49,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [],
+            "readonly": false,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Gather",
+            "width": 200,
+            "x": 3232.984489159657,
+            "y": 1360.9556836988904
+        },
+        {
+            "canHaveInputs": true,
+            "canHaveOutputs": true,
+            "category": "Memory",
+            "categoryType": "Data",
+            "collapsed": false,
+            "color": "#394BB2",
+            "description": "",
+            "drawOrderHint": 0,
+            "exitAppFields": [],
+            "exitApplicationKey": null,
+            "exitApplicationName": "",
+            "exitApplicationType": "None",
+            "expanded": false,
+            "fields": [
+                {
+                    "description": "Estimated size of the data contained in this node",
+                    "name": "data_volume",
+                    "readonly": false,
+                    "text": "Data volume",
+                    "type": "Float",
+                    "value": 5
+                },
+                {
+                    "description": "Is this node the end of a group?",
+                    "name": "group_end",
+                    "readonly": false,
+                    "text": "Group end",
+                    "type": "Boolean",
+                    "value": false
+                }
+            ],
+            "flipPorts": false,
+            "group": -35,
+            "height": 200,
+            "inputAppFields": [],
+            "inputApplicationKey": null,
+            "inputApplicationName": "",
+            "inputApplicationType": "None",
+            "inputLocalPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "62aa20a8-c2f4-4722-a706-f7e07610e6fa",
+                    "IdText": "output",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "isData": true,
+            "isGroup": false,
+            "key": -50,
+            "outputAppFields": [],
+            "outputApplicationKey": null,
+            "outputApplicationName": "",
+            "outputApplicationType": "None",
+            "outputLocalPorts": [],
+            "outputPorts": [
+                {
+                    "Id": "1c1f88c3-0bf1-4025-b77c-b47b8ebbe643",
+                    "IdText": "relationship",
+                    "event": false,
+                    "type": "Unknown"
+                }
+            ],
+            "readonly": false,
+            "selected": false,
+            "showPorts": false,
+            "streaming": false,
+            "subject": null,
+            "text": "Memory",
+            "width": 200,
+            "x": 2894.912758277487,
+            "y": 1327.0471099482056
         }
     ]
 }

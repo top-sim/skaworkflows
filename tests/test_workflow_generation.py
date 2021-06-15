@@ -24,15 +24,15 @@ from pipeline_cost_generator import SI
 import pipelines.eagle_daliuge_translation as edt
 
 TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low_long.csv'
-EAGLE_LGT = 'tests/data/eagle_lgt.graph'
 PGT_PATH = 'tests/data/daliuge_pgt.json'
 
 
 class TestPipelineStructureTranslation(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.lgt_path = EAGLE_LGT
         self.pgt_path = PGT_PATH
+        with open(self.pgt_path) as f:
+            self.dlg_json_dict = json.load(f)
 
     def test_daliuge_nx_conversion(self):
         """
@@ -45,9 +45,12 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         -------
 
         """
-
-        nx = edt._daliuge_to_nx(self.pgt_path)
-        self.assertTrue(False)
+        # Make sure the data file is consistent
+        random.seed(0)
+        nx_graph = edt._daliuge_to_nx(self.pgt_path)
+        self.assertEqual(46, len(nx_graph.nodes))
+        self.assertEqual(52, len(nx_graph.edges))
+        self.assertTrue(('Solve_5', 'Correct_81') in nx_graph.edges)
 
 
 class TestCostGenerationAndAssignment(unittest.TestCase):
@@ -55,6 +58,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
     def setUp(self) -> None:
         self.channels = 256
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
+        self.observations = []
 
     def test_generate_workflow_from_observation(self):
         """

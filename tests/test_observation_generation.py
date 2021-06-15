@@ -97,9 +97,20 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             (0, 60, 32, 'hpso01', 'dprepa', 256, 'long'),
             (60, 120, 32, 'hpso01', 'dprepa', 256, 'long')
         ]
+        self.obs2 = Observation(1, 'hpso01', 32, 60, 'dprepa',256,'long')
+        self.obs3 = Observation(2, 'hpso04a', 16, 30, 'dprepa',256,'long')
+
 
     def test_sizing_calculations(self):
+        """
+        Gvien an observation plan, we want to calculate the expected output
+        for that plan to ensure the expected ingest rates etc. are correct.
+        These are used in TopSim to count how much data is being produced in
+        the system during an observation on the telescope.
+        Returns
+        -------
 
+        """
         obslist = construct_telescope_config_from_observation_plan(
             self.plan, TOTAL_SYSTEM_SIZING
         )
@@ -107,6 +118,15 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         # channels, so we would expect the size to be half of the stored data
         # rate in the SDP report.
         self.assertAlmostEqual(0.316214, obslist[0]['data_product_rate'], 6)
+
+    def test_observation_output(self):
+        """
+        Given a plan, produce an JSON-serialisable dictionary for configuration
+
+        Returns
+        -------
+
+        """
 
 
 # Count the number of shared items between two dictionaries - this will help
