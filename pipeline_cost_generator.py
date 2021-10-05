@@ -177,6 +177,7 @@ def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
 
     return final_workflow
 
+
 def _find_ingest_demand(cluster, ingest_flops):
     """
     Get the average compute over teh CPUs in the cluster and determine the

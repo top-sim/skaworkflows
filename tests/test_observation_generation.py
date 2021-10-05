@@ -26,7 +26,6 @@ from pipelines.hpso_to_observation import \
     convert_systemsizing_csv_to_dict, create_observation_plan, \
     construct_telescope_config_from_observation_plan
 
-
 DATA_DIR = 'data/parametric_model'
 LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
 
@@ -40,8 +39,8 @@ EAGLE_LGT = 'tests/data/eagle_lgt.graph'
 class TestObservationUnroll(unittest.TestCase):
 
     def setUp(self):
-        self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa',256,'long')
-        self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa',256,'long')
+        self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa', 256, 'long')
+        self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa', 256, 'long')
 
     def test_unroll_observations(self):
         unroll_list = [self.obs1 for x in range(self.obs1.count)]
@@ -97,9 +96,8 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             (0, 60, 32, 'hpso01', 'dprepa', 256, 'long'),
             (60, 120, 32, 'hpso01', 'dprepa', 256, 'long')
         ]
-        self.obs2 = Observation(1, 'hpso01', 32, 60, 'dprepa',256,'long')
-        self.obs3 = Observation(2, 'hpso04a', 16, 30, 'dprepa',256,'long')
-
+        self.obs2 = Observation(1, 'hpso01', 32, 60, 'dprepa', 256, 'long')
+        self.obs3 = Observation(2, 'hpso04a', 16, 30, 'dprepa', 256, 'long')
 
     def test_sizing_calculations(self):
         """
@@ -127,7 +125,6 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         -------
 
         """
-
 
 # Count the number of shared items between two dictionaries - this will help
 # us test the JSON files produced during translation.

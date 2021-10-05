@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import subprocess
+import pydot
 import os
 import json
 import random
@@ -59,12 +60,12 @@ def unroll_logical_graph(input_lgt_path, output_pgt_path):
     """
 
     cmd_list = ['dlg', 'unroll', '-fv', '-L', input_lgt_path]
-    with open(format(output_pgt_path), 'w+') as f:
+    with open(output_pgt_path, 'w+') as f:
         subprocess.run(cmd_list, stdout=f)
     return output_pgt_path
 
 
-def generate_dot_from_networkx_graph(nx_graph, output_path):
+def generate_graphic_from_networkx_graph(nx_graph, output_path):
     """
     Given an networkx graph, produce a Graphviz 'dot'
     Parameters
@@ -78,10 +79,14 @@ def generate_dot_from_networkx_graph(nx_graph, output_path):
     -------
     Return value of `nx.drawing.nx_pydot.write_dot()`
     """
-    return nx.drawing.nx_pydot.write_dot(nx_graph, output_path)
+    graph_dot = nx.drawing.nx_pydot.to_pydot(nx_graph)
+    graph_dot.write_ps(output_path)
+    # cmd_list = ['dot', 'unroll', '-fv', '-L', ]
 
 
-def json_to_topsim(daliuge_json, output_file):
+
+
+def json_to_topsim(daliuge_json, output_file, generate_dot=False):
     """
     Daliuge import will use
     :return: The NetworkX graph for visualisation purposed;
@@ -98,6 +103,9 @@ def json_to_topsim(daliuge_json, output_file):
         },
         'graph': nx.readwrite.node_link_data(unrolled_nx)
     }
+
+    if generate_dot:
+        generate_graphic_from_networkx_graph(unrolled_nx, f'{output_file}.ps')
 
     with open("{0}".format(output_file), 'w') as jfile:
         json.dump(jgraph, jfile, indent=2)
@@ -213,7 +221,10 @@ LOGGER = logging.getLogger(__name__)
 if __name__ == '__main__':
     LOGGER.info("Generating test data and unrolling")
     res = unroll_logical_graph(
-        'tests/data/eagle_lgt_scatter.graph',
-        'tests/data/daliuge_pgt_scatter.json'
+        'tests/data/eagle_lgt_scatter_minimal.graph',
+        'tests/data/daliuge_pgt_scatter_minimal.json'
     )
-    LOGGER.info(f"Test PGT generated at: {res}")
+    # LOGGER.info(f"Test PGT generated at: {res}")
+    # json_to_topsim('data/eagle/daliuge_pgt_scatter_32scatter_4major.json',
+    #                'data/eagle/topsim_conversion_32scatter_4major.json',
+    #                generate_dot=True)

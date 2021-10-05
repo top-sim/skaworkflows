@@ -19,20 +19,27 @@ import json
 import os
 
 import pandas as pd
-import pipeline_cost_generator as pcg
-from pipeline_cost_generator import SI
+import pipelines.hpso_to_observation as hpo
 import pipelines.eagle_daliuge_translation as edt
+from pipelines.hpso_to_observation import SI
+
 
 TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low_long.csv'
-PGT_PATH = 'tests/data/daliuge_pgt.json'
+LGT_PATH = 'tests/data/eagle_lgt_scatter.graph'
+PGT_PATH = 'tests/data/daliuge_pgt_scatter.json'
 
 
 class TestPipelineStructureTranslation(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.pgt_path = PGT_PATH
-        with open(self.pgt_path) as f:
-            self.dlg_json_dict = json.load(f)
+        pass
+
+    def test_lgt_to_pgt(self):
+        edt.unroll_logical_graph(
+            'tests/data/eagle_lgt_scatter.graph',
+            'tests/data/daliuge_pgt_scatter.json'
+        )
+        self.assertTrue(os.path.exists('tests/data/daliuge_pgt_scatter.json'))
 
     def test_daliuge_nx_conversion(self):
         """
@@ -46,11 +53,25 @@ class TestPipelineStructureTranslation(unittest.TestCase):
 
         """
         # Make sure the data file is consistent
+        # We set the seed to for edge assertion below, as the numbers are
+        # randomly generated.
         random.seed(0)
-        nx_graph = edt._daliuge_to_nx(self.pgt_path)
-        self.assertEqual(46, len(nx_graph.nodes))
-        self.assertEqual(52, len(nx_graph.edges))
-        self.assertTrue(('Solve_5', 'Correct_81') in nx_graph.edges)
+        minimal_pgt = 'tests/data/daliuge_pgt_scatter_minimal.json'
+        nx_graph = edt._daliuge_to_nx(minimal_pgt)
+        self.assertEqual(21, len(nx_graph.nodes))
+        self.assertEqual(21, len(nx_graph.edges))
+        self.assertTrue(('Solve_27', 'Correct_4') in nx_graph.edges)
+
+    def tearDown(self) -> None:
+        """
+        Remove files generated during various test cases
+        Returns
+        -------
+
+        """
+        if os.path.exists(PGT_PATH):
+            os.remove(PGT_PATH)
+        self.assertFalse(os.path.exists(PGT_PATH))
 
 
 class TestCostGenerationAndAssignment(unittest.TestCase):
@@ -69,10 +90,12 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         """
 
+        self.assertTrue(False)
+
     def test_ingest_demand_calc(self):
         max_ingest = self.system_sizing[
             self.system_sizing['HPSO'] == 'hpso01'
             ]['Ingest [Pflop/s]']
         ingest_flops = 32 / 512 * (float(max_ingest) * SI.peta)
-        self.assertEqual(123, pcg._find_ingest_demand(self.cluster,
+        self.assertEqual(123, hpo._find_ingest_demand(self.cluster,
                                                       ingest_flops))

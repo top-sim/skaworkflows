@@ -1039,7 +1039,7 @@
                     "readonly": false,
                     "text": "Number loops",
                     "type": "Unknown",
-                    "value": "4"
+                    "value": "1"
                 }
             ],
             "flipPorts": false,
@@ -1131,7 +1131,7 @@
                     "readonly": false,
                     "text": "Number loops",
                     "type": "Unknown",
-                    "value": "2"
+                    "value": "1"
                 }
             ],
             "flipPorts": false,
@@ -3802,7 +3802,7 @@
                     "readonly": false,
                     "text": "Number of copies",
                     "type": "Integer",
-                    "value": 32
+                    "value": 1
                 },
                 {
                     "description": "The axis used to split the input into multiple outputs",
@@ -3894,7 +3894,7 @@
             "categoryType": "Application",
             "collapsed": false,
             "color": "#3498DB",
-            "description": "An application component in the form of a Python app",
+            "description/": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
             "exitApplicationKey": null,
@@ -4326,7 +4326,7 @@
                     "readonly": false,
                     "text": "Number of inputs",
                     "type": "Integer",
-                    "value": 64
+                    "value": 1
                 },
                 {
                     "description": "The axis by which to gather the inputs together",
