@@ -1039,7 +1039,7 @@
                     "readonly": false,
                     "text": "Number loops",
                     "type": "Unknown",
-                    "value": "4"
+                    "value": "2"
                 }
             ],
             "flipPorts": false,
@@ -3802,7 +3802,7 @@
                     "readonly": false,
                     "text": "Number of copies",
                     "type": "Integer",
-                    "value": 32
+                    "value": 1
                 },
                 {
                     "description": "The axis used to split the input into multiple outputs",
@@ -4326,7 +4326,7 @@
                     "readonly": false,
                     "text": "Number of inputs",
                     "type": "Integer",
-                    "value": 64
+                    "value": 1
                 },
                 {
                     "description": "The axis by which to gather the inputs together",

@@ -29,7 +29,8 @@ from pipelines.hpso_to_observation import \
 DATA_DIR = 'data/parametric_model'
 LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
 
-TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low_long.csv'
+
+TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low'
 COMPONENT_SYSTEM_SIZING = None
 CLUSTER = 'tests/PawseyGalaxy_nd_1619058732.json'
 
@@ -116,6 +117,17 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         # channels, so we would expect the size to be half of the stored data
         # rate in the SDP report.
         self.assertAlmostEqual(0.316214, obslist[0]['data_product_rate'], 6)
+
+    def test_ingest_machine_provisioning(self):
+        """
+        When creating system config, we want to find the largest ingest
+        pipeline based on expected FLOPS to set up the Telescope boundaries.
+        Returns
+        -------
+
+        """
+
+
 
     def test_observation_output(self):
         """

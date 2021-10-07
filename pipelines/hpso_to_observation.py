@@ -175,12 +175,8 @@ def create_observation_plan(observations, max_telescope_usage):
 
     Parameters
     ----------
-    dataframe : pandas.DataFrame
-        A dataframe describing the potential HPSOs that are to be placed in
-        the plan
-
-    per_hpso_count : list()
-        A list of Integers that describes how many of each HPSO is in the plan
+    observations : list
+        List of :py:obj:`~pipelines.hpso_to_observations.Observations`
 
     max_telescope_usage: float
         The maximum percentage of the telescope to be occupied at any given
@@ -193,7 +189,7 @@ def create_observation_plan(observations, max_telescope_usage):
     bespoke. The observation schedules we generate are therefore going to be
     made according to the following heuristic:
 
-        * Start with the largest observation in the list
+        * Start with the largest observation (size) in the list
             * This is tie broken on duration
         * If there are any more observations that fit on the telescope at the
         the same time, we add these to the plan too.
@@ -270,6 +266,19 @@ def create_observation_plan(observations, max_telescope_usage):
 
 
 def create_observation_plan_tuple(observation, start):
+    """
+    An observation can be represented as a tuple with a given start time,
+    for the purpose of transforming into JSON
+
+    Parameters
+    ----------
+    observation
+    start
+
+    Returns
+    -------
+
+    """
     start = start
     finish = start + observation.duration
     hpso = observation.hpso
@@ -456,9 +465,10 @@ def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
     }
 
     # generate pipeline total ingest costs:
-    max_ingest = system_sizing[
-        system_sizing['HPSO'] == 'hpso01'
-        ]['Total Compute Requirement [PetaFLOP/s]']
+    # max_ingest = system_sizing[
+    #     system_sizing['HPSO'] == 'hpso01'
+    #     ]['Total Compute Requirement [PetaFLOP/s]']
+
     observation_ingest = tel_pecentage * (float(max_ingest) * SI.peta)
     tel_pecentage = channels / float(MAX_CHANNELS)
 
@@ -523,5 +533,14 @@ def _find_ingest_demand(cluster, ingest_flops):
     num_machines = math.ceil(ingest_flops / sys_average)
     return num_machines
 
+
 def compile_observations_and_workflows():
+    """
+    Generate a configuration file given a set of observation descriptions and
+    the workflow file paths, as well as the cluster.
+
+    Returns
+    -------
+    Path to a JSON config file.
+    """
     pass

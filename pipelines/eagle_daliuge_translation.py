@@ -24,45 +24,111 @@ import networkx as nx
 
 def update_number_of_channels(lgt_path, channels):
     """
-    Given an EAGLE LGT, update the number of channels
+    Update the number of channels in an EAGLE graph
+
+    The EAGLE graph is a JSON structure we can read in as a python dictionary.
+    We use 'nodeDataArray' key, find the 'scatter' element in the list stored
+    there, and edit the 'copies' field.
+
 
     Parameters
     ----------
     lgt_path
     channels
 
-    The EAGLE graph is a JSON structure we can read in as a python dictionary.
-    We use 'nodeDataArray' key, find the 'scatter' element in the list stored
-    there, and edit the 'copies' field.
+    Notes
+    -----
+    This is upsettingly hacky, as any bespoke/post-hoc alteration of the
+    EAGLE LGT structure has to be edited locally by reading and manipulating
+    the raw JSON data.
 
-    'nodeDataArray'
 
     Returns
     -------
-
+    Dictionary with updated channel values
     """
 
+    node_data_key = 'nodeDataArray'
+    with open(lgt_path, 'r') as f:
+        lgt_dict = json.load(f)
 
-def unroll_logical_graph(input_lgt_path, output_pgt_path):
+    # Finds scatter & gather category
+    for node in lgt_dict[node_data_key]:
+        if (
+                node['category'] == 'Scatter'
+                and node['text'] == 'FrequencySplit'
+        ):
+            for field in node['fields']:
+                if field['name'] == 'num_of_copies':
+                    field['value'] = channels
+        elif (
+                node['category'] == 'Gather'
+        ):
+            for field in node['fields']:
+                if field['name'] == 'num_of_inputs':
+                    field['value'] = channels
+
+    return lgt_dict
+
+
+def unroll_logical_graph(input_lgt, output_pgt_path=None, file_in=True):
     """
     Take an EAGLE LGT and produce a PGT Using the DALIUGE graph translator
 
     Parameters
     ----------
-    input_lgt_path : str
-        The path of the LGT
-    output_pgt_path : str
+    file_in
+    input_lgt: str
+        A string containing either the path to a LGT file,
+        OR a JSON-encodable string of an LGT
+    output_pgt_path : str (optional)
         The output path where the translated JSON will be stored.
+
+    Notes
+    -----
+    If no `output_pgt_path` is provided, the result of running the DALiuGE
+    translator is saved to stderr and stdout. stdout is where the
+    JSON-compatible is output when running `dlg unroll ...`, so we can save
+    it to result.stdout and then use `json.loads(str)` instead of `json.load(
+    f)`.
+
+    This approach is useful if bundlng the unrolling in a pipeline and we
+    want to save read/writes on disk by reducing the number of intermediary
+    files on disk.
+
+    The same is true for the `file_in` parameter; when programmatically
+    changing an LGT to increase the scatter size, for example, it may be
+    cumbersome to store the data in a second file, then clean up after.
+    Therefore, we can pass in the string and then pretend it is a file using
+    /dev/stdin.
 
     Returns
     -------
     The path that is produced by they
     """
 
-    cmd_list = ['dlg', 'unroll', '-fv', '-L', input_lgt_path]
-    with open(output_pgt_path, 'w+') as f:
-        subprocess.run(cmd_list, stdout=f)
-    return output_pgt_path
+    cmd_list = ['dlg', 'unroll', '-fv', '-L', input_lgt]
+
+    jdict = ''
+    if file_in:
+        pass
+    else:
+        jdict = input_lgt
+
+    if output_pgt_path and file_in:
+        with open(output_pgt_path, 'w+') as f:
+            result = subprocess.run(cmd_list, stdout=f)
+        return result
+    elif not file_in:
+        result = subprocess.run(
+                ['dlg', 'unroll' ,'-L', '/dev/stdin'],
+                input=json.dumps(jdict), capture_output=True, text=True
+        )
+        return result.stdout
+    else:
+        result = subprocess.run(['dlg', 'unroll', '-L', f'{input_lgt}'],
+                       capture_output=True,text=True)
+        return result.stdout
 
 
 def generate_graphic_from_networkx_graph(nx_graph, output_path):
@@ -71,7 +137,7 @@ def generate_graphic_from_networkx_graph(nx_graph, output_path):
     Parameters
     ----------
     nx_graph : nx.DiGraph
-        NetworkX Directed Graph object
+        NetworkX Directed Grsph object
     output_path : str
         The output file path for the .dot file.
 
@@ -82,8 +148,6 @@ def generate_graphic_from_networkx_graph(nx_graph, output_path):
     graph_dot = nx.drawing.nx_pydot.to_pydot(nx_graph)
     graph_dot.write_ps(output_path)
     # cmd_list = ['dot', 'unroll', '-fv', '-L', ]
-
-
 
 
 def json_to_topsim(daliuge_json, output_file, generate_dot=False):
@@ -224,6 +288,15 @@ if __name__ == '__main__':
         'tests/data/eagle_lgt_scatter_minimal.graph',
         'tests/data/daliuge_pgt_scatter_minimal.json'
     )
+
+    # lgt_object = update_number_of_channels(
+    #     'tests/data/eagle_lgt_scatter_minimal.graph', 4
+    # )
+    # pgt_object = unroll_logical_graph(
+    #     lgt_object, file_in=False
+    # )
+
+
     # LOGGER.info(f"Test PGT generated at: {res}")
     # json_to_topsim('data/eagle/daliuge_pgt_scatter_32scatter_4major.json',
     #                'data/eagle/topsim_conversion_32scatter_4major.json',
