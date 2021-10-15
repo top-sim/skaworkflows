@@ -29,26 +29,10 @@ information
 import json
 import math
 import pandas as pd
-from enum import Enum
 
-
-class Baselines(Enum):
-    short = 4062.5
-    mid = 32500
-    long = 65000
-
-
-class SI:
-    kilo = 10 ** 3
-    mega = 10 ** 6
-    giga = 10 ** 9
-    tera = 10 ** 12
-    peta = 10 ** 15
-
-
-# These are 'binned' channels, by dividing the number of real channels by 64.
-MAX_CHANNELS = 512
-MAX_TEL_DEMAND = 256
+import pipelines.eagle_daliuge_translation as edt
+from pipelines.common import Baselines, MAX_CHANNELS, MAX_TEL_DEMAND, \
+    pipeline_paths, component_paths
 
 
 class Observation:
@@ -77,6 +61,7 @@ class Observation:
             count, hpso, demand, duration,
             pipeline, channels, baseline
     ):
+        self.telescope = "low"
         self.count = count
         self.hpso = hpso
         self.demand = demand
@@ -84,86 +69,39 @@ class Observation:
         self.pipeline = pipeline
         self.channels = channels
         self.baseline = Baselines[baseline]
+        self.workflow_path = None
 
     def unroll_observations(self):
+        """
+        Observation objects store the number of observations that will appear
+        in the mid-term plan
+
+        Returns
+        -------
+
+        """
         obslist = []
         for i in range(self.count):
             obslist.append(self)
         return obslist
 
+    def add_workflow_path(self, path):
+        """
+        Add the workflow path to observation
+        Parameters
+        ----------
+        path : str
+            Path to the workflow in JSON format
 
-compute_keys = {
-    'hpso': "HPSO",
-    'time': "Time [%]",
-    'stations': "Stations",
-    'tobs': "Tobs [h]",
-    'ingest': "Ingest [Pflop/s]",
-    'rcal': "RCAL [Pflop/s]",
-    'fastimg': "FastImg [Pflop/s]",
-    'ical': "ICAL [Pflop/s]",
-    'dprepa': "DPrepA [Pflop/s]",
-    'dprepb': "DPrepB [Pflop/s]",
-    'dprepc': "DPrepC [Pflop/s]",
-    'dprepd': "DPrepD [Pflop/s]",
-    'totalrt': "Total RT [Pflop/s]",
-    'totalbatch': "Total Batch [Pflop/s]",
-    'total': "Total [Pflop/s]",
-    'ingest_rate': 'Ingest Rate [TB/s]'
-}
+        Returns
+        -------
 
-compute_units = {
-    'hpso': None,
-    'time': "%",
-    'stations': None,
-    'tobs': "h",
-    'ingest': "Pflop/s",
-    'rcal': "Pflop/s",
-    'fastimg': "Pflop/s",
-    'ical': "Pflop/s",
-    'dprepa': "Pflop/s",
-    'dprepb': "Pflop/s",
-    'dprepc': "Pflop/s",
-    'dprepd': "Pflop/s",
-    'totalrt': "Pflop/s",
-    'totalbatch': "Pflop/s",
-    'total': "Pflop/s",
-    'ingest_rate': "TB/s"
-}
-
-# Keys for DATA csv
-data_keys = {
-    'telescope': "Telescope",
-    'pipeline': "Pipeline ",
-    'datarate': "Data Rate [Gbit/s]",
-    'dailygrowth': "Daily Growth [TB/day]",
-    'yearlygrowth': "Yearly Growth [PB/year]",
-    'five_yeargrowth': "5-year Growth [PB/(5 year)]"
-}
-
-hpso_constraints_exclude = {
-    'hpso4': ['dprepa', 'dprepb', 'dprepc', 'dprepd'],  # Pulsar
-    'hpso5': ['dprepa', 'dprepb', 'dprepc', 'dprepd'],  # Pulsar
-    'hpso18': ['dprepa', 'dprepb', 'dprepc', 'dprepd'],  # Transients (FRB)
-    'hpso32': ['dprepa', 'dprepc', 'dprepd']  # Cosmology (Gravity)
-}
-
-pipeline_constraints = {
-    'dprepc': ['dprepa']
-}
-
-# Pulsars do not require imaging pipelines
-pulsars = ['hpso4a', 'hpso5a']
-
-
-def convert_systemsizing_csv_to_dict(csv_file):
-    csv = pd.read_csv(csv_file)
-
-    # Keys for COMPUTE csv
-    reverse_keys = {v: k for k, v in compute_keys.items()}
-
-    df_updated_keys = csv.rename(columns=reverse_keys)
-
-    return df_updated_keys
+        """
+        if path:
+            raise RuntimeError('Path already defined')
+        else:
+            self.workflow_path = path
+            return True
 
 
 def create_observation_plan(observations, max_telescope_usage):
@@ -346,7 +284,7 @@ def construct_telescope_config_from_observation_plan(
         # Calculate the ingest for this size of observation, where ingest is
         # in Petaflops
         max_buffer_ingest = float(system_sizing[
-                                      system_sizing['HPSO'] == 'hpso01'
+                                      system_sizing['HPSO'] == observation.hpso
                                       ]['Ingest [Pflop/s]'])
         ingest_buffer_rate = tel_pecentage * max_buffer_ingest
 
@@ -361,24 +299,48 @@ def construct_telescope_config_from_observation_plan(
     return observation_list
 
 
-def generate_workflow_from_observation(observation):
+def generate_workflow_from_observation(observation, telescope_max, base_dir):
     """
     Given a pipeline and observation specification, generate a workflow file
     and return the path name
+
+
+
     Parameters
     ----------
-    observation : dict
-        Dictionary of observation data, including duration
+    observation : :py:object:`~hpso_to_observation.Observation`.
+        Observation descriptor object
+    telescope_max: int
+        The maximum number of arrays used on the telescope
+
+    base_dir: The directory in which the workflow will be produced
 
     Returns
     -------
-            'type':pipeline,
+    path to JSON file for associated workflow
 
     """
-    return None
+
+    telescope_frac = observation.demand / telescope_max
+
+    # select base graph
+    base_graph = pipeline_paths[observation.hpso][observation.pipeline]
+    channels = observation.channels
+    channel_lgt = edt.update_number_of_channels(base_graph, channels)
+    # Unroll the graph
+    pgt = edt.unroll_logical_graph(channel_lgt, file_in=False)
+
+    tel_base = f'{observation.telescope}_{observation.baseline}'
+    product_table = pd.read_csv(component_paths[tel_base])
+
+    final_path = generate_cost_per_product(
+        pgt, product_table, observation.hpso, base_dir
+    )
+
+    return final_path
 
 
-def generate_cost_per_product(workflow, product_table, hpso, pipeline):
+def generate_cost_per_product(workflow, product_table, hpso, base_dir):
     """
     Produce a cost value per node within the workflow graph for the given
     product.

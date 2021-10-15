@@ -21,14 +21,16 @@ import os
 import pandas as pd
 import pipelines.hpso_to_observation as hpo
 import pipelines.eagle_daliuge_translation as edt
-from pipelines.hpso_to_observation import SI
-
+from pipelines.common import SI
 
 TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low_long.csv'
 LGT_PATH = 'tests/data/eagle_lgt_scatter.graph'
 PGT_PATH = 'tests/data/daliuge_pgt_scatter.json'
+PGT_PATH_GENERATED = 'tests/data/daliuge_pgt_scatter_generated.json'
 LGT_CHANNEL_UPDATE = 'tests/data/eagle_lgt_scatter_channel-update.graph'
 PGT_CHANNEL_UPDATE = 'tests/data/daliuge_pgt_scatter_channel-update.json'
+TOPSIM_PGT_GRAPH = 'tests/data/topsim_compliant_pgt.json'
+NO_PATH = "dodgy.path"
 
 
 class TestPipelineStructureTranslation(unittest.TestCase):
@@ -38,10 +40,11 @@ class TestPipelineStructureTranslation(unittest.TestCase):
 
     def test_lgt_to_pgt_file(self):
         edt.unroll_logical_graph(
-            'tests/data/eagle_lgt_scatter.graph',
-            'tests/data/daliuge_pgt_scatter.json'
+            LGT_PATH,
+            PGT_PATH_GENERATED
         )
-        self.assertTrue(os.path.exists('tests/data/daliuge_pgt_scatter.json'))
+        self.assertTrue(os.path.exists(
+            PGT_PATH_GENERATED))
 
     def test_lgt_to_pgt_nofileoutput(self):
         """
@@ -51,12 +54,13 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         -------
 
         """
+
         result = edt.unroll_logical_graph(
             'tests/data/eagle_lgt_scatter_minimal.graph')
         jdict = json.loads(result)
         with open('tests/data/daliuge_pgt_scatter_minimal.json') as f:
             test_dic = json.load(f)
-        self.assertListEqual(jdict,test_dic)
+        self.assertListEqual(jdict, test_dic)
 
     def test_lgt_to_pgt_with_channel_update(self):
         number_channels = 4
@@ -64,11 +68,14 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         lgt_dict = edt.update_number_of_channels(
             LGT_CHANNEL_UPDATE, number_channels
         )
-        self.assertTrue(isinstance(lgt_dict,dict))
+        self.assertTrue(isinstance(lgt_dict, dict))
         self.assertTrue('linkDataArray' in lgt_dict)
+        # json_to_topsim('data/eagle/daliuge_pgt_scatter_32scatter_4major.json',
+        #                'data/eagle/topsim_conversion_32scatter_4major.json',
+        #                generate_dot=True)
 
         # Pass updated JSON string (not file) to unroll_logical_graph
-        pgt_dict = json.loads(edt.unroll_logical_graph(lgt_dict,file_in=False))
+        pgt_dict = json.loads(edt.unroll_logical_graph(lgt_dict, file_in=False))
         with open(PGT_CHANNEL_UPDATE) as f:
             test_pgt = json.load(f)
         self.assertEqual(pgt_dict, test_pgt)
@@ -92,10 +99,61 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         # randomly generated.
         random.seed(0)
         minimal_pgt = 'tests/data/daliuge_pgt_scatter_minimal.json'
-        nx_graph = edt._daliuge_to_nx(minimal_pgt)
+        with open(minimal_pgt) as f:
+            jdict = json.load(f)
+        nx_graph = edt._daliuge_to_nx(jdict)
         self.assertEqual(21, len(nx_graph.nodes))
         self.assertEqual(21, len(nx_graph.edges))
-        self.assertTrue(('Solve_27', 'Correct_4') in nx_graph.edges)
+
+        # Expected grid is 1
+        # Expected degrid is 1
+        # We want to double check that our translated JSON matches the
+        # original relationships in the previous JSON graph.
+        # Chck the following:
+
+        with open(PGT_PATH) as f:
+            jdict = json.load(f)
+        # jdict['oid']
+        nx_graph = edt._daliuge_to_nx(jdict)
+        example_edge_attr = {
+            "data_size": 0,
+            "u": "1_-4_0/0",
+            "v": "1_-13_0/0/1/0",
+            "data_drop_oid": "1_-26_0/0",
+        }
+
+        self.assertDictEqual(
+            nx_graph.edges['Flag_3','FFT_3'],
+            example_edge_attr
+        )
+
+        # now test for multi-loop example
+        # Expected grid is 2
+        # expected subtract image is 4
+
+    def test_json_to_topsim(self):
+        """
+        We use the converted daliuge_to_nx and then add additional
+        information required by TopSim.
+        """
+        self.assertRaises(FileExistsError, edt.eagle_to_topsim, NO_PATH)
+        final_graph = edt.eagle_to_topsim(LGT_PATH)
+
+        example_edge = {
+            "data_size": 0,
+            "u": "1_-4_0/0",
+            "v": "1_-13_0/0/1/0",
+            "source": "Flag_3",
+            "target": "FFT_3",
+            "data_drop_oid": "1_-26_0/0",
+        }
+        nodes = final_graph['graph']['nodes']
+        self.assertEqual(36, len(nodes))
+        edges = final_graph['graph']['links']
+        self.assertTrue(example_edge in edges)
+
+
+        # with open()
 
     def tearDown(self) -> None:
         """
@@ -104,9 +162,9 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         -------
 
         """
-        if os.path.exists(PGT_PATH):
-            os.remove(PGT_PATH)
-        self.assertFalse(os.path.exists(PGT_PATH))
+        if os.path.exists(PGT_PATH_GENERATED):
+            os.remove(PGT_PATH_GENERATED)
+        self.assertFalse(os.path.exists(PGT_PATH_GENERATED))
 
 
 # TODO Make sure that workflow paths in configuration files are relative to
@@ -127,6 +185,8 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         -------
 
         """
+        # Get an observation object and create a file for the associated HPSO
+        self.obs1 = hpo.Observation(1, 'hpso01', 32, 60, 'dprepa', 64, 'long')
 
         self.assertTrue(False)
 
@@ -145,4 +205,3 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         ingest_flops = 32 / 512 * (float(max_ingest) * SI.peta)
         self.assertEqual(123, hpo._find_ingest_demand(self.cluster,
                                                       ingest_flops))
-
