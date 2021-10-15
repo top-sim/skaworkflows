@@ -104,7 +104,8 @@ def unroll_logical_graph(input_lgt, output_pgt_path=None, file_in=True):
 
     Returns
     -------
-    The path that is produced by they
+    restuls.stdout
+        String representation of a JSON encodable dictionary
     """
 
     cmd_list = ['dlg', 'unroll', '-fv', '-L', input_lgt]
@@ -121,13 +122,13 @@ def unroll_logical_graph(input_lgt, output_pgt_path=None, file_in=True):
         return result
     elif not file_in:
         result = subprocess.run(
-                ['dlg', 'unroll' ,'-L', '/dev/stdin'],
-                input=json.dumps(jdict), capture_output=True, text=True
+            ['dlg', 'unroll', '-L', '/dev/stdin'],
+            input=json.dumps(jdict), capture_output=True, text=True
         )
         return result.stdout
     else:
         result = subprocess.run(['dlg', 'unroll', '-L', f'{input_lgt}'],
-                       capture_output=True,text=True)
+                                capture_output=True, text=True)
         return result.stdout
 
 
@@ -150,16 +151,35 @@ def generate_graphic_from_networkx_graph(nx_graph, output_path):
     # cmd_list = ['dot', 'unroll', '-fv', '-L', ]
 
 
-def json_to_topsim(daliuge_json, output_file, generate_dot=False):
+def eagle_to_topsim(eagle_graph, generate_dot=False):
     """
-    Daliuge import will use
-    :return: The NetworkX graph for visualisation purposed;
-    The path of the output file; None if the process fails
+    Produce a JSON-compatible configuration file for a topsim graph
+
+    Notes
+    -----
+    We default to `"time":False` here as we will be using FLOPs and Bytes
+    values when creating the pipeline characterisations. If `"time": True` was
+    the case, then the values would be assumed as time units rather than
+    compute units.
+
+    Returns
+    -------
+    jgraph : dict
+        JSON-compatible dictionary
+
     """
-    # Process DALiuGE JSON graph
-    unrolled_nx = _daliuge_to_nx(daliuge_json)
+
+    # Process DALiuGE JSON graph\
+    if not os.path.exists(eagle_graph):
+        raise FileExistsError(f'{eagle_graph} does not exist')
+
+    LOGGER.info(f"Preparing {eagle_graph} for LGT->PGT Translation")
+    daliuge_json = unroll_logical_graph(eagle_graph)
+    jdict = json.loads(daliuge_json)
+    unrolled_nx = _daliuge_to_nx(jdict)
 
     # Convering DALiuGE nodes to readable nodes
+    LOGGER.info(f"Graph converted to TopSim-compliant data")
 
     jgraph = {
         "header": {
@@ -168,13 +188,7 @@ def json_to_topsim(daliuge_json, output_file, generate_dot=False):
         'graph': nx.readwrite.node_link_data(unrolled_nx)
     }
 
-    if generate_dot:
-        generate_graphic_from_networkx_graph(unrolled_nx, f'{output_file}.ps')
-
-    with open("{0}".format(output_file), 'w') as jfile:
-        json.dump(jgraph, jfile, indent=2)
-
-    return output_file
+    return jgraph
 
 
 def _add_generated_values_to_graph(
@@ -211,12 +225,13 @@ def _add_generated_values_to_graph(
     return translated_graph
 
 
-def _daliuge_to_nx(dlg_json):
+def _daliuge_to_nx(dlg_json_dict):
     """
 
     Take a daliuge json file and read it into a NetworkX
+    The purpose of this is to re-organise nodes in the
 
-    dlg_json: the DALiuGE file we are translating
+    dlg_json_dict: the DALiuGE dictionary we are translating
 
     Returns
     -------
@@ -230,33 +245,47 @@ def _daliuge_to_nx(dlg_json):
 
 
     """
-    with open(dlg_json) as f:
-        dlg_json_dict = json.load(f)
     unrolled_nx = nx.DiGraph()
     labels = {}
     node_list = []
     edge_list = []
-    size = len(dlg_json_dict)
-    pop = [x for x in range(0, size)]
+    # store task names and counts
+    task_names = {}
+
     for element in dlg_json_dict:
         if 'app' in element.keys():
             oid = element['oid']
             label = element['nm']
-            index = random.randint(0, size - 1)
-            val = pop.pop(index)
-            size -= 1
-            labels[oid] = f"{element['nm']}_{val}"
-            # el = (element['oid'], {"label": element['nm']})
-            node_list.append(labels[oid])
+            if label in task_names:
+                task_names[label] += 1
+            else:
+                task_names[label] = 1
+            labels[oid] = f"{label}_{task_names[label]}"
+            node = (f'{label}_{task_names[label]}', {'comp': 0})
+            node_list.append(node)
 
     for element in dlg_json_dict:
         if 'storage' in element.keys():
             if 'producers' in element and 'consumers' in element:
                 for u in element['producers']:
                     for v in element['consumers']:
-                        edge_list.append((labels[u], labels[v]))
+                        edge = (labels[u], labels[v])
+                        edge_list.append(
+                            (
+                                labels[u],
+                                labels[v],
+                                {
+                                    'data_size': 0,
+                                    'u': u,
+                                    'v': v,
+                                    'data_drop_oid': element['oid']
+                                }
+                            )
+                        )
+
     unrolled_nx.add_nodes_from(node_list)
     unrolled_nx.add_edges_from(edge_list)
+
     return unrolled_nx
 
 
@@ -279,7 +308,7 @@ def produce_final_workflow_structure(lgt_path, pgt_path, channels):
     return wfdict
 
 
-logging.basicConfig(level="INFO")
+logging.basicConfig(level="DEBUG")
 LOGGER = logging.getLogger(__name__)
 
 if __name__ == '__main__':
@@ -296,8 +325,10 @@ if __name__ == '__main__':
     #     lgt_object, file_in=False
     # )
 
-
+    # TODO UPDATE THE CODE FOR _DALIGUE_TO_NX TO COUNT EACH DIFFERENT KEY
+    # This way we can keep track of the number of each task, rather than
+    # having random assignments for each
+    # USEFUL FOR ERROR CHECKING 
     # LOGGER.info(f"Test PGT generated at: {res}")
-    # json_to_topsim('data/eagle/daliuge_pgt_scatter_32scatter_4major.json',
-    #                'data/eagle/topsim_conversion_32scatter_4major.json',
-    #                generate_dot=True)
+    jdict = eagle_to_topsim('tests/data/eagle_lgt_scatter.graph')
+    LOGGER.info(json.dumps(jdict, indent=2))

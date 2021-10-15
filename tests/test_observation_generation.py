@@ -21,9 +21,8 @@ import os
 import pandas as pd
 
 from pipelines.hpso_to_observation import Observation
-from pipelines.hpso_to_observation import SI
-from pipelines.hpso_to_observation import \
-    convert_systemsizing_csv_to_dict, create_observation_plan, \
+from pipelines.common import SI
+from pipelines.hpso_to_observation import create_observation_plan, \
     construct_telescope_config_from_observation_plan
 
 DATA_DIR = 'data/parametric_model'
@@ -55,7 +54,7 @@ class TestObservationPlanGeneration(unittest.TestCase):
         # self.observations = convert_systemsizing_csv_to_dict(low_compute_data)
         self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa', 256, 'long')
         self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa', 128, 'long')
-        self.obs3 = Observation(3, 'hpso1', 32, 30, 'drepa', 256, 'long')
+        self.obs3 = Observation(3, 'hpso01', 32, 30, 'drepa', 256, 'long')
         self.system_sizing = pd.read_csv(LONG)
         self.max_telescope_usage = 32  # 1/16th of the telescope
 
@@ -127,8 +126,6 @@ class TestObservationTopSimTranslation(unittest.TestCase):
 
         """
 
-
-
     def test_observation_output(self):
         """
         Given a plan, produce an JSON-serialisable dictionary for configuration
@@ -138,6 +135,6 @@ class TestObservationTopSimTranslation(unittest.TestCase):
 
         """
 
-# Count the number of shared items between two dictionaries - this will help
-# us test the JSON files produced during translation.
-# shared_items = {k: x[k] for k in x if k in y and x[k] == y[k]}
+        # Count the number of shared items between two dictionaries - this will help
+        # us test the JSON files produced during translation.
+        # shared_items = {k: x[k] for k in x if k in y and x[k] == y[k]}
