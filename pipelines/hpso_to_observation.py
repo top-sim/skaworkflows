@@ -327,14 +327,14 @@ def generate_workflow_from_observation(observation, telescope_max, base_dir):
     base_graph = pipeline_paths[observation.hpso][observation.pipeline]
     channels = observation.channels
     channel_lgt = edt.update_number_of_channels(base_graph, channels)
-    # Unroll the graph
-    pgt = edt.unroll_logical_graph(channel_lgt, file_in=False)
+        # Unroll the graph
+    topsim_pgt = edt.unroll_logical_graph(channel_lgt, file_in=False)
 
     tel_base = f'{observation.telescope}_{observation.baseline}'
     product_table = pd.read_csv(component_paths[tel_base])
 
     final_path = generate_cost_per_product(
-        pgt, product_table, observation.hpso, base_dir
+        topsim_pgt, product_table, observation.hpso, base_dir
     )
 
     return final_path

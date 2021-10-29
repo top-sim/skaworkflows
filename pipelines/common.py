@@ -39,7 +39,7 @@ MAX_CHANNELS = 512
 MAX_TEL_DEMAND = 256
 
 
-compute_keys = {
+COMPUTE_KEYS = {
     'hpso': "HPSO",
     'time': "Time [%]",
     'stations': "Stations",

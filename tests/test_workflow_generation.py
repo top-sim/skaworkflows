@@ -153,6 +153,10 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         self.assertTrue(example_edge in edges)
 
 
+    def test_use_in_other_functions(self):
+        pass
+
+
         # with open()
 
     def tearDown(self) -> None:

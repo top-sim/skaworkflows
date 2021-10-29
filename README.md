@@ -1,4 +1,4 @@
-# Topsim Pipelines
+# Topsim pipelines
 
 This repository stores data and translator scripts to convert HPSO data produced
 by the SDP Parametric model into a mid-term Observation Schedule, for use
@@ -32,7 +32,7 @@ In order to produce an observation workflow with appropriate node and edge costs
 - Using observation details, we can derive:
     - Ingest requirements for the observation (in number of resources) based on compute provided by the compute system configuration 
         - Iteratively store the maximum ingest requirements for a simulation to determine the maximum number of ingest pipeliens needed. 
-    - [ ] Number of channels is used to construct the final observation path
+    - [x] Number of channels is used to construct the final observation path
         - [ ] Get number of channels from observation and pass to workflow generator
         - [ ] Use this to modify the number of channels in the logical graph template for unrolling
         - [ ] HPSOs linked to EAGLE graphs opened and `unrolled_nx` passed as data 
@@ -45,6 +45,7 @@ In order to produce an observation workflow with appropriate node and edge costs
     - After each component is stored, save final worklow as JSON and return path to the observation
 - Doing the above for each observation creates the necessary details required to generate a complete simulation configuration, consisting of: 
     - Telescope configuration
+    
 
 
 ## Generating HPSO data
@@ -52,4 +53,13 @@ In order to produce an observation workflow with appropriate node and edge costs
 The HPSO data described in the sdp-par-model is exported from the code into CSV
 files using the `sdp_par_model.reports` code. An example of this is used in
 the `notebooks/SKA1_Export.ipynb` notebook in the sdp-par-model repository. 
+
+
+### Using the parametric model data
+   
+#### Calculating edge requirements for the data
+
+e.g. DeGridding for an entire imaging pipeline for long baseline is 0.1Terrabytes/second 
+
+For an application that takes 1 minute, this is 6 terrabytes of data; not taking data transfer time into account, existing system provisioning shows that for a single node the memory is 31GB. The data input into a node's memory is far greater, which requires the application to process data in chunks, write to disk, and then process the data again. 
 
