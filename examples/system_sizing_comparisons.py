@@ -17,9 +17,10 @@ import math
 
 import pandas as pd
 from hpconfig.specs.sdp import sdp
+from pipelines.common import SI
 
 LOGGER = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
 def collate_sdp_globaldataframe(adjusted=True, human_readable=True):
@@ -39,13 +40,14 @@ def collate_sdp_globaldataframe(adjusted=True, human_readable=True):
         sdp_obj = sdp.SKA_CDR()
 
     if human_readable:
+        LOGGER.debug('Human Readable selected')
         sdp_df = sdp_obj.to_df()
         col_fmt = 'c' * len(sdp_df.columns)
         return sdp_df.to_latex(
             index=False, escape=False, column_format=col_fmt
         )
     else:
-        return sdp_obj.to_df()
+        return sdp_obj.to_df(human_readable)
 
 
 def calculate_equivalent_time_sdp(adjusted=True, telescope='low'):
@@ -65,24 +67,44 @@ def calculate_equivalent_time_sdp(adjusted=True, telescope='low'):
             sdpc.maximal_use_case / sdpc.maximal_obs_time
     )
     total_nodes = 0
+    total_system_flops = 0
     if telescope == 'low':
         # Required flops does not take into account expected system performance
         total_system_flops = required_floprate / sdpc.estimated_efficiency
         compute_per_node = sdpc.gpu_peak_flops * sdpc.gpu_per_node
-        additional_nodes = math.ceil( (
+        additional_nodes = math.ceil(
             (total_system_flops - sdpc.SKALOW_total_compute) / compute_per_node
-        ))
+        )
         total_nodes = additional_nodes+sdpc.SKALOW_nodes
 
-    return total_nodes
+    df = sdpc.to_df(human_readable=True)
+    # Get rid of mid, as we are doing 'low'
+    df = df.drop(len(df)-1)
+    row = dict(df.iloc[0])
+    row['Telescope'] = 'Low (Equivalent Time)'
+    row['$|M_{\\mathrm{SDP}}$'] = (
+            '\\textcolor{red}{' +
+            f'{total_nodes}'
+            + '}'
+    )
+    row['$\\mathrm{TP}_{\\mathrm{SDP}}$ (PFLOPS)'] = (
+            '\\textcolor{red}{'
+            + f'{math.ceil(total_system_flops/SI.peta)}'
+            + '}'
+    )
+
+    df.loc[len(df)] = row
+    return df
+    # row = [telescope, total_nodes,]
 
 
 if __name__ == '__main__':
     LOGGER.info('Producing computer readable system config')
-    print(
+    LOGGER.info(
         f'{collate_sdp_globaldataframe(adjusted=False, human_readable=False)}')
     LOGGER.info('Producing latex_compliant system config')
     LOGGER.info(collate_sdp_globaldataframe(adjusted=False,
                                             human_readable=True))
     LOGGER.info("Number of nodes needed to compute in same time as observation")
-    LOGGER.info(calculate_equivalent_time_sdp())
+    LOGGER.info(calculate_equivalent_time_sdp().to_latex(index=False,
+                                                         escape=False))

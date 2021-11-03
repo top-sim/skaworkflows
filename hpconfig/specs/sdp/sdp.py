@@ -23,6 +23,8 @@ import pandas as pd
 
 from hpconfig.utils.constants import SI
 
+class SKA_LOW:
+    pass
 
 class SKA_CDR:
     SKALOW_nodes = 896
