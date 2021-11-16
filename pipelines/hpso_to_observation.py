@@ -26,6 +26,7 @@ information
     - Pipeline information is how we get the workflow runtime`
         - Multiple-pipelines per HPSO
 """
+
 import json
 import math
 import pandas as pd
@@ -39,7 +40,7 @@ class Observation:
     """
     Helper-class to store information for when generating observation schedule
 
-    Parameters:
+    Parameters
     -----------
     count : int
         The number of the observations wanted in the schedule
@@ -229,7 +230,7 @@ def create_observation_plan_tuple(observation, start):
 
 
 def construct_telescope_config_from_observation_plan(
-        plan, total_system_sizing
+        plan, total_system_sizing, itemised_system_sizing
 ):
     """
     Based on a simplified dictionaries built from the System Sizing for the
@@ -241,38 +242,28 @@ def construct_telescope_config_from_observation_plan(
     plan: list
         list of observation tuples, in the form
             (start, finish, telescope demand, hpso, pipeline, channels).
-    total_system_sizing : csv
+    total_system_sizing : :py:object:`pd.DataFrame`
         This is the system sizing that contains total system costs. It is
-        from this that we get the ingest rate for the selected HPSO.
+        from this that we get the maximum number of arrays available,
+        and the baseline-dependent ingest rate for the selected HPSO.
+
+    itemised_system_sizing: hpconfig-based spec.
+        This is the itemised system sizing that provides node-based
+        descriptions for system specifications. This allows us to determine
+        how many nodes are required for ingest, given an observations
+        requirements.
 
     Notes
     -----
-
-    The structure of an observation.json file takes the following:
-    {
-      "telescope": {
-        "total_arrays": # This is adapted from the maximum number of
-        'stations' in the system_sizing csv.
-
-        }
-        "observations": [
-            # a list of observations in the order of the 'plan'
-            "name": # this is a place holder
-            "start": This is relative to the first, in hours from first
-            observation start time
-            "duration": Tobs, from system sizing
-            "demand": this is the number of stations it requires
-            "data_product_rate": This is
-        ]
-      }
-    }
+    Currently, the relevant `hpconfig` objects will be the specs.sdp. In the
+    future, it may be possible to use any system specification to determine
+    what different SDP candidate specifications look like.
 
     Returns
     -------
     config : dict()
         A dictionary that is in the form required of the TOpSim simulator to
         configure a Telescope (see topsim.core.telescope.Telescope).
-
     """
 
     # Calculate expected ingest rate and demand for the observation
@@ -283,6 +274,7 @@ def construct_telescope_config_from_observation_plan(
         tel_pecentage = channels / float(MAX_CHANNELS)
         # Calculate the ingest for this size of observation, where ingest is
         # in Petaflops
+        # TODO use CDR class for maximum system sizing values
         max_buffer_ingest = float(system_sizing[
                                       system_sizing['HPSO'] == observation.hpso
                                       ]['Ingest [Pflop/s]'])
@@ -302,9 +294,8 @@ def construct_telescope_config_from_observation_plan(
 def generate_workflow_from_observation(observation, telescope_max, base_dir):
     """
     Given a pipeline and observation specification, generate a workflow file
-    and return the path name
-
-
+    in the provided directory according to observation specifications,
+    including telescope usage and frequency channels.
 
     Parameters
     ----------
@@ -327,7 +318,7 @@ def generate_workflow_from_observation(observation, telescope_max, base_dir):
     base_graph = pipeline_paths[observation.hpso][observation.pipeline]
     channels = observation.channels
     channel_lgt = edt.update_number_of_channels(base_graph, channels)
-        # Unroll the graph
+    # Unroll the graph
     topsim_pgt = edt.unroll_logical_graph(channel_lgt, file_in=False)
 
     tel_base = f'{observation.telescope}_{observation.baseline}'
@@ -390,7 +381,7 @@ def generate_cost_per_product(workflow, product_table, hpso, base_dir):
                     total_product_costs[name] = 0
                 else:
                     df = product_table[['Pipeline', 'hpso', name]]
-                    df = df[(df['Pipeline'] == pipeline) & (df['hpso'] == hpso)]
+                    df = df[(df['Pipeline'] == hpso) & (df['hpso'] == hpso)]
                     value = float(df[name])
                     total_product_costs[name] = value
 
@@ -496,13 +487,95 @@ def _find_ingest_demand(cluster, ingest_flops):
     return num_machines
 
 
-def compile_observations_and_workflows():
+def compile_observations_and_workflows(
+        input_dir='./',
+        output_dir='out/'
+        
+):
     """
     Generate a configuration file given a set of observation descriptions and
     the workflow file paths, as well as the cluster.
+
+    Parameters
+    ----------
+    input_dir : str
+    output_dir : str
+        Destination directory for the config and workflow files
+
+    Notes
+    ------
+    The telescope system sizing is generated by
+    :py:obj:`construct_telescope_config_from_observation_plan`,
+    which builds the following:
+
+    >>> {
+    >>>    "telescope": {
+    >>>       "total_arrays": 512,
+    >>>       "pipelines": {
+    >>>           "DPrepA": {
+    >>>               "ingest_demand": 128,
+    >>>                "workflow": "final/directory/for/workflow",
+    >>>           },
+    >>>           "DPrepC": {
+    >>>               "ingest_demand": 84,
+    >>>                "workflow": "final/directory/for/workflow",
+    >>>       },
+
+    :py:obj: `total_arrays` are specified at the beginning of generation.
+    Pipelines are constructed based on the observation plan, and their
+    :py:obj: `ingest_demand` is calculated based on the Ingest rate of the
+    observation in conjunction with the system sizing that is provided.
+
+
+    >>>        "observations": [
+    >>>            {
+    >>>                "name": "hpso01_1",
+    >>>                "start": 0,
+    >>>                "duration": 10,
+    >>>                "demand": 256,
+    >>>                "type": "continuum",
+    >>>                "data_product_rate": 4
+    >>>            }
+    >>>        ]
+    >>>    },
+
+
+    >>>    "cluster": {
+    >>>        "header": {
+    >>>            "time": "false",
+    >>>        },
+    >>>        "system": {
+    >>>            "resources": {
+    >>>                    "cat0_m0": {
+    >>>                        "flops": 35000,
+    >>>                        "rates": 10
+    >>>                    },
+    >>>            },
+    >>>            "bandwidth": 1.0
+    >>>        }
+    >>>    },
+
+    >>>     "buffer": {
+    >>>         "hot": {
+    >>>             "capacity": 2000000,
+    >>>             "max_ingest_rate": 1000
+    >>>         },
+    >>>         "cold": {
+    >>>             "capacity": 5000000,
+    >>>             "max_data_rate": 500
+    >>>         }
+    >>>     }
+    >>> }
+
+
 
     Returns
     -------
     Path to a JSON config file.
     """
-    pass
+
+    # construct_telescope_config_from_observation_plan()
+    # for observation in observations:
+    #     generate_workflow_from_observation()
+    #
+    # pass

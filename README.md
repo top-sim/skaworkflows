@@ -4,24 +4,41 @@ This repository stores data and translator scripts to convert HPSO data produced
 by the SDP Parametric model into a mid-term Observation Schedule, for use
  during a TOpSim simulation. 
  
- `sdp_system_sizing.py` adapts code from the SDP Parametric model to produce
+   
+To do so, this provides the following modules, which may work separately or in conjunction with others to produce a complete Telsescope Observation Plan, complete with observation-specific workflows translated from ICRAR's [EAGLE editor](http://eagle.icrar.org). 
+
+`data/`
+- data/pandas_system_sizing.py`
+    - The `sdp-par-model` code produces a human readable .csv file with a significant amount of data. The purpose of this code is to filter this information and collate only what is necessary for component-based sizing, which will allow us to produce per-task FLOPs weights for each observation workflow. 
+    - The most up-to-date runs of `pandas_system_sizing.py` is stored in `data/pandas_sizing`.
+- data/csv  
+
+ - `sdp_system_sizing.py` adapts code from the SDP Parametric model to produce
   a reduced data set for selected HPSOs. 
- `hpso_to_observation.py` then takes this CSV output and converts it to a
+ - `hpso_to_observation.py` then takes this CSV output and converts it to a
   JSON file in the `observations.json` format required by the TOpSim
    simulator.  
    
 
-## Steps to generating provisional workflow characterisations
+
+## Features necessary to produce a TopSim configuration file
 
 In order to produce an observation workflow with appropriate node and edge costs (tasks and data transfer, respectively), the following is required:
 
 
 - [x] Relevant Parametric model output for Telescope (low or mid) and the baseline length (short, mid, long)
     - This is (ideally) pre-calculated and stored in `data/pandas_sizing` directory. 
-- Compute system config
+- [ ] Compute system config
     - Stored in JSON format
-    - Systems generated for tests and experiments using this set of modules use the `hpconfig` library.
-- Telescope configuration
+    - ~~Systems generated for tests and experiments using this set of modules use the `hpconfig` library.~~ 
+        - Compute system config is located in hpconfig, with SDP specifications having a `to_topsim` function. 
+        - Specifications are stored as classes, as their details are unlikely to change and it gives us an opportunity to specify multiple instances, and have spec-specific class methods for data transformation (e.g. `to_topsim`, `to_latex`). 
+        
+- [ ] Telescope configuration
+    - Needs TOTAL system sizing  
+    - Get Ingest Rate from observation (Baseline-dependent)
+    - Get total number of stations (Gives MAX telescope demand; can use up to 16* ) 
+    
 
 - Observation(s) , including information on 
     - Baseline length (short, mid, long)

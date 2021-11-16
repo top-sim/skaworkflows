@@ -16,12 +16,10 @@
 import unittest
 import random
 import json
-import os
 
 import pandas as pd
 
 from pipelines.hpso_to_observation import Observation
-from pipelines.common import SI
 from pipelines.hpso_to_observation import create_observation_plan, \
     construct_telescope_config_from_observation_plan
 
@@ -29,14 +27,17 @@ DATA_DIR = 'data/parametric_model'
 LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
 
 
+SYSTEM_SIZING_DIR = 'data/pandas_sizing'
 TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low'
+
 COMPONENT_SYSTEM_SIZING = None
 CLUSTER = 'tests/PawseyGalaxy_nd_1619058732.json'
 
 EAGLE_LGT = 'tests/data/eagle_lgt.graph'
 
+PATH_NOT_EXISTS = 'path/doesnt/exist'
 
-class TestObservationUnroll(unittest.TestCase):
+class TestObservationClass(unittest.TestCase):
 
     def setUp(self):
         self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa', 256, 'long')
@@ -45,6 +46,12 @@ class TestObservationUnroll(unittest.TestCase):
     def test_unroll_observations(self):
         unroll_list = [self.obs1 for x in range(self.obs1.count)]
         self.assertListEqual(unroll_list, self.obs1.unroll_observations())
+
+    def test_add_workflow_path(self):
+        self.assertRaises(
+            RuntimeError, self.obs1.add_workflow_path, PATH_NOT_EXISTS
+            )
+        self.assertTrue()
 
 
 class TestObservationPlanGeneration(unittest.TestCase):
@@ -99,7 +106,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         self.obs2 = Observation(1, 'hpso01', 32, 60, 'dprepa', 256, 'long')
         self.obs3 = Observation(2, 'hpso04a', 16, 30, 'dprepa', 256, 'long')
 
-    def test_sizing_calculations(self):
+    def test_telescope_config_sizing(self):
         """
         Gvien an observation plan, we want to calculate the expected output
         for that plan to ensure the expected ingest rates etc. are correct.
@@ -109,6 +116,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         -------
 
         """
+
         obslist = construct_telescope_config_from_observation_plan(
             self.plan, TOTAL_SYSTEM_SIZING
         )
@@ -116,6 +124,19 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         # channels, so we would expect the size to be half of the stored data
         # rate in the SDP report.
         self.assertAlmostEqual(0.316214, obslist[0]['data_product_rate'], 6)
+
+    def test_buffer_config_sizing(self):
+        """
+        Call the generate_buffer_config, which is a wrapper for hpconfig
+        buffer_to_topsim config
+
+        Returns
+        -------
+
+        """
+
+
+
 
     def test_ingest_machine_provisioning(self):
         """
@@ -126,6 +147,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
 
         """
 
+
     def test_observation_output(self):
         """
         Given a plan, produce an JSON-serialisable dictionary for configuration
@@ -135,6 +157,34 @@ class TestObservationTopSimTranslation(unittest.TestCase):
 
         """
 
-        # Count the number of shared items between two dictionaries - this will help
-        # us test the JSON files produced during translation.
+        # Count the number of shared items between two dictionaries -
+        # this will help us test the JSON files produced during translation.
         # shared_items = {k: x[k] for k in x if k in y and x[k] == y[k]}
+
+    def test_final_config_creation(self):
+        """
+        Produce a total simulation config for at TopSim simulator
+
+        Requires:
+
+        * Final output directory for the data and workflow
+        * Underlying compute infrastructure (using HPConfig)
+        * Path to component-based costs (parametric output)
+        * Path or dictionary to logical graph files for workflow translation
+        * List of observations (to be unrolled).
+
+        These are compiled and will produce a JSON-compatible dictionary:
+
+
+        Returns
+        -------
+
+        """
+        final_dir = 'test/data/out/'
+        final_workflow_dir = 'test/data/out/workflows'
+        observations = self.obs1.unroll_observations()
+
+        system_sizing = None
+        pandas_component_sizing = None
+
+        path = compile_observations_and_workflows()

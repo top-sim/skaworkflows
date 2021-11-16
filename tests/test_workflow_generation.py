@@ -23,14 +23,18 @@ import pipelines.hpso_to_observation as hpo
 import pipelines.eagle_daliuge_translation as edt
 from pipelines.common import SI
 
-TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low_long.csv'
+BASE_DATA_DIR = "data/pandas_sizing/"
+TEST_DATA_DIR = 'tests/data/'
+
+TOTAL_SYSTEM_SIZING = f'{BASE_DATA_DIR}total_compute_SKA1_Low_long.csv'
 LGT_PATH = 'tests/data/eagle_lgt_scatter.graph'
 PGT_PATH = 'tests/data/daliuge_pgt_scatter.json'
-PGT_PATH_GENERATED = 'tests/data/daliuge_pgt_scatter_generated.json'
-LGT_CHANNEL_UPDATE = 'tests/data/eagle_lgt_scatter_channel-update.graph'
-PGT_CHANNEL_UPDATE = 'tests/data/daliuge_pgt_scatter_channel-update.json'
+PGT_PATH_GENERATED = f'{TEST_DATA_DIR}/daliuge_pgt_scatter_generated.json'
+LGT_CHANNEL_UPDATE = f'{TEST_DATA_DIR}/eagle_lgt_scatter_channel-update.graph'
+PGT_CHANNEL_UPDATE = f'{TEST_DATA_DIR}/daliuge_pgt_scatter_channel-update.json'
 TOPSIM_PGT_GRAPH = 'tests/data/topsim_compliant_pgt.json'
 NO_PATH = "dodgy.path"
+COMPONENT_SYSTEM_SIZING = f'{BASE_DATA_DIR}/component_compute_SKA1_low_long.csv'
 
 
 class TestPipelineStructureTranslation(unittest.TestCase):
@@ -123,7 +127,7 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         }
 
         self.assertDictEqual(
-            nx_graph.edges['Flag_3','FFT_3'],
+            nx_graph.edges['Flag_3', 'FFT_3'],
             example_edge_attr
         )
 
@@ -152,10 +156,8 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         edges = final_graph['graph']['links']
         self.assertTrue(example_edge in edges)
 
-
     def test_use_in_other_functions(self):
         pass
-
 
         # with open()
 
@@ -201,6 +203,28 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         -------
 
         """
+
+    def test_generate_workflow_from_observation(self):
+        """
+        For a given observation, generate the workflow associated with it.
+
+        Points of tests include:
+
+        * If the telescope demand is not complete, this will affect the
+        calculations
+        * The number of frequency channels will affect the size of the workflow
+
+        This is reliant on the generate_cost_per_product workflow
+        Returns
+        -------
+
+        """
+        # Ground truths of the workflow
+
+        total_system_sizing = TOTAL_SYSTEM_SIZING
+        component_system_sizing = COMPONENT_SYSTEM_SIZING
+
+        generate_workflow_from_observation(observation, telescope_max, base_dir)
 
     def test_ingest_demand_calc(self):
         max_ingest = self.system_sizing[
