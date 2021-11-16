@@ -13,6 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+"""
+Class implementation of the total system sizing values used in the
+https:github.com/ska-telescope/sdp-par-model.
+
+Use for comparisons and sanity checking of itemised componenents.
+"""
+
 import os
 import logging
 
@@ -59,7 +66,7 @@ def produce_tex_table():
     return df.to_latex()
 
 
-class LowSizingCDR:
+class TotalSizingLowCDR:
     """
     CDR system sizing data wrapper
 
@@ -70,7 +77,8 @@ class LowSizingCDR:
     # These are the same foro all system sizing classes
     hot_rate_per_size = 3 * SI.giga / 10 / SI.tera
     cold_rate_per_size = 0.5 * SI.giga / 16 / SI.tera
-    ingest_rate = 0.46 * SI.tera  # Byte/s
+    # Derived from total_compute system sizing
+    ingest_rate = 0.46 * SI.tera  # Byte/s -
     delivery_rate = int(100 / 8 * SI.giga)  # Byte
 
     def __init__(self):
@@ -222,7 +230,7 @@ if __name__ == '__main__':
     if TEX_OUT:
         LOGGER.info('Generating LaTeX compatible table markup')
     else:
-        low_cdr = LowSizingCDR()
+        low_cdr = TotalSizingLowCDR()
         LOGGER.info(f'{low_cdr.to_df(False).columns}')
 
     LOGGER.info(generate_pipeline_component_table_baselines(

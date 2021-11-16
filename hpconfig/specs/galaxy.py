@@ -157,6 +157,14 @@ class PawseyGalaxy:
         return cluster
 
     def to_json(self):
+        """
+        Write configuration to a JSON file
+
+        Returns
+        -------
+        name : str
+            Path to the JSON file
+        """
         jdict = self.create_config_dict()
         timestamp = f'{time.time()}'.split('.')[0]
         name = f'{str(self)}_nd_{timestamp}.json'

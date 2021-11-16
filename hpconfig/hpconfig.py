@@ -28,7 +28,7 @@ class) that may be imported into a
 import sys
 import argparse
 
-from hpconfig.specs.pawsey import galaxy
+from hpconfig.specs import galaxy
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

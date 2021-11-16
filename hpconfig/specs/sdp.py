@@ -22,32 +22,37 @@ import numpy as np
 import pandas as pd
 
 from hpconfig.utils.constants import SI
+from hpconfig.utils.classes import ARCHITECTURE
+
 
 class SKA_LOW:
     pass
 
-class SKA_CDR:
+class SDP_LOW_CDR(ARCHITECTURE):
+
     SKALOW_nodes = 896
-    SKAMID_nodes = 786
+
     gpu_per_node = 2
     gpu_peak_flops = 31 * SI.tera  # Double precision
     memory_per_node = 320 * SI.giga
 
     SKALOW_buffer_storage_per_node = 75 * SI.tera
     SKALOW_buffer_total = SKALOW_nodes * SKALOW_buffer_storage_per_node
-    SKAMID_buffer_storage_per_node = 147 * SI.tera
-    SKAMID_buffer_total = SKAMID_nodes * SKAMID_buffer_storage_per_node
+
+
     SKALOW_storage_per_island = 4.2 * SI.peta
-    SKAMID_storage_per_island = 7.7 * SI.peta
+
 
     SKALOW_total_compute = (SKALOW_nodes * gpu_per_node * gpu_peak_flops)
     estimated_efficiency = 0.25
 
-    SKAMID_total_compute = (SKAMID_nodes * gpu_per_node * gpu_peak_flops)
+    SKALOW_req_ingest_rate_node = 3.5
+
+
+
 
     maximal_use_case = 1.5 * (10 ** 21)
-    maximal_obs_time = 6*3600 # 6 hours, in seconds
-
+    maximal_obs_time = 6 * 3600  # 6 hours, in seconds
 
     def to_df(self, human_readable=True):
         """
@@ -76,12 +81,7 @@ class SKA_CDR:
                             self.SKALOW_buffer_total // SI.peta,
                             self.SKALOW_total_compute // SI.peta])
 
-            mid = ['Mid', self.SKAMID_nodes, self.gpu_per_node,
-                   self.memory_per_node // SI.giga,
-                   self.SKAMID_buffer_storage_per_node // SI.tera,
-                   self.gpu_peak_flops // SI.tera,
-                   self.SKAMID_buffer_total // SI.peta,
-                   self.SKAMID_total_compute // SI.peta]
+
 
             df = pd.DataFrame([low, mid], columns=cols.values())
         else:
@@ -110,12 +110,58 @@ class SKA_CDR:
 
         """
         return (
-            self.SKALOW_total_compute*self.estimated_efficiency,
-            self.SKAMID_total_compute*self.estimated_efficiency
+            self.SKALOW_total_compute * self.estimated_efficiency,
         )
 
+class SDP_MID_CDR(ARCHITECTURE):
+
+    gpu_per_node = 2
+    gpu_peak_flops = 31 * SI.tera  # Double precision
+    memory_per_node = 320 * SI.giga
+
+    nodes = 786
+    buffer_storage_per_node = 147 * SI.tera
+    SKAMID_buffer_total =
+    SKAMID_storage_per_island = 7.7 * SI.peta
+    SKA_MID_req_ingest_rate_node = 3.8
+
+    @property
+    def total_storage(self):
+        """
+        Total data storage for SDP MID CDR requirements
+
+        Notes
+        -----
+        This value becomes the SDP data buffer when considering total system
+        sizing.
+
+        Returns
+        -------
+        int : Total data of combined nodes in SDP
+        """
+
+        return self.nodes * self.buffer_storage_per_node
+
+    @property
+    def total_compute(self):
+        return self.nodes * self.gpu_per_node * self.gpu_peak_flops
+
+    def to_topsim_dictionary(self):
+        pass
+
+    def to_dataframe(self, human_readable=True):
+        if human_readable:
+            mid = ['Mid', self.nodes, self.gpu_per_node,
+                   self.memory_per_node // SI.giga,
+                   self.total_storage // SI.peta,
+                   self.buffer_storage_per_node // SI.tera,
+                   self.gpu_peak_flops // SI.tera,
+                   self.total_compute // SI.peta]
+
+    df = pd.DataFrame([low, mid], columns=cols.values())
 
 class SKA_Adjusted:
+
     SKALOW_nodes = 896
     SKAMID_nodes = 786
     gpu_per_node = 2
@@ -147,3 +193,7 @@ class SKA_Adjusted:
     # with 25 % 3585
     #     Total
     # nodes = 4481
+
+def sdp_to_csv():
+
+    df = pd.DataFrame([low, mid], columns=cols.values())

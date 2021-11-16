@@ -16,7 +16,7 @@ import logging
 import math
 
 import pandas as pd
-from hpconfig.specs.sdp import sdp
+from hpconfig.specs import sdp
 from pipelines.common import SI
 
 LOGGER = logging.getLogger(__name__)
