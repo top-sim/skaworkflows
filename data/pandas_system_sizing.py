@@ -134,6 +134,8 @@ def csv_to_pandas_total_compute(csv_path):
     makes the data selection and compiling much more explicit, and is (
     hopefully) more accessible to those accessing this codebase.
 
+    #TODO options to make this computer readable
+
     Returns
     -------
     final_dicts : dictionary

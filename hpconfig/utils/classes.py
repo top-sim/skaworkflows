@@ -118,12 +118,12 @@ class CPU_NODE:
 
     def total_flops(self):
         """
-		Calculate total flops based on hardware specs
+        Calculate total flops based on hardware specs
 
 
         Returns
         -------
-		Integer FLOPS values
+        Integer FLOPS values
         """
         return self.cores * self.flops_per_cycle * self.ncyles
 

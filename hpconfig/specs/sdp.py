@@ -25,32 +25,38 @@ from hpconfig.utils.constants import SI
 from hpconfig.utils.classes import ARCHITECTURE
 
 
-class SKA_LOW:
-    pass
-
 class SDP_LOW_CDR(ARCHITECTURE):
+    """
+    Itemised description of the SKA Low Science Data Processor architecture,
+    as discussed in the SDP CDR documentation.
 
-    SKALOW_nodes = 896
+    Per-node summary of the archictecture that was used to assist in the
+    costing for the SKA SDP.
+
+    Notes
+    ------
+    Data derived from:
+    - SDP Memo 025: Updated SDP Cost Basis of Estimate June 2016
+    - SDP Parametric Model: https://github.com/ska-telescope/sdp-par-model
+
+    """
+    nodes = 896
 
     gpu_per_node = 2
     gpu_peak_flops = 31 * SI.tera  # Double precision
     memory_per_node = 320 * SI.giga
 
-    SKALOW_buffer_storage_per_node = 75 * SI.tera
-    SKALOW_buffer_total = SKALOW_nodes * SKALOW_buffer_storage_per_node
+    storage_per_node = 75 * SI.tera
+    storage_per_island = 4.2 * SI.peta
 
-
-    SKALOW_storage_per_island = 4.2 * SI.peta
-
-
-    SKALOW_total_compute = (SKALOW_nodes * gpu_per_node * gpu_peak_flops)
+    #: Projected efficiency for CDR calculations; since superseded/
     estimated_efficiency = 0.25
 
-    SKALOW_req_ingest_rate_node = 3.5
+    ethernet = 25 / 8 * SI.giga  # GbE
 
+    required_ingest_rate_per_node = 3.5 / 8 * SI.giga  # Gb/s
 
-
-
+    #: Largest science use case (in FLOPS)
     maximal_use_case = 1.5 * (10 ** 21)
     maximal_obs_time = 6 * 3600  # 6 hours, in seconds
 
@@ -74,56 +80,144 @@ class SDP_LOW_CDR(ARCHITECTURE):
         }
 
         if human_readable:
-            low = np.array(['Low', self.SKALOW_nodes, self.gpu_per_node,
+            low = np.array(['Low', self.nodes, self.gpu_per_node,
                             self.memory_per_node // SI.giga,
-                            self.SKALOW_buffer_storage_per_node // SI.tera,
+                            self.storage_per_node // SI.tera,
                             self.gpu_peak_flops // SI.tera,
-                            self.SKALOW_buffer_total // SI.peta,
-                            self.SKALOW_total_compute // SI.peta])
+                            self.total_storage // SI.peta,
+                            self.total_compute // SI.peta])
 
-
-
-            df = pd.DataFrame([low, mid], columns=cols.values())
+            df = pd.DataFrame([low], columns=cols.values())
         else:
-            low = ['Low', self.SKALOW_nodes, self.gpu_per_node,
-                   self.memory_per_node, self.SKALOW_buffer_storage_per_node,
+            low = ['Low', self.nodes, self.gpu_per_node,
+                   self.memory_per_node, self.storage_per_node,
                    self.gpu_peak_flops,
-                   self.SKALOW_buffer_total, self.SKALOW_total_compute]
+                   self.total_storage, self.total_compute]
 
-            mid = ['Mid', self.SKAMID_nodes, self.gpu_per_node,
-                   self.memory_per_node, self.SKAMID_buffer_storage_per_node,
-                   self.gpu_peak_flops,
-                   self.SKAMID_buffer_total, self.SKAMID_total_compute]
-
-            df = pd.DataFrame([low, mid], columns=cols.keys())
+            df = pd.DataFrame([low], columns=cols.keys())
 
         return df
 
     @property
-    def average_flops(self):
+    def total_compute(self, expected=False):
         """
-        Calculate the average required operations rate given the predicted
-        operations efficiency of the system
+        Cumulative compute power provided by nodes in the system specification.
+
+        Parameters
+        -----------
+        expected : bool
+            If `True`, use expected_efficiency of system to get an idea of
+            what the expected 'acheived' compute will be
+
+        Notes
+        -----
+        Expected efficiency should be ~13.6PFLOPs according to CDR (Memo 25)
+
+        Returns
+        -------
+        int : Total compute power of the cluster, in FLOPS
+        """
+
+        efficiency = 1.0
+        if expected:
+            efficiency = self.estimated_efficiency
+        return int(
+            self.nodes * self.gpu_per_node * self.gpu_peak_flops * efficiency
+        )
+
+    @property
+    def total_storage(self):
+        """
+        Cumulative storage provided by nodes in the system specification
+
+        Notes
+        ------
+        Total storage acts as Total Buffer size for the SDP.
 
         Returns
         -------
 
         """
-        return (
-            self.SKALOW_total_compute * self.estimated_efficiency,
-        )
+        return int(self.nodes * self.storage_per_node)
+
+    def to_topsim_dictionary(self):
+        """
+        Generate dictionary expected as part of TopSim configuration file
+
+        "cluster": {
+            "header": {
+                "time": "false",
+                "generator": "hpconfig",
+                "architecture": {
+                    "cpu": {
+                        "GenericSDP": num_nodes,
+                    },
+                    "gpu": {}
+                }
+            },
+            "system": {
+                "resources": {
+                    "XeonIvyBridge_m0": {
+                        "flops": 48000000.0,
+                        "rates": 10.0
+                    },
+                }
+            }
+        }
+
+
+        Returns
+        -------
+
+        """
+        system = {"system": {"resources": {}}}
+        for i in range(0, self.nodes):
+            node_dict = {
+                f"GenericeSDP_m{i}": {
+                    f"flops": self.gpu_peak_flops * self.gpu_per_node,
+                    f"rates": self.ethernet,
+                    f"memory": self.memory_per_node
+                }
+            }
+        cluster = {
+            "header": {
+
+            }
+        }
+
 
 class SDP_MID_CDR(ARCHITECTURE):
+    """
+    Itemised description of the SKA Mid Science Data Processor architecture,
+    as discussed in the SDP CDR documentation.
+
+    Per-node summary of the archictecture that was used to assist in the
+    costing for the SKA SDP.
+
+    Notes
+    ------
+    Data derived from:
+    - SDP Memo 025: Updated SDP Cost Basis of Estimate June 2016
+    - SDP Parametric Model: https://github.com/ska-telescope/sdp-par-model
+    """
 
     gpu_per_node = 2
     gpu_peak_flops = 31 * SI.tera  # Double precision
     memory_per_node = 320 * SI.giga
 
     nodes = 786
-    buffer_storage_per_node = 147 * SI.tera
-    SKAMID_buffer_total =
-    SKAMID_storage_per_island = 7.7 * SI.peta
-    SKA_MID_req_ingest_rate_node = 3.8
+    storage_per_node = 147 * SI.tera
+    storage_per_island = 7.7 * SI.peta
+
+    estimated_efficiency = 0.25
+
+    ethernet = 25 / 8 * SI.giga  # GbE
+
+    required_ingest_rate_per_node = 3.8 / 8 * SI.giga  # Gb/s
+
+    #: Largest science use case (in FLOPS)
+    maximal_use_case = 1.5 * (10 ** 21)
+    maximal_obs_time = 6 * 3600  # 6 hours, in seconds
 
     @property
     def total_storage(self):
@@ -140,28 +234,85 @@ class SDP_MID_CDR(ARCHITECTURE):
         int : Total data of combined nodes in SDP
         """
 
-        return self.nodes * self.buffer_storage_per_node
+        return self.nodes * self.storage_per_node
 
     @property
-    def total_compute(self):
-        return self.nodes * self.gpu_per_node * self.gpu_peak_flops
+    def total_compute(self, expected=False):
+        """
+        Cumulative compute power provided by nodes in the system specification.
+
+        Parameters
+        -----------
+        expected : bool
+            If `True`, use expected_efficiency of system to get an idea of
+            what the expected 'acheived' compute will be
+
+        Notes
+        -----
+        Expected efficiency should be ~13.6PFLOPs according to CDR (Memo 25)
+
+        Returns
+        -------
+        int : Total compute power of the cluster, in FLOPS
+        """
+
+        efficiency = 1.0
+        if expected:
+            efficiency = self.estimated_efficiency
+        return int(
+            self.nodes * self.gpu_per_node * self.gpu_peak_flops * efficiency
+        )
 
     def to_topsim_dictionary(self):
+        """
+        Generate dictionary expected as part of TopSim configuration file
+
+        Returns
+        -------
+        dict : JSON encodable dictionary of self.nodes descriptions
+        """
         pass
 
-    def to_dataframe(self, human_readable=True):
-        if human_readable:
-            mid = ['Mid', self.nodes, self.gpu_per_node,
-                   self.memory_per_node // SI.giga,
-                   self.total_storage // SI.peta,
-                   self.buffer_storage_per_node // SI.tera,
-                   self.gpu_peak_flops // SI.tera,
-                   self.total_compute // SI.peta]
+    def to_df(self, human_readable=True):
+        """
+        Report data as dataframe
 
-    df = pd.DataFrame([low, mid], columns=cols.values())
+        Returns
+        -------
+
+        """
+        cols = {
+            'telescope': "Telescope",
+            'num_nodes': '$|M_{\\mathrm{SDP}}$',
+            'gpu_per_node': '$|P_m|$',
+            'memory_per_node': '$d$ (GB)',
+            'storage_per_node': '$s$ (TB)',
+            'flops_per_node': ' $p_{i}^m$ (PFLOPS)(est.)',
+            'total_storage': '$\\mathrm{TS}_{\\mathrm{SDP}}$ (PB)',
+            'total_processing': '$\\mathrm{TP}_{\\mathrm{SDP}}$ (PFLOPS)'
+        }
+
+        if human_readable:
+            mid = np.array(['Mid', self.nodes, self.gpu_per_node,
+                            self.memory_per_node // SI.giga,
+                            self.total_storage // SI.tera,
+                            self.gpu_peak_flops // SI.tera,
+                            self.total_storage // SI.peta,
+                            self.total_compute // SI.peta])
+
+            df = pd.DataFrame([mid], columns=cols.values())
+        else:
+            mid = ['mid', self.nodes, self.gpu_per_node,
+                   self.memory_per_node, self.storage_per_node,
+                   self.gpu_peak_flops,
+                   self.total_storage, self.total_compute]
+
+            df = pd.DataFrame([mid], columns=cols.keys())
+
+        return df
+
 
 class SKA_Adjusted:
-
     SKALOW_nodes = 896
     SKAMID_nodes = 786
     gpu_per_node = 2
@@ -194,6 +345,7 @@ class SKA_Adjusted:
     #     Total
     # nodes = 4481
 
-def sdp_to_csv():
 
-    df = pd.DataFrame([low, mid], columns=cols.values())
+def sdp_to_csv():
+    pass
+    # df = pd.DataFrame([low, mid], columns=cols.values())

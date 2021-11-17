@@ -271,10 +271,16 @@ def construct_telescope_config_from_observation_plan(
     system_sizing = pd.read_csv(total_system_sizing)
     for i, observation in enumerate(plan):
         start, finish, demand, hpso, pipeline, channels, baseline = observation
+
+        # TODO Find correct system sizing from observation baseline
+        # total_system.lookup(baseline).max_telescope
+        # percentage = channels/max_channels
+
         tel_pecentage = channels / float(MAX_CHANNELS)
         # Calculate the ingest for this size of observation, where ingest is
         # in Petaflops
         # TODO use CDR class for maximum system sizing values
+        # total_system.lookup(baseline).lookup(observation).ingest
         max_buffer_ingest = float(system_sizing[
                                       system_sizing['HPSO'] == observation.hpso
                                       ]['Ingest [Pflop/s]'])
