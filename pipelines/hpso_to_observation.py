@@ -229,6 +229,49 @@ def create_observation_plan_tuple(observation, start):
     return tup
 
 
+def create_buffer_config(itemised_spec, ratio):
+    """
+    Generate the buffer configuration from spec, given the provided ratio of
+    HotBuffer:ColdBuffer
+
+    Parameters
+    ----------
+    itemised_spec : hpconfig.ARCHITECTURE
+    ratio : tuple
+        ratio of buffer size (HotBuffer:ColdBuffer)
+
+    Returns
+    -------
+    spec : dict
+        Dictionary
+
+    """
+    spec = {
+        "buffer": {
+            "hot": {
+                "capacity": -1,
+                "max_ingest_rate": -1
+            },
+            "cold": {
+                "capacity": -1,
+                "max_data_rate": -1
+            }
+        }
+    }
+    hot, cold = ratio
+    spec['buffer']['hot']['capacity'] = (
+            itemised_spec.total_storage * (hot / cold)
+    )
+    spec['buffer']['cold']['capacity'] = (
+            itemised_spec.total_storage * (1 - (hot / cold))
+    )
+    spec['buffer']['hot']['max_ingest_rate'] = (
+            itemised_spec.total_bandwidth * (hot / cold)
+    )
+    spec['buffer']['cold']['max_data_rate'] = itemised_spec.ethernet
+    return spec
+
+
 def construct_telescope_config_from_observation_plan(
         plan, total_system_sizing, itemised_system_sizing
 ):
@@ -496,7 +539,7 @@ def _find_ingest_demand(cluster, ingest_flops):
 def compile_observations_and_workflows(
         input_dir='./',
         output_dir='out/'
-        
+
 ):
     """
     Generate a configuration file given a set of observation descriptions and

@@ -63,7 +63,18 @@ class ARCHITECTURE(ABC):
         -------
         total_storage : int
             Total storage in bytes
+        """
 
+    @property
+    @abstractmethod
+    def total_bandwidth(self):
+        """
+        Calculate total bandwidth based cumulative ethernet
+
+        Returns
+        -------
+        total_bandwidth: int
+            Total bandwidth in bytes/sec
         """
 
     @abstractmethod

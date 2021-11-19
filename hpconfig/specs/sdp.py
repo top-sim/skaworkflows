@@ -52,7 +52,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
     #: Projected efficiency for CDR calculations; since superseded/
     estimated_efficiency = 0.25
 
-    ethernet = 25 / 8 * SI.giga  # GbE
+    ethernet = 56 / 8 * SI.giga  # GbE
 
     required_ingest_rate_per_node = 3.5 / 8 * SI.giga  # Gb/s
 
@@ -139,6 +139,21 @@ class SDP_LOW_CDR(ARCHITECTURE):
 
         """
         return int(self.nodes * self.storage_per_node)
+
+    @property
+    def total_bandwidth(self):
+        """
+        Cumulative bandwidth provided by nodes in system specification
+
+        Notes
+        ------
+        Total bandwidth doubles as maximum ingest rate for the Buffer
+
+        Returns
+        -------
+
+        """
+        return int(self.nodes * self.ethernet)
 
     def to_topsim_dictionary(self):
         """

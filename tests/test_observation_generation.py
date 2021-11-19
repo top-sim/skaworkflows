@@ -21,11 +21,15 @@ import pandas as pd
 
 from pipelines.hpso_to_observation import Observation
 from pipelines.hpso_to_observation import create_observation_plan, \
-    construct_telescope_config_from_observation_plan
+    construct_telescope_config_from_observation_plan, \
+    create_buffer_config
+
+from pipelines.common import SI
+
+from hpconfig.specs.sdp import SDP_LOW_CDR
 
 DATA_DIR = 'data/parametric_model'
 LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
-
 
 SYSTEM_SIZING_DIR = 'data/pandas_sizing'
 TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low'
@@ -36,6 +40,7 @@ CLUSTER = 'tests/PawseyGalaxy_nd_1619058732.json'
 EAGLE_LGT = 'tests/data/eagle_lgt.graph'
 
 PATH_NOT_EXISTS = 'path/doesnt/exist'
+
 
 class TestObservationClass(unittest.TestCase):
 
@@ -50,7 +55,7 @@ class TestObservationClass(unittest.TestCase):
     def test_add_workflow_path(self):
         self.assertRaises(
             RuntimeError, self.obs1.add_workflow_path, PATH_NOT_EXISTS
-            )
+        )
         self.assertTrue()
 
 
@@ -130,13 +135,30 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         Call the generate_buffer_config, which is a wrapper for hpconfig
         buffer_to_topsim config
 
+        Buffer information is in hpconfig or the Total System sizing. At the
+        beginning of the configuration, the only necessary information for
+        the buffer is how we split the Hot and Cold, as this is not currently
+        set in stone.
+
         Returns
         -------
 
         """
-
-
-
+        buffer_ratio = (1, 5)
+        sdp = SDP_LOW_CDR()
+        # For SDP_LOW_CDR, total_storage is 67.2 PetaBytes
+        hot_buffer = 13.44  # 20% of buffer
+        cold_buffer = 53.76  # 80% of buffer
+        spec = create_buffer_config(sdp, buffer_ratio)
+        self.assertEqual(spec['buffer']['hot']['capacity']/SI.peta, hot_buffer)
+        self.assertEqual(
+            spec['buffer']['cold']['capacity']/SI.peta,
+            cold_buffer
+        )
+        self.assertEqual(
+            spec['buffer']['hot']['max_ingest_rate']/SI.giga,
+            1260.0
+        )
 
     def test_ingest_machine_provisioning(self):
         """
@@ -146,7 +168,6 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         -------
 
         """
-
 
     def test_observation_output(self):
         """
