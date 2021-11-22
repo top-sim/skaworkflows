@@ -149,7 +149,8 @@ def csv_to_pandas_total_compute(csv_path):
     #  dictionary, then compile the data accordingly
 
     hpso_data = [
-        "HPSO", 'Stations', "Total Time [s]", "Tobs [h]", "Ingest [Pflop/s]",
+        "HPSO", "Baseline", 'Stations', "Total Time [s]", "Tobs [h]",
+        "Ingest [Pflop/s]",
         "RCAL [Pflop/s]",
         "FastImg [Pflop/s]", "ICAL [Pflop/s]", "DPrepA [Pflop/s]",
         "DPrepB [Pflop/s]", "DPrepC [Pflop/s]", "DPrepD [Pflop/s]",
@@ -164,33 +165,37 @@ def csv_to_pandas_total_compute(csv_path):
         df_ska = df_csv.T[df_csv.T['Telescope'] == telescope].T
         hpso_dict = {header: [] for header in hpso_data}
         df_hpso = pd.DataFrame(data=hpso_dict)
+        max_baseline = max((df_ska.loc['Max Baseline [km]']).astype(float))
         for i, hpso in enumerate(SKA_HPSOS[telescope]):
             df_hpso.loc[i, ['HPSO']] = hpso
+            df_hpso.loc[i, ['Baseline']] = max_baseline
             rt_flop_total = 0
             rflop_total = 0
-            for x in list(df_ska.columns):
-                if hpso in x:
+            for col in list(df_ska.columns):
+                # TODO wrap below code in separate function
+                #  'simplify_paremetric_system_sizing' or something
+                if hpso in col:
                     # These variables are the same for all pipelines,
                     # so we just take the information from the ingest pipeline
-                    if 'Ingest' in x:
-                        stations = int(df_ska.loc[['Stations/antennas'], x])
+                    if 'Ingest' in col:
+                        stations = int(df_ska.loc[['Stations/antennas'], col])
                         df_hpso.loc[i, ['Stations']] = stations
-                        t_obs = float(df_ska.loc[['Observation Time [s]'], x])
+                        t_obs = float(df_ska.loc[['Observation Time [s]'], col])
                         df_hpso.loc[i, "Tobs [h]"] = t_obs / 3600
-                        t_exp = float(df_ska.loc[['Total Time [s]'], x])
+                        t_exp = float(df_ska.loc[['Total Time [s]'], col])
                         df_hpso.loc[i, "Total Time [s]"] = t_exp
                         ingest_rate = df_ska.loc[
-                            ['Total buffer ingest rate [TeraBytes/s]'], x
+                            ['Total buffer ingest rate [TeraBytes/s]'], col
                         ]
                         df_hpso.loc[i, "Ingest Rate [TB/s]"] = float(
                             ingest_rate
                         )
                     compute = df_ska.loc[
-                        ['Total Compute Requirement [PetaFLOP/s]'], x
+                        ['Total Compute Requirement [PetaFLOP/s]'], col
                     ]
                     compute = float(compute)
                     # Realtime computing is all the 'Ingest' compute pipelines
-                    pipeline_name = f"{x.strip(hpso).strip('[]').strip('( )')}"
+                    pipeline_name = f"{col.split()[1].strip('()')}"
                     if pipeline_name in REALTIME:
                         rt_flop_total += compute
 
@@ -245,8 +250,9 @@ def csv_to_pandas_pipeline_components(csv_path, baseline='long'):
 
     final_dict = {}
     for telescope in TELESCOPE_IDS:
-        df_ska = (df_csv.T[df_csv.T['Telescope'] == telescope].T).fillna(-1)
+        df_ska = df_csv.T[df_csv.T['Telescope'] == telescope].T.fillna(-1)
         pipeline_df = pd.DataFrame()
+        max_baseline = max((df_ska.loc['Max Baseline [km]']).astype(float))
         for hpso in sorted(SKA_HPSOS[telescope]):
             pipeline_products = {}
             for pipeline in PIPELINES:
@@ -262,11 +268,11 @@ def csv_to_pandas_pipeline_components(csv_path, baseline='long'):
                 for product in PRODUCTS:
                     compute_entry = column.loc[[f'-> {product} [PetaFLOP/s]']]
                     data_entry = column.loc[[f'-> {product} [Tera/s]']]
-                    if compute_entry[0] is ' ' or '':
+                    if compute_entry[0] == ' ' or compute_entry[0] == '':
                         pipeline_overview[product] = -1
                     else:
                         pipeline_overview[product] = float(compute_entry)
-                    if data_entry[0] is ' ' or '':
+                    if data_entry[0] == ' ' or data_entry[0] == '':
                         pipeline_data_overview[product] = -1
                     else:
                         pipeline_data_overview[product] = float(data_entry)
@@ -277,10 +283,13 @@ def csv_to_pandas_pipeline_components(csv_path, baseline='long'):
             df.index.name = 'Pipeline'
             newcol = [hpso for x in range(0, len(df))]
             df.insert(0, 'hpso', newcol)
+            basecol = [max_baseline for x in range(0, len(df))]
+            df.insert(1, 'Baseline', basecol)
             pipeline_df = pipeline_df.append(df, sort=False)
         final_dict[telescope] = pipeline_df
 
     return final_dict
+
 
 def generate_pandas_system_sizing(
         total=True,
@@ -334,6 +343,8 @@ if __name__ == '__main__':
     OUTPUT_DIR = f'data/pandas_sizing/'
     files = os.listdir(DATA_DIR)
     LOGGER.info(f'Searching {DATA_DIR} for sdp-par-model reports...')
+    total_sizing = {}
+    component_sizing = {}
     for baseline in files:
         LOGGER.info(f'Processing {baseline} generated by sdp-par-model:')
         length = baseline.split("_")[1]
@@ -343,19 +354,37 @@ if __name__ == '__main__':
         pipe_dict = csv_to_pandas_pipeline_components(
             f'{DATA_DIR}/{baseline}', length
         )
-        for telescope in total_dict:
-            fn = f'{OUTPUT_DIR}/total_compute_{telescope}_{length}.csv'
-            LOGGER.info(f'Writing Total Compute CSV to {fn}')
-            total_dict[telescope].to_csv(fn)
-            fn = (f'{OUTPUT_DIR}/component_compute_{telescope}_'
-                + f'{length}.csv')
-            LOGGER.info(f'Writing Pipeline Compute CSV to {fn}')
-            pipe_dict[telescope].to_csv(fn)
+        for tel in total_dict:
+            if tel in total_sizing:
+                total_sizing[tel] = total_sizing[tel].append(
+                    total_dict[tel]
+                )
+            else:
+                total_sizing[tel] = pd.DataFrame()
+                total_sizing[tel] = total_sizing[tel].append(
+                    total_dict[tel]
+                )
+            if tel in component_sizing:
+                component_sizing[tel] = component_sizing[tel].append(
+                    pipe_dict[tel]
+                )
+            else:
+                component_sizing[tel] = pd.DataFrame()
+                component_sizing[tel] = component_sizing[tel].append(
+                    pipe_dict[tel]
+                )
+                # LOGGER.info(")
+
+    for tel in total_sizing:
+        fn_total = f'{OUTPUT_DIR}/total_compute_{tel}.csv'
+        LOGGER.info(f'Writing Total Compute CSV to {fn_total}')
+        total_sizing[tel].to_csv(fn_total)
+    for tel in component_sizing:
+        fn_component = f'{OUTPUT_DIR}/component_compute_{tel}.csv'
+        LOGGER.info(f'Writing Pipeline Compute CSV to {fn_component}')
+        component_sizing[tel].to_csv(fn_component)
 
     LOGGER.info(f"Final Output data in {OUTPUT_DIR}/:")
     for file in os.listdir(OUTPUT_DIR):
         LOGGER.info(file)
     LOGGER.info("Pandas system sizing translation complete.")
-
-
-

@@ -56,7 +56,7 @@ class TestObservationClass(unittest.TestCase):
         self.assertRaises(
             RuntimeError, self.obs1.add_workflow_path, PATH_NOT_EXISTS
         )
-        self.assertTrue()
+        # self.assert()
 
 
 class TestObservationPlanGeneration(unittest.TestCase):
@@ -111,19 +111,36 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         self.obs2 = Observation(1, 'hpso01', 32, 60, 'dprepa', 256, 'long')
         self.obs3 = Observation(2, 'hpso04a', 16, 30, 'dprepa', 256, 'long')
 
+    def test_workflow_generated_from_observation(self):
+        """
+        Given an observation, create a workflow file from the observation
+        specifications based on the system sizing details provided.
+
+
+        Returns
+        -------
+
+        """
+
+        telescope_max = 512.0  # Taken from total system sizing
+        base_dir = "test/data/tmp"
+        component_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
+
+
     def test_telescope_config_sizing(self):
         """
         Gvien an observation plan, we want to calculate the expected output
         for that plan to ensure the expected ingest rates etc. are correct.
         These are used in TopSim to count how much data is being produced in
         the system during an observation on the telescope.
+
         Returns
         -------
 
         """
-
+        itemised_spec = SDP_LOW_CDR()
         obslist = construct_telescope_config_from_observation_plan(
-            self.plan, TOTAL_SYSTEM_SIZING
+            self.plan, TOTAL_SYSTEM_SIZING, itemised_spec
         )
         # The number of channels is 256; this is half the number of max
         # channels, so we would expect the size to be half of the stored data
@@ -150,14 +167,15 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         hot_buffer = 13.44  # 20% of buffer
         cold_buffer = 53.76  # 80% of buffer
         spec = create_buffer_config(sdp, buffer_ratio)
-        self.assertEqual(spec['buffer']['hot']['capacity']/SI.peta, hot_buffer)
+        self.assertEqual(spec['buffer']['hot']['capacity'] / SI.peta,
+                         hot_buffer)
         self.assertEqual(
-            spec['buffer']['cold']['capacity']/SI.peta,
+            spec['buffer']['cold']['capacity'] / SI.peta,
             cold_buffer
         )
         self.assertEqual(
-            spec['buffer']['hot']['max_ingest_rate']/SI.giga,
-            1260.0
+            spec['buffer']['hot']['max_ingest_rate'] / SI.giga,
+            1254.4
         )
 
     def test_ingest_machine_provisioning(self):
@@ -207,5 +225,8 @@ class TestObservationTopSimTranslation(unittest.TestCase):
 
         system_sizing = None
         pandas_component_sizing = None
+
+        buffer_ratio = (1, 5)
+        sdp = SDP_LOW_CDR()
 
         path = compile_observations_and_workflows()
