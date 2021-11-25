@@ -34,7 +34,7 @@ from sdp_par_model.parameters.definitions import *
 
 from data import pandas_system_sizing as pss
 
-DATA_DIR = 'data/parametric_model'
+DATA_DIR = 'data/sdp-par-model_output'
 SHORT = f'{DATA_DIR}/2021-06-02_short_HPSOs.csv'
 MID = f'{DATA_DIR}/2021-06-02_mid_HPSOs.csv'
 LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
@@ -60,54 +60,230 @@ class TestSystemPandasOutputCompute(unittest.TestCase):
         """
         pass
 
-    def test_hpso_report_generated(self):
+    def test_compile_all_sizing(self):
+        total_sizing, component_sizing = pss.compile_baseline_sizing(DATA_DIR)
+        self.assertEqual(15, len(total_sizing['SKA1_Low']))
+        self.assertEqual(192, len(component_sizing['SKA1_Low']))
+
+    def test_total_sizing_baselines(self):
         ret = pss.csv_to_pandas_total_compute(LONG)
-        for telescope in ret:
-            ret[telescope].to_csv(
-                f'tests/data/total_compute_{telescope}_LONG.csv'
-            )
-            self.assertTrue(
-                os.path.exists(
-                    f'tests/data/total_compute_{telescope}_LONG.csv'
-                )
-            )
-            os.remove(f'tests/data/total_compute_{telescope}_LONG.csv')
+        low = ret['SKA1_Low']
+        mid = ret['SKA1_Mid']
 
-    def test_pipeline_component_report_generate(self):
-        ret = pss.csv_to_pandas_pipeline_components(LONG, 'long')
-        self.assertNotEqual({}, ret)
-        data = ret['SKA1_Low'][['hpso', 'Correct']]
+        self.assertEqual(5, len(low))
+        self.assertEqual(19, len(low.T))
+        self.assertEqual(15, len(mid))
+        self.assertEqual(20, len(mid.T))
 
-        # Check the size is large enough
-        self.assertEqual(60, len(data))
 
-        # If there are issues, it will get grumpy here and fail.
-        for telescope in ret:
-            ret[telescope].to_csv(
-                f'tests/data/component_compute_{telescope}_SHORT.csv'
-            )
-            self.assertTrue(
-                os.path.exists(
-                    f'tests/data/component_compute_{telescope}_SHORT.csv'
-                )
-            )
-            os.remove(f'tests/data/component_compute_{telescope}_SHORT.csv')
+    def test_isolate_total_sizing(self):
+        """
+        Internal function that processes total costs for specific pipelines
+        for cross checking and use in telescope sizing for observations
 
-    def test_pipeline_components_accuracy(self):
-        df = pss.csv_to_pandas_pipeline_components(LONG)
 
-        # IN the pandas CSV, we would do df['Correct'].loc['DprepA'] to get
-        # this value for LOW at Max Baseline
-        dprepa_hpso01_correct = 0.059946046291823374
-        res = df['SKA1_Low'][['hpso', 'Correct']].loc['DPrepA']
-        val = res[res['hpso'] == 'hpso01']['Correct']
-        self.assertTrue(dprepa_hpso01_correct, val)
-        rcal_hpso01_correct_data = 0.36783429678851104
-        res = df['SKA1_Low'][['hpso', 'Correct']].loc['RCAL_data']
-        val = res[res['hpso'] == 'hpso01']['Correct']
-        self.assertTrue(rcal_hpso01_correct_data, val)
+        Returns
+        -------
 
-        # Use DF to check results
+        """
+        df_csv = pd.read_csv(LONG, index_col=0)
+        tel = 'SKA1_Mid'
+        df_tel = df_csv.T[df_csv.T['Telescope'] == tel].T
+        hpso_dict = {header: 0 for header in pss.HPSO_DATA}
+        # hpso_dict = {}
+        rflop_total, rt_flop_total, hpso_dict = (
+            pss._isolate_total_sizing(df_tel, hpso_dict, 'hpso14')
+        )
+
+        # Ingest + RCAL + FastImg
+        real_time_total_hpso14 = 0.19424524633241602
+        # ICAL + DPrepA + DPrepB + DPrepC
+        batch_compute_hpso14 = 0.6309361569888947
+        self.assertEqual(rt_flop_total, real_time_total_hpso14)
+        self.assertEqual(batch_compute_hpso14, rflop_total - rt_flop_total)
+
+        test_dict = {header: 0 for header in pss.HPSO_DATA}
+        test_dict.update({
+            'HPSO': 'hpso14',
+            'Baseline': 25000.0,
+            'Stations': 197,
+            "Tobs [h]": 28800.0 / 3600,
+            'Total Time [s]': 7200000.0,
+            'Ingest Rate [TB/s]': 0.11107894713422155,
+            "Total RT [Pflop/s]": real_time_total_hpso14,
+            "Total Batch [Pflop/s]": batch_compute_hpso14,
+            "Total [Pflop/s]": real_time_total_hpso14 + batch_compute_hpso14,
+            'RCAL [Pflop/s]': 0.027555502716787368,
+            'FastImg [Pflop/s]': 0.013671169517356207,
+            'ICAL [Pflop/s]': 0.14887923234478867,
+            'DPrepA [Pflop/s]': 0.08903299777714171,
+            'DPrepB [Pflop/s]': 0.08626238145668516,
+            'DPrepC [Pflop/s]': 0.3067615454102791,
+            'DPrepD [Pflop/s]': 0,
+            'Ingest [Pflop/s]': 0.15301857409827246,
+        })
+        self.assertDictEqual(test_dict, hpso_dict)
+
+    def test_process_common_values(self):
+        df_csv = pd.read_csv(LONG, index_col=0)
+        tel = 'SKA1_Mid'
+        df_tel = df_csv.T[df_csv.T['Telescope'] == tel].T
+        hpso_dict = {header: 0 for header in pss.HPSO_DATA}
+        hpso_dict['HPSO'] = 'hpso13'
+        col = 'hpso13 (ICAL) [] [Bmax=35000]'
+        hpso_dict = pss._process_common_values(
+            df_tel, col, hpso_dict
+        )
+        test_dict = {header: 0 for header in pss.HPSO_DATA}
+        test_dict.update({
+            'HPSO': 'hpso13',
+            'Baseline': 35000.0,
+            'Stations': 197,
+            "Tobs [h]": 28800.0 / 3600,
+            'Total Time [s]': 18000000.0
+        })
+        self.assertDictEqual(test_dict, hpso_dict)
+
+    def test_isolate_correct_baseline(self):
+        """
+        Depending on the baseline generated, there is a reported 'Bmax'
+        component of the column name, which follows some bizarre rules.
+
+        This is going to test that we get the right data from
+        _isolate_products, and then associate the correct baseline to those
+        products.
+
+        Condtions:
+        For SKA1_Low:
+        * If Max Baseline [km] is 65.0, we do nothing
+        * Else - report what the baseline is
+
+
+
+        Returns
+        -------
+
+        """
+
+        # Long, mid,  hpso15 DPrepC -> [Bmax=15000]
+
+        # Long, mid, hpso13 (FastImg) [] [Bmax=35000]
+
+        final_df_dict = pss.csv_to_pandas_pipeline_components(LONG)
+        pl_df_mid = final_df_dict['SKA1_Mid']
+        self.assertEqual(
+            15000.0,
+            pl_df_mid[pl_df_mid['hpso'] == 'hpso15'].loc['Ingest']['Baseline']
+        )
+        # hpso18(Ingest)[] 150km/150000m
+        self.assertEqual(
+            150000.0,
+            pl_df_mid[pl_df_mid['hpso'] == 'hpso18'].loc['Ingest']['Baseline']
+        )
+        # hpso37a(RCAL)[][Bmax = 120000]
+        self.assertEqual(
+            120000.0,
+            pl_df_mid[pl_df_mid['hpso'] == 'hpso37a'].loc['Ingest']['Baseline']
+        )
+
+        pl_df_low = final_df_dict['SKA1_Low']
+        # hpso01(DPrepA)[] max 65km
+        self.assertEqual(
+            65000.0,
+            pl_df_low[pl_df_low['hpso'] == 'hpso01'].loc['DPrepA']['Baseline']
+        )
+
+        final_df_dict = pss.csv_to_pandas_pipeline_components(SHORT)
+        pl_df_mid = final_df_dict['SKA1_Mid']
+        self.assertEqual(
+            4062.5,
+            pl_df_mid[pl_df_mid['hpso'] == 'hpso15'].loc['Ingest']['Baseline']
+        )
+
+    def test_isolated_correct_baseline_components(self):
+        """
+
+        Returns
+        -------
+
+        """
+        df_csv_long = pd.read_csv(
+            LONG,
+            index_col=0
+        )
+        df_low_long = df_csv_long.T[df_csv_long.T['Telescope'] ==
+                                    "SKA1_Low"].T.fillna(-1)
+        df_mid_long = df_csv_long.T[df_csv_long.T['Telescope'] ==
+                                    "SKA1_Mid"].T.fillna(-1)
+        # Long, mid,  hpso15 Ingest, Flag -> [Bmax=15000]
+
+        # pipeline_products_low = pss._isolate_products(df_low)
+        products_mid_long_hpso15 = pss._isolate_products(df_mid_long, 'hpso15')
+        self.assertEqual(
+            0.0013957169918481806,
+            products_mid_long_hpso15['Ingest']['Flag']
+        )
+        self.assertEqual(
+            0.9813000364283198,
+            products_mid_long_hpso15['ICAL_data']['Grid']
+        )
+
+        self.assertEqual(
+            15000,
+            products_mid_long_hpso15['Ingest']['Baseline']
+        )
+        # Long, mid, hpso13, Dprepa, FFT [] [Bmax=35000]
+        products_mid_long_hpso13 = pss._isolate_products(df_mid_long, 'hpso13')
+        self.assertEqual(
+            0.003614069512036861,
+            products_mid_long_hpso13['DPrepA']['FFT']
+        )
+
+        # Long, low, hpso01, DPrepC, Grid [] (Bmax=65km)
+        products_low_long_hpso01 = pss._isolate_products(df_low_long, 'hpso01')
+        self.assertEqual(
+            0.11530553363337567,
+            products_low_long_hpso01['DPrepC']['Grid']
+        )
+
+        df_csv_mid = pd.read_csv(
+            MID,
+            index_col=0
+        )
+
+        df_low_mid = df_csv_mid.T[df_csv_mid.T['Telescope'] ==
+                                  "SKA1_Low"].T.fillna(-1)
+        df_mid_mid = df_csv_mid.T[df_csv_mid.T['Telescope'] ==
+                                  "SKA1_Mid"].T.fillna(-1)
+
+        # Medium basline, Mid, hpso015
+        products_mid_mid_hpso15 = pss._isolate_products(df_mid_mid, 'hpso15')
+        self.assertEqual(
+            0.0034172025900270336,
+            products_mid_mid_hpso15['Ingest']['Flag']
+        )
+        products_mid_mid_hpso13 = pss._isolate_products(df_mid_mid, 'hpso13')
+        self.assertEqual(
+            0.0029486904534746536,
+            products_mid_mid_hpso13['DPrepA']['FFT']
+        )
+
+        # Medium baseline, SKA Low, hpso04a  Ingest  [Bmax=325000]
+        products_low_mid_hpso04a = pss._isolate_products(df_low_mid, 'hpso01')
+        self.assertEqual(
+            0.04363672860136016,
+            products_low_mid_hpso04a['DPrepC']["Grid"]
+        )
+
+    def test_compile_baseline_sizing(self):
+        """
+        Test the system sizing generation that accumulates baselines
+
+        Returns
+        -------
+
+        """
+        expected_df_length = 192
 
 
 class TestSystemSizingBackwardsCompatibility(unittest.TestCase):
@@ -156,8 +332,6 @@ class TestSystemSizingBackwardsCompatibility(unittest.TestCase):
         bc_data = float(prev['hpso01 (Ingest) []'].loc['-> Flag [PetaFLOP/s]'])
         self.assertEqual(bc_data, lflag_val)
         # self.assertEqual(bc_data, data)
-
-
 
 
 # NOTE This test will take a long time to run (At least 30 minutes) as it

@@ -40,7 +40,5 @@ requirement, as well as individual ingest requirements for each
 observation workflow.
 
 
-
-
 As described in the Data origins section, we use the full system sizing to
 generate configuration for Telescope

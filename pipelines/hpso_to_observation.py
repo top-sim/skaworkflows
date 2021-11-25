@@ -259,13 +259,13 @@ def create_buffer_config(itemised_spec, ratio):
         }
     }
     hot, cold = ratio
-    spec['buffer']['hot']['capacity'] = (
+    spec['buffer']['hot']['capacity'] = int(
             itemised_spec.total_storage * (hot / cold)
     )
-    spec['buffer']['cold']['capacity'] = (
+    spec['buffer']['cold']['capacity'] = int(
             itemised_spec.total_storage * (1 - (hot / cold))
     )
-    spec['buffer']['hot']['max_ingest_rate'] = (
+    spec['buffer']['hot']['max_ingest_rate'] = int(
             itemised_spec.total_bandwidth * (hot / cold)
     )
     spec['buffer']['cold']['max_data_rate'] = itemised_spec.ethernet
@@ -273,7 +273,7 @@ def create_buffer_config(itemised_spec, ratio):
 
 
 def construct_telescope_config_from_observation_plan(
-        plan, total_system_sizing, itemised_system_sizing
+        plan, total_system_sizing, itemised_spec
 ):
     """
     Based on a simplified dictionaries built from the System Sizing for the
@@ -285,12 +285,12 @@ def construct_telescope_config_from_observation_plan(
     plan: list
         list of observation tuples, in the form
             (start, finish, telescope demand, hpso, pipeline, channels).
-    total_system_sizing : :py:object:`pd.DataFrame`
+    total_system_sizing : :py:obj:`pd.DataFrame`
         This is the system sizing that contains total system costs. It is
         from this that we get the maximum number of arrays available,
         and the baseline-dependent ingest rate for the selected HPSO.
 
-    itemised_system_sizing: hpconfig-based spec.
+    itemised_spec: :py:obj:
         This is the itemised system sizing that provides node-based
         descriptions for system specifications. This allows us to determine
         how many nodes are required for ingest, given an observations
@@ -340,7 +340,8 @@ def construct_telescope_config_from_observation_plan(
     return observation_list
 
 
-def generate_workflow_from_observation(observation, telescope_max, base_dir):
+def generate_workflow_from_observation(observation, telescope_max, base_dir,
+                                       component_system_sizing):
     """
     Given a pipeline and observation specification, generate a workflow file
     in the provided directory according to observation specifications,
@@ -348,10 +349,14 @@ def generate_workflow_from_observation(observation, telescope_max, base_dir):
 
     Parameters
     ----------
-    observation : :py:object:`~hpso_to_observation.Observation`.
+    observation : :py:obj:`~hpso_to_observation.Observation`.
         Observation descriptor object
     telescope_max: int
         The maximum number of arrays used on the telescope
+    component_system_sizing : pd.DataFrame
+        Data frame that stores information of system sizing. See
+        common.SIZING for a dictionary mapping saved column names
+        to human readable names.
 
     base_dir: The directory in which the workflow will be produced
 
@@ -538,7 +543,9 @@ def _find_ingest_demand(cluster, ingest_flops):
 
 def compile_observations_and_workflows(
         input_dir='./',
-        output_dir='out/'
+        output_dir='out/',
+        itemised_spec=None,
+        buffer_ratio=None
 
 ):
     """
@@ -576,7 +583,7 @@ def compile_observations_and_workflows(
     observation in conjunction with the system sizing that is provided.
 
 
-    >>>        "observations": [
+    >>>    {"observations": [
     >>>            {
     >>>                "name": "hpso01_1",
     >>>                "start": 0,
@@ -589,7 +596,7 @@ def compile_observations_and_workflows(
     >>>    },
 
 
-    >>>    "cluster": {
+    >>>    {"cluster": {
     >>>        "header": {
     >>>            "time": "false",
     >>>        },
@@ -604,7 +611,7 @@ def compile_observations_and_workflows(
     >>>        }
     >>>    },
 
-    >>>     "buffer": {
+    >>>     {"buffer": {
     >>>         "hot": {
     >>>             "capacity": 2000000,
     >>>             "max_ingest_rate": 1000
@@ -628,3 +635,6 @@ def compile_observations_and_workflows(
     #     generate_workflow_from_observation()
     #
     # pass
+
+    # Generate buffer spec
+    buffer_spec = create_buffer_config(itemised_spec, buffer_ratio)

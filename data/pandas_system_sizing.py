@@ -25,6 +25,7 @@ out his system sizing analysis into csv file (for ease of repeatability).
 import os
 import logging
 import pandas as pd
+from zope.interface import named
 
 KEYS = {
     'hpso': "HPSO", 'time': "Time [%]", 'tobs': " Tobs [h]",
@@ -38,8 +39,11 @@ KEYS = {
     'dprepd': "DPrepD [Pflop/s]",
     'totalrt': "Total RT [Pflop/s]",
     'totalbatch': "Total Batch [Pflop/s]",
-    'total': " Total [Pflop/s"
+    'total': " Total [Pflop/s]"
 }
+
+# PRODUCTS are copies of the sdp-par-model product strings; we remove the
+# units and the leading '->' for more effective interaction.
 
 PRODUCTS = [
     'Image Spectral Fitting',
@@ -113,6 +117,16 @@ REALTIME = ['Ingest', 'RCAL', 'FastImg']
 
 BASELINE_LENGTHS = {'short': 4062.5, 'mid': 32500, 'long': 65000}
 
+HPSO_DATA = [
+    "HPSO", "Baseline", 'Stations', "Total Time [s]", "Tobs [h]",
+    "Ingest [Pflop/s]",
+    "RCAL [Pflop/s]",
+    "FastImg [Pflop/s]", "ICAL [Pflop/s]", "DPrepA [Pflop/s]",
+    "DPrepB [Pflop/s]", "DPrepC [Pflop/s]", "DPrepD [Pflop/s]",
+    "Total RT [Pflop/s]", "Total Batch [Pflop/s]", "Total [Pflop/s]",
+    "Ingest Rate [TB/s]"
+]
+
 
 def csv_to_pandas_total_compute(csv_path):
     """
@@ -143,80 +157,112 @@ def csv_to_pandas_total_compute(csv_path):
     """
     df_csv = pd.read_csv(
         csv_path,
-        index_col=0
+        index_col=0,
+        na_values=['(undefined)']
     )
+    # Undefined values are okay to be treated as 0, as we want to add these
+    # up for totals.
+    df_csv = df_csv.fillna(0)
     # TODO Shamelessly read baseline from the System sizing and add this to
     #  dictionary, then compile the data accordingly
 
-    hpso_data = [
-        "HPSO", "Baseline", 'Stations', "Total Time [s]", "Tobs [h]",
-        "Ingest [Pflop/s]",
-        "RCAL [Pflop/s]",
-        "FastImg [Pflop/s]", "ICAL [Pflop/s]", "DPrepA [Pflop/s]",
-        "DPrepB [Pflop/s]", "DPrepC [Pflop/s]", "DPrepD [Pflop/s]",
-        "Total RT [Pflop/s]", "Total Batch [Pflop/s]", "Total [Pflop/s]",
-        "Ingest Rate [TB/s]"
-    ]
     # hpso_dict = {header: [] for header in hpso_data}
     # df_hpso = pd.DataFrame(data=hpso_dict)
     final_dict = {telescope: None for telescope in TELESCOPE_IDS}
     retval = None
     for telescope in TELESCOPE_IDS:
-        df_ska = df_csv.T[df_csv.T['Telescope'] == telescope].T
-        hpso_dict = {header: [] for header in hpso_data}
-        df_hpso = pd.DataFrame(data=hpso_dict)
-        max_baseline = max((df_ska.loc['Max Baseline [km]']).astype(float))
+        df_tel = df_csv.T[df_csv.T['Telescope'] == telescope].T
+        hpso_dict = {header: [] for header in HPSO_DATA}
+        df_from_hpso_dict = pd.DataFrame(data=hpso_dict)
         for i, hpso in enumerate(SKA_HPSOS[telescope]):
-            df_hpso.loc[i, ['HPSO']] = hpso
-            df_hpso.loc[i, ['Baseline']] = max_baseline
-            rt_flop_total = 0
-            rflop_total = 0
-            for col in list(df_ska.columns):
-                # TODO wrap below code in separate function
-                #  'simplify_paremetric_system_sizing' or something
-                if hpso in col:
-                    # These variables are the same for all pipelines,
-                    # so we just take the information from the ingest pipeline
-                    if 'Ingest' in col:
-                        stations = int(df_ska.loc[['Stations/antennas'], col])
-                        df_hpso.loc[i, ['Stations']] = stations
-                        t_obs = float(df_ska.loc[['Observation Time [s]'], col])
-                        df_hpso.loc[i, "Tobs [h]"] = t_obs / 3600
-                        t_exp = float(df_ska.loc[['Total Time [s]'], col])
-                        df_hpso.loc[i, "Total Time [s]"] = t_exp
-                        ingest_rate = df_ska.loc[
-                            ['Total buffer ingest rate [TeraBytes/s]'], col
-                        ]
-                        df_hpso.loc[i, "Ingest Rate [TB/s]"] = float(
-                            ingest_rate
-                        )
-                    compute = df_ska.loc[
-                        ['Total Compute Requirement [PetaFLOP/s]'], col
-                    ]
-                    compute = float(compute)
-                    # Realtime computing is all the 'Ingest' compute pipelines
-                    pipeline_name = f"{col.split()[1].strip('()')}"
-                    if pipeline_name in REALTIME:
-                        rt_flop_total += compute
-
-                    # Total 'real' flops for the entire sequence of pipelines
-                    rflop_total += compute
-                    col_str = f"{pipeline_name} [Pflop/s]"
-                    df_hpso.loc[i, col_str] = compute
-                df_hpso.loc[i, "Total RT [Pflop/s]"] = rt_flop_total
-                # Batch processing is simply the difference between realtime
-                # pipelines flops and all pipelines
-                df_hpso.loc[
-                    i, "Total Batch [Pflop/s]"
-                ] = rflop_total - rt_flop_total
-                df_hpso.loc[i, "Total [Pflop/s"] = rflop_total
-
-        final_dict[telescope] = df_hpso
-
+            tmp_dict = {header: 0 for header in HPSO_DATA}
+            rflop_total, rt_flop_total, tmp_dict = (
+                _isolate_total_sizing(df_tel, tmp_dict, hpso)
+            )
+            df_from_hpso_dict = df_from_hpso_dict.append(
+                tmp_dict, ignore_index=True)
+        final_dict[telescope] = df_from_hpso_dict
     return final_dict
 
 
-def csv_to_pandas_pipeline_components(csv_path, baseline='long'):
+def _isolate_total_sizing(df_tel, hpso_dict, hpso):
+    """
+    Calculate and store the total compute and data requirements for HPSOs,
+    based on baseline-dependent system sizing produced by the sdp-par-model.
+
+    Returns
+    -------
+
+    """
+    hpso_dict['HPSO'] = hpso
+    # df_hpso.loc[i, ['Baseline']] = max_baseline
+    rt_flop_total = 0
+    rflop_total = 0
+    for col in [col for col in df_tel.columns if hpso in col]:
+        compute = 0
+        hpso_dict = _process_common_values(
+            df_tel, col, hpso_dict
+        )
+        compute = df_tel.loc[
+            ['Total Compute Requirement [PetaFLOP/s]'], col
+        ]
+        compute = float(compute)
+        # Realtime computing is all the 'Ingest' compute pipelines
+        pipeline_name = f"{col.split()[1].strip('()')}"
+        if pipeline_name in REALTIME:
+            rt_flop_total += compute
+
+        ingest_rate = float(
+            df_tel.loc[['Total buffer ingest rate [TeraBytes/s]'], col]
+        )
+        # Select the maximum ingest rate from our HPSO's columns
+        if "Ingest Rate [TB/s]" in hpso_dict:
+            hpso_dict["Ingest Rate [TB/s]"] = max(
+                ingest_rate, float(hpso_dict["Ingest Rate [TB/s]"])
+            )
+        else:
+            hpso_dict["Ingest Rate [TB/s]"] = float(ingest_rate)
+        # Total 'real' flops for the entire sequence of pipelines
+        rflop_total += compute
+        col_str = f"{pipeline_name} [Pflop/s]"
+        hpso_dict[col_str] = compute
+        hpso_dict["Total RT [Pflop/s]"] = rt_flop_total
+        # Batch processing is simply the difference between realtime
+        # pipelines flops and all pipelines
+        hpso_dict["Total Batch [Pflop/s]"] = rflop_total - rt_flop_total
+        hpso_dict["Total [Pflop/s]"] = rflop_total
+
+    return rflop_total, rt_flop_total, hpso_dict
+
+
+def _process_common_values(df_tel, col, hpso_dict):
+    """
+
+    For each HPSO, there are a few rows that are the same for each column,
+    so we can isolate them with ingest and process them here
+
+    Parameters
+    ----------
+    df_tel : pd.DataFrame
+    pos : int
+        Position in the DataFrame
+
+    Returns
+    -------
+
+    """
+    stations = int(df_tel.loc[['Stations/antennas'], col])
+    hpso_dict['Stations'] = stations
+    baseline = float(df_tel.loc[['Max Baseline [km]'], col]) * 1000
+    hpso_dict['Baseline'] = baseline
+    t_obs = float(df_tel.loc[['Observation Time [s]'], col])
+    hpso_dict['Tobs [h]'] = t_obs / 3600
+    t_exp = float(df_tel.loc[['Total Time [s]'], col])
+    hpso_dict['Total Time [s]'] = t_exp
+    return hpso_dict
+
+
+def csv_to_pandas_pipeline_components(csv_path):
     """
     Produce a Pandas DataFrame of data product calculations that replicate
     the approach taken in the SDP parametric model
@@ -229,7 +275,6 @@ def csv_to_pandas_pipeline_components(csv_path, baseline='long'):
     Parameters
     ----------
     csv_path
-
 
     Notes
     -----
@@ -254,41 +299,75 @@ def csv_to_pandas_pipeline_components(csv_path, baseline='long'):
         pipeline_df = pd.DataFrame()
         max_baseline = max((df_ska.loc['Max Baseline [km]']).astype(float))
         for hpso in sorted(SKA_HPSOS[telescope]):
-            pipeline_products = {}
-            for pipeline in PIPELINES:
-                pipeline_overview = {}
-                pipeline_data_overview = {}
-                max_str = '[]'
-                if baseline != 'long':
-                    max_str = f'[Bmax={BASELINE_LENGTHS[baseline]}]'
-                if f'{hpso} ({pipeline}) {max_str}' in df_ska.columns:
-                    column = df_ska[f'{hpso} ({pipeline}) {max_str}']
-                else:
-                    continue
-                for product in PRODUCTS:
-                    compute_entry = column.loc[[f'-> {product} [PetaFLOP/s]']]
-                    data_entry = column.loc[[f'-> {product} [Tera/s]']]
-                    if compute_entry[0] == ' ' or compute_entry[0] == '':
-                        pipeline_overview[product] = -1
-                    else:
-                        pipeline_overview[product] = float(compute_entry)
-                    if data_entry[0] == ' ' or data_entry[0] == '':
-                        pipeline_data_overview[product] = -1
-                    else:
-                        pipeline_data_overview[product] = float(data_entry)
-                pipeline_products[pipeline] = pipeline_overview
-                pipeline_products[f'{pipeline}_data'] = pipeline_data_overview
-
+            pipeline_products = _isolate_products(df_ska, hpso)
             df = pd.DataFrame(pipeline_products).T
             df.index.name = 'Pipeline'
             newcol = [hpso for x in range(0, len(df))]
             df.insert(0, 'hpso', newcol)
-            basecol = [max_baseline for x in range(0, len(df))]
-            df.insert(1, 'Baseline', basecol)
+            # basecol = [max_baseline for x in range(0, len(df))]
+            # df.insert(1, 'Baseline', basecol)
             pipeline_df = pipeline_df.append(df, sort=False)
         final_dict[telescope] = pipeline_df
 
     return final_dict
+
+
+def _isolate_products(df_tel, hpso):
+    """
+    Generate product system sizing information for each component
+
+    Notes
+    -----
+    df_tel is expected to be partial dataframe of the original output
+    from the sdp-par-model system sizing, generated by the following:
+
+    >>> df_tel = df_csv.T[df_csv.T['Telescope'] == telescope].T.fillna(-1)
+    where `df_csv` is the original data frame
+
+                                        hpso04b (Ingest) [Bmax=4062.5] ...
+    -> Image Spectral Fitting [Tera/s]               0.004
+    ->  Flag [Tera/s]                                4.5
+    ...
+
+    Parameters
+    ----------
+    df_tel : pd.DataFrame
+        Data frame storing telescope specific system sizing from sdp-par-model
+    Returns
+    -------
+    """
+    pipeline_products = {}
+
+    for pl in [col for col in df_tel.columns if hpso in col]:
+        pipeline_overview = {}
+        pipeline_data_overview = {}
+        column = df_tel[pl]
+        splt = pl.split()
+        if '[]' in splt:
+            splt.remove('[]')
+        pipeline = splt[1].strip('()')
+        baseline = float(column['Max Baseline [km]']) * 1000
+        pipeline_overview['Baseline'] = baseline
+        pipeline_data_overview['Baseline'] = baseline
+        for product in PRODUCTS:
+            compute_entry = column.loc[
+                [f'-> {product} [PetaFLOP/s]']]
+            data_entry = column.loc[[f'-> {product} [Tera/s]']]
+            if compute_entry[0] == ' ' or compute_entry[0] == '':
+                pipeline_overview[product] = -1
+            else:
+                pipeline_overview[product] = float(compute_entry)
+
+            if data_entry[0] == ' ' or data_entry[0] == '':
+                pipeline_data_overview[product] = -1
+            else:
+                pipeline_data_overview[product] = float(data_entry)
+            pipeline_products[pipeline] = pipeline_overview
+            pipeline_products[
+                f'{pipeline}_data'
+            ] = pipeline_data_overview
+
+    return pipeline_products
 
 
 def generate_pandas_system_sizing(
@@ -312,14 +391,14 @@ def generate_pandas_system_sizing(
     """
 
     files = os.listdir(in_dir)
-    LOGGER.info(f'Searching {DATA_DIR} for sdp-par-model reports...')
+    LOGGER.info(f'Searching {dir} for sdp-par-model reports...')
     for baseline in files:
         LOGGER.info(f'Processing {baseline} generated by sdp-par-model:')
         length = baseline.split("_")[1]
         if total:
 
             total_dict = csv_to_pandas_total_compute(
-                f'{DATA_DIR}/{baseline}',
+                f'{dir}/{baseline}',
             )
             for telescope in total_dict:
                 fn = f'{OUTPUT_DIR}/total_compute_{telescope}_{length}.csv'
@@ -327,7 +406,7 @@ def generate_pandas_system_sizing(
                 total_dict[telescope].to_csv(fn)
         if components:
             pipe_dict = csv_to_pandas_pipeline_components(
-                f'{DATA_DIR}/{baseline}', length
+                f'{dir}/{baseline}', length
             )
             fn = (f'{OUTPUT_DIR}/component_compute_{telescope}_'
                   + f'{length}.csv')
@@ -335,24 +414,36 @@ def generate_pandas_system_sizing(
             pipe_dict[telescope].to_csv(fn)
 
 
-logging.basicConfig(level="INFO")
-LOGGER = logging.getLogger()
-if __name__ == '__main__':
-    # System sizing for each baseline:
-    DATA_DIR = f'data/parametric_model/'
-    OUTPUT_DIR = f'data/pandas_sizing/'
-    files = os.listdir(DATA_DIR)
-    LOGGER.info(f'Searching {DATA_DIR} for sdp-par-model reports...')
+def compile_baseline_sizing(data_dir, total=True, component=True):
+    """
+    Given a directory, produce pandas system sizing for each baseline and
+    produce a dataframe that contains all baselines
+
+    Parameters
+    ----------
+    data_dir
+    total : bool
+        If False, do not generate total system sizing data frame
+    component : bool
+        If False, do not generate component system sizingi data frame
+
+    Returns
+    -------
+    total_sizing, component_sizing : dict
+        Python dicitonary for each sizing, for each telescope
+    """
+    files = os.listdir(data_dir)
+    LOGGER.info(f'Searching {data_dir} for sdp-par-model reports...')
     total_sizing = {}
     component_sizing = {}
     for baseline in files:
         LOGGER.info(f'Processing {baseline} generated by sdp-par-model:')
         length = baseline.split("_")[1]
         total_dict = csv_to_pandas_total_compute(
-            f'{DATA_DIR}/{baseline}',
+            f'{data_dir}/{baseline}',
         )
         pipe_dict = csv_to_pandas_pipeline_components(
-            f'{DATA_DIR}/{baseline}', length
+            f'{data_dir}/{baseline}',
         )
         for tel in total_dict:
             if tel in total_sizing:
@@ -374,7 +465,16 @@ if __name__ == '__main__':
                     pipe_dict[tel]
                 )
                 # LOGGER.info(")
+    return total_sizing, component_sizing
 
+
+logging.basicConfig(level="INFO")
+LOGGER = logging.getLogger()
+if __name__ == '__main__':
+    # System sizing for each baseline:
+    dir = f'data/sdp-par-model_output/'
+    OUTPUT_DIR = f'data/pandas_sizing/'
+    total_sizing, component_sizing = compile_baseline_sizing(dir)
     for tel in total_sizing:
         fn_total = f'{OUTPUT_DIR}/total_compute_{tel}.csv'
         LOGGER.info(f'Writing Total Compute CSV to {fn_total}')
