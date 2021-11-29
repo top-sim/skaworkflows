@@ -25,7 +25,9 @@ out his system sizing analysis into csv file (for ease of repeatability).
 import os
 import logging
 import pandas as pd
-from zope.interface import named
+
+# logging.basicConfig(level="INFO")
+LOGGER = logging.getLogger()
 
 KEYS = {
     'hpso': "HPSO", 'time': "Time [%]", 'tobs': " Tobs [h]",
@@ -175,6 +177,7 @@ def csv_to_pandas_total_compute(csv_path):
         hpso_dict = {header: [] for header in HPSO_DATA}
         df_from_hpso_dict = pd.DataFrame(data=hpso_dict)
         for i, hpso in enumerate(SKA_HPSOS[telescope]):
+            LOGGER.info(f'Processing total sizing for {hpso}')
             tmp_dict = {header: 0 for header in HPSO_DATA}
             rflop_total, rt_flop_total, tmp_dict = (
                 _isolate_total_sizing(df_tel, tmp_dict, hpso)
@@ -299,6 +302,7 @@ def csv_to_pandas_pipeline_components(csv_path):
         pipeline_df = pd.DataFrame()
         max_baseline = max((df_ska.loc['Max Baseline [km]']).astype(float))
         for hpso in sorted(SKA_HPSOS[telescope]):
+            LOGGER.info(f'Processing component sizing for {hpso}')
             pipeline_products = _isolate_products(df_ska, hpso)
             df = pd.DataFrame(pipeline_products).T
             df.index.name = 'Pipeline'
@@ -468,20 +472,21 @@ def compile_baseline_sizing(data_dir, total=True, component=True):
     return total_sizing, component_sizing
 
 
-logging.basicConfig(level="INFO")
-LOGGER = logging.getLogger()
 if __name__ == '__main__':
     # System sizing for each baseline:
+    logging.basicConfig(level='WARNING')
     dir = f'data/sdp-par-model_output/'
     OUTPUT_DIR = f'data/pandas_sizing/'
     total_sizing, component_sizing = compile_baseline_sizing(dir)
     for tel in total_sizing:
         fn_total = f'{OUTPUT_DIR}/total_compute_{tel}.csv'
-        LOGGER.info(f'Writing Total Compute CSV to {fn_total}')
+        LOGGER.info(f'Writing total system sizing for {tel}to {fn_total}')
         total_sizing[tel].to_csv(fn_total)
     for tel in component_sizing:
         fn_component = f'{OUTPUT_DIR}/component_compute_{tel}.csv'
-        LOGGER.info(f'Writing Pipeline Compute CSV to {fn_component}')
+        LOGGER.info(
+            f'Writing component compute sizing for {tel} to {fn_component}'
+        )
         component_sizing[tel].to_csv(fn_component)
 
     LOGGER.info(f"Final Output data in {OUTPUT_DIR}/:")

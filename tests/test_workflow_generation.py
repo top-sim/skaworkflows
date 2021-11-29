@@ -183,17 +183,43 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         self.observations = []
 
+    def test_generate_cost_per_product_workflow(self):
+        """
+        For a workflow, get a product and determine the cost of each task on
+        that product
+        Returns
+        -------
+
+        """
+
     def test_generate_workflow_from_observation(self):
         """
         From a single observation, produce a workflow, get the file path,
         and return the location and the 'pipelines' dictionary entry.
+
+        * If the telescope demand is not complete, this will affect the
+        calculations
+        * The number of frequency channels will affect the size of the workflow
+
+        This is reliant on the hpo.generate_cost_per_product_workflow
+
         Returns
         -------
 
         """
         # Get an observation object and create a file for the associated HPSO
         self.obs1 = hpo.Observation(1, 'hpso01', 32, 60, 'dprepa', 64, 'long')
+        total_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
+        component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
+        telescope_max = hpo.telescope_max(
+            total_system_sizing, self.obs1.baseline
+        )
+        self.assertEqual(512, telescope_max)
 
+        base_dir = 'test/data/'
+        hpo.generate_workflow_from_observation(
+            self.obs1, telescope_max, base_dir, component_system_sizing
+        )
         self.assertTrue(False)
 
     def test_generate_cost_per_product(self):
@@ -210,21 +236,13 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         Points of tests include:
 
-        * If the telescope demand is not complete, this will affect the
-        calculations
-        * The number of frequency channels will affect the size of the workflow
-
-        This is reliant on the generate_cost_per_product workflow
         Returns
         -------
 
         """
         # Ground truths of the workflow
 
-        total_system_sizing = TOTAL_SYSTEM_SIZING
-        component_system_sizing = COMPONENT_SYSTEM_SIZING
 
-        generate_workflow_from_observation(observation, telescope_max, base_dir)
 
     def test_ingest_demand_calc(self):
         max_ingest = self.system_sizing[

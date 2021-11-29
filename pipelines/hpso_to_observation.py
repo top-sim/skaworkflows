@@ -260,13 +260,13 @@ def create_buffer_config(itemised_spec, ratio):
     }
     hot, cold = ratio
     spec['buffer']['hot']['capacity'] = int(
-            itemised_spec.total_storage * (hot / cold)
+        itemised_spec.total_storage * (hot / cold)
     )
     spec['buffer']['cold']['capacity'] = int(
-            itemised_spec.total_storage * (1 - (hot / cold))
+        itemised_spec.total_storage * (1 - (hot / cold))
     )
     spec['buffer']['hot']['max_ingest_rate'] = int(
-            itemised_spec.total_bandwidth * (hot / cold)
+        itemised_spec.total_bandwidth * (hot / cold)
     )
     spec['buffer']['cold']['max_data_rate'] = itemised_spec.ethernet
     return spec
@@ -338,6 +338,27 @@ def construct_telescope_config_from_observation_plan(
         observation_list.append(tmp_dict)
 
     return observation_list
+
+
+def telescope_max(system_sizing, baseline):
+    """
+
+    Parameters
+    ----------
+    system_sizing : pd.DataFrame
+        Dataframe using our translated system sizing data produced by
+        `data.pandas_system_sizing`a
+    baseline
+
+    Returns
+    -------
+
+    """
+
+    bl = Baselines[baseline].value
+    tmax = max(system_sizing[system_sizing['Baseline'] == bl]['Stations'])
+
+    return tmax
 
 
 def generate_workflow_from_observation(observation, telescope_max, base_dir,

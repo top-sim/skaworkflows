@@ -21,6 +21,8 @@ import logging
 
 import networkx as nx
 
+LOGGER = logging.getLogger(__name__)
+
 
 def update_number_of_channels(lgt_path, channels):
     """
@@ -308,16 +310,13 @@ def produce_final_workflow_structure(lgt_path, pgt_path, channels):
     return wfdict
 
 
-logging.basicConfig(level="DEBUG")
-LOGGER = logging.getLogger(__name__)
-
 if __name__ == '__main__':
     LOGGER.info("Generating test data and unrolling")
     res = unroll_logical_graph(
         'tests/data/eagle_lgt_scatter_minimal.graph',
         'tests/data/daliuge_pgt_scatter_minimal.json'
     )
-
+    logging.basicConfig(level="DEBUG")
     # lgt_object = update_number_of_channels(
     #     'tests/data/eagle_lgt_scatter_minimal.graph', 4
     # )

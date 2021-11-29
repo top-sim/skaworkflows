@@ -22,7 +22,7 @@ import pandas as pd
 from pipelines.hpso_to_observation import Observation
 from pipelines.hpso_to_observation import create_observation_plan, \
     construct_telescope_config_from_observation_plan, \
-    create_buffer_config
+    create_buffer_config, compile_observations_and_workflows
 
 from pipelines.common import SI
 
@@ -32,7 +32,7 @@ DATA_DIR = 'data/parametric_model'
 LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
 
 SYSTEM_SIZING_DIR = 'data/pandas_sizing'
-TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low'
+TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low.csv'
 
 COMPONENT_SYSTEM_SIZING = None
 CLUSTER = 'tests/PawseyGalaxy_nd_1619058732.json'
@@ -67,7 +67,7 @@ class TestObservationPlanGeneration(unittest.TestCase):
         self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa', 256, 'long')
         self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa', 128, 'long')
         self.obs3 = Observation(3, 'hpso01', 32, 30, 'drepa', 256, 'long')
-        self.system_sizing = pd.read_csv(LONG)
+        self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         self.max_telescope_usage = 32  # 1/16th of the telescope
 
     def test_create_observation_plan_notiebreaks(self):
