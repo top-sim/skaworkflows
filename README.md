@@ -79,4 +79,3 @@ the `notebooks/SKA1_Export.ipynb` notebook in the sdp-par-model repository.
 e.g. DeGridding for an entire imaging pipeline for long baseline is 0.1Terrabytes/second 
 
 For an application that takes 1 minute, this is 6 terrabytes of data; not taking data transfer time into account, existing system provisioning shows that for a single node the memory is 31GB. The data input into a node's memory is far greater, which requires the application to process data in chunks, write to disk, and then process the data again. 
-

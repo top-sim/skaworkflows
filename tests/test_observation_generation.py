@@ -19,12 +19,12 @@ import json
 
 import pandas as pd
 
-from pipelines.hpso_to_observation import Observation
-from pipelines.hpso_to_observation import create_observation_plan, \
+from workflow.hpso_to_observation import Observation
+from workflow.hpso_to_observation import create_observation_plan, \
     construct_telescope_config_from_observation_plan, \
     create_buffer_config, compile_observations_and_workflows
 
-from pipelines.common import SI
+from workflow.common import SI
 
 from hpconfig.specs.sdp import SDP_LOW_CDR
 
@@ -98,7 +98,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
     def setUp(self):
         self.obs1 = Observation(
             count=2, hpso='hpso01', demand=32,
-            duration=60, pipeline='dprepa', channels=256,
+            duration=60, workflows=['dprepa'], channels=256,
             baseline='long'
         )
         with open(CLUSTER) as jf:
@@ -111,21 +111,15 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         self.obs2 = Observation(1, 'hpso01', 32, 60, 'dprepa', 256, 'long')
         self.obs3 = Observation(2, 'hpso04a', 16, 30, 'dprepa', 256, 'long')
 
-    def test_workflow_generated_from_observation(self):
-        """
-        Given an observation, create a workflow file from the observation
-        specifications based on the system sizing details provided.
-
-
-        Returns
-        -------
-
-        """
-
-        telescope_max = 512.0  # Taken from total system sizing
-        base_dir = "test/data/tmp"
-        component_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
-
+    def test_ingest_demand_calc(self):
+        # Start with a spec, then determine how many machines we will need
+        # based on the ingest size
+        max_ingest = self.system_sizing[
+            self.system_sizing['HPSO'] == 'hpso01'
+            ]['Ingest [Pflop/s]']
+        ingest_flops = 32 / 512 * (float(max_ingest) * SI.peta)
+        self.assertEqual(123, hpo._find_ingest_demand(self.cluster,
+                                                      ingest_flops))
 
     def test_telescope_config_sizing(self):
         """
@@ -134,13 +128,31 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         These are used in TopSim to count how much data is being produced in
         the system during an observation on the telescope.
 
+        >>>    {..."telescope": {
+        >>>       "total_arrays": 512,
+        >>>       "pipelines": {
+        >>>           "DPrepA": {
+        >>>               "ingest_demand": 128,
+        >>>                "workflow": "final/directory/for/workflow",
+        >>>           },
+        >>>     ...}
+
+        This is testing the combination of
+
+        generate_workflow_from_observation
+        generate_cost_per_product
+        find_ingest_deman
+
         Returns
         -------
 
         """
         itemised_spec = SDP_LOW_CDR()
+        total_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
+        component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         obslist = construct_telescope_config_from_observation_plan(
-            self.plan, TOTAL_SYSTEM_SIZING, itemised_spec
+            self.plan, total_system_sizing, component_system_sizing,
+            itemised_spec
         )
         # The number of channels is 256; this is half the number of max
         # channels, so we would expect the size to be half of the stored data

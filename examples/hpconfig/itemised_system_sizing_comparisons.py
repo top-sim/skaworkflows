@@ -17,18 +17,18 @@ import math
 
 import pandas as pd
 from hpconfig.specs import sdp
-from pipelines.common import SI
+from workflow.common import SI
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 
-def collate_sdp_globaldataframe(adjusted=True, human_readable=True):
+def collate_sdp_globaldataframe(adjusted=False, human_readable=True):
     """
     Get the global system compute values for the SDP and produce the data frame
 
     cdr : bool
-        If False, use 'cdr' metrics
+        If True, use 'Adjusted' specifications
     Returns
     -------
 
@@ -37,7 +37,7 @@ def collate_sdp_globaldataframe(adjusted=True, human_readable=True):
     if adjusted:
         sdp_obj = sdp.SKA_Adjusted()
     else:
-        sdp_obj = sdp.SKA_CDR()
+        sdp_obj = sdp.SDP_LOW_CDR()
 
     if human_readable:
         LOGGER.debug('Human Readable selected')
@@ -62,7 +62,7 @@ def calculate_equivalent_time_sdp(adjusted=True, telescope='low'):
 
     """
 
-    sdpc = sdp.SKA_CDR()
+    sdpc = sdp.SDP_LOW_CDR()
     required_floprate = (
             sdpc.maximal_use_case / sdpc.maximal_obs_time
     )
@@ -73,13 +73,11 @@ def calculate_equivalent_time_sdp(adjusted=True, telescope='low'):
         total_system_flops = required_floprate / sdpc.estimated_efficiency
         compute_per_node = sdpc.gpu_peak_flops * sdpc.gpu_per_node
         additional_nodes = math.ceil(
-            (total_system_flops - sdpc.SKALOW_total_compute) / compute_per_node
+            (total_system_flops - sdpc.total_compute) / compute_per_node
         )
-        total_nodes = additional_nodes+sdpc.SKALOW_nodes
+        total_nodes = additional_nodes+sdpc.nodes
 
     df = sdpc.to_df(human_readable=True)
-    # Get rid of mid, as we are doing 'low'
-    df = df.drop(len(df)-1)
     row = dict(df.iloc[0])
     row['Telescope'] = 'Low (Equivalent Time)'
     row['$|M_{\\mathrm{SDP}}$'] = (
@@ -95,7 +93,6 @@ def calculate_equivalent_time_sdp(adjusted=True, telescope='low'):
 
     df.loc[len(df)] = row
     return df
-    # row = [telescope, total_nodes,]
 
 
 if __name__ == '__main__':
@@ -108,3 +105,5 @@ if __name__ == '__main__':
     LOGGER.info("Number of nodes needed to compute in same time as observation")
     LOGGER.info(calculate_equivalent_time_sdp().to_latex(index=False,
                                                          escape=False))
+
+

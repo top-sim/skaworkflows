@@ -153,13 +153,26 @@ def generate_graphic_from_networkx_graph(nx_graph, output_path):
     # cmd_list = ['dot', 'unroll', '-fv', '-L', ]
 
 
-def eagle_to_topsim(eagle_graph, generate_dot=False):
+def eagle_to_topsim(eagle_graph, workflow, time=False, generate_dot=False):
     """
     Produce a JSON-compatible configuration file for a topsim graph
 
+    Parameters
+    ----------
+    eagle_graph : str
+        Path directory to the Logical Graph template we are translating
+
+    workflow: str
+        The type of workflow (DPrepA, ICAL etc.) that is being generated.
+        Necessary for when we concatenate the workflows together.
+
+    time: bool, default=False
+    The unit in which computation 'cost'. Historically, task DAG
+    scheduling has used the total seconds it takes to run a task
+
     Notes
     -----
-    We default to `"time":False` here as we will be using FLOPs and Bytes
+    We default to `"time": False` here as we will be using FLOPs and Bytes
     values when creating the pipeline characterisations. If `"time": True` was
     the case, then the values would be assumed as time units rather than
     compute units.
@@ -178,14 +191,14 @@ def eagle_to_topsim(eagle_graph, generate_dot=False):
     LOGGER.info(f"Preparing {eagle_graph} for LGT->PGT Translation")
     daliuge_json = unroll_logical_graph(eagle_graph)
     jdict = json.loads(daliuge_json)
-    unrolled_nx = _daliuge_to_nx(jdict)
+    unrolled_nx = _daliuge_to_nx(jdict, workflow)
 
     # Convering DALiuGE nodes to readable nodes
     LOGGER.info(f"Graph converted to TopSim-compliant data")
 
     jgraph = {
         "header": {
-            "time": False,
+            "time": time,
         },
         'graph': nx.readwrite.node_link_data(unrolled_nx)
     }
@@ -193,41 +206,7 @@ def eagle_to_topsim(eagle_graph, generate_dot=False):
     return jgraph
 
 
-def _add_generated_values_to_graph(
-        nxgraph,
-        mean,
-        uniform_range,
-        ccr,
-        multiplier,
-        node_identifier,
-        data_intensive=False
-):
-    """
-    Produces a new graph that converts the DALiuGE Node labels into easier-to-read values,
-    and adds the generated computation and data values to the nodes and edges respectively.
-    :param nxgraph: The NetworkX DiGraph that is with raw DALiuGE node information
-    :return: A NetworkX DiGraph
-    """
-    translation_dict = {}
-    for i, node in enumerate(nx.topological_sort(nxgraph)):
-        translation_dict[node] = i
-
-    translated_graph = nx.DiGraph()
-    for key in translation_dict:
-        translated_graph.add_node(translation_dict[key])
-
-    for edge in nxgraph.edges():
-        (u, v) = edge
-        translated_graph.add_edge(translation_dict[u], translation_dict[v])
-
-    new = [node_identifier + str(node) for node in translated_graph.nodes()]
-    mapping = dict(zip(translated_graph, new))
-    translated_graph = nx.relabel_nodes(translated_graph, mapping)
-
-    return translated_graph
-
-
-def _daliuge_to_nx(dlg_json_dict):
+def _daliuge_to_nx(dlg_json_dict, workflow):
     """
 
     Take a daliuge json file and read it into a NetworkX
@@ -239,6 +218,10 @@ def _daliuge_to_nx(dlg_json_dict):
     -------
     unrolled_nx : networkx.DiGraph
         Directed graph representation of Physical Graph Template
+
+    workflow : str
+        What type of workflow (i.e. DPrepA, DPrepB, ICAL) to append to
+        the names of components
 
     Notes
     -----
@@ -263,27 +246,29 @@ def _daliuge_to_nx(dlg_json_dict):
             else:
                 task_names[label] = 1
             labels[oid] = f"{label}_{task_names[label]}"
-            node = (f'{label}_{task_names[label]}', {'comp': 0})
+            name = f'{workflow}_{label}_{task_names[label]}'
+            node = (name, {'comp': 0})
             node_list.append(node)
 
     for element in dlg_json_dict:
-        if 'storage' in element.keys():
-            if 'producers' in element and 'consumers' in element:
-                for u in element['producers']:
-                    for v in element['consumers']:
-                        edge = (labels[u], labels[v])
-                        edge_list.append(
-                            (
-                                labels[u],
-                                labels[v],
-                                {
-                                    'data_size': 0,
-                                    'u': u,
-                                    'v': v,
-                                    'data_drop_oid': element['oid']
-                                }
-                            )
+        if ('storage' in element.keys()) and (
+                'producers' in element and 'consumers' in element
+        ):
+            for u in element['producers']:
+                for v in element['consumers']:
+                    edge = (labels[u], labels[v])
+                    edge_list.append(
+                        (
+                            f'{workflow}_{labels[u]}',
+                            f'{workflow}_{labels[v]}',
+                            {
+                                'data_size': 0,
+                                'u': u,
+                                'v': v,
+                                'data_drop_oid': element['oid']
+                            }
                         )
+                    )
 
     unrolled_nx.add_nodes_from(node_list)
     unrolled_nx.add_edges_from(edge_list)

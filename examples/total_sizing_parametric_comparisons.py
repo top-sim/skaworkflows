@@ -26,7 +26,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from pipelines.common import SI
+from workflow.common import SI
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -207,16 +207,16 @@ def generate_pipeline_component_table_baselines(
                 (df['Pipeline'] == pipeline)
                 & (df['hpso'] == 'hpso01')
                 ].drop(['Pipeline', 'hpso'],axis=1)
-            total = row[row > 0].T.sum()
+            col_list = list(row)
+            col_list.remove('Baseline')
+            total = row[row > 0][col_list].T.sum()
             row['Total'] = total
             # row = row.add_suffix(' (PFLOPS)')
             row = row.replace(-1.0, '--')
             bline = 0
-            for x in baselines.keys():
-                if x in f:
-                    bline = baselines[x]
+
             # TODO This becomes a column name
-            row.insert(0, 'Components', f'Baseline ({bline}m)')
+            # row.insert(0, 'Components', f'Baseline ({bline}m)')
             row_df = row_df.append(row, ignore_index=True)
     row_df = row_df.set_index('Components').transpose()
     return row_df

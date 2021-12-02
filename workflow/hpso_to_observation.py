@@ -31,10 +31,16 @@ import json
 import math
 import pandas as pd
 
-import pipelines.eagle_daliuge_translation as edt
-from pipelines.common import Baselines, MAX_CHANNELS, MAX_TEL_DEMAND, \
+from enum import Enum
+
+import workflow.eagle_daliuge_translation as edt
+from workflow.common import Baselines, MAX_CHANNELS, MAX_TEL_DEMAND, \
     pipeline_paths, component_paths
 
+class HPSO(Enum):
+    ingest = ['ingest, rcal, ']
+    hpso1 = ['ingest','dprepa, dprepb,dprepc,dprepd']
+    hpso2a = ['ingest']
 
 class Observation:
     """
@@ -48,7 +54,7 @@ class Observation:
         The high-priority science project the observation is associated with
     duration : int
         The duration of the observation in minutes
-    pipeline : str
+    workflows : list()
         The imaging pipeline to process the observation data
     channels : int
         The nunber of averaged channels expected to make up a workflow
@@ -60,14 +66,14 @@ class Observation:
     def __init__(
             self,
             count, hpso, demand, duration,
-            pipeline, channels, baseline
+            workflows, channels, baseline
     ):
         self.telescope = "low"
         self.count = count
         self.hpso = hpso
         self.demand = demand
         self.duration = duration
-        self.pipeline = pipeline
+        self.workflows = workflows
         self.channels = channels
         self.baseline = Baselines[baseline]
         self.workflow_path = None
@@ -273,7 +279,7 @@ def create_buffer_config(itemised_spec, ratio):
 
 
 def construct_telescope_config_from_observation_plan(
-        plan, total_system_sizing, itemised_spec
+        plan, total_system_sizing, component_system_sizing, itemised_spec
 ):
     """
     Based on a simplified dictionaries built from the System Sizing for the
@@ -289,6 +295,9 @@ def construct_telescope_config_from_observation_plan(
         This is the system sizing that contains total system costs. It is
         from this that we get the maximum number of arrays available,
         and the baseline-dependent ingest rate for the selected HPSO.
+    component_system_sizing: :py:obj:`pd.DataFrame`
+        Component system sizing contains the predicted FLOPS/GBs-1 output of
+        each task within a workflow.
 
     itemised_spec: :py:obj:
         This is the itemised system sizing that provides node-based
@@ -406,7 +415,7 @@ def generate_workflow_from_observation(observation, telescope_max, base_dir,
     return final_path
 
 
-def generate_cost_per_product(workflow, product_table, hpso, base_dir):
+def generate_cost_per_product(workflow, product_table, observation, base_dir):
     """
     Produce a cost value per node within the workflow graph for the given
     product.
@@ -429,7 +438,7 @@ def generate_cost_per_product(workflow, product_table, hpso, base_dir):
     product_table : pd.DataFrame
         Pandas dataframe containing the components
 
-    hpso : str
+    observation : str
         the HPSO we are generating.
 
     cluster: str
@@ -462,6 +471,21 @@ def generate_cost_per_product(workflow, product_table, hpso, base_dir):
 
     return total_product_costs
 
+def isolate_component_cost(observation, component, component_sizing):
+    """
+    Use HPSO and pipeline information to generate the correct workflow
+    information
+
+    Parameters
+    ----------
+    observation
+    component
+    component_sizing
+
+    Returns
+    -------
+
+    """
 
 def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
     """

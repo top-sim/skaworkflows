@@ -19,9 +19,9 @@ import json
 import os
 
 import pandas as pd
-import pipelines.hpso_to_observation as hpo
-import pipelines.eagle_daliuge_translation as edt
-from pipelines.common import SI
+import workflow.hpso_to_observation as hpo
+import workflow.eagle_daliuge_translation as edt
+from workflow.common import SI
 
 BASE_DATA_DIR = "data/pandas_sizing/"
 TEST_DATA_DIR = 'tests/data/'
@@ -35,6 +35,22 @@ PGT_CHANNEL_UPDATE = f'{TEST_DATA_DIR}/daliuge_pgt_scatter_channel-update.json'
 TOPSIM_PGT_GRAPH = 'tests/data/topsim_compliant_pgt.json'
 NO_PATH = "dodgy.path"
 COMPONENT_SYSTEM_SIZING = f'{BASE_DATA_DIR}/component_compute_SKA1_low_long.csv'
+
+
+# SKA Low Pipelines
+#
+#         # hpso01:  (Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
+#         #           Pipelines.ICAL, Pipelines.DPrepA,
+#         #           Pipelines.DPrepB, Pipelines.DPrepC, Pipelines.DPrepD),
+#         # hpso02a: (Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
+#         #           Pipelines.ICAL, Pipelines.DPrepA,
+#         #           Pipelines.DPrepB, Pipelines.DPrepC, Pipelines.DPrepD),
+#         # hpso02b: (Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
+#         #           Pipelines.ICAL, Pipelines.DPrepA,
+#         #           Pipelines.DPrepB, Pipelines.DPrepC, Pipelines.DPrepD),
+#         # hpso04a: (Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
+#         #           Pipelines.PSS),
+#
 
 
 class TestPipelineStructureTranslation(unittest.TestCase):
@@ -70,19 +86,21 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         number_channels = 4
         # First convert channels from JSON string/dict
         lgt_dict = edt.update_number_of_channels(
-            LGT_CHANNEL_UPDATE, number_channels
+            LGT_PATH, number_channels
         )
         self.assertTrue(isinstance(lgt_dict, dict))
         self.assertTrue('linkDataArray' in lgt_dict)
-        # json_to_topsim('data/eagle/daliuge_pgt_scatter_32scatter_4major.json',
-        #                'data/eagle/topsim_conversion_32scatter_4major.json',
-        #                generate_dot=True)
-
+        #TODO UPDATE THIS TEST
+        # The test needs to have the EAGLE scatter (base), and then I need to
+        # manually adjust the EAGLE_SCATTER_UPDATED to reflect what it actually is
+        # THis means updating major/minor cycles, and the GATHER.
         # Pass updated JSON string (not file) to unroll_logical_graph
         pgt_dict = json.loads(edt.unroll_logical_graph(lgt_dict, file_in=False))
         with open(PGT_CHANNEL_UPDATE) as f:
             test_pgt = json.load(f)
-        self.assertEqual(pgt_dict, test_pgt)
+        self.assertEqual(test_pgt, pgt_dict)
+        # self.assertEqual(163, len(pgt_dict))
+
 
         # Get returned string and confirm it is the same as a previously
         # converted logical graph
@@ -105,7 +123,7 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         minimal_pgt = 'tests/data/daliuge_pgt_scatter_minimal.json'
         with open(minimal_pgt) as f:
             jdict = json.load(f)
-        nx_graph = edt._daliuge_to_nx(jdict)
+        nx_graph = edt._daliuge_to_nx(jdict, 'DPrepA')
         self.assertEqual(21, len(nx_graph.nodes))
         self.assertEqual(21, len(nx_graph.edges))
 
@@ -118,7 +136,7 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         with open(PGT_PATH) as f:
             jdict = json.load(f)
         # jdict['oid']
-        nx_graph = edt._daliuge_to_nx(jdict)
+        nx_graph = edt._daliuge_to_nx(jdict, 'DPrepA')
         example_edge_attr = {
             "data_size": 0,
             "u": "1_-4_0/0",
@@ -127,10 +145,9 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         }
 
         self.assertDictEqual(
-            nx_graph.edges['Flag_3', 'FFT_3'],
+            nx_graph.edges['DPrepA_Flag_3', 'DPrepA_FFT_3'],
             example_edge_attr
         )
-
         # now test for multi-loop example
         # Expected grid is 2
         # expected subtract image is 4
@@ -140,15 +157,16 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         We use the converted daliuge_to_nx and then add additional
         information required by TopSim.
         """
-        self.assertRaises(FileExistsError, edt.eagle_to_topsim, NO_PATH)
-        final_graph = edt.eagle_to_topsim(LGT_PATH)
+        self.assertRaises(FileExistsError, edt.eagle_to_topsim, NO_PATH,
+                          'DPrepA')
+        final_graph = edt.eagle_to_topsim(LGT_PATH, 'DPrepA')
 
         example_edge = {
             "data_size": 0,
             "u": "1_-4_0/0",
             "v": "1_-13_0/0/1/0",
-            "source": "Flag_3",
-            "target": "FFT_3",
+            "source": "DPrepA_Flag_3",
+            "target": "DPrepA_FFT_3",
             "data_drop_oid": "1_-26_0/0",
         }
         nodes = final_graph['graph']['nodes']
@@ -175,6 +193,29 @@ class TestPipelineStructureTranslation(unittest.TestCase):
 
 # TODO Make sure that workflow paths in configuration files are relative to
 #  the config file and stored in a 'workflows/' directory.
+
+class TestWorkflowFromObservation(unittest.TestCase):
+
+    def setUp(self) -> None:
+        pass
+
+    def testConcatWorkflows(self):
+        """
+        Generate 2 workflows, and ensure that they have been correctly
+        concatenated
+
+        Returns
+        -------
+
+        """
+        minimal_pgt = 'tests/data/daliuge_pgt_scatter_minimal.json'
+        with open(minimal_pgt) as f:
+            jdict = json.load(f)
+        # We know this has 21 nodes and edges
+        nx_graph = edt._daliuge_to_nx(jdict, 'DPrepA')
+
+        pass
+
 
 class TestCostGenerationAndAssignment(unittest.TestCase):
 
@@ -208,7 +249,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         """
         # Get an observation object and create a file for the associated HPSO
-        self.obs1 = hpo.Observation(1, 'hpso01', 32, 60, 'dprepa', 64, 'long')
+        self.obs1 = hpo.Observation(1, 'hpso01', 32, 60, 64, 'long')
         total_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         telescope_max = hpo.telescope_max(
@@ -222,32 +263,31 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         )
         self.assertTrue(False)
 
-    def test_generate_cost_per_product(self):
+    def generate_cost_per_product(self, workflow, product_table, hpso):
         """
-        Given the
+
+        Parameters
+        ----------
+        workflow
+        product_table
+        hpso
+
         Returns
         -------
 
         """
 
-    def test_generate_workflow_from_observation(self):
+    def test_workflow_generated_from_observation(self):
         """
-        For a given observation, generate the workflow associated with it.
+        Given an observation, create a workflow file from the observation
+        specifications based on the system sizing details provided.
 
-        Points of tests include:
 
         Returns
         -------
 
         """
-        # Ground truths of the workflow
 
-
-
-    def test_ingest_demand_calc(self):
-        max_ingest = self.system_sizing[
-            self.system_sizing['HPSO'] == 'hpso01'
-            ]['Ingest [Pflop/s]']
-        ingest_flops = 32 / 512 * (float(max_ingest) * SI.peta)
-        self.assertEqual(123, hpo._find_ingest_demand(self.cluster,
-                                                      ingest_flops))
+        telescope_max = 512.0  # Taken from total system sizing
+        base_dir = "test/data/tmp"
+        component_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
