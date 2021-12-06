@@ -214,8 +214,6 @@ def generate_pipeline_component_table_baselines(
             # row = row.add_suffix(' (PFLOPS)')
             row = row.replace(-1.0, '--')
             bline = 0
-
-            # TODO This becomes a column name
             # row.insert(0, 'Components', f'Baseline ({bline}m)')
             row_df = row_df.append(row, ignore_index=True)
     row_df = row_df.set_index('Components').transpose()

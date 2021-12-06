@@ -1039,7 +1039,7 @@
                     "readonly": false,
                     "text": "Number loops",
                     "type": "Unknown",
-                    "value": "1"
+                    "value": "2"
                 }
             ],
             "flipPorts": false,
@@ -1131,7 +1131,7 @@
                     "readonly": false,
                     "text": "Number loops",
                     "type": "Unknown",
-                    "value": "1"
+                    "value": "2"
                 }
             ],
             "flipPorts": false,

@@ -150,8 +150,6 @@ def csv_to_pandas_total_compute(csv_path):
     makes the data selection and compiling much more explicit, and is (
     hopefully) more accessible to those accessing this codebase.
 
-    #TODO options to make this computer readable
-
     Returns
     -------
     final_dicts : dictionary
@@ -165,9 +163,6 @@ def csv_to_pandas_total_compute(csv_path):
     # Undefined values are okay to be treated as 0, as we want to add these
     # up for totals.
     df_csv = df_csv.fillna(0)
-    # TODO Shamelessly read baseline from the System sizing and add this to
-    #  dictionary, then compile the data accordingly
-
     # hpso_dict = {header: [] for header in hpso_data}
     # df_hpso = pd.DataFrame(data=hpso_dict)
     final_dict = {telescope: None for telescope in TELESCOPE_IDS}

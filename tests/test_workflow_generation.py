@@ -90,17 +90,11 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         )
         self.assertTrue(isinstance(lgt_dict, dict))
         self.assertTrue('linkDataArray' in lgt_dict)
-        #TODO UPDATE THIS TEST
-        # The test needs to have the EAGLE scatter (base), and then I need to
-        # manually adjust the EAGLE_SCATTER_UPDATED to reflect what it actually is
-        # THis means updating major/minor cycles, and the GATHER.
-        # Pass updated JSON string (not file) to unroll_logical_graph
-        pgt_dict = json.loads(edt.unroll_logical_graph(lgt_dict, file_in=False))
+        pgt_list = json.loads(edt.unroll_logical_graph(lgt_dict, file_in=False))
         with open(PGT_CHANNEL_UPDATE) as f:
             test_pgt = json.load(f)
-        self.assertEqual(test_pgt, pgt_dict)
-        # self.assertEqual(163, len(pgt_dict))
-
+        self.assertEqual(test_pgt, pgt_list)
+        self.assertEqual(283, len(pgt_list))
 
         # Get returned string and confirm it is the same as a previously
         # converted logical graph
@@ -190,9 +184,6 @@ class TestPipelineStructureTranslation(unittest.TestCase):
             os.remove(PGT_PATH_GENERATED)
         self.assertFalse(os.path.exists(PGT_PATH_GENERATED))
 
-
-# TODO Make sure that workflow paths in configuration files are relative to
-#  the config file and stored in a 'workflows/' directory.
 
 class TestWorkflowFromObservation(unittest.TestCase):
 
