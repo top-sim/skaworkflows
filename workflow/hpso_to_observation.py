@@ -37,10 +37,12 @@ import workflow.eagle_daliuge_translation as edt
 from workflow.common import Baselines, MAX_CHANNELS, MAX_TEL_DEMAND, \
     pipeline_paths, component_paths
 
+
 class HPSO(Enum):
     ingest = ['ingest, rcal, ']
-    hpso1 = ['ingest','dprepa, dprepb,dprepc,dprepd']
+    hpso1 = ['ingest', 'dprepa, dprepb,dprepc,dprepd']
     hpso2a = ['ingest']
+
 
 class Observation:
     """
@@ -65,8 +67,8 @@ class Observation:
 
     def __init__(
             self,
-            count, hpso, demand, duration,
-            workflows, channels, baseline
+            count, hpso, workflows, demand, duration,
+            channels, baseline
     ):
         self.telescope = "low"
         self.count = count
@@ -409,13 +411,13 @@ def generate_workflow_from_observation(observation, telescope_max, base_dir,
     product_table = pd.read_csv(component_paths[tel_base])
 
     final_path = generate_cost_per_product(
-        topsim_pgt, product_table, observation.hpso, base_dir
+        pgt, product_table, observation.hpso, base_dir
     )
 
     return final_path
 
 
-def generate_cost_per_product(workflow, product_table, observation, base_dir):
+def generate_cost_per_product(pgt, observation, component_sizing, base_dir):
     """
     Produce a cost value per node within the workflow graph for the given
     product.
@@ -433,17 +435,14 @@ def generate_cost_per_product(workflow, product_table, observation, base_dir):
 
     Parameters
     ----------
-    workflow : dictionary of the JSON graph we are focusing on
-
-    product_table : pd.DataFrame
-        Pandas dataframe containing the components
+    pgt : dict
+        Physical Graph Template that forms the basis of the workflow
 
     observation : str
         the HPSO we are generating.
 
-    cluster: str
-        path to the cluster specification required of the observation.
-
+    component_sizing : pd.DataFrame
+        Pandas dataframe containing the components
 
     Returns
     -------
@@ -455,37 +454,42 @@ def generate_cost_per_product(workflow, product_table, observation, base_dir):
     ]
 
     total_product_costs = {}
-    for element in workflow:
-        # Name of task in DALiuGE workflow is 'nm'
-        if 'outputs' in element.keys():
-            name = element['nm']
-            if name not in total_product_costs:
-                if name in ignore_components:
-                    # These are not 'products' that take compute time
-                    total_product_costs[name] = 0
-                else:
-                    df = product_table[['Pipeline', 'hpso', name]]
-                    df = df[(df['Pipeline'] == hpso) & (df['hpso'] == hpso)]
-                    value = float(df[name])
-                    total_product_costs[name] = value
+
+    # for each element in the workflow
+    # strip the name
+    # 
+    # 
 
     return total_product_costs
 
-def isolate_component_cost(observation, component, component_sizing):
+
+def isolate_component_cost(hpso, baseline, workflow, component, component_sizing):
     """
     Use HPSO and pipeline information to generate the correct workflow
     information
 
     Parameters
     ----------
-    observation
-    component
-    component_sizing
+    hpso : str
+        'Name' of the observation, which doubles as the HPSO
+    baseline: :py:object:`common.Baseline`
+    workflow : str
+    component : str
+    component_sizing : :py:obj:`pd.DataFrame`
 
     Returns
     -------
 
     """
+    obs_frame = component_sizing[
+        (component_sizing['hpso'] == hpso) &
+        (component_sizing['Baseline'] == baseline.value)
+    ]
+
+    cost = float(obs_frame[obs_frame['Pipeline'] == workflow][component])
+
+    return cost
+
 
 def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
     """

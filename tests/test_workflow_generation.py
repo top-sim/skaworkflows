@@ -26,7 +26,7 @@ from workflow.common import SI
 BASE_DATA_DIR = "data/pandas_sizing/"
 TEST_DATA_DIR = 'tests/data/'
 
-TOTAL_SYSTEM_SIZING = f'{BASE_DATA_DIR}total_compute_SKA1_Low_long.csv'
+TOTAL_SYSTEM_SIZING = f'{BASE_DATA_DIR}total_compute_SKA1_Low.csv'
 LGT_PATH = 'tests/data/eagle_lgt_scatter.graph'
 PGT_PATH = 'tests/data/daliuge_pgt_scatter.json'
 PGT_PATH_GENERATED = f'{TEST_DATA_DIR}/daliuge_pgt_scatter_generated.json'
@@ -34,7 +34,7 @@ LGT_CHANNEL_UPDATE = f'{TEST_DATA_DIR}/eagle_lgt_scatter_channel-update.graph'
 PGT_CHANNEL_UPDATE = f'{TEST_DATA_DIR}/daliuge_pgt_scatter_channel-update.json'
 TOPSIM_PGT_GRAPH = 'tests/data/topsim_compliant_pgt.json'
 NO_PATH = "dodgy.path"
-COMPONENT_SYSTEM_SIZING = f'{BASE_DATA_DIR}/component_compute_SKA1_low_long.csv'
+COMPONENT_SYSTEM_SIZING = f'{BASE_DATA_DIR}/component_compute_SKA1_Low.csv'
 
 
 # SKA Low Pipelines
@@ -213,16 +213,65 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
     def setUp(self) -> None:
         self.channels = 256
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
+        demand = 32
+        duration = 3600
+        channels = 64
+        self.obs1 = hpo.Observation(
+            1, 'hpso01', ['DPrepA'], demand, duration, channels, 'long'
+        )
+        self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
+
         self.observations = []
 
-    def test_generate_cost_per_product_workflow(self):
+    def testIsolateComponentCost(self):
         """
-        For a workflow, get a product and determine the cost of each task on
-        that product
+        isolate_component_cost takes observation, workflow, the component, and
+        the component-based system sizing as a arguments to find the total
+        FLOPS cost for that product
         Returns
         -------
 
         """
+
+        # long baseline, DPrepA - component is Degrid
+        component_cost = hpo.isolate_component_cost(
+            self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[0],
+            'Degrid', self.component_system_sizing
+        )
+        print(component_cost)
+        self.assertAlmostEquals(0.06615325754321748, component_cost, places=5)
+
+        component_cost = hpo.isolate_component_cost(
+            self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[0],
+            'Degrid', self.component_system_sizing
+        )
+        component_cost = hpo.isolate_component_cost(
+            self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[0],
+            'Degrid', self.component_system_sizing
+        )
+
+
+    def generate_cost_per_product(self):
+        """
+        Based on the number of channels and the observation specs, we divide
+        the cost across those tasks. Here, we test that the division occurs,
+        and that the total of all the divisions adds up to the total FLOPs
+        for the provided workflow.
+
+        workflow
+        product_table
+        hpso
+
+        Returns
+        -------
+
+        """
+
+        final_workflow = hpo.generate_cost_per_product(
+
+        )
+
+        self.assertTrue(False)
 
     def test_generate_workflow_from_observation(self):
         """
@@ -240,9 +289,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         """
         # Get an observation object and create a file for the associated HPSO
-        self.obs1 = hpo.Observation(1, 'hpso01', 32, 60, 64, 'long')
         total_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
-        component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         telescope_max = hpo.telescope_max(
             total_system_sizing, self.obs1.baseline
         )
@@ -250,23 +297,9 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         base_dir = 'test/data/'
         hpo.generate_workflow_from_observation(
-            self.obs1, telescope_max, base_dir, component_system_sizing
+            self.obs1, telescope_max, base_dir, self.component_system_sizing
         )
         self.assertTrue(False)
-
-    def generate_cost_per_product(self, workflow, product_table, hpso):
-        """
-
-        Parameters
-        ----------
-        workflow
-        product_table
-        hpso
-
-        Returns
-        -------
-
-        """
 
     def test_workflow_generated_from_observation(self):
         """
@@ -282,3 +315,4 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         telescope_max = 512.0  # Taken from total system sizing
         base_dir = "test/data/tmp"
         component_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
+        self.assertTrue(False)

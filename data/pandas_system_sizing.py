@@ -293,7 +293,7 @@ def csv_to_pandas_pipeline_components(csv_path):
 
     final_dict = {}
     for telescope in TELESCOPE_IDS:
-        df_ska = df_csv.T[df_csv.T['Telescope'] == telescope].T.fillna(-1)
+        df_ska = df_csv.T[df_csv.T['Telescope'] == telescope].T.fillna(0)
         pipeline_df = pd.DataFrame()
         max_baseline = max((df_ska.loc['Max Baseline [km]']).astype(float))
         for hpso in sorted(SKA_HPSOS[telescope]):
