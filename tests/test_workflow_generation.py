@@ -78,7 +78,7 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         result = edt.unroll_logical_graph(
             'tests/data/eagle_lgt_scatter_minimal.graph')
         jdict = json.loads(result)
-        with open('tests/data/daliuge_pgt_scatter_minimal.json') as f:
+        with open('tests/data/daliuge_scatter_minimal.json') as f:
             test_dic = json.load(f)
         self.assertListEqual(jdict, test_dic)
 
@@ -114,15 +114,24 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         # We set the seed to for edge assertion below, as the numbers are
         # randomly generated.
         random.seed(0)
-        minimal_pgt = 'tests/data/daliuge_pgt_scatter_minimal.json'
+        minimal_pgt = 'tests/data/daliuge_scatter_minimal.json'
         with open(minimal_pgt) as f:
             jdict = json.load(f)
-        nx_graph = edt._daliuge_to_nx(jdict, 'DPrepA')
+        nx_graph, task_dict = edt.daliuge_to_nx(jdict, 'DPrepA')
         self.assertEqual(21, len(nx_graph.nodes))
-        self.assertEqual(21, len(nx_graph.edges))
+        self.assertEqual(22, len(nx_graph.edges))
+        # Make sure the component exists and is properly initialised
 
         # Expected grid is 1
         # Expected degrid is 1
+        self.assertEqual(0, nx_graph.nodes['DPrepA_Flag_0']['comp'])
+        self.assertEqual(0, nx_graph.nodes['DPrepA_Grid_0']['comp'])
+        # There are two instances of 'Flag' application in the graph, so we
+        # expect two edges from this.
+        self.assertEqual(2, task_dict['Flag']['node'])
+        self.assertEqual(2, task_dict['Flag']['out_edge'])
+
+        self.assertEqual(1, task_dict['FFT']['out_edge'])
         # We want to double check that our translated JSON matches the
         # original relationships in the previous JSON graph.
         # Chck the following:
@@ -130,43 +139,50 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         with open(PGT_PATH) as f:
             jdict = json.load(f)
         # jdict['oid']
-        nx_graph = edt._daliuge_to_nx(jdict, 'DPrepA')
+        nx_graph, task_dict = edt.daliuge_to_nx(jdict, 'DPrepA')
+        # check our string counter is right, should have 0-2
+        self.assertFalse('DPrepA_Flag_3' in nx_graph.nodes)
+        # make sure the data is consistent
         example_edge_attr = {
             "data_size": 0,
             "u": "1_-4_0/0",
             "v": "1_-13_0/0/1/0",
             "data_drop_oid": "1_-26_0/0",
         }
-
         self.assertDictEqual(
-            nx_graph.edges['DPrepA_Flag_3', 'DPrepA_FFT_3'],
+            nx_graph.edges['DPrepA_Flag_2', 'DPrepA_FFT_2'],
             example_edge_attr
         )
         # now test for multi-loop example
         # Expected grid is 2
         # expected subtract image is 4
+        self.assertEqual(2, task_dict['Grid']['node'])
+        self.assertEqual(4, task_dict['Subtract Image Component']['node'])
 
-    def test_json_to_topsim(self):
+    def test_json_to_nx(self):
         """
         We use the converted daliuge_to_nx and then add additional
         information required by TopSim.
         """
-        self.assertRaises(FileExistsError, edt.eagle_to_topsim, NO_PATH,
+        self.assertRaises(FileExistsError, edt.eagle_to_nx, NO_PATH,
                           'DPrepA')
-        final_graph = edt.eagle_to_topsim(LGT_PATH, 'DPrepA')
+        final_graph, task_dict = edt.eagle_to_nx(LGT_PATH, 'DPrepA')
 
-        example_edge = {
+        example_edge_data = {
             "data_size": 0,
             "u": "1_-4_0/0",
             "v": "1_-13_0/0/1/0",
-            "source": "DPrepA_Flag_3",
-            "target": "DPrepA_FFT_3",
             "data_drop_oid": "1_-26_0/0",
         }
-        nodes = final_graph['graph']['nodes']
-        self.assertEqual(36, len(nodes))
-        edges = final_graph['graph']['links']
-        self.assertTrue(example_edge in edges)
+        # nodes = final_graph['graph']['nodes']
+        self.assertEqual(36, len(final_graph.nodes))
+        # edges = final_graph['graph']['links']
+        self.assertEqual(
+            example_edge_data,
+            final_graph.edges['DPrepA_Flag_2', 'DPrepA_FFT_2']
+        )
+        # self.assertTrue('task_dict' in final_graph['header'])
+        self.assertTrue(6, task_dict['Flag']['node'])
 
     def test_use_in_other_functions(self):
         pass
@@ -188,7 +204,14 @@ class TestPipelineStructureTranslation(unittest.TestCase):
 class TestWorkflowFromObservation(unittest.TestCase):
 
     def setUp(self) -> None:
-        pass
+        demand = 32
+        duration = 3600
+        channels = 1
+        self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
+        self.obs1 = hpo.Observation(
+            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
+            'long'
+        )
 
     def testConcatWorkflows(self):
         """
@@ -199,11 +222,29 @@ class TestWorkflowFromObservation(unittest.TestCase):
         -------
 
         """
-        minimal_pgt = 'tests/data/daliuge_pgt_scatter_minimal.json'
-        with open(minimal_pgt) as f:
-            jdict = json.load(f)
-        # We know this has 21 nodes and edges
-        nx_graph = edt._daliuge_to_nx(jdict, 'DPrepA')
+        workflows = ['DPrepA', 'DPrepB']
+        # minimal_pgt = 'tests/data/daliuge_pgt_scatter_minimal.json'
+        # with open(minimal_pgt) as f:
+        #     jdict = json.load(f)
+        # # We know this has 21 nodes and edges
+        final_graphs = {}
+        base_graph = LGT_PATH
+        # channel_lgt = edt.update_number_of_channels(
+        #     base_graph, self.obs1.channels
+        # )
+        for workflow in self.obs1.workflows:
+            nx_graph, task_dict = edt.eagle_to_nx(
+                base_graph, workflow, file_in=True
+            )
+            intermed_graph = hpo.generate_cost_per_product(
+                nx_graph, task_dict, self.obs1, workflow,
+                self.component_sizing
+            )
+            final_graphs[workflow] = intermed_graph
+        final_graph = edt.concatenate_workflows(final_graphs, self.obs1.workflows)
+        self.assertEqual(72, len(final_graph.nodes))
+
+        # Need to ensure that the DPrepA costs are Different to DPrepB
 
         pass
 
@@ -211,13 +252,12 @@ class TestWorkflowFromObservation(unittest.TestCase):
 class TestCostGenerationAndAssignment(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.channels = 256
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         demand = 32
         duration = 3600
         channels = 64
         self.obs1 = hpo.Observation(
-            1, 'hpso01', ['DPrepA'], demand, duration, channels, 'long'
+            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, 'long'
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
 
@@ -239,39 +279,62 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
             'Degrid', self.component_system_sizing
         )
         print(component_cost)
-        self.assertAlmostEquals(0.06615325754321748, component_cost, places=5)
+        self.assertAlmostEqual(0.06615325754321748, component_cost, places=5)
 
         component_cost = hpo.isolate_component_cost(
-            self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[0],
+            self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[1],
             'Degrid', self.component_system_sizing
         )
-        component_cost = hpo.isolate_component_cost(
-            self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[0],
-            'Degrid', self.component_system_sizing
-        )
+        self.assertAlmostEqual(0.031270291820095455, component_cost, places=5)
 
-
-    def generate_cost_per_product(self):
+    def test_generate_cost_per_product(self):
         """
         Based on the number of channels and the observation specs, we divide
         the cost across those tasks. Here, we test that the division occurs,
         and that the total of all the divisions adds up to the total FLOPs
         for the provided workflow.
 
-        workflow
-        product_table
-        hpso
+        Notes
+        ------
+        We have standard eagle, which has 2 minor cycles. For an observation
+        that is running on
 
         Returns
         -------
 
         """
-
+        # generate a workflow based on number of channels in the observation
+        wf = self.obs1.workflows[0]
+        channels = self.obs1.channels
+        nx_graph, task_dict = edt.eagle_to_nx(LGT_PATH, wf)
+        self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow = hpo.generate_cost_per_product(
+            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
+        )
+        # We want to make sure the comp cost has been updated
 
+        # TURN INTO GRAPH TO MAKE INTERACTION EASIER
+        self.assertAlmostEqual(
+            0.0330766287716087,
+            final_workflow.nodes['DPrepA_Degrid_0']['comp'],
+            places=5
         )
 
-        self.assertTrue(False)
+        # UPDATE CHANNELS TO A MUCH LARGER NUMBER
+        # self.assertTrue(False)
+        channel_lgt = edt.update_number_of_channels(LGT_PATH, channels)
+        nx_graph, task_dict = edt.eagle_to_nx(channel_lgt, wf, file_in=False)
+        self.assertEqual(128, task_dict['Degrid']['node'])
+        self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
+        final_workflow = hpo.generate_cost_per_product(
+            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
+        )
+
+        self.assertAlmostEqual(
+            0.0005168223245563866,
+            final_workflow.nodes['DPrepA_Degrid_0']['comp'],
+            places=5
+        )
 
     def test_generate_workflow_from_observation(self):
         """
@@ -289,6 +352,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         """
         # Get an observation object and create a file for the associated HPSO
+        base_dir = 'tests/data/'
         total_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         telescope_max = hpo.telescope_max(
             total_system_sizing, self.obs1.baseline

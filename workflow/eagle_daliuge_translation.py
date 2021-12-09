@@ -153,9 +153,9 @@ def generate_graphic_from_networkx_graph(nx_graph, output_path):
     # cmd_list = ['dot', 'unroll', '-fv', '-L', ]
 
 
-def eagle_to_topsim(eagle_graph, workflow, time=False, generate_dot=False):
+def eagle_to_nx(eagle_graph, workflow, file_in=True):
     """
-    Produce a JSON-compatible configuration file for a topsim graph
+    Produce a JSON-compatible dictionary of a topsim graph
 
     Parameters
     ----------
@@ -165,10 +165,8 @@ def eagle_to_topsim(eagle_graph, workflow, time=False, generate_dot=False):
     workflow: str
         The type of workflow (DPrepA, ICAL etc.) that is being generated.
         Necessary for when we concatenate the workflows together.
-
-    time: bool, default=False
-    The unit in which computation 'cost'. Historically, task DAG
-    scheduling has used the total seconds it takes to run a task
+    file_in : bool
+        True if passing a file; False if passing in a string represetnation
 
     Notes
     -----
@@ -179,49 +177,47 @@ def eagle_to_topsim(eagle_graph, workflow, time=False, generate_dot=False):
 
     Returns
     -------
-    jgraph : dict
-        JSON-compatible dictionary
+    unrolled_nx : :py:object:`networkx.DiGraph`
+    task_dict : dict
+
 
     """
 
     # Process DALiuGE JSON graph\
-    if not os.path.exists(eagle_graph):
-        raise FileExistsError(f'{eagle_graph} does not exist')
+    if file_in:
+        if not os.path.exists(eagle_graph):
+            raise FileExistsError(f'{eagle_graph} does not exist')
 
     LOGGER.info(f"Preparing {eagle_graph} for LGT->PGT Translation")
-    daliuge_json = unroll_logical_graph(eagle_graph)
+    daliuge_json = unroll_logical_graph(eagle_graph, file_in=file_in)
     jdict = json.loads(daliuge_json)
-    unrolled_nx = _daliuge_to_nx(jdict, workflow)
+    unrolled_nx, task_dict = daliuge_to_nx(jdict, workflow)
 
     # Convering DALiuGE nodes to readable nodes
     LOGGER.info(f"Graph converted to TopSim-compliant data")
 
-    jgraph = {
-        "header": {
-            "time": time,
-        },
-        'graph': nx.readwrite.node_link_data(unrolled_nx)
-    }
-
-    return jgraph
+    return unrolled_nx, task_dict
 
 
-def _daliuge_to_nx(dlg_json_dict, workflow):
+def daliuge_to_nx(dlg_json_dict, workflow):
     """
 
     Take a daliuge json file and read it into a NetworkX
     The purpose of this is to re-organise nodes in the
 
-    dlg_json_dict: the DALiuGE dictionary we are translating
+    Parameters
+    -----------
+    dlg_json_dict: dict
+        the DALiuGE dictionary we are translating
+    workflow : str
+        What type of workflow (i.e. DPrepA, DPrepB, ICAL) to append to
+        the names of components
 
     Returns
     -------
     unrolled_nx : networkx.DiGraph
         Directed graph representation of Physical Graph Template
 
-    workflow : str
-        What type of workflow (i.e. DPrepA, DPrepB, ICAL) to append to
-        the names of components
 
     Notes
     -----
@@ -242,11 +238,11 @@ def _daliuge_to_nx(dlg_json_dict, workflow):
             oid = element['oid']
             label = element['nm']
             if label in task_names:
-                task_names[label] += 1
+                task_names[label]['node'] += 1
             else:
-                task_names[label] = 1
-            labels[oid] = f"{label}_{task_names[label]}"
-            name = f'{workflow}_{label}_{task_names[label]}'
+                task_names[label] = {'node': 1}
+            labels[oid] = f"{label}_{task_names[label]['node'] - 1}"
+            name = f"{workflow}_{labels[oid]}"
             node = (name, {'comp': 0})
             node_list.append(node)
 
@@ -255,6 +251,11 @@ def _daliuge_to_nx(dlg_json_dict, workflow):
                 'producers' in element and 'consumers' in element
         ):
             for u in element['producers']:
+                component, num = labels[u].split('_')
+                if 'out_edge' in task_names[component]:
+                    task_names[component]['out_edge'] += 1
+                else:
+                    task_names[component]['out_edge'] = 1
                 for v in element['consumers']:
                     edge = (labels[u], labels[v])
                     edge_list.append(
@@ -273,26 +274,47 @@ def _daliuge_to_nx(dlg_json_dict, workflow):
     unrolled_nx.add_nodes_from(node_list)
     unrolled_nx.add_edges_from(edge_list)
 
-    return unrolled_nx
+    return unrolled_nx, task_names
 
 
-def produce_final_workflow_structure(lgt_path, pgt_path, channels):
+def concatenate_workflows(
+        unrolled_graphs: dict = None, workflows: list = None
+):
     """
-    For a given logical graph template, produce a workflow with the specific
-    number of channels and return it as a JSON serialisable dictionary.
+    For a list of workflows and unrolled graphs, generate a concatenated
+    'super-graph' that is the sequence of these workflows
+
+    Notes
+    -----
+    If one looks into how the SDP parametric model works, it takes into account
+    all pipelines when generating a schedule for a particular observation.
 
     Parameters
     ----------
-    lgt_path : str
-    The path of the LGT
-    channels : int
+    unrolled_graphs
+    workflows
 
     Returns
     -------
 
     """
-    wfdict = {}
-    return wfdict
+    # final_graph = nx.DiGraph()
+    start_graph = unrolled_graphs['DPrepA']
+    curr_parent = 'DPrepA_Gather_0'
+    workflows.remove('DPrepA')
+    final_graph = nx.compose_all(list(unrolled_graphs.values()))
+    for workflow in workflows:
+        curr_child = f'{workflow}_FrequencySplit_0'
+        final_graph.add_edge(curr_parent, curr_child)
+        curr_parent = f'{workflow}_Gather_0'
+
+    # for graph in  unrolled_graphs:
+    #     final_graph
+
+    # FrequencySplit
+    # Gather
+
+    return final_graph
 
 
 if __name__ == '__main__':
@@ -314,5 +336,5 @@ if __name__ == '__main__':
     # having random assignments for each
     # USEFUL FOR ERROR CHECKING 
     # LOGGER.info(f"Test PGT generated at: {res}")
-    jdict = eagle_to_topsim('tests/data/eagle_lgt_scatter.graph')
+    jdict = eagle_to_nx('tests/data/eagle_lgt_scatter.graph')
     LOGGER.info(json.dumps(jdict, indent=2))

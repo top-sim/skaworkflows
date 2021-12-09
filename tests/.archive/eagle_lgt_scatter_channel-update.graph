@@ -300,14 +300,24 @@
             "loop_aware": "0",
             "to": -49,
             "toPort": "f4de5de5-4a86-4fee-9ade-2e14d66108de"
+        },
+        {
+            "from": -48,
+            "fromPort": "d1b09419-e04b-4857-b815-f707e1532dec",
+            "loop_aware": "0",
+            "to": -6,
+            "toPort": "8a3bd47c-4d1d-4d6c-8e7d-56d3c7e72375"
         }
     ],
     "modelData": {
-        "eagleCommitHash": "9dffb2c3f02e3f230247356191a5ca4e8e2c11a1",
-        "eagleVersion": "v3.0.4",
+        "eagleCommitHash": "ac560ae51d67c40cc0d54995d5a6a558e03e8ea1",
+        "eagleVersion": "v4.0.0",
         "filePath": "eagle_lgt_scatter.graph",
-        "fileType": "graph",
-        "git_url": "",
+        "fileType": "Graph",
+        "gitUrl": "",
+        "lastModifiedDatetime": 0,
+        "lastModifiedEmail": "",
+        "lastModifiedName": "",
         "readonly": false,
         "repo": "",
         "repoBranch": "",
@@ -317,12 +327,12 @@
     },
     "nodeDataArray": [
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "File",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -332,40 +342,50 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "check_filepath_exists",
+                    "precious": false,
                     "readonly": false,
                     "text": "Check file path exists",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "filepath",
+                    "precious": false,
                     "readonly": false,
                     "text": "File path",
                     "type": "Unknown",
                     "value": ""
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "dirname",
+                    "precious": false,
                     "readonly": false,
                     "text": "Directory name",
                     "type": "Unknown",
@@ -373,7 +393,8 @@
                 }
             ],
             "flipPorts": false,
-            "height": 200,
+            "git_url": "",
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -392,19 +413,23 @@
                 {
                     "Id": "3f0341f9-8ed4-4768-8b6b-5f9baafe4001",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "b8b2d818-616a-4bbd-afa8-756b538e3571",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "InputDataFromIngest",
@@ -413,12 +438,12 @@
             "y": 0
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -428,32 +453,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -461,8 +494,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -472,13 +506,17 @@
                 {
                     "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "03a1cc06-630c-4b38-a6f5-d877f617c2b8",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -494,33 +532,37 @@
                 {
                     "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "537f6c79-7b34-4e24-ba3e-e54586fbb0f9",
                     "IdText": "output",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "UpdateGSM",
             "width": 200,
-            "x": 2625.6616337774185,
-            "y": 1344.3699075367608
+            "x": 2629.468809218663,
+            "y": 1463.0485790425741
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -530,32 +572,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -563,8 +613,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -574,7 +625,9 @@
                 {
                     "Id": "d9009125-9d01-4503-a302-62c93ea3ec9c",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -590,33 +643,37 @@
                 {
                     "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "c6480eb8-c7dd-4f83-a89b-aede2643b3e0",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Solve",
             "width": 200,
-            "x": 1216.1390120177766,
-            "y": 147.3699075367607
+            "x": 1219.9461874590208,
+            "y": 266.04857904257426
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -626,32 +683,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -659,8 +724,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -670,13 +736,17 @@
                 {
                     "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "5ca7c21a-3a86-45b6-be01-a25c71f22c48",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -692,33 +762,37 @@
                 {
                     "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "9d16bfa8-2baf-4235-82a0-304944209614",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Grid",
             "width": 200,
-            "x": 2462.366807192554,
-            "y": 584.4936665094599
+            "x": 2466.1739826337985,
+            "y": 703.1723380152735
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -728,32 +802,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -761,8 +843,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -772,13 +855,17 @@
                 {
                     "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "b16cd9c2-d490-4954-8a05-9573277fc59b",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -794,33 +881,37 @@
                 {
                     "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "56e8061a-4b48-4eab-bd82-56572545a998",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Degrid",
             "width": 200,
-            "x": 1349.8950924776696,
-            "y": 557.1583933791479
+            "x": 1353.7022679189138,
+            "y": 675.8370648849615
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -830,32 +921,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -863,8 +962,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -874,13 +974,17 @@
                 {
                     "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "21def1e7-5171-4fa3-90aa-1d7cceaa8c37",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -896,33 +1000,37 @@
                 {
                     "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "f426dc8f-5447-450b-b25a-4c7ed5f32494",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Flag",
             "width": 200,
-            "x": 2115.7925673614272,
-            "y": 587.4114418649342
+            "x": 2119.5997428026717,
+            "y": 706.0901133707478
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -932,32 +1040,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -965,8 +1081,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -22,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -976,13 +1093,17 @@
                 {
                     "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "2973644b-6e1a-4496-af4b-31f5cf3f674c",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -998,62 +1119,71 @@
                 {
                     "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "71665222-0d2a-435e-a5f0-da1b62169c7e",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Subtract Image Component",
             "width": 200,
-            "x": 1974.146741790361,
-            "y": 978.9870143766152
+            "x": 1977.9539172316051,
+            "y": 1097.6656858824285
         },
         {
+            "applicationParams": [],
             "canHaveInputs": false,
             "canHaveOutputs": false,
             "category": "Loop",
-            "categoryType": "Group",
             "collapsed": false,
-            "color": "#512E5F",
+            "color": "rgb(221, 173, 0)",
             "description": "Placeholder 'loop' description",
             "drawOrderHint": 0,
             "exitAppFields": [],
-            "exitApplicationKey": -34,
+            "exitApplicationKey": -7,
             "exitApplicationName": "event",
-            "exitApplicationType": "None",
+            "exitApplicationType": "UnknownApplication",
             "expanded": true,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_of_iter",
+                    "precious": false,
                     "readonly": false,
                     "text": "Number loops",
                     "type": "Unknown",
-                    "value": "1"
+                    "value": "2"
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
             "height": 800.0000000000002,
             "inputAppFields": [],
-            "inputApplicationKey": -7,
+            "inputApplicationKey": -3,
             "inputApplicationName": "event",
-            "inputApplicationType": "None",
+            "inputApplicationType": "UnknownApplication",
             "inputLocalPorts": [
                 {
                     "Id": "cf66a28c-e1d5-4568-9bd8-645216eead0c",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1061,13 +1191,17 @@
                 {
                     "Id": "cca8ad7e-5fcc-46fa-bf59-0871479fd3f6",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "baf142fd-05ed-4fab-9e28-d5162e73e081",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1082,7 +1216,9 @@
                 {
                     "Id": "208df7a1-baf9-41da-89fd-038061146cbd",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1090,62 +1226,71 @@
                 {
                     "Id": "12cb0caa-2272-4586-ba2b-913e9b571530",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "9143d73b-b0e1-4ede-8713-73681803fcbd",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "MajorCycle",
             "width": 1899.9999999999995,
-            "x": 867.628118072374,
-            "y": 471.49366650945956
+            "x": 871.4352935136184,
+            "y": 590.1723380152731
         },
         {
+            "applicationParams": [],
             "canHaveInputs": false,
             "canHaveOutputs": false,
             "category": "Loop",
-            "categoryType": "Group",
             "collapsed": false,
-            "color": "#512E5F",
+            "color": "rgb(221, 173, 0)",
             "description": "Placeholder 'loop' description",
             "drawOrderHint": 0,
             "exitAppFields": [],
-            "exitApplicationKey": -47,
+            "exitApplicationKey": -46,
             "exitApplicationName": "event",
-            "exitApplicationType": "None",
+            "exitApplicationType": "UnknownApplication",
             "expanded": true,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_of_iter",
+                    "precious": false,
                     "readonly": false,
                     "text": "Number loops",
                     "type": "Unknown",
-                    "value": "1"
+                    "value": "2"
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
             "height": 410.79814061690774,
             "inputAppFields": [],
-            "inputApplicationKey": -46,
+            "inputApplicationKey": -34,
             "inputApplicationName": "event",
-            "inputApplicationType": "None",
+            "inputApplicationType": "UnknownApplication",
             "inputLocalPorts": [
                 {
                     "Id": "cf66a28c-e1d5-4568-9bd8-645216eead0c",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1153,7 +1298,9 @@
                 {
                     "Id": "cca8ad7e-5fcc-46fa-bf59-0871479fd3f6",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1168,7 +1315,9 @@
                 {
                     "Id": "208df7a1-baf9-41da-89fd-038061146cbd",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1176,27 +1325,29 @@
                 {
                     "Id": "12cb0caa-2272-4586-ba2b-913e9b571530",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "MInorCycle",
             "width": 1105.6737335183204,
-            "x": 1184.1467417903596,
-            "y": 789.9870143766142
+            "x": 1187.9539172316038,
+            "y": 908.6656858824277
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -1206,32 +1357,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -1239,8 +1398,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -1250,13 +1410,17 @@
                 {
                     "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "99686221-fa3b-4475-a14c-6a1128c62602",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1272,33 +1436,37 @@
                 {
                     "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "4c4d6c25-4398-4d63-b607-96babce9e10a",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Source Find",
             "width": 200,
-            "x": 1750.4455664168777,
-            "y": 1396.5859748973012
+            "x": 1754.252741858122,
+            "y": 1515.2646464031145
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -1308,32 +1476,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -1341,8 +1517,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -1352,13 +1529,17 @@
                 {
                     "Id": "29b034a3-4a7d-4cab-ba84-2b90650113d0",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "f60e7f0d-907f-431c-9be4-581a6c845962",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1374,33 +1555,37 @@
                 {
                     "Id": "910e73fc-8688-4688-b211-90bdbbb6c1db",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "bbae8e98-44a7-45ea-8b37-78563eb33e6d",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "UpdateLSM",
             "width": 200,
-            "x": 2204.661633777417,
-            "y": 1373.3699075367608
+            "x": 2208.4688092186616,
+            "y": 1492.0485790425741
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -1410,32 +1595,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -1443,8 +1636,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -1454,13 +1648,17 @@
                 {
                     "Id": "3445ea1d-e0c2-4ae1-962d-781eabe0ec42",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "a782bc96-3e25-41b0-8b9c-207d9e1fa0a6",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1476,33 +1674,37 @@
                 {
                     "Id": "d9549463-528f-4276-b7f6-4b5f13d1eedb",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "a7409048-8387-4cc0-9f0e-a75e459747db",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "FinishMajorCycle",
             "width": 200,
-            "x": 2461.366807192554,
-            "y": 866.4936665094598
+            "x": 2465.1739826337985,
+            "y": 985.1723380152733
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -1512,32 +1714,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -1545,8 +1755,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -1556,13 +1767,17 @@
                 {
                     "Id": "c02630c4-0863-4679-84ab-c58784af5d15",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "d6d14a31-39de-410f-b56f-87fe76c61362",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1578,33 +1793,37 @@
                 {
                     "Id": "d5c22486-2c72-4cdf-b77c-46813587ec45",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "68de886a-3c83-498b-ac8e-647cc650f957",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Phase Rotation Predict",
             "width": 200,
-            "x": 800.4130258629407,
-            "y": 172.47634297720174
+            "x": 804.220201304185,
+            "y": 291.1550144830153
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
             "collapsed": false,
-            "color": "#3498DB",
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -1614,32 +1833,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -1647,14 +1874,24 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
             "inputApplicationType": "None",
             "inputLocalPorts": [],
-            "inputPorts": [],
+            "inputPorts": [
+                {
+                    "Id": "8a3bd47c-4d1d-4d6c-8e7d-56d3c7e72375",
+                    "IdText": "event",
+                    "description": "",
+                    "event": false,
+                    "text": "",
+                    "type": "Unknown"
+                }
+            ],
             "isData": false,
             "isGroup": false,
             "key": -6,
@@ -1667,33 +1904,37 @@
                 {
                     "Id": "d5c22486-2c72-4cdf-b77c-46813587ec45",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "82bb3f22-b25f-4b6e-bd41-b8e596e9bc88",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Reprojection Predict",
             "width": 200,
-            "x": 1581.877701137957,
-            "y": -6.630092463239521
+            "x": 1587.6731997354088,
+            "y": 112.048579042574
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -1703,32 +1944,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -1736,8 +1985,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -1747,7 +1997,9 @@
                 {
                     "Id": "b0fa471e-cf5f-40ab-b8b5-6e8a585d9301",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1763,27 +2015,29 @@
                 {
                     "Id": "da98d8a1-fed3-445b-9804-51c0a72e3a2b",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Correct",
             "width": 200,
-            "x": 1720.3347789065997,
-            "y": 161.23417697892125
+            "x": 1724.141954347844,
+            "y": 279.9128484847348
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -1793,32 +2047,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -1826,8 +2088,9 @@
                 }
             ],
             "flipPorts": true,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -1837,13 +2100,17 @@
                 {
                     "Id": "feaed519-83e7-48a1-aa25-c9fc91291091",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "bdb4b14f-1c1f-4636-95ed-3c087201b126",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1859,33 +2126,37 @@
                 {
                     "Id": "2828b754-6eb3-4551-8529-08d836ebf03e",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "bafe9ab0-7f63-44c9-97d4-fe960f4e3dc5",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Flag",
             "width": 200,
-            "x": 2170.406695641784,
-            "y": 318.64601122828344
+            "x": 2174.2138710830286,
+            "y": 437.324682734097
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "Placeholder to being major cycle",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -1895,32 +2166,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -1928,8 +2207,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -1939,13 +2219,17 @@
                 {
                     "Id": "feaed519-83e7-48a1-aa25-c9fc91291091",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "abd167c8-325f-4890-a194-5a3e6dbe1043",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -1961,33 +2245,37 @@
                 {
                     "Id": "2828b754-6eb3-4551-8529-08d836ebf03e",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "567db69e-219b-4648-ae0f-cdc814cf3510",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "BeginMajorCycle",
             "width": 200,
-            "x": 1006.7286888542487,
-            "y": 575.4021131010744
+            "x": 1010.5358642954931,
+            "y": 694.080784606888
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -1997,32 +2285,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -2030,8 +2326,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -22,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2041,13 +2338,17 @@
                 {
                     "Id": "feaed519-83e7-48a1-aa25-c9fc91291091",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "de4a4d11-e55e-4f2e-93ef-72f65d5991fb",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2063,33 +2364,37 @@
                 {
                     "Id": "2828b754-6eb3-4551-8529-08d836ebf03e",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "a5209afa-0c50-49cf-bc72-6fdc5827cf45",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "FFT",
             "width": 200,
-            "x": 1287.1467417903596,
-            "y": 911.9870143766148
+            "x": 1290.9539172316038,
+            "y": 1030.6656858824283
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2099,32 +2404,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "Unknown",
@@ -2132,8 +2445,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2143,13 +2457,17 @@
                 {
                     "Id": "feaed519-83e7-48a1-aa25-c9fc91291091",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "ac24319d-e747-480f-ad6f-a596ae6529c8",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2165,33 +2483,37 @@
                 {
                     "Id": "2828b754-6eb3-4551-8529-08d836ebf03e",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "c03e1d80-11a7-4471-a8c2-6ac502b9c7dc",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Image Spectral Fitting",
             "width": 200,
-            "x": 1267.6616337774167,
-            "y": 1365.3699075367608
+            "x": 1271.468809218661,
+            "y": 1484.0485790425741
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2201,16 +2523,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -2218,8 +2544,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2229,13 +2556,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "4fdf3e84-d9a0-4334-a10b-cceeead8c095",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2251,33 +2582,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "bebdc294-ddd1-47b3-8582-53305883e687",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1013.4003228975971,
-            "y": 153.10859665694068
+            "x": 1017.2074983388414,
+            "y": 271.78726816275423
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "File",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2287,40 +2622,50 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
                     "value": "0"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "check_filepath_exists",
+                    "precious": false,
                     "readonly": false,
                     "text": "Check file path exists",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "filepath",
+                    "precious": false,
                     "readonly": false,
                     "text": "File path",
                     "type": "Unknown",
                     "value": ""
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "dirname",
+                    "precious": false,
                     "readonly": false,
                     "text": "Directory name",
                     "type": "Unknown",
@@ -2328,8 +2673,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2339,13 +2685,17 @@
                 {
                     "Id": "9b5dcb30-781f-4b9e-80d4-f6f98f94b32b",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "b1782733-345f-4c7b-a7a9-5460696d9bb2",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2361,33 +2711,37 @@
                 {
                     "Id": "cd0245b7-7332-4067-8429-7bf4e76a805c",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "b1ae00d1-c044-4da5-96ba-dc421a3d73ea",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1442.8777011379566,
-            "y": 151.63121841658074
+            "x": 1446.6848765792008,
+            "y": 270.3098899223943
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
             "collapsed": false,
-            "color": "#394BB2",
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2397,16 +2751,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -2414,8 +2772,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2425,13 +2784,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "9e8df206-ff9c-4695-91fa-4b73b253e9ef",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2447,33 +2810,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "81b6d648-fe02-4ac0-86aa-2038e72e7125",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1876.616390258138,
-            "y": 144.7567987385611
+            "x": 1880.4235656993822,
+            "y": 263.43547024437464
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2483,16 +2850,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -2500,8 +2871,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2511,13 +2883,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "6c1c1d3b-9e11-4458-b483-91517457d19c",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2533,33 +2909,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "5ae2605c-4793-4108-8017-63a8e16d689e",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1893.264592339758,
-            "y": 3.028259854239991
+            "x": 1897.0717677810023,
+            "y": 121.70693136005352
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2569,16 +2949,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -2586,8 +2970,9 @@
                 }
             ],
             "flipPorts": true,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2597,13 +2982,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "0bf33fa4-97e3-42e7-a5a2-2216b8a67778",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2619,33 +3008,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "5f96c831-dc5f-42a0-9311-8af71bde3b7e",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2604.4751520402824,
-            "y": 330.14833251620496
+            "x": 2608.282327481527,
+            "y": 448.8270040220185
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2655,16 +3048,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -2672,8 +3069,9 @@
                 }
             ],
             "flipPorts": true,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2683,13 +3081,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "c00d7542-1803-46fb-b758-16b75e14ca2e",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2705,33 +3107,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "93b3ac8f-91bf-4c5e-9a5d-e25d73ecdb6f",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1286.8511347512735,
-            "y": 314.7560215598327
+            "x": 1290.6583101925178,
+            "y": 433.43469306564623
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2741,16 +3147,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -2758,8 +3168,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2769,13 +3180,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "8fa7a5e7-ef27-4a66-b062-af503b185b1b",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2791,33 +3206,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "37c7019e-7acb-41d9-85ac-d25d85fa5949",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1539.6687190158113,
-            "y": 728.7346769175618
+            "x": 1543.4758944570556,
+            "y": 847.4133484233754
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2827,16 +3246,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -2844,8 +3267,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2855,13 +3279,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "df51bed8-5795-4891-a3f3-8075813206f9",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2877,33 +3305,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "c1ea6a62-e1b3-4e4c-9a32-428f338ca0c4",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1937.8293926212123,
-            "y": 587.1621690627976
+            "x": 1941.6365680624565,
+            "y": 705.8408405686112
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2913,16 +3345,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -2930,8 +3366,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -2941,13 +3378,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "40b4ffe0-960e-442e-9009-b9dd6abebd8f",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -2963,33 +3404,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "ea16e692-6d64-4ca4-bed3-06da92d82f43",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2293.7389055826516,
-            "y": 593.6395473031578
+            "x": 2297.546081023896,
+            "y": 712.3182188089713
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -2999,16 +3444,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -3016,8 +3465,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -3027,13 +3477,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "2c359c1d-5181-4392-a7a6-05ee68998df3",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3049,33 +3503,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "6adf2260-f698-46b0-8481-499deeec9414",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1187.3367332409682,
-            "y": 675.7935575058023
+            "x": 1191.1439086822124,
+            "y": 794.4722290116158
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -3085,16 +3543,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -3102,8 +3564,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -3113,13 +3576,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "5616fa3d-76bc-421f-a168-44381df9e6f2",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3135,33 +3602,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "b290e1b9-8205-4e12-8910-208b9ea58f4c",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2524.628118072374,
-            "y": 694.493666509459
+            "x": 2528.4352935136185,
+            "y": 813.1723380152725
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -3171,16 +3642,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -3188,8 +3663,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -22,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -3199,13 +3675,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "23925694-e9a9-4182-bf2d-294b0ba7c12d",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3221,33 +3701,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "68e64afb-2833-42ad-b5f4-161bd2029854",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1306.7856587202923,
-            "y": 1056.147687982017
+            "x": 1310.5928341615365,
+            "y": 1174.8263594878304
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -3257,16 +3741,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -3274,8 +3762,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -22,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -3285,13 +3774,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "af095d26-be16-4840-8d5a-e405f1491939",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3307,33 +3800,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "48744cd0-405d-4918-a5db-d7c15872054f",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1802.1467417903605,
-            "y": 1052.9870143766148
+            "x": 1805.9539172316047,
+            "y": 1171.665685882428
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -3343,16 +3840,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -3360,8 +3861,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -22,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -3371,13 +3873,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "75462347-f9e9-4e96-85c8-a3051cf77c6a",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3393,33 +3899,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "fc697d8d-12a4-4dbe-b952-bdda5c505e0d",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2332.1467417903596,
-            "y": 991.9870143766152
+            "x": 2335.953917231604,
+            "y": 1110.6656858824285
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -3429,16 +3939,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -3446,8 +3960,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -3457,13 +3972,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "5d18023f-1e8c-4b7f-b532-4467dcc54772",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3479,33 +3998,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "7ef63957-6b8f-4848-b556-4c5e91aed0c1",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2495.6281180723745,
-            "y": 1133.4936665094606
+            "x": 2499.435293513619,
+            "y": 1252.172338015274
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -3515,16 +4038,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -3532,8 +4059,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -3543,13 +4071,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "85e8eb48-c826-41d2-83c1-25398b94d9eb",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3565,33 +4097,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "84b865c8-901b-4425-96d8-528d4b0a3a10",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1494.6616337774167,
-            "y": 1367.3699075367608
+            "x": 1498.468809218661,
+            "y": 1486.0485790425741
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -3601,16 +4137,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
@@ -3618,8 +4158,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -3629,13 +4170,17 @@
                 {
                     "Id": "17482733-4963-4689-b5ee-f5f2f20d72ef",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "dc837007-faa5-402f-914e-634879aee22b",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3651,33 +4196,37 @@
                 {
                     "Id": "93e57dd0-dcd3-4079-827b-5c5af7940fc3",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "423b85a8-3dae-414f-a277-f50d57a686b9",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 1987.6616337774176,
-            "y": 1393.3699075367608
+            "x": 1991.4688092186618,
+            "y": 1512.0485790425741
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "File",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -3687,40 +4236,50 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Unknown",
                     "value": "5"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "check_filepath_exists",
+                    "precious": false,
                     "readonly": false,
                     "text": "Check file path exists",
                     "type": "Unknown",
                     "value": "1"
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "filepath",
+                    "precious": false,
                     "readonly": false,
                     "text": "File path",
                     "type": "Unknown",
                     "value": ""
                 },
                 {
+                    "defaultValue": "",
                     "description": "",
                     "name": "dirname",
+                    "precious": false,
                     "readonly": false,
                     "text": "Directory name",
                     "type": "Unknown",
@@ -3728,8 +4287,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -3739,13 +4299,17 @@
                 {
                     "Id": "9b5dcb30-781f-4b9e-80d4-f6f98f94b32b",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "a40453cf-0828-4854-a0d5-60a9e7893349",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3761,33 +4325,37 @@
                 {
                     "Id": "cd0245b7-7332-4067-8429-7bf4e76a805c",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 },
                 {
                     "Id": "7f7f84cd-4f6e-4ae8-8700-31471fdb3440",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2408.6616337774185,
-            "y": 1375.3699075367608
+            "x": 2412.468809218663,
+            "y": 1494.0485790425741
         },
         {
+            "applicationParams": [],
             "canHaveInputs": false,
             "canHaveOutputs": false,
             "category": "Scatter",
-            "categoryType": "Group",
             "collapsed": false,
-            "color": "#DDAD00",
+            "color": "rgb(221, 173, 0)",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -3797,16 +4365,20 @@
             "expanded": true,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "The number of outputs generated by this construct",
                     "name": "num_of_copies",
+                    "precious": false,
                     "readonly": false,
                     "text": "Number of copies",
                     "type": "Integer",
-                    "value": 1
+                    "value": 4
                 },
                 {
+                    "defaultValue": "",
                     "description": "The axis used to split the input into multiple outputs",
                     "name": "scatter_axis",
+                    "precious": false,
                     "readonly": false,
                     "text": "Scatter axis",
                     "type": "String",
@@ -3814,35 +4386,44 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "height": 1648,
             "inputAppFields": [
                 {
+                    "defaultValue": "",
                     "description": "Estimate of execution time (in seconds) for this application.",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Float",
                     "value": 5
                 },
                 {
+                    "defaultValue": "",
                     "description": "Number of CPUs used for this application.",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Integer",
                     "value": 1
                 },
                 {
+                    "defaultValue": "",
                     "description": "Is this node the start of a group?",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Boolean",
                     "value": false
                 },
                 {
+                    "defaultValue": "",
                     "description": "The python class that implements this application",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "String",
@@ -3856,7 +4437,9 @@
                 {
                     "Id": "bcefb502-da72-40ef-b6d4-512501f26134",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3864,7 +4447,9 @@
                 {
                     "Id": "a4a56071-4a24-4c89-99b4-faac7bd56dc7",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3877,24 +4462,24 @@
             "outputApplicationType": "None",
             "outputLocalPorts": [],
             "outputPorts": [],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "FrequencySplit",
             "width": 2492,
-            "x": 683.6616337774167,
-            "y": -106.6300924632393
+            "x": 687.468809218661,
+            "y": 12.048579042574238
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
-            "description/": "An application component in the form of a Python app",
+            "collapsed": true,
+            "color": "#0059a5",
+            "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
             "exitApplicationKey": null,
@@ -3903,32 +4488,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "Estimate of execution time (in seconds) for this application.",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Float",
                     "value": 5
                 },
                 {
+                    "defaultValue": "",
                     "description": "Number of CPUs used for this application.",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Integer",
                     "value": 1
                 },
                 {
+                    "defaultValue": "",
                     "description": "Is this node the start of a group?",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Boolean",
                     "value": false
                 },
                 {
+                    "defaultValue": "",
                     "description": "The python class that implements this application",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "String",
@@ -3936,8 +4529,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -21,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -3947,7 +4541,9 @@
                 {
                     "Id": "9a65f69b-d322-4d17-996c-481d568550c6",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -3963,27 +4559,29 @@
                 {
                     "Id": "89fbbab5-d430-4412-818b-4d1b63cb6033",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Subtract",
             "width": 200,
-            "x": 1670.0070131908665,
-            "y": 588.1457339881949
+            "x": 1673.8141886321107,
+            "y": 706.8244054940085
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -3993,32 +4591,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "Estimate of execution time (in seconds) for this application.",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Float",
                     "value": 5
                 },
                 {
+                    "defaultValue": "",
                     "description": "Number of CPUs used for this application.",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Integer",
                     "value": 1
                 },
                 {
+                    "defaultValue": "",
                     "description": "Is this node the start of a group?",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Boolean",
                     "value": false
                 },
                 {
+                    "defaultValue": "",
                     "description": "The python class that implements this application",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "String",
@@ -4026,8 +4632,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -22,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -4037,7 +4644,9 @@
                 {
                     "Id": "6ed54ecd-d6f0-42b7-bf07-283701d87137",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -4053,27 +4662,29 @@
                 {
                     "Id": "4a0f1201-1dbc-4cf6-855c-e074748b52e4",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Identify Component",
             "width": 200,
-            "x": 1561.9023778747937,
-            "y": 1071.3215121362205
+            "x": 1565.709553316038,
+            "y": 1190.0001836420338
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "PythonApp",
-            "categoryType": "Application",
-            "collapsed": false,
-            "color": "#3498DB",
+            "collapsed": true,
+            "color": "#0059a5",
             "description": "An application component in the form of a Python app",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -4083,32 +4694,40 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "Estimate of execution time (in seconds) for this application.",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Float",
                     "value": 5
                 },
                 {
+                    "defaultValue": "",
                     "description": "Number of CPUs used for this application.",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Integer",
                     "value": 1
                 },
                 {
+                    "defaultValue": "",
                     "description": "Is this node the start of a group?",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Boolean",
                     "value": false
                 },
                 {
+                    "defaultValue": "",
                     "description": "The python class that implements this application",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "String",
@@ -4116,8 +4735,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -4127,7 +4747,9 @@
                 {
                     "Id": "8e88f1f0-454b-41f2-9e2d-568609d472cc",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -4143,27 +4765,29 @@
                 {
                     "Id": "588fca28-a900-42b5-b47d-98b2fd400e45",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Subtract",
             "width": 200,
-            "x": 2126.698016129217,
-            "y": 45.47991786830994
+            "x": 2130.5051915704616,
+            "y": 164.1585893741235
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -4173,16 +4797,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "Estimated size of the data contained in this node",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Float",
                     "value": 5
                 },
                 {
+                    "defaultValue": "",
                     "description": "Is this node the end of a group?",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Boolean",
@@ -4190,8 +4818,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -4201,7 +4830,9 @@
                 {
                     "Id": "45aad63f-7cca-4f2a-8a5c-a2d274b903d1",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -4217,27 +4848,29 @@
                 {
                     "Id": "218c1585-dc00-4af6-aee6-567c087eadcd",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "relationship",
             "width": 200,
-            "x": 2431.0893379147583,
-            "y": 164.6760733464963
+            "x": 2434.8965133560027,
+            "y": 283.35474485230986
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
             "collapsed": false,
-            "color": "#394BB2",
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -4247,16 +4880,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "Estimated size of the data contained in this node",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Float",
                     "value": 5
                 },
                 {
+                    "defaultValue": "",
                     "description": "Is this node the end of a group?",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Boolean",
@@ -4264,8 +4901,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -4275,7 +4913,9 @@
                 {
                     "Id": "bc44545f-3079-4670-8165-015c92f9c88b",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -4291,27 +4931,29 @@
                 {
                     "Id": "d1b09419-e04b-4857-b815-f707e1532dec",
                     "IdText": "event",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "event",
             "width": 200,
-            "x": 778.7295480132165,
-            "y": 17.86990753676048
+            "x": 806.396601328952,
+            "y": 132.57193273015884
         },
         {
+            "applicationParams": [],
             "canHaveInputs": false,
             "canHaveOutputs": false,
             "category": "Gather",
-            "categoryType": "Group",
             "collapsed": false,
-            "color": "#D35400",
+            "color": "rgb(221, 173, 0)",
             "description": "Placeholder 'gather' description",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -4321,16 +4963,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "The number of inputs that will be gathered together by this construct.",
                     "name": "num_of_inputs",
+                    "precious": false,
                     "readonly": false,
                     "text": "Number of inputs",
                     "type": "Integer",
                     "value": 1
                 },
                 {
+                    "defaultValue": "",
                     "description": "The axis by which to gather the inputs together",
                     "name": "gather_axis",
+                    "precious": false,
                     "readonly": false,
                     "text": "Gather axis",
                     "type": "String",
@@ -4338,35 +4984,44 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "height": 200,
             "inputAppFields": [
                 {
+                    "defaultValue": "",
                     "description": "Estimate of execution time (in seconds) for this application.",
                     "name": "execution_time",
+                    "precious": false,
                     "readonly": false,
                     "text": "Execution time",
                     "type": "Float",
                     "value": 5
                 },
                 {
+                    "defaultValue": "",
                     "description": "Number of CPUs used for this application.",
                     "name": "num_cpus",
+                    "precious": false,
                     "readonly": false,
                     "text": "Num CPUs",
                     "type": "Integer",
                     "value": 1
                 },
                 {
+                    "defaultValue": "",
                     "description": "Is this node the start of a group?",
                     "name": "group_start",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group start",
                     "type": "Boolean",
                     "value": false
                 },
                 {
+                    "defaultValue": "",
                     "description": "The python class that implements this application",
                     "name": "appclass",
+                    "precious": false,
                     "readonly": false,
                     "text": "Appclass",
                     "type": "String",
@@ -4381,7 +5036,9 @@
                 {
                     "Id": "f4de5de5-4a86-4fee-9ade-2e14d66108de",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -4394,9 +5051,9 @@
             "outputApplicationType": "None",
             "outputLocalPorts": [],
             "outputPorts": [],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Gather",
@@ -4405,12 +5062,12 @@
             "y": 1360.9556836988904
         },
         {
+            "applicationParams": [],
             "canHaveInputs": true,
             "canHaveOutputs": true,
             "category": "Memory",
-            "categoryType": "Data",
-            "collapsed": false,
-            "color": "#394BB2",
+            "collapsed": true,
+            "color": "#2c2c2c",
             "description": "",
             "drawOrderHint": 0,
             "exitAppFields": [],
@@ -4420,16 +5077,20 @@
             "expanded": false,
             "fields": [
                 {
+                    "defaultValue": "",
                     "description": "Estimated size of the data contained in this node",
                     "name": "data_volume",
+                    "precious": false,
                     "readonly": false,
                     "text": "Data volume",
                     "type": "Float",
                     "value": 5
                 },
                 {
+                    "defaultValue": "",
                     "description": "Is this node the end of a group?",
                     "name": "group_end",
+                    "precious": false,
                     "readonly": false,
                     "text": "Group end",
                     "type": "Boolean",
@@ -4437,8 +5098,9 @@
                 }
             ],
             "flipPorts": false,
+            "git_url": "",
             "group": -35,
-            "height": 200,
+            "height": 72,
             "inputAppFields": [],
             "inputApplicationKey": null,
             "inputApplicationName": "",
@@ -4448,7 +5110,9 @@
                 {
                     "Id": "62aa20a8-c2f4-4722-a706-f7e07610e6fa",
                     "IdText": "output",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
@@ -4464,19 +5128,21 @@
                 {
                     "Id": "1c1f88c3-0bf1-4025-b77c-b47b8ebbe643",
                     "IdText": "relationship",
+                    "description": "",
                     "event": false,
+                    "text": "",
                     "type": "Unknown"
                 }
             ],
+            "precious": false,
             "readonly": false,
-            "selected": false,
-            "showPorts": false,
+            "sha": "",
             "streaming": false,
             "subject": null,
             "text": "Memory",
             "width": 200,
-            "x": 2894.912758277487,
-            "y": 1327.0471099482056
+            "x": 2898.719933718731,
+            "y": 1445.725781454019
         }
     ]
 }

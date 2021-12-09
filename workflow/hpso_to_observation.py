@@ -28,8 +28,10 @@ information
 """
 
 import json
+import os
 import math
 import pandas as pd
+import networkx as nx
 
 from enum import Enum
 
@@ -372,8 +374,11 @@ def telescope_max(system_sizing, baseline):
     return tmax
 
 
-def generate_workflow_from_observation(observation, telescope_max, base_dir,
-                                       component_system_sizing):
+def generate_workflow_from_observation(
+        observation,
+        telescope_max,
+        base_dir,
+        component_sizing):
     """
     Given a pipeline and observation specification, generate a workflow file
     in the provided directory according to observation specifications,
@@ -385,7 +390,7 @@ def generate_workflow_from_observation(observation, telescope_max, base_dir,
         Observation descriptor object
     telescope_max: int
         The maximum number of arrays used on the telescope
-    component_system_sizing : pd.DataFrame
+    component_sizing : pd.DataFrame
         Data frame that stores information of system sizing. See
         common.SIZING for a dictionary mapping saved column names
         to human readable names.
@@ -397,27 +402,50 @@ def generate_workflow_from_observation(observation, telescope_max, base_dir,
     path to JSON file for associated workflow
 
     """
+    if not os.path.exists(base_dir):
+        raise FileNotFoundError(f'{base_dir} does not exist')
+    elif not os.path.exists(f'{base_dir}/config'):
+        os.mkdir(f'{base_dir}/config')
+        os.path.exists(f'{base_dir}/config/worklows')
+    elif not os.path.exists(f'{base_dir}config/worklows'):
+        os.path.exists(f'{base_dir}/config/worklows')
 
     telescope_frac = observation.demand / telescope_max
 
-    # select base graph
     base_graph = pipeline_paths[observation.hpso][observation.pipeline]
     channels = observation.channels
     channel_lgt = edt.update_number_of_channels(base_graph, channels)
     # Unroll the graph
-    topsim_pgt = edt.unroll_logical_graph(channel_lgt, file_in=False)
+    final_graphs = {}
+    for workflow in observation.workflows:
+        intermed_graph, task_dict = edt.eagle_to_nx(
+            channel_lgt, workflow, file_in=False
+        )
+        intermed_graph = generate_cost_per_product(
+            channel_lgt, task_dict, workflow, observation.hpso,
+            component_sizing
+        )
+        final_graphs[workflow] = intermed_graph
 
-    tel_base = f'{observation.telescope}_{observation.baseline}'
-    product_table = pd.read_csv(component_paths[tel_base])
+    final_workflow = edt.concatenate_workflows(final_graphs)
+    final_json = produce_final_workflow_structure(final_workflow, time=False)
 
-    final_path = generate_cost_per_product(
-        pgt, product_table, observation.hpso, base_dir
+    final_path = (
+        f'{observation.name}_channels-{channels}_tel-{telescope_frac}.json'
     )
+    with open(final_path) as fp:
+        json.dump(final_json, fp, indent=2)
 
     return final_path
 
 
-def generate_cost_per_product(pgt, observation, component_sizing, base_dir):
+def generate_cost_per_product(
+        nx_graph,
+        task_dict,
+        observation,
+        workflow,
+        component_sizing,
+):
     """
     Produce a cost value per node within the workflow graph for the given
     product.
@@ -435,14 +463,15 @@ def generate_cost_per_product(pgt, observation, component_sizing, base_dir):
 
     Parameters
     ----------
-    pgt : dict
-        Physical Graph Template that forms the basis of the workflow
+    nx_graph : :py:object:`networkx.DiGraph`
+        Topsim-compliant that forms the basis of the workflow
 
-    observation : str
+    observation : :py:object:`hpso_to_observation.Observation`
         the HPSO we are generating.
 
     component_sizing : pd.DataFrame
         Pandas dataframe containing the components
+
 
     Returns
     -------
@@ -450,20 +479,58 @@ def generate_cost_per_product(pgt, observation, component_sizing, base_dir):
     """
 
     ignore_components = [
-        'UpdateGSM', 'UpdateLSM', 'FinishMinorCycle', 'BeginMinorCycle'
+        'UpdateGSM', 'UpdateLSM', 'BeginMajorCycle', 'FinishMajorCycle',
+        'FinishMinorCycle', 'BeginMinorCycle', 'Gather', 'Scatter',
+        'FrequencySplit'
     ]
+    # EAGLE : System Sizing
+    component_translate = {'Subtract': 'Subtract Visibility'}
 
-    total_product_costs = {}
+    # total_product_costs = {}
+    # Precompute per-component costs, assuming equal split accross component
+    for component in task_dict:
+        if component in ignore_components:
+            continue
+        if component in component_translate:
+            total = isolate_component_cost(
+                observation.hpso, observation.baseline, workflow,
+                component_translate[component], component_sizing
+            )
+        else:
+            total = isolate_component_cost(
+                observation.hpso, observation.baseline, workflow,
+                component, component_sizing
+            )
+        task_dict[component]['total'] = total
+        task_dict[component]['fraction'] = total / task_dict[component]['node']
 
-    # for each element in the workflow
-    # strip the name
-    # 
-    # 
+    for node in nx_graph.nodes:
+        workflow, component, index = node.split('_')
+        if component in ignore_components:
+            continue
 
-    return total_product_costs
+        nx_graph.nodes[node]['comp'] = task_dict[component]['fraction']
+
+    return nx_graph
 
 
-def isolate_component_cost(hpso, baseline, workflow, component, component_sizing):
+def generate_computation_cost_per_component():
+    """
+    For the workflow type, generate comp cost for the component
+    """
+    pass
+
+
+def generate_data_cost_per_component():
+    """
+    for the workflow type, generate data cost for the component
+    (this is absorbed as an edge cost).
+    """
+    pass
+
+
+def isolate_component_cost(hpso, baseline, workflow, component,
+                           component_sizing):
     """
     Use HPSO and pipeline information to generate the correct workflow
     information
@@ -484,11 +551,36 @@ def isolate_component_cost(hpso, baseline, workflow, component, component_sizing
     obs_frame = component_sizing[
         (component_sizing['hpso'] == hpso) &
         (component_sizing['Baseline'] == baseline.value)
-    ]
+        ]
 
     cost = float(obs_frame[obs_frame['Pipeline'] == workflow][component])
 
     return cost
+
+
+def produce_final_workflow_structure(nx_final, time=False):
+    """
+    For a given logical graph template, produce a workflow with the specific
+    number of channels and return it as a JSON serialisable dictionary.
+
+    Parameters
+    ----------
+    nx_final : :py:obj:`networkx.DiGraph`
+    time: bool, default=False
+        The unit in which computation 'cost'. Historically, task DAG
+        scheduling has used the total seconds it takes to run a task
+
+    Returns
+    -------
+
+    """
+    jgraph = {
+        "header": {
+            "time": time,
+        },
+        "graph": nx.readwrite.node_link_data(nx_final)
+    }
+    return jgraph
 
 
 def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
