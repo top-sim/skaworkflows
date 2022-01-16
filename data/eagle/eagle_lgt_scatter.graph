@@ -1593,7 +1593,7 @@
             "showPorts": false,
             "streaming": false,
             "subject": null,
-            "text": "Phase Rotation Predict",
+            "text": "Predict",
             "width": 200,
             "x": 800.4130258629407,
             "y": 172.47634297720174
@@ -1682,7 +1682,7 @@
             "showPorts": false,
             "streaming": false,
             "subject": null,
-            "text": "Reprojection Predict",
+            "text": "Predict",
             "width": 200,
             "x": 1581.877701137957,
             "y": -6.630092463239521

@@ -479,61 +479,154 @@ def generate_cost_per_product(
     """
 
     ignore_components = [
-        'UpdateGSM', 'UpdateLSM', 'BeginMajorCycle', 'FinishMajorCycle',
+        'UpdateGSM', 'BeginMajorCycle', 'FinishMajorCycle',
         'FinishMinorCycle', 'BeginMinorCycle', 'Gather', 'Scatter',
         'FrequencySplit'
     ]
     # EAGLE : System Sizing
-    component_translate = {'Subtract': 'Subtract Visibility'}
-
     # total_product_costs = {}
     # Precompute per-component costs, assuming equal split accross component
     for component in task_dict:
         if component in ignore_components:
             continue
-        if component in component_translate:
-            total = isolate_component_cost(
-                observation.hpso, observation.baseline, workflow,
-                component_translate[component], component_sizing
-            )
         else:
-            total = isolate_component_cost(
+            total_cost, total_data = identify_component_cost(
                 observation.hpso, observation.baseline, workflow,
                 component, component_sizing
             )
-        task_dict[component]['total'] = total
-        task_dict[component]['fraction'] = total / task_dict[component]['node']
+        task_dict[component]['total_cost'] = total_cost
+        task_dict[component]['fraction_cost'] = (
+            total_cost / task_dict[component]['node']
+        )
+        task_dict[component]['total_data'] = total_data
+        task_dict[component]['fraction_data'] = (
+            total_data / task_dict[component]['out_edge']
+        )
 
+    # DO Compute
     for node in nx_graph.nodes:
         workflow, component, index = node.split('_')
         if component in ignore_components:
             continue
 
-        nx_graph.nodes[node]['comp'] = task_dict[component]['fraction']
+        nx_graph.nodes[node]['comp'] = task_dict[component]['fraction_cost']
 
-    return nx_graph
+    # TODO potential refactoring exercise
+    # # Do Edges
+    # for node
+    for edge in nx_graph.edges:
+        producer = edge[0]
+        workflow, component, index = producer.split('_')
 
+        if component in ignore_components:
+            continue
+        print(edge)
+        nx_graph[edge[0]][edge[1]]['data_size'] = task_dict[component][
+            'fraction_data']
 
-def generate_computation_cost_per_component():
-    """
-    For the workflow type, generate comp cost for the component
-    """
-    pass
-
-
-def generate_data_cost_per_component():
-    """
-    for the workflow type, generate data cost for the component
-    (this is absorbed as an edge cost).
-    """
-    pass
+    return nx_graph, task_dict
 
 
-def isolate_component_cost(hpso, baseline, workflow, component,
-                           component_sizing):
+def identify_component_cost(hpso, baseline, workflow, component,
+                            component_sizing):
     """
     Use HPSO and pipeline information to generate the correct workflow
     information
+
+    Parameters
+    ----------
+    hpso : str
+        'Name' of the observation, which doubles as the HPSO
+    baseline: :py:object:`common.Baseline`
+    workflow : str
+    component : str
+    component_sizing : :py:obj:`pd.DataFrame`
+
+    Notes
+    ------
+    * The component 'UpdateLSM' subsumes the 'reproject and reproject predict'
+    components
+
+    * The Gridding component subsumes Phase Rotation Predict, in addition to
+    its own costs.
+
+    * The component 'Predict', which appears in a couple of places in the
+    workflow, sources it's cost from DFT and IFFT
+
+    * Subtract is 'subtract visibilities'
+
+    Returns
+    -------
+
+    """
+
+    total_cost = 0
+    total_data = 0
+    if component == 'UpdateLSM':
+        for compnt in ['Reprojection Predict', 'Reprojection']:
+            cost, data = retrieve_cost(
+                hpso, baseline, workflow, compnt, component_sizing
+            )
+            total_cost += cost
+            total_data += data
+
+    elif component == 'Grid':
+        for compnt in [
+            'Grid', 'Phase Rotation Predict', 'Visibility Weighting',
+            'Gridding Kernel Update'
+        ]:
+            cost, data = retrieve_cost(
+                hpso, baseline, workflow, compnt, component_sizing
+            )
+            total_cost += cost
+            total_data += data
+
+    elif component == 'Degrid':
+        for compnt in [
+            'Degrid', 'Degridding Kernel Update'
+        ]:
+            cost, data = retrieve_cost(
+                hpso, baseline, workflow, compnt, component_sizing
+            )
+            total_cost += cost
+            total_data += data
+
+    elif component == 'Predict':
+        for compnt in ['DFT', 'IFFT']:
+            cost, data = retrieve_cost(
+                hpso, baseline, workflow, compnt, component_sizing
+            )
+            total_cost += cost
+            total_data += data
+
+    elif component == 'Subtract':
+        for compnt in ['Subtract Visibility']:
+            cost, data = retrieve_cost(
+                hpso, baseline, workflow, compnt, component_sizing
+            )
+            total_cost += cost
+            total_data += data
+
+    elif component == 'Correct':
+        for compnt in ['Correct', 'Average']:
+            cost, data = retrieve_cost(
+                hpso, baseline, workflow, compnt, component_sizing
+            )
+            total_cost += cost
+            total_data += data
+
+    else:
+        cost, data = retrieve_cost(
+            hpso, baseline, workflow, component, component_sizing
+        )
+        total_cost += cost
+        total_data += data
+
+    return total_cost, total_data
+
+
+def retrieve_cost(hpso, baseline, workflow, component, component_sizing):
+    """
 
     Parameters
     ----------
@@ -552,10 +645,12 @@ def isolate_component_cost(hpso, baseline, workflow, component,
         (component_sizing['hpso'] == hpso) &
         (component_sizing['Baseline'] == baseline.value)
         ]
+    compute = float(obs_frame[obs_frame['Pipeline'] == workflow][component])
+    data = float(
+        obs_frame[obs_frame['Pipeline'] == f'{workflow}_data'][component]
+    )
 
-    cost = float(obs_frame[obs_frame['Pipeline'] == workflow][component])
-
-    return cost
+    return compute, data
 
 
 def produce_final_workflow_structure(nx_final, time=False):
@@ -583,70 +678,71 @@ def produce_final_workflow_structure(nx_final, time=False):
     return jgraph
 
 
-def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
-    """
-    For a given set of costs, calculate the amount per-task in the workflow
-    is necessary.
-    Parameters
-    ----------
-    workflow : dictionary
-        Dictionary representation of JSON object that is converted from EAGLE
-        LGT through DALiuGE
-    costs : dict
-        product-compute costs (petaflops/s) pairs for each component in the
-        workflow
-    observation : dict
-        This is a list of requirements associated with the observation,
-        which we use to determine the amount of compute associated with it
-        e.g. length (max 5 hours), number of baselines (max 512) etc.
-
-    Notes
-    -----
-    The idea is that for a given component (e.g. Grid) there is a set compute
-
-    Returns
-    -------
-
-    """
-    pipelines = {
-        "pipelines": {}
-    }
-
-    # generate pipeline total ingest costs:
-    # max_ingest = system_sizing[
-    #     system_sizing['HPSO'] == 'hpso01'
-    #     ]['Total Compute Requirement [PetaFLOP/s]']
-
-    observation_ingest = tel_pecentage * (float(max_ingest) * SI.peta)
-    tel_pecentage = channels / float(MAX_CHANNELS)
-
-    ingest_cluster_demand = _find_ingest_demand(cluster, observation_ingest)
-
-    final_workflow = []
-    ecounter = {}
-
-    # count prevalence of each component in the workflow
-    for element in workflow:
-        if 'outputs' in element.keys():
-            if element['nm'] in ecounter:
-                ecounter[element['nm']] += 1
-            else:
-                ecounter[element['nm']] = 1
-
-    for element in workflow:
-        if 'outputs' in element.keys():
-            name = element['nm']
-            if name in ecounter:
-                if costs[name] == -1:
-                    continue
-                else:
-                    individual_cost = costs[name] / ecounter[name] * SI.peta
-                    element['tw'] = individual_cost
-                    final_workflow.append(element)
-        else:
-            final_workflow.append(element)
-
-    return final_workflow
+#
+# def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
+#     """
+#     For a given set of costs, calculate the amount per-task in the workflow
+#     is necessary.
+#     Parameters
+#     ----------
+#     workflow : dictionary
+#         Dictionary representation of JSON object that is converted from EAGLE
+#         LGT through DALiuGE
+#     costs : dict
+#         product-compute costs (petaflops/s) pairs for each component in the
+#         workflow
+#     observation : dict
+#         This is a list of requirements associated with the observation,
+#         which we use to determine the amount of compute associated with it
+#         e.g. length (max 5 hours), number of baselines (max 512) etc.
+#
+#     Notes
+#     -----
+#     The idea is that for a given component (e.g. Grid) there is a set compute
+#
+#     Returns
+#     -------
+#
+#     """
+#     pipelines = {
+#         "pipelines": {}
+#     }
+#
+#     # generate pipeline total ingest costs:
+#     # max_ingest = system_sizing[
+#     #     system_sizing['HPSO'] == 'hpso01'
+#     #     ]['Total Compute Requirement [PetaFLOP/s]']
+#
+#     observation_ingest = tel_pecentage * (float(max_ingest) * SI.peta)
+#     tel_pecentage = channels / float(MAX_CHANNELS)
+#
+#     ingest_cluster_demand = _find_ingest_demand(cluster, observation_ingest)
+#
+#     final_workflow = []
+#     ecounter = {}
+#
+#     # count prevalence of each component in the workflow
+#     for element in workflow:
+#         if 'outputs' in element.keys():
+#             if element['nm'] in ecounter:
+#                 ecounter[element['nm']] += 1
+#             else:
+#                 ecounter[element['nm']] = 1
+#
+#     for element in workflow:
+#         if 'outputs' in element.keys():
+#             name = element['nm']
+#             if name in ecounter:
+#                 if costs[name] == -1:
+#                     continue
+#                 else:
+#                     individual_cost = costs[name] / ecounter[name] * SI.peta
+#                     element['tw'] = individual_cost
+#                     final_workflow.append(element)
+#         else:
+#             final_workflow.append(element)
+#
+#     return final_workflow
 
 
 def _find_ingest_demand(cluster, ingest_flops):
@@ -673,6 +769,13 @@ def _find_ingest_demand(cluster, ingest_flops):
     arch = cluster['cluster']['header']['architecture']
     cpus = arch['cpu'].keys()
     m = 0
+
+    # TODO To get ingest flops, sum all the flops for the ingest and then
+    # divide based on the machine numbers. This is a partial solution,
+    # as we don't want to also simulate scheduling the ingest (this is too
+    # much overhead for the simulation - especially when we have to assume
+    # ingest pipelines will run on time, as they are necessary for the
+    # observation to occur.
 
     for cpu in cpus:
         m += cluster['cluster']['system']['resources'][f'{cpu}_m0'][

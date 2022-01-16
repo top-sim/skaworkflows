@@ -4372,7 +4372,7 @@
                     "readonly": false,
                     "text": "Number of copies",
                     "type": "Integer",
-                    "value": 4
+                    "value": 1
                 },
                 {
                     "defaultValue": "",
@@ -4970,7 +4970,7 @@
                     "readonly": false,
                     "text": "Number of inputs",
                     "type": "Integer",
-                    "value": 4
+                    "value": 1
                 },
                 {
                     "defaultValue": "",

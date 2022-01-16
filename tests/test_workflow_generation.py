@@ -241,23 +241,76 @@ class TestWorkflowFromObservation(unittest.TestCase):
                 self.component_sizing
             )
             final_graphs[workflow] = intermed_graph
-        final_graph = edt.concatenate_workflows(final_graphs, self.obs1.workflows)
+        final_graph = edt.concatenate_workflows(final_graphs,
+                                                self.obs1.workflows)
         self.assertEqual(72, len(final_graph.nodes))
 
         # Need to ensure that the DPrepA costs are Different to DPrepB
-
+        self.assertAlmostEqual(
+            0.0330766,
+            final_graphs['DPrepA'].nodes['DPrepA_Grid_0']['comp'],
+            places=5
+        )
+        self.assertAlmostEqual(
+            0.015635,
+            final_graphs['DPrepB'].nodes['DPrepB_Grid_0']['comp'],
+            places=5
+        )
         pass
+
+    def testConcatWorkflowsCost(self):
+        """
+        We want to be comparable to the SDP parametric model, so we want the
+        costs to be the same. Hence, we need to check against the compute that
+        is presented in the parametric model, which should be ~5x a single
+        pipeline (using their nomenclature).
+
+
+        Returns
+        -------
+
+        """
+        # 'ICAL + DPrepA + DPrepB + DPrepC + DPrepD'
+        self.obs1.demand = 512
+        sdp_par_model_batchcompute = 7861834424122161
+        workflows = ['ICAL', 'DPrepA', 'DPrepB', 'DPrepC', 'DPrepD']
+        final_graphs = {}
+        base_graph = LGT_PATH
+        self.obs1.workflows = workflows
+        for workflow in self.obs1.workflows:
+            nx_graph, task_dict = edt.eagle_to_nx(
+                base_graph, workflow, file_in=True
+            )
+            intermed_graph = hpo.generate_cost_per_product(
+                nx_graph, task_dict, self.obs1, workflow,
+                self.component_sizing
+            )
+            final_graphs[workflow] = intermed_graph
+        final_graph = edt.concatenate_workflows(final_graphs,
+                                                self.obs1.workflows)
+        sum = 0
+        for node in final_graph:
+            sum += final_graph.nodes[node]['comp']
+
+        # ICAL 6.878779923892501
+        # DPrepA 2.354166012951267
+        # DPrepB 2.503983537367972
+        # DPrepC 5.119784348908921
+        # DPrepD 0.300741837640721
+        self.assertEqual(sdp_par_model_batchcompute/(10**15), sum)
+
 
 
 class TestCostGenerationAndAssignment(unittest.TestCase):
 
     def setUp(self) -> None:
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
-        demand = 32
+        demand = 512
         duration = 3600
         channels = 64
         self.obs1 = hpo.Observation(
-            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, 'long'
+            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
+            'long'
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
 
@@ -274,14 +327,14 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         """
 
         # long baseline, DPrepA - component is Degrid
-        component_cost = hpo.isolate_component_cost(
+        component_cost = hpo.identify_component_cost(
             self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[0],
             'Degrid', self.component_system_sizing
         )
         print(component_cost)
         self.assertAlmostEqual(0.06615325754321748, component_cost, places=5)
 
-        component_cost = hpo.isolate_component_cost(
+        component_cost = hpo.identify_component_cost(
             self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[1],
             'Degrid', self.component_system_sizing
         )
@@ -308,15 +361,23 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         channels = self.obs1.channels
         nx_graph, task_dict = edt.eagle_to_nx(LGT_PATH, wf)
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
-        final_workflow = hpo.generate_cost_per_product(
+        final_workflow, task_dict = hpo.generate_cost_per_product(
             nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
         )
         # We want to make sure the comp cost has been updated
 
-        # TURN INTO GRAPH TO MAKE INTERACTION EASIER
+        # 2022 UPDATE - includes more than just degrid (see function docs).
+
         self.assertAlmostEqual(
-            0.0330766287716087,
+            0.045599966584772,
             final_workflow.nodes['DPrepA_Degrid_0']['comp'],
+            places=5
+        )
+        self.assertAlmostEqual(
+            15.683419877615755,
+            final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
+                'data_size'
+            ],
             places=5
         )
 
@@ -326,15 +387,44 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         nx_graph, task_dict = edt.eagle_to_nx(channel_lgt, wf, file_in=False)
         self.assertEqual(128, task_dict['Degrid']['node'])
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
-        final_workflow = hpo.generate_cost_per_product(
+        final_workflow, task_dict = hpo.generate_cost_per_product(
             nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
         )
 
         self.assertAlmostEqual(
-            0.0005168223245563866,
+            0.0007130320969410361,
             final_workflow.nodes['DPrepA_Degrid_0']['comp'],
             places=5
         )
+        self.assertAlmostEqual(
+            0.24505343558774617,
+            final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
+                'data_size'
+            ],
+            places=5
+        )
+
+    def testTotalComponentSum(self):
+        """
+        The sum of each node in the graph should equal the total compute for
+        the workflow
+
+        Returns
+        -------
+        """
+        wf = self.obs1.workflows[0]
+
+        nx_graph, task_dict = edt.eagle_to_nx(LGT_PATH, wf)
+        self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
+        final_workflow, task_dict = hpo.generate_cost_per_product(
+            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
+        )
+
+        total = sum(
+            [final_workflow.nodes[node]['comp'] for node in final_workflow]
+        )
+        self.assertAlmostEqual(2.3541660129512665, total, places=5)
+
 
     def test_generate_workflow_from_observation(self):
         """

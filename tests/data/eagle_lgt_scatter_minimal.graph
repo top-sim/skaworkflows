@@ -1166,7 +1166,7 @@
                     "readonly": false,
                     "text": "Number loops",
                     "type": "Unknown",
-                    "value": "2"
+                    "value": "1"
                 }
             ],
             "flipPorts": false,
@@ -1273,7 +1273,7 @@
                     "readonly": false,
                     "text": "Number loops",
                     "type": "Unknown",
-                    "value": "2"
+                    "value": "1"
                 }
             ],
             "flipPorts": false,
@@ -4372,7 +4372,7 @@
                     "readonly": false,
                     "text": "Number of copies",
                     "type": "Integer",
-                    "value": 4
+                    "value": 1
                 },
                 {
                     "defaultValue": "",
@@ -4970,7 +4970,7 @@
                     "readonly": false,
                     "text": "Number of inputs",
                     "type": "Integer",
-                    "value": 4
+                    "value": 1
                 },
                 {
                     "defaultValue": "",
