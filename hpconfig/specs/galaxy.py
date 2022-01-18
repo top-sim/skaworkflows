@@ -74,7 +74,7 @@ class PawseyGalaxy:
 
         Parameters
         ----------
-        updated_counts : list
+        updated_counts : list()
             List of counts, e.g. [10,25,4] for SandyBride, XeonBrige and Kepler
             respectively
 
@@ -82,7 +82,7 @@ class PawseyGalaxy:
         -------
 
         """
-        new_architecture = {'cpu':{},'gpu':{}}
+        new_architecture = {'cpu': {}, 'gpu': {}}
         total_counts = (len(self.architecture['cpu'])
                         + len(self.architecture['gpu']))
         if len(updated_counts) != total_counts:
@@ -90,10 +90,10 @@ class PawseyGalaxy:
         i = 0
         for cpu in (self.architecture['cpu'].keys()):
             new_architecture['cpu'][cpu] = updated_counts[i]
-            i+=i
+            i += i
         for gpu in (self.architecture['gpu'].keys()):
             new_architecture['gpu'][gpu] = updated_counts[i]
-            i+=i
+            i += i
         return new_architecture
 
     def print_config(self):
@@ -111,7 +111,7 @@ class PawseyGalaxy:
         for hw_type, arch in self.architecture.items():
             if arch:
                 for cpu_type, num in self.architecture[hw_type].items():
-                    print_str+=f'{str(cpu_type)}: {num} CPUs\n'
+                    print_str += f'{str(cpu_type)}: {num} CPUs\n'
         return print_str
 
     def create_config_dict(self):
@@ -182,10 +182,10 @@ class GalaxyNoGPU(PawseyGalaxy):
         super(GalaxyNoGPU, self).__init__()
         self.name = "GalaxyNoGPU"
         self.architecture = {
-            'cpu':{
+            'cpu': {
                 self.XeonIvyBridge: 50,
                 self.XeonSandyBridge: 100
             },
-            'gpu':{}
+            'gpu': {}
         }
         memory_per_cpu_node = 64

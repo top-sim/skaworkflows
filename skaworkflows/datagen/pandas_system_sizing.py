@@ -470,9 +470,9 @@ def compile_baseline_sizing(data_dir, total=True, component=True):
 if __name__ == '__main__':
     # System sizing for each baseline:
     logging.basicConfig(level='WARNING')
-    dir = f'data/sdp-par-model_output/'
+    IN_DIR = f'data/sdp-par-model_output/'
     OUTPUT_DIR = f'data/pandas_sizing/'
-    total_sizing, component_sizing = compile_baseline_sizing(dir)
+    total_sizing, component_sizing = compile_baseline_sizing(IN_DIR)
     for tel in total_sizing:
         fn_total = f'{OUTPUT_DIR}/total_compute_{tel}.csv'
         LOGGER.info(f'Writing total system sizing for {tel}to {fn_total}')
