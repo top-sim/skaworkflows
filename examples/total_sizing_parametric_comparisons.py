@@ -26,7 +26,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from workflow.common import SI
+from skaworkflows.workflow import SI
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)

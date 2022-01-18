@@ -19,12 +19,12 @@ import json
 
 import pandas as pd
 
-from workflow.hpso_to_observation import Observation
-from workflow.hpso_to_observation import create_observation_plan, \
+from skaworkflows.workflow import Observation
+from skaworkflows.workflow import create_observation_plan, \
     construct_telescope_config_from_observation_plan, \
     create_buffer_config, compile_observations_and_workflows
 
-from workflow.common import SI
+from skaworkflows.workflow import SI
 
 from hpconfig.specs.sdp import SDP_LOW_CDR
 

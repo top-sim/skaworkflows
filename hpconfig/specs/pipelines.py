@@ -18,21 +18,22 @@ Parametric model results as derived in the Parametric model presented in
 SKA-TEL-SDP-0000013
 """
 
-from utils.constants import SI
+from hpconfig.utils.constants import SI
 
 
 class PulsarSearch:
-	search_parameters = {
-		'no_beams': {
-			'mid': 1500,  # mid
-			'low': 500  # low
-		},
-		'no_candidates_per-beam': 1000,
-		'no_freq_cahnnels_per-beam': 128,
-		'nu_pulse_profile_bins': 128,
-		'observation_length': 600  # seconds
-	}
-	task_requirements = {
-		'merge_oclds': {'flops': 0.19 * SI.giga, 'data': 30 * SI.giga},  # flop, GB
-		'gen_extract_heuristics': 300000
-	}
+    search_parameters = {
+        'no_beams': {
+            'mid': 1500,  # mid
+            'low': 500  # low
+        },
+        'no_candidates_per-beam': 1000,
+        'no_freq_cahnnels_per-beam': 128,
+        'nu_pulse_profile_bins': 128,
+        'observation_length': 600  # seconds
+    }
+    task_requirements = {
+        'merge_oclds': {'flops': 0.19 * SI.giga, 'data': 30 * SI.giga},
+        # flop, GB
+        'gen_extract_heuristics': 300000
+    }

@@ -15,9 +15,8 @@
 import logging
 import math
 
-import pandas as pd
 from hpconfig.specs import sdp
-from workflow.common import SI
+from skaworkflows.common import SI
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)

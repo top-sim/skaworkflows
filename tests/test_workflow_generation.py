@@ -19,9 +19,8 @@ import json
 import os
 
 import pandas as pd
-import workflow.hpso_to_observation as hpo
-import workflow.eagle_daliuge_translation as edt
-from workflow.common import SI
+import skaworkflows.workflow.hpso_to_observation as hpo
+import skaworkflows.workflow.eagle_daliuge_translation as edt
 
 BASE_DATA_DIR = "data/pandas_sizing/"
 TEST_DATA_DIR = 'tests/data/'
@@ -236,7 +235,7 @@ class TestWorkflowFromObservation(unittest.TestCase):
             nx_graph, task_dict = edt.eagle_to_nx(
                 base_graph, workflow, file_in=True
             )
-            intermed_graph = hpo.generate_cost_per_product(
+            intermed_graph, task_dict = hpo.generate_cost_per_product(
                 nx_graph, task_dict, self.obs1, workflow,
                 self.component_sizing
             )
@@ -247,32 +246,42 @@ class TestWorkflowFromObservation(unittest.TestCase):
 
         # Need to ensure that the DPrepA costs are Different to DPrepB
         self.assertAlmostEqual(
-            0.0330766,
+            0.04563405*self.obs1.duration,
             final_graphs['DPrepA'].nodes['DPrepA_Grid_0']['comp'],
-            places=5
+            places=3
         )
         self.assertAlmostEqual(
-            0.015635,
+            0.0476149*self.obs1.duration,
             final_graphs['DPrepB'].nodes['DPrepB_Grid_0']['comp'],
-            places=5
+            places=3
         )
-        pass
+
+        self.assertNotEqual(
+            final_graphs['DPrepA'].nodes['DPrepA_Grid_0']['comp'],
+            final_graphs['DPrepB'].nodes['DPrepB_Grid_0']['comp']
+        )
 
     def testConcatWorkflowsCost(self):
         """
-        We want to be comparable to the SDP parametric model, so we want the
-        costs to be the same. Hence, we need to check against the compute that
-        is presented in the parametric model, which should be ~5x a single
-        pipeline (using their nomenclature).
+        Ensure that the cumulative cost of all nodes are equivalent to the
+        cost of each entire pipeline, as described in
+        `pandas_sizing/total_compute_SKA1_Low.csv`.
 
 
-        Returns
-        -------
+        Notes
+        -----
+        The values for each entire pipeline are as follows (pipeline, PFLOP/s);
+
+        * ICAL 6.878779923892501
+        * DPrepA 2.354166012951267
+        * DPrepB 2.503983537367972
+        * DPrepC 5.119784348908921
+        * DPrepD 0.300741837640721
 
         """
         # 'ICAL + DPrepA + DPrepB + DPrepC + DPrepD'
         self.obs1.demand = 512
-        sdp_par_model_batchcompute = 7861834424122161
+
         workflows = ['ICAL', 'DPrepA', 'DPrepB', 'DPrepC', 'DPrepD']
         final_graphs = {}
         base_graph = LGT_PATH
@@ -281,24 +290,20 @@ class TestWorkflowFromObservation(unittest.TestCase):
             nx_graph, task_dict = edt.eagle_to_nx(
                 base_graph, workflow, file_in=True
             )
-            intermed_graph = hpo.generate_cost_per_product(
+            intermed_graph, task_dict = hpo.generate_cost_per_product(
                 nx_graph, task_dict, self.obs1, workflow,
                 self.component_sizing
             )
             final_graphs[workflow] = intermed_graph
         final_graph = edt.concatenate_workflows(final_graphs,
                                                 self.obs1.workflows)
-        sum = 0
+        total = 0
         for node in final_graph:
-            sum += final_graph.nodes[node]['comp']
+            total += final_graph.nodes[node]['comp']
 
-        # ICAL 6.878779923892501
-        # DPrepA 2.354166012951267
-        # DPrepB 2.503983537367972
-        # DPrepC 5.119784348908921
-        # DPrepD 0.300741837640721
-        self.assertEqual(sdp_par_model_batchcompute/(10**15), sum)
-
+        self.assertAlmostEqual(
+            17.157455660761382*self.obs1.duration, total,places=5
+        )
 
 
 class TestCostGenerationAndAssignment(unittest.TestCase):
@@ -306,7 +311,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
     def setUp(self) -> None:
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         demand = 512
-        duration = 3600
+        duration = 60  # seconds
         channels = 64
         self.obs1 = hpo.Observation(
             1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
@@ -327,18 +332,18 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         """
 
         # long baseline, DPrepA - component is Degrid
-        component_cost = hpo.identify_component_cost(
+        component_cost, component_data = hpo.identify_component_cost(
             self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[0],
             'Degrid', self.component_system_sizing
         )
         print(component_cost)
-        self.assertAlmostEqual(0.06615325754321748, component_cost, places=5)
+        self.assertAlmostEqual(0.091199933169544, component_cost, places=5)
 
-        component_cost = hpo.identify_component_cost(
+        component_cost, component_data = hpo.identify_component_cost(
             self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[1],
             'Degrid', self.component_system_sizing
         )
-        self.assertAlmostEqual(0.031270291820095455, component_cost, places=5)
+        self.assertAlmostEqual(0.0950936323565933, component_cost, places=5)
 
     def test_generate_cost_per_product(self):
         """
@@ -349,8 +354,12 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         Notes
         ------
-        We have standard eagle, which has 2 minor cycles. For an observation
-        that is running on
+        We have basic eagle, which has 2 minor cycles. This means we will
+        see 2 of things like gridding/degridding operations.
+
+        This also takes into account the *total* compute required for
+        component (i.e. the task such as 'Grid'). This means it is a multiple
+        of `observation.duration * component_cost` above.
 
         Returns
         -------
@@ -369,12 +378,12 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         # 2022 UPDATE - includes more than just degrid (see function docs).
 
         self.assertAlmostEqual(
-            0.045599966584772,
+            0.045599966584772*self.obs1.duration,
             final_workflow.nodes['DPrepA_Degrid_0']['comp'],
             places=5
         )
         self.assertAlmostEqual(
-            15.683419877615755,
+            15.683419877615755*self.obs1.duration,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
                 'data_size'
             ],
@@ -392,16 +401,16 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         )
 
         self.assertAlmostEqual(
-            0.0007130320969410361,
+            0.0007130320969410361*self.obs1.duration,
             final_workflow.nodes['DPrepA_Degrid_0']['comp'],
-            places=5
+            places=3
         )
         self.assertAlmostEqual(
-            0.24505343558774617,
+            0.24505343558774617*self.obs1.duration,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
                 'data_size'
             ],
-            places=5
+            places=3
         )
 
     def testTotalComponentSum(self):
@@ -423,8 +432,9 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         total = sum(
             [final_workflow.nodes[node]['comp'] for node in final_workflow]
         )
-        self.assertAlmostEqual(2.3541660129512665, total, places=5)
-
+        self.assertAlmostEqual(
+            2.3541660129512665*self.obs1.duration, total, places=5
+        )
 
     def test_generate_workflow_from_observation(self):
         """
@@ -442,7 +452,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         """
         # Get an observation object and create a file for the associated HPSO
-        base_dir = 'tests/data/'
+        base_dir = 'tests/data/config'
         total_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         telescope_max = hpo.telescope_max(
             total_system_sizing, self.obs1.baseline

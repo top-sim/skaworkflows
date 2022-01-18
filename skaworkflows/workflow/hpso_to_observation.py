@@ -35,9 +35,8 @@ import networkx as nx
 
 from enum import Enum
 
-import workflow.eagle_daliuge_translation as edt
-from workflow.common import Baselines, MAX_CHANNELS, MAX_TEL_DEMAND, \
-    pipeline_paths, component_paths
+import skaworkflows.workflow.eagle_daliuge_translation as edt
+from skaworkflows.common import Baselines, MAX_CHANNELS, pipeline_paths
 
 
 class HPSO(Enum):
@@ -378,7 +377,9 @@ def generate_workflow_from_observation(
         observation,
         telescope_max,
         base_dir,
-        component_sizing):
+        component_sizing,
+        concat=True
+):
     """
     Given a pipeline and observation specification, generate a workflow file
     in the provided directory according to observation specifications,
@@ -496,11 +497,11 @@ def generate_cost_per_product(
             )
         task_dict[component]['total_cost'] = total_cost
         task_dict[component]['fraction_cost'] = (
-            total_cost / task_dict[component]['node']
+                total_cost / task_dict[component]['node']
         )
         task_dict[component]['total_data'] = total_data
         task_dict[component]['fraction_data'] = (
-            total_data / task_dict[component]['out_edge']
+                total_data / task_dict[component]['out_edge']
         )
 
     # DO Compute
@@ -509,7 +510,9 @@ def generate_cost_per_product(
         if component in ignore_components:
             continue
 
-        nx_graph.nodes[node]['comp'] = task_dict[component]['fraction_cost']
+        nx_graph.nodes[node]['comp'] = (
+            observation.duration * task_dict[component]['fraction_cost']
+        )
 
     # TODO potential refactoring exercise
     # # Do Edges
@@ -517,12 +520,11 @@ def generate_cost_per_product(
     for edge in nx_graph.edges:
         producer = edge[0]
         workflow, component, index = producer.split('_')
-
         if component in ignore_components:
             continue
-        print(edge)
-        nx_graph[edge[0]][edge[1]]['data_size'] = task_dict[component][
-            'fraction_data']
+        nx_graph[edge[0]][edge[1]]['data_size'] = (
+            observation.duration * task_dict[component]['fraction_data']
+        )
 
     return nx_graph, task_dict
 

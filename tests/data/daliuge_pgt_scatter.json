@@ -1372,7 +1372,7 @@
     "iid": "0/0",
     "lg_key": -5,
     "dt": "PythonApp",
-    "nm": "Phase Rotation Predict",
+    "nm": "Predict",
     "outputs": [
       "1_-23_0/0"
     ],
@@ -1397,7 +1397,7 @@
     "iid": "0/0",
     "lg_key": -6,
     "dt": "PythonApp",
-    "nm": "Reprojection Predict",
+    "nm": "Predict",
     "outputs": [
       "1_-32_0/0"
     ]

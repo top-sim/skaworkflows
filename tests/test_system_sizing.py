@@ -28,11 +28,11 @@ import os
 import unittest
 import pandas as pd
 
+from skaworkflows.datagen import pandas_system_sizing as pss
+
 sys.path.insert(0, os.path.abspath('../sdp-par-model'))
 from sdp_par_model import reports
 from sdp_par_model.parameters.definitions import *
-
-from data import pandas_system_sizing as pss
 
 DATA_DIR = 'data/sdp-par-model_output'
 SHORT = f'{DATA_DIR}/2021-06-02_short_HPSOs.csv'
