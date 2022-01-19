@@ -1,23 +1,22 @@
-#[tool.poetry]
-#[project]
-#name = "skaworkflows"
-#version = "0.1.9"
-#description = "Generate workflows for simulating SKA Science Data Processor performance"
-#authors = ["Ryan Bunney"]
-#license = "MIT"
-#
-##[tool.poetry.dependencies]
-#python = "^3.8"
-#numpy  = "^1.20.0"
-#pandas =  "^1.3.0"
-#networkx = "^2.6"
-#matplotlib = "^3.1.1"
-#sdp-par-model = { git = "https://github.com/ska-telescope/sdp-par-model.git" }
-#
-#[tool.poetry.dev-dependencies]
+[tool.poetry]
+name = "skaworkflows"
+version = "0.1.0"
+description = "SKA workflow generator and characterisation"
+authors = ["Ryan Bunney"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = ">=1.2.0"
+networkx = ">=2.6"
+pandas = ">=1.2.4"
+matplotlib = ">=3.1.1"
+coverage = ">=4.5.4"
+coveralls = ">=1.8.2"
+sdp-par-model = {git = "https://github.com/ska-telescope/sdp-par-model.git"}
+
+[tool.poetry.dev-dependencies]
+
 [build-system]
-requires = ["setuptools>=44.0", "wheel"]
-build-backend = "setuptools.build_meta"
-#[build-system]
-#requires = ["poetry-core>=1.0.0"]
-#build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
