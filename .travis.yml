@@ -9,5 +9,5 @@ python:
 #install:
 #  - pip install .
 
-script: coverage run -m unittest discover test
+script: coverage run -m unittest discover tests
 after_script: coveralls
