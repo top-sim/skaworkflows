@@ -27,6 +27,8 @@ setup(
         'matplotlib>=3.0',
         'pandas>=0.20',
         'coverage',
+        'IPython',
+        'pydot',
         'sdp-par-model @ git+https://github.com/ska-telescope/sdp-par-model',
         'daliuge-common @ git+https://github.com/ICRAR/daliuge.git#egg'
         '&subdirectory=daliuge-common',
