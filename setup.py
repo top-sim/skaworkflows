@@ -29,6 +29,7 @@ setup(
         'coverage',
         'IPython',
         'pydot',
+        'coveralls',
         'sdp-par-model @ git+https://github.com/ska-telescope/sdp-par-model',
         'daliuge-common @ git+https://github.com/ICRAR/daliuge.git#egg'
         '&subdirectory=daliuge-common',
