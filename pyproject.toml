@@ -13,6 +13,8 @@ pandas = ">=1.2.4"
 matplotlib = ">=3.1.1"
 coverage = ">=4.5.4"
 coveralls = ">=1.8.2"
+IPython = ">=7.27.0"
+pydot = ">=1.4.2"
 sdp-par-model = {git = "https://github.com/ska-telescope/sdp-par-model.git"}
 
 [tool.poetry.dev-dependencies]
