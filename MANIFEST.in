@@ -1,2 +1,2 @@
 prune tests/*
-prune hpconfig*
+prune hpconfig/*

@@ -26,8 +26,14 @@ setup(
         'networkx>=2.0',
         'matplotlib>=3.0',
         'pandas>=0.20',
-        'coverage'
-        'sdp-par-model @ git+https://github.com/ska-telescope/sdp-par-model'
+        'coverage',
+        'sdp-par-model @ git+https://github.com/ska-telescope/sdp-par-model',
+        'daliuge-common @ git+https://github.com/ICRAR/daliuge.git#egg'
+        '&subdirectory=daliuge-common',
+        'daliuge-engine @ git+https://github.com/ICRAR/daliuge.git#egg'
+        '&subdirectory=daliuge-engine',
+        'daliuge-translator @ git+https://github.com/ICRAR/daliuge.git#egg'
+        '&subdirectory=daliuge-translator'
     ],
     # dependency_links=[
     #     'https://github.com/ska-telescope/sdp-par-model.git"'
