@@ -2,9 +2,10 @@ language: python
 python:
   - "3.7"
 #
-#before_install:
-#  - poetry export --output requirements.txt
-#  - pip install -r requirements.txt
+before_install:
+  - curl -sSL https://install.python-poetry.org | python3 -
+  - poetry export --output requirements.txt
+  - pip install -r requirements.txt
 #
 #install:
 #  - pip install .
