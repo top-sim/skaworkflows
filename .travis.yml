@@ -4,9 +4,9 @@ python:
 #
 before_install:
   - curl -sSL https://install.python-poetry.org | python3 -
-#
+  - poetry install
 #install:
-#  - pip install .
+  - pip install .
 
 script: coverage run -m unittest discover tests
 after_script: coveralls
