@@ -19,12 +19,12 @@ import json
 
 import pandas as pd
 
-from skaworkflows.workflow import Observation
-from skaworkflows.workflow import create_observation_plan, \
+from skaworkflows.workflow.hpso_to_observation import Observation
+from skaworkflows.workflow.hpso_to_observation import create_observation_plan, \
     construct_telescope_config_from_observation_plan, \
     create_buffer_config, compile_observations_and_workflows
 
-from skaworkflows.workflow import SI
+from skaworkflows.common import SI
 
 from hpconfig.specs.sdp import SDP_LOW_CDR
 
@@ -64,6 +64,7 @@ class TestObservationPlanGeneration(unittest.TestCase):
     def setUp(self):
         # low_compute_data = "csv/SKA1_Low_COMPUTE.csv"
         # self.observations = convert_systemsizing_csv_to_dict(low_compute_data)
+        Observation()
         self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa', 256, 'long')
         self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa', 128, 'long')
         self.obs3 = Observation(3, 'hpso01', 32, 30, 'drepa', 256, 'long')
