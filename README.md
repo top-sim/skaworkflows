@@ -1,10 +1,8 @@
 # Topsim pipelines
 
-[![Build Status](https://app.travis-ci.com/top-sim/skaworkflows.svg?branch
-=master)](https://app.travis-ci.com/top-sim/skaworkflows) 
+[![Build Status](https://app.travis-ci.com/top-sim/skaworkflows.svg?branch=master)](https://app.travis-ci.com/top-sim/skaworkflows) 
 
-[![Coverage Status](https://coveralls.io/repos/github/top-sim/skaworkflows
-/badge.svg)](https://coveralls.io/github/top-sim/skaworkflows) 
+[![Coverage Status](https://coveralls.io/repos/github/top-sim/skaworkflows/badge.svg)](https://coveralls.io/github/top-sim/skaworkflows) 
 
 This repository stores data and translator scripts to convert HPSO data produced
 by the SDP Parametric model into a mid-term Observation Schedule, for use
