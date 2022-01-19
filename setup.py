@@ -22,10 +22,11 @@ setup(
     ),
     include_package_data=True,
     install_requires=[
+        'numpy>=1.2.0',
         'networkx>=2.0',
         'matplotlib>=3.0',
-        'numpy>=1.2.0',
         'pandas>=0.20',
+        'coverage'
         'sdp-par-model @ git+https://github.com/ska-telescope/sdp-par-model'
     ],
     # dependency_links=[
