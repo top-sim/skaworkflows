@@ -4,9 +4,6 @@ python:
 #
 before_install:
   - curl -sSL https://install.python-poetry.org | python3 -
-  - poetry --version
-  - poetry export --without-hashes --output requirements.txt
-  - pip install -r requirements.txt
 #
 #install:
 #  - pip install .
