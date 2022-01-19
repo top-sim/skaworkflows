@@ -21,3 +21,13 @@ with subdirectories containing each observations' workflow file.
 .. autoclass:: pipelines.hpso_to_observation.Observation
 	:members:
 
+--------------------
+Where is everything?
+--------------------
+
+------------------------
+Recommended user 'flow'
+-------------------------
+
+There are two approaches one can use to generate configuration files for the
+
