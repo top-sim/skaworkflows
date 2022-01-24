@@ -2,14 +2,15 @@
 	"telescope": {
 		"total_arrays": 36,
 		"pipelines": {
-			"continuum": {
-				"demand": 5
+			"emu": {
+				"workflow": "test/data/config/workflow_config.json",
+
+				"ingest_demand": 5
 			},
-			"spectral": {
-				"demand": 10
-			},
-			"pulsar": {
-				"demand": 5
+			"dingo": {
+				"workflow": "test/data/config/workflow_config.json",
+
+				"ingest_demand": 10
 			}
 		},
 		"observations": [
@@ -18,7 +19,6 @@
 				"start": 0,
 				"duration": 10,
 				"demand": 36,
-				"workflow": "test/data/config/workflow_config.json",
 				"type": "continuum",
 				"data_product_rate": 4
 			},
@@ -27,7 +27,6 @@
 				"start": 15,
 				"duration": 20,
 				"demand": 18,
-				"workflow": "test/data/config/workflow_config.json",
 				"type": "spectral",
 				"data_product_rate": 5
 			}

@@ -177,6 +177,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         buffer_ratio = (1, 5)
         sdp = SDP_LOW_CDR()
         # For SDP_LOW_CDR, total_storage is 67.2 PetaBytes
+        # TODO get values from sdp.total_storage instead
         hot_buffer = 13.44  # 20% of buffer
         cold_buffer = 53.76  # 80% of buffer
         spec = create_buffer_config(sdp, buffer_ratio)

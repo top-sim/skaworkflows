@@ -14,18 +14,23 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import unittest
+import shutil
 import random
 import json
 import os
 
+
+import networkx as nx
 import pandas as pd
+from skaworkflows import __version__
+from skaworkflows.common import SI
 import skaworkflows.workflow.hpso_to_observation as hpo
 import skaworkflows.workflow.eagle_daliuge_translation as edt
 
 BASE_DATA_DIR = "data/pandas_sizing/"
 TEST_DATA_DIR = 'tests/data/'
 
-TOTAL_SYSTEM_SIZING = f'{BASE_DATA_DIR}total_compute_SKA1_Low.csv'
+TOTAL_SYSTEM_SIZING = f'{BASE_DATA_DIR}/total_compute_SKA1_Low.csv'
 LGT_PATH = 'tests/data/eagle_lgt_scatter.graph'
 PGT_PATH = 'tests/data/daliuge_pgt_scatter.json'
 PGT_PATH_GENERATED = f'{TEST_DATA_DIR}/daliuge_pgt_scatter_generated.json'
@@ -246,12 +251,12 @@ class TestWorkflowFromObservation(unittest.TestCase):
 
         # Need to ensure that the DPrepA costs are Different to DPrepB
         self.assertAlmostEqual(
-            0.04563405*self.obs1.duration,
+            0.04563405 * self.obs1.duration,
             final_graphs['DPrepA'].nodes['DPrepA_Grid_0']['comp'],
             places=3
         )
         self.assertAlmostEqual(
-            0.0476149*self.obs1.duration,
+            0.0476149 * self.obs1.duration,
             final_graphs['DPrepB'].nodes['DPrepB_Grid_0']['comp'],
             places=3
         )
@@ -302,14 +307,17 @@ class TestWorkflowFromObservation(unittest.TestCase):
             total += final_graph.nodes[node]['comp']
 
         self.assertAlmostEqual(
-            17.157455660761382*self.obs1.duration, total,places=5
+            17.157455660761382
+            * self.obs1.duration
+            * SI.peta,
+            total,
+            places=5
         )
 
 
 class TestCostGenerationAndAssignment(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         demand = 512
         duration = 60  # seconds
         channels = 64
@@ -318,8 +326,6 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
             'long'
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
-
-        self.observations = []
 
     def testIsolateComponentCost(self):
         """
@@ -378,16 +384,16 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         # 2022 UPDATE - includes more than just degrid (see function docs).
 
         self.assertAlmostEqual(
-            0.045599966584772*self.obs1.duration,
+            0.045599966584772 * self.obs1.duration * SI.peta,
             final_workflow.nodes['DPrepA_Degrid_0']['comp'],
-            places=5
+            delta=1000
         )
         self.assertAlmostEqual(
-            15.683419877615755*self.obs1.duration,
+            15.683419877615755 * self.obs1.duration * SI.peta,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
                 'data_size'
             ],
-            places=5
+            delta=1000
         )
 
         # UPDATE CHANNELS TO A MUCH LARGER NUMBER
@@ -401,16 +407,16 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         )
 
         self.assertAlmostEqual(
-            0.0007130320969410361*self.obs1.duration,
+            0.0007124994778870625 * self.obs1.duration * SI.peta,
             final_workflow.nodes['DPrepA_Degrid_0']['comp'],
-            places=3
+            delta=1000
         )
         self.assertAlmostEqual(
-            0.24505343558774617*self.obs1.duration,
+            0.24505343558774617 * self.obs1.duration * SI.peta,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
                 'data_size'
             ],
-            places=3
+            delta=1000
         )
 
     def testTotalComponentSum(self):
@@ -433,10 +439,31 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
             [final_workflow.nodes[node]['comp'] for node in final_workflow]
         )
         self.assertAlmostEqual(
-            2.3541660129512665*self.obs1.duration, total, places=5
+            2.3541660129512665 * self.obs1.duration * SI.peta, total, delta=1000
         )
 
-    def test_generate_workflow_from_observation(self):
+
+class TestFileGenerationAndAssignment(unittest.TestCase):
+
+    def setUp(self) -> None:
+        demand = 512
+        duration = 60  # seconds
+        channels = 1
+        self.obs1 = hpo.Observation(
+            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
+            'long'
+        )
+        self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
+
+        self.config_dir = 'tests/data/config'
+        total_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
+
+        self.telescope_max = hpo.telescope_max(total_system_sizing, self.obs1)
+
+    def tearDown(self) -> None:
+        shutil.rmtree(self.config_dir)
+
+    def testWorkflowFileGenerated(self):
         """
         From a single observation, produce a workflow, get the file path,
         and return the location and the 'pipelines' dictionary entry.
@@ -452,31 +479,67 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         """
         # Get an observation object and create a file for the associated HPSO
-        base_dir = 'tests/data/config'
-        total_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
-        telescope_max = hpo.telescope_max(
-            total_system_sizing, self.obs1.baseline
+        self.assertEqual(512, self.telescope_max)
+        self.assertRaises(
+            FileNotFoundError,
+            hpo.generate_workflow_from_observation,
+            self.obs1, self.telescope_max, self.config_dir,
+            self.component_system_sizing
         )
-        self.assertEqual(512, telescope_max)
 
-        base_dir = 'test/data/'
+        # The creation of the config directory needs to
+        os.mkdir(self.config_dir)
+        self.assertTrue(os.path.exists(self.config_dir))
         hpo.generate_workflow_from_observation(
-            self.obs1, telescope_max, base_dir, self.component_system_sizing
+            self.obs1, self.telescope_max, self.config_dir,
+            self.component_system_sizing
         )
-        self.assertTrue(False)
 
-    def test_workflow_generated_from_observation(self):
+        final_dir = f'{self.config_dir}/workflows'
+        # we want to see test/data/sim_config/hpso01_workflow.json
+        'hpso01_channels-1_tel-512.json'
+        final_path = f'{final_dir}/hpso01_channels-1_tel-512.json'
+        self.assertTrue(os.path.exists(final_path))
+
+    def testWorkflowFileCorrectness(self):
         """
-        Given an observation, create a workflow file from the observation
-        specifications based on the system sizing details provided.
+        Ensure that the following is correct:
 
+        1. The header file fits the observation definition
+        2. The graph data is equivalent to the final graph object
 
         Returns
         -------
 
         """
+        os.mkdir(self.config_dir)
+        self.assertTrue(os.path.exists(self.config_dir))
+        result = hpo.generate_workflow_from_observation(
+            self.obs1, self.telescope_max, self.config_dir,
+            self.component_system_sizing
+        )
 
-        telescope_max = 512.0  # Taken from total system sizing
-        base_dir = "test/data/tmp"
-        component_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
-        self.assertTrue(False)
+        header = {
+            'generator': {
+                'name': 'skaworkflows',
+                'version': __version__,
+            },
+            'parameters': {
+                'max_arrays': 512,
+                'channels': 1,
+                'arrays': 512,
+                'baseline': 65000
+            },
+            'time': False
+        }
+        final_dir = f'{self.config_dir}/workflows'
+
+        with open(f'{final_dir}/hpso01_channels-1_tel-512.json') as fp:
+            test_workflow = json.load(fp)
+
+        self.assertDictEqual(header, test_workflow['header'])
+        nx_graph = nx.readwrite.node_link_graph(test_workflow['graph'])
+        self.assertAlmostEqual(
+            0.09119993316954411 * self.obs1.duration * SI.peta,
+            nx_graph.nodes['DPrepA_Degrid_0']['comp'], delta=1000
+        )

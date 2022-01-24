@@ -18,7 +18,7 @@ Common data and classes for access between diferrent pipeline codes
 """
 
 from enum import Enum
-
+from skaworkflows import __version__
 
 class Baselines(Enum):
     short = 4062.5
@@ -37,7 +37,7 @@ class SI:
 # These are 'binned' channels, by dividing the number of real channels by 64.
 MAX_CHANNELS = 512
 MAX_TEL_DEMAND = 256
-
+BASE_GRAPH_PATH = 'data/hpsos/hpso01/dprepa.graph'
 
 COMPUTE_KEYS = {
     'hpso': "HPSO",
@@ -75,6 +75,21 @@ compute_units = {
     'totalbatch': "Pflop/s",
     'total': "Pflop/s",
     'ingest_rate': "TB/s"
+}
+
+
+WORKFLOW_HEADER = {
+    'generator': {
+        'name': 'skaworkflows',
+        'version': __version__,
+    },
+    'parameters': {
+        'max_arrays': 512,
+        'channels': None,
+        'arrays': None,
+        'baseline': None
+    },
+    'time': 'False'
 }
 
 # Keys for DATA csv
