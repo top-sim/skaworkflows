@@ -19,10 +19,10 @@ import json
 
 import pandas as pd
 
-from skaworkflows.workflow.hpso_to_observation import Observation
+from skaworkflows.workflow.hpso_to_observation import Observation, create_observation_from_hpso
 from skaworkflows.workflow.hpso_to_observation import create_observation_plan, \
     construct_telescope_config_from_observation_plan, \
-    create_buffer_config, compile_observations_and_workflows
+    create_buffer_config, compile_observations_and_workflows, calc_ingest_demand
 
 from skaworkflows.common import SI
 
@@ -45,8 +45,8 @@ PATH_NOT_EXISTS = 'path/doesnt/exist'
 class TestObservationClass(unittest.TestCase):
 
     def setUp(self):
-        self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa', 256, 'long')
-        self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa', 256, 'long')
+        self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 'long')
+        self.obs2 = Observation(4, 'hpso04a', ['dprepa'], 16, 30, 256, 'long')
 
     def test_unroll_observations(self):
         unroll_list = [self.obs1 for x in range(self.obs1.count)]
@@ -64,10 +64,14 @@ class TestObservationPlanGeneration(unittest.TestCase):
     def setUp(self):
         # low_compute_data = "csv/SKA1_Low_COMPUTE.csv"
         # self.observations = convert_systemsizing_csv_to_dict(low_compute_data)
-        Observation()
-        self.obs1 = Observation(2, 'hpso01', 32, 60, 'dprepa', 256, 'long')
-        self.obs2 = Observation(4, 'hpso04a', 16, 30, 'dprepa', 128, 'long')
-        self.obs3 = Observation(3, 'hpso01', 32, 30, 'drepa', 256, 'long')
+        self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60,  256, 'long')
+        self.obslist1 = create_observation_from_hpso(
+            2, 'hpso01', ['dprepa'], 32, 60, 256, 'long'
+        )
+        self.obslist2 = create_observation_from_hpso(
+            4, 'hpso04a', ['dprepa'], 16, 30, 128, 'long'
+        )
+        self.obs3 = Observation(3, 'hpso01', ['dprepa'], 32, 30, 256, 'long')
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         self.max_telescope_usage = 32  # 1/16th of the telescope
 
@@ -87,11 +91,29 @@ class TestObservationPlanGeneration(unittest.TestCase):
         -------
         """
         random.seed(0)
-        obslist = (self.obs1.unroll_observations()
-                   + self.obs2.unroll_observations())
+        # obslist = (self.obs1.unroll_observations()
+        #            + self.obs2.unroll_observations())
+        obslist = self.obslist1 + self.obslist2
         plan = create_observation_plan(obslist, self.max_telescope_usage)
-        self.assertTrue(plan[0], [(0, 30, self.obs1)])
-        self.assertTrue(plan[1], self.obs2)
+        self.assertEqual('hpso01_1', plan[0].name)
+        self.assertEqual(0, plan[0].start)
+        self.assertEqual(150, plan[5].start)
+
+
+
+
+
+class TestObservationComponentGeneration(unittest.TestCase):
+
+    def setup(self):
+        self.obs1 = Observation(
+            count=3, hpso='hpso01', demand=512,
+            duration=60, workflows=['dprepa'], channels=256,
+            baseline='long'
+        )
+
+    def testObservationPipeplineConfigCreated(self):
+        self.assertTrue(False)
 
 
 class TestObservationTopSimTranslation(unittest.TestCase):
@@ -109,18 +131,17 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             (0, 60, 32, 'hpso01', 'dprepa', 256, 'long'),
             (60, 120, 32, 'hpso01', 'dprepa', 256, 'long')
         ]
-        self.obs2 = Observation(1, 'hpso01', 32, 60, 'dprepa', 256, 'long')
-        self.obs3 = Observation(2, 'hpso04a', 16, 30, 'dprepa', 256, 'long')
+        self.obs2 = Observation(
+            count=1, hpso='hpso01', workflows=['dprepa'],
+            demand=32, duration=60, channels=256, baseline='long')
+        self.obs3 = Observation(2, 'hpso04a', ['dprepa'], 16, 30, 256, 'long')
 
     def test_ingest_demand_calc(self):
         # Start with a spec, then determine how many machines we will need
         # based on the ingest size
-        max_ingest = self.system_sizing[
-            self.system_sizing['HPSO'] == 'hpso01'
-            ]['Ingest [Pflop/s]']
-        ingest_flops = 32 / 512 * (float(max_ingest) * SI.peta)
-        self.assertEqual(123, hpo._find_ingest_demand(self.cluster,
-                                                      ingest_flops))
+        # ingest_flops = 32 / 512 * (float(max_ingest) * SI.peta)
+        self.assertEqual(123, calc_ingest_demand(
+            self.cluster,
 
     def test_telescope_config_sizing(self):
         """

@@ -46,13 +46,34 @@ class HPSO(Enum):
     hpso2a = ['ingest']
 
 
+def create_observation_from_hpso(
+        count, hpso, workflows, demand, duration, channels, baseline
+):
+    """
+    Observation objects store the number of observations that will appear
+    in the mid-term plan
+
+    Returns
+    -------
+
+    """
+    obslist = []
+    for i in range(count):
+        obs = Observation(
+            f'{hpso}_{i}', hpso, workflows, demand, duration, channels,
+            baseline
+        )
+        obslist.append(obs)
+    return obslist
+
+
 class Observation:
     """
     Helper-class to store information for when generating observation schedule
 
     Parameters
     -----------
-    count : int
+    id : str
         The number of the observations wanted in the schedule
     hpso : str
         The high-priority science project the observation is associated with
@@ -69,32 +90,46 @@ class Observation:
 
     def __init__(
             self,
-            count, hpso, workflows, demand, duration,
+            name, hpso, workflows, demand, duration,
             channels, baseline
     ):
+        self.name = name
         self.telescope = "low"
-        self.count = count
         self.hpso = hpso
         self.demand = demand
+        self.start = 0
         self.duration = duration
         self.workflows = workflows
         self.channels = channels
         self.baseline = Baselines[baseline]
         self.workflow_path = None
+        self.planned = False
 
-    def unroll_observations(self):
+    def __hash__(self):
         """
-        Observation objects store the number of observations that will appear
-        in the mid-term plan
+        Construct a hash of observation parameters to determine if one is
+        equivalent to another
+
+        If an observation has the same:
+        * HPSO
+        * Demand
+        * Duration
+        * Baseline
+
+        It is the same workflow
 
         Returns
         -------
 
         """
-        obslist = []
-        for i in range(self.count):
-            obslist.append(self)
-        return obslist
+        hash(self.hpso + (
+            str(self.demand + self.channels + self.baseline.value)))
+
+    def __repr__(self):
+        return self.name
+
+    def __eq__(self, other):
+        return self.__hash__() == other.__hash__()
 
     def add_workflow_path(self, path):
         """
@@ -113,6 +148,9 @@ class Observation:
         else:
             self.workflow_path = path
             return True
+
+    def add_start_time(self, start):
+        self.start = start
 
 
 def create_observation_plan(observations, max_telescope_usage):
@@ -170,73 +208,63 @@ def create_observation_plan(observations, max_telescope_usage):
     current_tel_usage = 0
     loop_count = 0
     # start, finish, demand, hpso, pipeline, channels, baseline
-    plan = [(0, -1, 0, '', '', 0, '')]
+    # plan = [(0, -1, 0, '', '', 0, '')]
+    start = 0
+    finish = -1
     while observations:
         observations = sorted(
-            observations, key=lambda obs: (obs.baseline.value, obs.channels)
+            observations, key=lambda obs: (obs.baseline.value, obs.duration)
         )
         if loop_count % len(observations) == 0:
-            start, finish, demand, hpso, pipeline, channels, baseline = plan[-1]
-            largest = observations[-1]
+            largest_observation = observations[-1]
             if finish == -1:  # Then we are the first with this time
-                plan.pop()
-                plan.append(create_observation_plan_tuple(largest, start))
-                current_tel_usage += largest.demand
-                observations.remove(largest)
+                # plan.pop()
+                largest_observation.add_start_time(start)
+                largest_observation.planned = True
+                plan.append(largest_observation)
+                current_tel_usage += largest_observation.demand
+                # observations.remove(largest_observation)
                 loop_count += 1
+                finish = start + largest_observation.duration
             else:  # We have to check the telescope capacity
-                if current_tel_usage + largest.demand > max_telescope_usage:
+                if (
+                        current_tel_usage + largest_observation.demand
+                        > max_telescope_usage
+                ):
                     loop_count += 1
-                    continue
                 else:
-                    plan.append((create_observation_plan_tuple(largest, start)))
-                    current_tel_usage += largest.demand
-                    observations.remove(largest)
+                    largest_observation.add_start_time(start)
+                    largest_observation.planned = True
+                    plan.append(largest_observation)
+                    current_tel_usage += largest_observation.demand
+                    # observations.remove(largest_observation)
                     loop_count += 1
+                    finish = start + largest_observation.duration
+
         else:  # we are not looking to add the largest:
-            start, finish, demand, hpso, pipeline, channels, baseline = plan[-1]
-            if finish == -1:
-                plan.pop()
             # See if we can squeeze in a few observations
             for observation in observations:
+                if observation.planned:
+                    continue
                 if (current_tel_usage + observation.demand
                         <= max_telescope_usage):
-                    plan.append(create_observation_plan_tuple(observation,
-                                                              start))
+                    observation.add_start_time(start)
+                    observation.planned = True
+                    plan.append(observation)
                     current_tel_usage += observation.demand
-                    observations.remove(observation)
+                    # observations.remove(observation)
                     loop_count += 1
-            start, finish, demand, hpso, pipeline, channels, baseline = plan[-1]
-            next_time_frame = (finish, -1, 0, '', '', 0, '')
+                    if finish < start + observation.duration:
+                        finish = start + observation.duration
+            start = finish
+            finish = -1
             current_tel_usage = 0
-            plan.append(next_time_frame)
+        observations = [
+            observation for observation in
+            observations if not observation.planned
+        ]
 
     return plan
-
-
-def create_observation_plan_tuple(observation, start):
-    """
-    An observation can be represented as a tuple with a given start time,
-    for the purpose of transforming into JSON
-
-    Parameters
-    ----------
-    observation
-    start
-
-    Returns
-    -------
-
-    """
-    start = start
-    finish = start + observation.duration
-    hpso = observation.hpso
-    pipeline = observation.pipeline
-    demand = observation.demand
-    channels = observation.channels
-    baseline = observation.baseline
-    tup = (start, finish, demand, hpso, pipeline, channels, baseline)
-    return tup
 
 
 def create_buffer_config(itemised_spec, ratio):
@@ -374,6 +402,64 @@ def telescope_max(system_sizing, observation):
     return tmax
 
 
+def generate_instrument_config(
+        observation_plan, telescope_max, config_dir,
+        system_sizing, component_sizing, cluster):
+    """
+    Produce the `instrument level configuration for a TopSim compatible
+    simulation configuration file.
+
+
+    The instrument config describes within it:
+
+
+    Returns
+    -------
+
+    """
+
+    # telescope_max,
+    # config_dir,
+    # component_sizing,
+
+    for observation in observation_plan:
+        # create workflow
+        workflow_path = generate_workflow_from_observation(
+            observation, telescope_max, config_dir, component_sizing
+        )
+        rel_workflow_path = workflow_path.lstrip(config_dir)
+
+        ingest_demand = calc_ingest_demand(observation, system_sizing, cluster)
+
+
+def create_single_observation_for_instrument(observation, workflow_path):
+    """
+    Given an observation, generate the following two components for the
+    telescope configuration:
+
+    * pipeline:
+
+    >>>    {
+    >>>         "observation": {
+    >>>             "workflow": "path/to/workflow"
+    >>>             "ingest_demand": number_of_machines_needed_for_ingest
+    >>>         }
+    >>> }
+
+    * Observation:
+    >>>  "name" : observation.hpso + count
+    >>>  "start": observation.start
+    >>>  "duration" : length_of_observation
+    >>>  "demand" :
+    >>>  "data_product_rate": ingest_rate
+
+
+    Returns
+    -------
+
+    """
+
+
 def generate_workflow_from_observation(
         observation,
         telescope_max,
@@ -436,7 +522,8 @@ def generate_workflow_from_observation(
 
     final_path = (
             f'{workflow_dir}/'
-            + f'{observation.hpso}_channels-{channels}_tel-'
+            + f'{observation.hpso}_time-{observation.duration}'
+            + f'_channels-{channels}_tel-'
             + f'{observation.demand}.json'
     )
 
@@ -576,7 +663,7 @@ def identify_component_cost(hpso, baseline, workflow, component,
     total_data = 0
     if component == 'UpdateLSM':
         for compnt in ['Reprojection Predict', 'Reprojection']:
-            cost, data = retrieve_cost(
+            cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
             total_cost += cost
@@ -587,7 +674,7 @@ def identify_component_cost(hpso, baseline, workflow, component,
             'Grid', 'Phase Rotation Predict', 'Visibility Weighting',
             'Gridding Kernel Update'
         ]:
-            cost, data = retrieve_cost(
+            cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
             total_cost += cost
@@ -597,7 +684,7 @@ def identify_component_cost(hpso, baseline, workflow, component,
         for compnt in [
             'Degrid', 'Degridding Kernel Update'
         ]:
-            cost, data = retrieve_cost(
+            cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
             total_cost += cost
@@ -605,7 +692,7 @@ def identify_component_cost(hpso, baseline, workflow, component,
 
     elif component == 'Predict':
         for compnt in ['DFT', 'IFFT']:
-            cost, data = retrieve_cost(
+            cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
             total_cost += cost
@@ -613,7 +700,7 @@ def identify_component_cost(hpso, baseline, workflow, component,
 
     elif component == 'Subtract':
         for compnt in ['Subtract Visibility']:
-            cost, data = retrieve_cost(
+            cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
             total_cost += cost
@@ -621,14 +708,14 @@ def identify_component_cost(hpso, baseline, workflow, component,
 
     elif component == 'Correct':
         for compnt in ['Correct', 'Average']:
-            cost, data = retrieve_cost(
+            cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
             total_cost += cost
             total_data += data
 
     else:
-        cost, data = retrieve_cost(
+        cost, data = retrieve_component_cost(
             hpso, baseline, workflow, component, component_sizing
         )
         total_cost += cost
@@ -637,7 +724,8 @@ def identify_component_cost(hpso, baseline, workflow, component,
     return total_cost, total_data
 
 
-def retrieve_cost(hpso, baseline, workflow, component, component_sizing):
+def retrieve_component_cost(hpso, baseline, workflow, component,
+                            component_sizing):
     """
 
     Parameters
@@ -665,6 +753,31 @@ def retrieve_cost(hpso, baseline, workflow, component, component_sizing):
     return compute, data
 
 
+def retrive_workflow_cost(hpso, baseline, workflow, system_sizing):
+    """
+    For HPSO (e.g. HPSO01a) retrieve total ingest FLOPS for a specific baseline
+
+    Parameters
+    ----------
+    hpso
+    baseline
+    workflow
+    system_sizing
+
+    Returns
+    -------
+
+    """
+
+    obs_frame = system_sizing[
+        (system_sizing['hpso'] == hpso) &
+        (system_sizing['Baseline'] == baseline.value)
+        ]
+    flops = float(obs_frame[obs_frame['Pipeline'] == workflow][component])
+
+    return flops
+
+
 def produce_final_workflow_structure(nx_final, observation, time=False):
     """
     For a given logical graph template, produce a workflow with the specific
@@ -688,6 +801,7 @@ def produce_final_workflow_structure(nx_final, observation, time=False):
     header['parameters']['channels'] = observation.channels
     header['parameters']['arrays'] = observation.demand
     header['parameters']['baseline'] = observation.baseline.value
+    header['parameters']['duration'] = observation.duration
     jgraph = {
         "header": header,
         "graph": nx.readwrite.node_link_data(nx_final)
@@ -762,30 +876,16 @@ def produce_final_workflow_structure(nx_final, observation, time=False):
 #     return final_workflow
 
 
-def _find_ingest_demand(cluster, ingest_flops):
+def calc_ingest_demand(observation, system_sizing, cluster):
     """
     Get the average compute over teh CPUs in the cluster and determine the
     number of resources necessary for the current ingest_flops
 
-    "cluster": {
-        "header": {
-            "time": "false",
-            "generator": "hpconfig",
-            "architecture": {
-                "cpu": {
-                    "XeonIvyBridge": 50,
-                    "XeonSandyBridge": 100
-                },
-                "gpu": {
-                    "NvidiaKepler": 64
-                }
-            }
-        },
-
     """
-    arch = cluster['cluster']['header']['architecture']
-    cpus = arch['cpu'].keys()
-    m = 0
+    #
+    # arch = cluster['cluster']['header']['architecture']
+    # cpus = arch['cpu'].keys()
+    # m = 0
 
     # TODO To get ingest flops, sum all the flops for the ingest and then
     # divide based on the machine numbers. This is a partial solution,
@@ -794,12 +894,22 @@ def _find_ingest_demand(cluster, ingest_flops):
     # ingest pipelines will run on time, as they are necessary for the
     # observation to occur.
 
-    for cpu in cpus:
-        m += cluster['cluster']['system']['resources'][f'{cpu}_m0'][
-            'flops']
-    sys_average = m / len(cpus)
-    num_machines = math.ceil(ingest_flops / sys_average)
-    return num_machines
+    ingest_flops = retrive_workflow_cost(
+        observation.hpso,
+        observation.baseline,
+        'Ingest [PFLOP/s]',
+        system_sizing
+    )
+    resources = cluster['system']['resources']
+    m = 0
+    num_machines = 0
+    for machine in resources:
+        m += resources[machine]['flops']
+        num_machines += 1
+        if m > ingest_flops:
+            break
+
+    return num_machines, ingest_flops
 
 
 def compile_observations_and_workflows(
@@ -856,7 +966,7 @@ def compile_observations_and_workflows(
     >>>        ]
     >>>    },
 
-
+zx
     >>>    {"cluster": {
     >>>        "header": {
     >>>            "time": "false",

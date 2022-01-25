@@ -87,7 +87,8 @@ WORKFLOW_HEADER = {
         'max_arrays': 512,
         'channels': None,
         'arrays': None,
-        'baseline': None
+        'baseline': None,
+        'duration': None,
     },
     'time': 'False'
 }

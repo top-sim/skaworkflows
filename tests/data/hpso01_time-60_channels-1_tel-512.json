@@ -1,0 +1,533 @@
+{
+  "header": {
+    "generator": {
+      "name": "skaworkflows",
+      "version": "0.1.0"
+    },
+    "parameters": {
+      "max_arrays": 512,
+      "channels": 1,
+      "arrays": 512,
+      "baseline": 65000,
+      "duration": 60
+    },
+    "time": false
+  },
+  "graph": {
+    "directed": true,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+      {
+        "comp": 0,
+        "id": "DPrepA_UpdateGSM_0"
+      },
+      {
+        "comp": 0.0,
+        "id": "DPrepA_Solve_0"
+      },
+      {
+        "comp": 5476086504507157.0,
+        "id": "DPrepA_Grid_0"
+      },
+      {
+        "comp": 5471995990172640.0,
+        "id": "DPrepA_Degrid_0"
+      },
+      {
+        "comp": 522654591106833.0,
+        "id": "DPrepA_Flag_0"
+      },
+      {
+        "comp": 1230929993333.3333,
+        "id": "DPrepA_Subtract Image Component_0"
+      },
+      {
+        "comp": 1531660005612636.0,
+        "id": "DPrepA_FFT_0"
+      },
+      {
+        "comp": 627803720146.2394,
+        "id": "DPrepA_Identify Component_0"
+      },
+      {
+        "comp": 0,
+        "id": "DPrepA_FinishMajorCycle_0"
+      },
+      {
+        "comp": 0,
+        "id": "DPrepA_BeginMajorCycle_0"
+      },
+      {
+        "comp": 3746627893235.9995,
+        "id": "DPrepA_Subtract_0"
+      },
+      {
+        "comp": 0.0,
+        "id": "DPrepA_Source Find_0"
+      },
+      {
+        "comp": 29612936350968.0,
+        "id": "DPrepA_UpdateLSM_0"
+      },
+      {
+        "comp": 0.0,
+        "id": "DPrepA_Phase Rotation Predict_0"
+      },
+      {
+        "comp": 14806468175484.0,
+        "id": "DPrepA_Reprojection Predict_0"
+      },
+      {
+        "comp": 3596762777509398.0,
+        "id": "DPrepA_Correct_0"
+      },
+      {
+        "comp": 522654591106833.0,
+        "id": "DPrepA_Flag_1"
+      },
+      {
+        "comp": 0.0,
+        "id": "DPrepA_Image Spectral Fitting_0"
+      },
+      {
+        "comp": 3746627893235.9995,
+        "id": "DPrepA_Subtract_1"
+      },
+      {
+        "comp": 0,
+        "id": "DPrepA_Gather_0"
+      },
+      {
+        "comp": 0,
+        "id": "DPrepA_FrequencySplit_0"
+      },
+      {
+        "comp": 0,
+        "id": "DPrepB_UpdateGSM_0"
+      },
+      {
+        "comp": 0.0,
+        "id": "DPrepB_Solve_0"
+      },
+      {
+        "comp": 5713798970064630.0,
+        "id": "DPrepB_Grid_0"
+      },
+      {
+        "comp": 5705617941395598.0,
+        "id": "DPrepB_Degrid_0"
+      },
+      {
+        "comp": 1045309182213668.9,
+        "id": "DPrepB_Flag_0"
+      },
+      {
+        "comp": 246185998666662.0,
+        "id": "DPrepB_Subtract Image Component_0"
+      },
+      {
+        "comp": 4678808475780276.0,
+        "id": "DPrepB_FFT_0"
+      },
+      {
+        "comp": 62780372014620.0,
+        "id": "DPrepB_Identify Component_0"
+      },
+      {
+        "comp": 0,
+        "id": "DPrepB_FinishMajorCycle_0"
+      },
+      {
+        "comp": 0,
+        "id": "DPrepB_BeginMajorCycle_0"
+      },
+      {
+        "comp": 7493255786475.0,
+        "id": "DPrepB_Subtract_0"
+      },
+      {
+        "comp": 0.0,
+        "id": "DPrepB_Source Find_0"
+      },
+      {
+        "comp": 103645277228406.0,
+        "id": "DPrepB_UpdateLSM_0"
+      },
+      {
+        "comp": 0.0,
+        "id": "DPrepB_Phase Rotation Predict_0"
+      },
+      {
+        "comp": 29612936350974.0,
+        "id": "DPrepB_Reprojection Predict_0"
+      },
+      {
+        "comp": 7193525555018803.0,
+        "id": "DPrepB_Correct_0"
+      },
+      {
+        "comp": 1045309182213668.9,
+        "id": "DPrepB_Flag_1"
+      },
+      {
+        "comp": 0.0,
+        "id": "DPrepB_Image Spectral Fitting_0"
+      },
+      {
+        "comp": 7493255786475.0,
+        "id": "DPrepB_Subtract_1"
+      },
+      {
+        "comp": 0,
+        "id": "DPrepB_Gather_0"
+      },
+      {
+        "comp": 0,
+        "id": "DPrepB_FrequencySplit_0"
+      }
+    ],
+    "links": [
+      {
+        "data_size": 0,
+        "u": "1_-1_0/0",
+        "v": "1_-49_0/0",
+        "data_drop_oid": "1_-50_0/0",
+        "source": "DPrepA_UpdateGSM_0",
+        "target": "DPrepA_Gather_0"
+      },
+      {
+        "data_size": 0.0,
+        "u": "1_-8_0/0",
+        "v": "1_-11_0/0",
+        "data_drop_oid": "1_-30_0/0",
+        "source": "DPrepA_Solve_0",
+        "target": "DPrepA_Correct_0"
+      },
+      {
+        "data_size": 2.98788439698258e+18,
+        "u": "1_-10_0/0/0",
+        "v": "1_-28_0/0/0",
+        "data_drop_oid": "1_-36_0/0/0",
+        "source": "DPrepA_Grid_0",
+        "target": "DPrepA_FinishMajorCycle_0"
+      },
+      {
+        "data_size": 1.8820103853138908e+18,
+        "u": "1_-14_0/0/0",
+        "v": "1_-15_0/0/0",
+        "data_drop_oid": "1_-37_0/0/0",
+        "source": "DPrepA_Degrid_0",
+        "target": "DPrepA_Subtract_0"
+      },
+      {
+        "data_size": 2.2479767359433764e+16,
+        "u": "1_-16_0/0/0",
+        "v": "1_-10_0/0/0",
+        "data_drop_oid": "1_-39_0/0/0",
+        "source": "DPrepA_Flag_0",
+        "target": "DPrepA_Grid_0"
+      },
+      {
+        "data_size": 4935489391829.026,
+        "u": "1_-20_0/0/0/0",
+        "v": "1_-28_0/0/0",
+        "data_drop_oid": "1_-42_0/0/0/0",
+        "source": "DPrepA_Subtract Image Component_0",
+        "target": "DPrepA_FinishMajorCycle_0"
+      },
+      {
+        "data_size": 2369034908077932.0,
+        "u": "1_-13_0/0/0/0",
+        "v": "1_-19_0/0/0/0",
+        "data_drop_oid": "1_-41_0/0/0/0",
+        "source": "DPrepA_FFT_0",
+        "target": "DPrepA_Identify Component_0"
+      },
+      {
+        "data_size": 5866666.666666665,
+        "u": "1_-19_0/0/0/0",
+        "v": "1_-20_0/0/0/0",
+        "data_drop_oid": "1_-27_0/0/0/0",
+        "source": "DPrepA_Identify Component_0",
+        "target": "DPrepA_Subtract Image Component_0"
+      },
+      {
+        "data_size": 0,
+        "u": "1_-28_0/0/0",
+        "v": "1_-17_0/0",
+        "data_drop_oid": "1_-43_0/0/0",
+        "source": "DPrepA_FinishMajorCycle_0",
+        "target": "DPrepA_Image Spectral Fitting_0"
+      },
+      {
+        "data_size": 0,
+        "u": "1_-12_0/0/0",
+        "v": "1_-14_0/0/0",
+        "data_drop_oid": "1_-40_0/0/0",
+        "source": "DPrepA_BeginMajorCycle_0",
+        "target": "DPrepA_Degrid_0"
+      },
+      {
+        "data_size": 2.2479767359433764e+16,
+        "u": "1_-15_0/0/0",
+        "v": "1_-16_0/0/0",
+        "data_drop_oid": "1_-38_0/0/0",
+        "source": "DPrepA_Subtract_0",
+        "target": "DPrepA_Flag_0"
+      },
+      {
+        "data_size": 0.0,
+        "u": "1_-24_0/0",
+        "v": "1_-25_0/0",
+        "data_drop_oid": "1_-44_0/0",
+        "source": "DPrepA_Source Find_0",
+        "target": "DPrepA_UpdateLSM_0"
+      },
+      {
+        "data_size": 4738069816155864.0,
+        "u": "1_-25_0/0",
+        "v": "1_-1_0/0",
+        "data_drop_oid": "1_-18_0/0",
+        "source": "DPrepA_UpdateLSM_0",
+        "target": "DPrepA_UpdateGSM_0"
+      },
+      {
+        "data_size": 0.0,
+        "u": "1_-5_0/0",
+        "v": "1_-8_0/0",
+        "data_drop_oid": "1_-23_0/0",
+        "source": "DPrepA_Phase Rotation Predict_0",
+        "target": "DPrepA_Solve_0"
+      },
+      {
+        "data_size": 2369034908077932.0,
+        "u": "1_-6_0/0",
+        "v": "1_-9_0/0",
+        "data_drop_oid": "1_-32_0/0",
+        "source": "DPrepA_Reprojection Predict_0",
+        "target": "DPrepA_Subtract_1"
+      },
+      {
+        "data_size": 4.495953471886753e+16,
+        "u": "1_-11_0/0",
+        "v": "1_-9_0/0",
+        "data_drop_oid": "1_-31_0/0",
+        "source": "DPrepA_Correct_0",
+        "target": "DPrepA_Subtract_1"
+      },
+      {
+        "data_size": 2.2479767359433764e+16,
+        "u": "1_-4_0/0",
+        "v": "1_-12_0/0/0",
+        "data_drop_oid": "1_-26_0/0",
+        "source": "DPrepA_Flag_1",
+        "target": "DPrepA_BeginMajorCycle_0"
+      },
+      {
+        "data_size": 2.2479767359433764e+16,
+        "u": "1_-4_0/0",
+        "v": "1_-13_0/0/0/0",
+        "data_drop_oid": "1_-26_0/0",
+        "source": "DPrepA_Flag_1",
+        "target": "DPrepA_FFT_0"
+      },
+      {
+        "data_size": 0.0,
+        "u": "1_-17_0/0",
+        "v": "1_-24_0/0",
+        "data_drop_oid": "1_-29_0/0",
+        "source": "DPrepA_Image Spectral Fitting_0",
+        "target": "DPrepA_Source Find_0"
+      },
+      {
+        "data_size": 2.2479767359433764e+16,
+        "u": "1_-9_0/0",
+        "v": "1_-4_0/0",
+        "data_drop_oid": "1_-45_0/0",
+        "source": "DPrepA_Subtract_1",
+        "target": "DPrepA_Flag_1"
+      },
+      {
+        "source": "DPrepA_Gather_0",
+        "target": "DPrepB_FrequencySplit_0"
+      },
+      {
+        "data_size": 0,
+        "u": "1_-35_0",
+        "v": "1_-5_0/0",
+        "data_drop_oid": "1_-48_0/0",
+        "source": "DPrepA_FrequencySplit_0",
+        "target": "DPrepA_Phase Rotation Predict_0"
+      },
+      {
+        "data_size": 0,
+        "u": "1_-1_0/0",
+        "v": "1_-49_0/0",
+        "data_drop_oid": "1_-50_0/0",
+        "source": "DPrepB_UpdateGSM_0",
+        "target": "DPrepB_Gather_0"
+      },
+      {
+        "data_size": 0.0,
+        "u": "1_-8_0/0",
+        "v": "1_-11_0/0",
+        "data_drop_oid": "1_-30_0/0",
+        "source": "DPrepB_Solve_0",
+        "target": "DPrepB_Correct_0"
+      },
+      {
+        "data_size": 1.2795047428897587e+19,
+        "u": "1_-10_0/0/0",
+        "v": "1_-28_0/0/0",
+        "data_drop_oid": "1_-36_0/0/0",
+        "source": "DPrepB_Grid_0",
+        "target": "DPrepB_FinishMajorCycle_0"
+      },
+      {
+        "data_size": 1.235178612289409e+19,
+        "u": "1_-14_0/0/0",
+        "v": "1_-15_0/0/0",
+        "data_drop_oid": "1_-37_0/0/0",
+        "source": "DPrepB_Degrid_0",
+        "target": "DPrepB_Subtract_0"
+      },
+      {
+        "data_size": 4.495953471886753e+16,
+        "u": "1_-16_0/0/0",
+        "v": "1_-10_0/0/0",
+        "data_drop_oid": "1_-39_0/0/0",
+        "source": "DPrepB_Flag_0",
+        "target": "DPrepB_Grid_0"
+      },
+      {
+        "data_size": 493548939182898.0,
+        "u": "1_-20_0/0/0/0",
+        "v": "1_-28_0/0/0",
+        "data_drop_oid": "1_-42_0/0/0/0",
+        "source": "DPrepB_Subtract Image Component_0",
+        "target": "DPrepB_FinishMajorCycle_0"
+      },
+      {
+        "data_size": 1.184517454038966e+16,
+        "u": "1_-13_0/0/0/0",
+        "v": "1_-19_0/0/0/0",
+        "data_drop_oid": "1_-41_0/0/0/0",
+        "source": "DPrepB_FFT_0",
+        "target": "DPrepB_Identify Component_0"
+      },
+      {
+        "data_size": 586666666.6666666,
+        "u": "1_-19_0/0/0/0",
+        "v": "1_-20_0/0/0/0",
+        "data_drop_oid": "1_-27_0/0/0/0",
+        "source": "DPrepB_Identify Component_0",
+        "target": "DPrepB_Subtract Image Component_0"
+      },
+      {
+        "data_size": 0,
+        "u": "1_-28_0/0/0",
+        "v": "1_-17_0/0",
+        "data_drop_oid": "1_-43_0/0/0",
+        "source": "DPrepB_FinishMajorCycle_0",
+        "target": "DPrepB_Image Spectral Fitting_0"
+      },
+      {
+        "data_size": 0,
+        "u": "1_-12_0/0/0",
+        "v": "1_-14_0/0/0",
+        "data_drop_oid": "1_-40_0/0/0",
+        "source": "DPrepB_BeginMajorCycle_0",
+        "target": "DPrepB_Degrid_0"
+      },
+      {
+        "data_size": 4.495953471886753e+16,
+        "u": "1_-15_0/0/0",
+        "v": "1_-16_0/0/0",
+        "data_drop_oid": "1_-38_0/0/0",
+        "source": "DPrepB_Subtract_0",
+        "target": "DPrepB_Flag_0"
+      },
+      {
+        "data_size": 0.0,
+        "u": "1_-24_0/0",
+        "v": "1_-25_0/0",
+        "data_drop_oid": "1_-44_0/0",
+        "source": "DPrepB_Source Find_0",
+        "target": "DPrepB_UpdateLSM_0"
+      },
+      {
+        "data_size": 1.6583244356545524e+16,
+        "u": "1_-25_0/0",
+        "v": "1_-1_0/0",
+        "data_drop_oid": "1_-18_0/0",
+        "source": "DPrepB_UpdateLSM_0",
+        "target": "DPrepB_UpdateGSM_0"
+      },
+      {
+        "data_size": 0.0,
+        "u": "1_-5_0/0",
+        "v": "1_-8_0/0",
+        "data_drop_oid": "1_-23_0/0",
+        "source": "DPrepB_Phase Rotation Predict_0",
+        "target": "DPrepB_Solve_0"
+      },
+      {
+        "data_size": 4738069816155864.0,
+        "u": "1_-6_0/0",
+        "v": "1_-9_0/0",
+        "data_drop_oid": "1_-32_0/0",
+        "source": "DPrepB_Reprojection Predict_0",
+        "target": "DPrepB_Subtract_1"
+      },
+      {
+        "data_size": 8.991906943773506e+16,
+        "u": "1_-11_0/0",
+        "v": "1_-9_0/0",
+        "data_drop_oid": "1_-31_0/0",
+        "source": "DPrepB_Correct_0",
+        "target": "DPrepB_Subtract_1"
+      },
+      {
+        "data_size": 4.495953471886753e+16,
+        "u": "1_-4_0/0",
+        "v": "1_-12_0/0/0",
+        "data_drop_oid": "1_-26_0/0",
+        "source": "DPrepB_Flag_1",
+        "target": "DPrepB_BeginMajorCycle_0"
+      },
+      {
+        "data_size": 4.495953471886753e+16,
+        "u": "1_-4_0/0",
+        "v": "1_-13_0/0/0/0",
+        "data_drop_oid": "1_-26_0/0",
+        "source": "DPrepB_Flag_1",
+        "target": "DPrepB_FFT_0"
+      },
+      {
+        "data_size": 0.0,
+        "u": "1_-17_0/0",
+        "v": "1_-24_0/0",
+        "data_drop_oid": "1_-29_0/0",
+        "source": "DPrepB_Image Spectral Fitting_0",
+        "target": "DPrepB_Source Find_0"
+      },
+      {
+        "data_size": 4.495953471886753e+16,
+        "u": "1_-9_0/0",
+        "v": "1_-4_0/0",
+        "data_drop_oid": "1_-45_0/0",
+        "source": "DPrepB_Subtract_1",
+        "target": "DPrepB_Flag_1"
+      },
+      {
+        "data_size": 0,
+        "u": "1_-35_0",
+        "v": "1_-5_0/0",
+        "data_drop_oid": "1_-48_0/0",
+        "source": "DPrepB_FrequencySplit_0",
+        "target": "DPrepB_Phase Rotation Predict_0"
+      }
+    ]
+  }
+}

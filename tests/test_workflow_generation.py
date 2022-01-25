@@ -460,8 +460,8 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
 
         self.telescope_max = hpo.telescope_max(total_system_sizing, self.obs1)
 
-    def tearDown(self) -> None:
-        shutil.rmtree(self.config_dir)
+    # def tearDown(self) -> None:
+        # shutil.rmtree(self.config_dir)
 
     def testWorkflowFileGenerated(self):
         """
@@ -498,7 +498,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         final_dir = f'{self.config_dir}/workflows'
         # we want to see test/data/sim_config/hpso01_workflow.json
         'hpso01_channels-1_tel-512.json'
-        final_path = f'{final_dir}/hpso01_channels-1_tel-512.json'
+        final_path = f'{final_dir}/hpso01_time-60_channels-1_tel-512.json'
         self.assertTrue(os.path.exists(final_path))
 
     def testWorkflowFileCorrectness(self):
@@ -528,13 +528,14 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
                 'max_arrays': 512,
                 'channels': 1,
                 'arrays': 512,
-                'baseline': 65000
+                'baseline': 65000,
+                'duration': 60
             },
             'time': False
         }
         final_dir = f'{self.config_dir}/workflows'
 
-        with open(f'{final_dir}/hpso01_channels-1_tel-512.json') as fp:
+        with open(f'{final_dir}/hpso01_time-60_channels-1_tel-512.json') as fp:
             test_workflow = json.load(fp)
 
         self.assertDictEqual(header, test_workflow['header'])
