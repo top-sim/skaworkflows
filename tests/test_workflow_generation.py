@@ -27,7 +27,7 @@ from skaworkflows.common import SI
 import skaworkflows.workflow.hpso_to_observation as hpo
 import skaworkflows.workflow.eagle_daliuge_translation as edt
 
-BASE_DATA_DIR = "data/pandas_sizing/"
+BASE_DATA_DIR = "skaworkflows/data/pandas_sizing/"
 TEST_DATA_DIR = 'tests/data/'
 
 TOTAL_SYSTEM_SIZING = f'{BASE_DATA_DIR}/total_compute_SKA1_Low.csv'
@@ -251,14 +251,14 @@ class TestWorkflowFromObservation(unittest.TestCase):
 
         # Need to ensure that the DPrepA costs are Different to DPrepB
         self.assertAlmostEqual(
-            0.04563405 * self.obs1.duration,
+            0.04563405420422631 * self.obs1.duration*SI.peta,
             final_graphs['DPrepA'].nodes['DPrepA_Grid_0']['comp'],
-            places=3
+            places=6
         )
         self.assertAlmostEqual(
-            0.0476149 * self.obs1.duration,
+            0.04761499141720525 * self.obs1.duration*SI.peta,
             final_graphs['DPrepB'].nodes['DPrepB_Grid_0']['comp'],
-            places=3
+            places=6
         )
 
         self.assertNotEqual(
@@ -307,11 +307,9 @@ class TestWorkflowFromObservation(unittest.TestCase):
             total += final_graph.nodes[node]['comp']
 
         self.assertAlmostEqual(
-            17.157455660761382
-            * self.obs1.duration
-            * SI.peta,
+            6.176684037874095e+19,
             total,
-            places=5
+            places=3
         )
 
 
@@ -460,8 +458,8 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
 
         self.telescope_max = hpo.telescope_max(total_system_sizing, self.obs1)
 
-    # def tearDown(self) -> None:
-        # shutil.rmtree(self.config_dir)
+    def tearDown(self) -> None:
+        shutil.rmtree(self.config_dir)
 
     def testWorkflowFileGenerated(self):
         """
@@ -480,11 +478,12 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         """
         # Get an observation object and create a file for the associated HPSO
         self.assertEqual(512, self.telescope_max)
+        workflow_path_name = hpo._create_workflow_path_name(self.obs1)
         self.assertRaises(
             FileNotFoundError,
             hpo.generate_workflow_from_observation,
             self.obs1, self.telescope_max, self.config_dir,
-            self.component_system_sizing
+            self.component_system_sizing, workflow_path_name
         )
 
         # The creation of the config directory needs to
@@ -492,7 +491,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         self.assertTrue(os.path.exists(self.config_dir))
         hpo.generate_workflow_from_observation(
             self.obs1, self.telescope_max, self.config_dir,
-            self.component_system_sizing
+            self.component_system_sizing, workflow_path_name
         )
 
         final_dir = f'{self.config_dir}/workflows'
@@ -512,11 +511,13 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         -------
 
         """
+        workflow_path_name = hpo._create_workflow_path_name(self.obs1)
+
         os.mkdir(self.config_dir)
         self.assertTrue(os.path.exists(self.config_dir))
         result = hpo.generate_workflow_from_observation(
             self.obs1, self.telescope_max, self.config_dir,
-            self.component_system_sizing
+            self.component_system_sizing, workflow_path_name
         )
 
         header = {

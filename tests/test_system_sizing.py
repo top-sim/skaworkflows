@@ -34,7 +34,7 @@ sys.path.insert(0, os.path.abspath('../sdp-par-model'))
 from sdp_par_model import reports
 from sdp_par_model.parameters.definitions import *
 
-DATA_DIR = 'data/sdp-par-model_output'
+DATA_DIR = 'skaworkflows/data/sdp-par-model_output'
 SHORT = f'{DATA_DIR}/2021-06-02_short_HPSOs.csv'
 MID = f'{DATA_DIR}/2021-06-02_mid_HPSOs.csv'
 LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'

@@ -373,7 +373,7 @@ def generate_pandas_system_sizing(
         total=True,
         components=True,
         in_dir='parametric_model',
-        out_dir='data/pandas_sizing'
+        out_dir='skaworkflows/data/pandas_sizing'
 ):
     """
 
@@ -470,8 +470,8 @@ def compile_baseline_sizing(data_dir, total=True, component=True):
 if __name__ == '__main__':
     # System sizing for each baseline:
     logging.basicConfig(level='WARNING')
-    IN_DIR = f'data/sdp-par-model_output/'
-    OUTPUT_DIR = f'data/pandas_sizing/'
+    IN_DIR = f'skaworkflows/data/sdp-par-model_output/'
+    OUTPUT_DIR = f'skaworkflows/data/pandas_sizing/'
     total_sizing, component_sizing = compile_baseline_sizing(IN_DIR)
     for tel in total_sizing:
         fn_total = f'{OUTPUT_DIR}/total_compute_{tel}.csv'

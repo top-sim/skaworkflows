@@ -12,30 +12,31 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
+import os
+import shutil
 import unittest
 import random
-import json
 
 import pandas as pd
 
-from skaworkflows.workflow.hpso_to_observation import Observation, create_observation_from_hpso
+from skaworkflows.workflow.hpso_to_observation import Observation, \
+    create_observation_from_hpso, assign_observation_ingest_demands
 from skaworkflows.workflow.hpso_to_observation import create_observation_plan, \
-    construct_telescope_config_from_observation_plan, \
-    create_buffer_config, compile_observations_and_workflows, calc_ingest_demand
+    create_buffer_config, compile_observations_and_workflows, \
+    calc_ingest_demand, generate_instrument_config
 
 from skaworkflows.common import SI
 
-from hpconfig.specs.sdp import SDP_LOW_CDR
+from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR
 
 DATA_DIR = 'data/parametric_model'
 LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
 
-SYSTEM_SIZING_DIR = 'data/pandas_sizing'
-TOTAL_SYSTEM_SIZING = 'data/pandas_sizing/total_compute_SKA1_Low.csv'
+SYSTEM_SIZING_DIR = 'skaworkflows/data/pandas_sizing'
+TOTAL_SYSTEM_SIZING = 'skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv'
 
-COMPONENT_SYSTEM_SIZING = None
-CLUSTER = 'tests/PawseyGalaxy_nd_1619058732.json'
+COMPONENT_SYSTEM_SIZING = 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low.csv'
+# CLUSTER = 'tests/PawseyGalaxy_nd_1619058732.json'
 
 EAGLE_LGT = 'tests/data/eagle_lgt.graph'
 
@@ -48,9 +49,6 @@ class TestObservationClass(unittest.TestCase):
         self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 'long')
         self.obs2 = Observation(4, 'hpso04a', ['dprepa'], 16, 30, 256, 'long')
 
-    def test_unroll_observations(self):
-        unroll_list = [self.obs1 for x in range(self.obs1.count)]
-        self.assertListEqual(unroll_list, self.obs1.unroll_observations())
 
     def test_add_workflow_path(self):
         self.assertRaises(
@@ -64,7 +62,7 @@ class TestObservationPlanGeneration(unittest.TestCase):
     def setUp(self):
         # low_compute_data = "csv/SKA1_Low_COMPUTE.csv"
         # self.observations = convert_systemsizing_csv_to_dict(low_compute_data)
-        self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60,  256, 'long')
+        self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 'long')
         self.obslist1 = create_observation_from_hpso(
             2, 'hpso01', ['dprepa'], 32, 60, 256, 'long'
         )
@@ -100,86 +98,90 @@ class TestObservationPlanGeneration(unittest.TestCase):
         self.assertEqual(150, plan[5].start)
 
 
-
-
-
-class TestObservationComponentGeneration(unittest.TestCase):
-
-    def setup(self):
-        self.obs1 = Observation(
-            count=3, hpso='hpso01', demand=512,
-            duration=60, workflows=['dprepa'], channels=256,
-            baseline='long'
-        )
-
-    def testObservationPipeplineConfigCreated(self):
-        self.assertTrue(False)
-
-
 class TestObservationTopSimTranslation(unittest.TestCase):
 
     def setUp(self):
         self.obs1 = Observation(
-            count=2, hpso='hpso01', demand=32,
-            duration=60, workflows=['dprepa'], channels=256,
+            name='hpso01_0', hpso='hpso01', demand=512,
+            duration=60, workflows=['DPrepA'], channels=256,
             baseline='long'
         )
-        with open(CLUSTER) as jf:
-            self.cluster = json.load(jf)
+
+        self.observation_list = create_observation_from_hpso(
+            count=2, hpso='hpso01', demand=512,
+            duration=60, workflows=['DPrepA'], channels=256,
+            baseline='long'
+
+        )
+        self.observation_plan = create_observation_plan(
+            self.observation_list,512
+        )
         self.max_telescope_usage = 32  # 1/16th of telescope
         self.plan = [
             (0, 60, 32, 'hpso01', 'dprepa', 256, 'long'),
             (60, 120, 32, 'hpso01', 'dprepa', 256, 'long')
         ]
         self.obs2 = Observation(
-            count=1, hpso='hpso01', workflows=['dprepa'],
+            'hpso01_2', hpso='hpso01', workflows=['DPrepA'],
             demand=32, duration=60, channels=256, baseline='long')
-        self.obs3 = Observation(2, 'hpso04a', ['dprepa'], 16, 30, 256, 'long')
+        self.obs3 = Observation(
+            'hpso01_5', 'hpso04a', ['DPrepA'], 16, 30, 256, 'long'
+        )
+        self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
+        self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
+        sdp = SDP_LOW_CDR()
+        self.cluster = sdp.to_topsim_dictionary()
+        self.config_dir = 'tests/data/config'
+        os.mkdir(self.config_dir)
 
-    def test_ingest_demand_calc(self):
+    def tearDown(self) -> None:
+        shutil.rmtree(self.config_dir)
+
+    def testIngestDemandCalc(self):
         # Start with a spec, then determine how many machines we will need
         # based on the ingest size
         # ingest_flops = 32 / 512 * (float(max_ingest) * SI.peta)
-        self.assertEqual(123, calc_ingest_demand(
-            self.cluster,
+        machines, ingest_flops, ingest_data = calc_ingest_demand(
+            self.obs1, 512, self.system_sizing, self.cluster
+        )
+        self.assertEqual(11, machines)
+        self.assertEqual(632428093239751.1, ingest_flops)
 
-    def test_telescope_config_sizing(self):
+    def testObservationWorkflowDict(self):
         """
-        Gvien an observation plan, we want to calculate the expected output
-        for that plan to ensure the expected ingest rates etc. are correct.
-        These are used in TopSim to count how much data is being produced in
-        the system during an observation on the telescope.
+        Produce the workflow entry for an observation:
 
-        >>>    {..."telescope": {
-        >>>       "total_arrays": 512,
-        >>>       "pipelines": {
-        >>>           "DPrepA": {
-        >>>               "ingest_demand": 128,
-        >>>                "workflow": "final/directory/for/workflow",
-        >>>           },
-        >>>     ...}
-
-        This is testing the combination of
-
-        generate_workflow_from_observation
-        generate_cost_per_product
-        find_ingest_deman
+        "hpso01_1": {
+            "workflow": "test/data/config/workflow_config.json",
+            "ingest_demand": 5
+            },
 
         Returns
         -------
 
         """
-        itemised_spec = SDP_LOW_CDR()
-        total_system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
-        component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
-        obslist = construct_telescope_config_from_observation_plan(
-            self.plan, total_system_sizing, component_system_sizing,
-            itemised_spec
+        # self.observation_lis
+
+        final_instrument_config = generate_instrument_config(
+            self.observation_list, 512,
+            self.config_dir,
+            self.component_sizing,
+            self.system_sizing,
+            self.cluster
         )
-        # The number of channels is 256; this is half the number of max
-        # channels, so we would expect the size to be half of the stored data
-        # rate in the SDP report.
-        self.assertAlmostEqual(0.316214, obslist[0]['data_product_rate'], 6)
+        self.assertEqual(
+            11,
+            final_instrument_config['pipelines']['hpso01_0']['ingest_demand'])
+        self.assertEqual(
+            'tests/data/config/workflows/hpso01_time-60_channels-256_tel-512'
+            '.json',
+            final_instrument_config['pipelines']['hpso01_1']['workflow']
+        )
+        self.assertEqual(
+            {'name': 'hpso01_1', 'start': 0, 'duration': 60, 'demand': 512,
+             'type': 'hpso01', 'data_product_rate': 459024629760000.0},
+            final_instrument_config['observations'][0]
+        )
 
     def test_buffer_config_sizing(self):
         """
@@ -213,55 +215,4 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             1254.4
         )
 
-    def test_ingest_machine_provisioning(self):
-        """
-        When creating system config, we want to find the largest ingest
-        pipeline based on expected FLOPS to set up the Telescope boundaries.
-        Returns
-        -------
 
-        """
-
-    def test_observation_output(self):
-        """
-        Given a plan, produce an JSON-serialisable dictionary for configuration
-
-        Returns
-        -------
-
-        """
-
-        # Count the number of shared items between two dictionaries -
-        # this will help us test the JSON files produced during translation.
-        # shared_items = {k: x[k] for k in x if k in y and x[k] == y[k]}
-
-    def test_final_config_creation(self):
-        """
-        Produce a total simulation config for at TopSim simulator
-
-        Requires:
-
-        * Final output directory for the data and workflow
-        * Underlying compute infrastructure (using HPConfig)
-        * Path to component-based costs (parametric output)
-        * Path or dictionary to logical graph files for workflow translation
-        * List of observations (to be unrolled).
-
-        These are compiled and will produce a JSON-compatible dictionary:
-
-
-        Returns
-        -------
-
-        """
-        final_dir = 'test/data/out/'
-        final_workflow_dir = 'test/data/out/workflows'
-        observations = self.obs1.unroll_observations()
-
-        system_sizing = None
-        pandas_component_sizing = None
-
-        buffer_ratio = (1, 5)
-        sdp = SDP_LOW_CDR()
-
-        path = compile_observations_and_workflows()

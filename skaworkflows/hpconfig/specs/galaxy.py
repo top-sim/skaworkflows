@@ -23,8 +23,8 @@ Based on the above link, the Galaxy Ivy Bridge has 8FLOPs/Cycle
 import json
 import time
 
-from hpconfig.utils.constants import SI
-from hpconfig.utils.classes import CPU_NODE, GPU_NODE
+from skaworkflows.hpconfig import SI
+from skaworkflows.hpconfig import CPU_NODE, GPU_NODE
 
 
 class PawseyGalaxy:

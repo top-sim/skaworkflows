@@ -13,8 +13,8 @@ the Square Kilometre Science Data Processors.
  An example class may be constructed as follows: 
  
  ```python
-from hpconfig.utils.constants import SI
-from hpconfig.utils.classes import CPU_NODE, GPU_NODE
+from skaworkflows.hpconfig import SI
+from skaworkflows.hpconfig import CPU_NODE, GPU_NODE
 
 
 class MyStartingSpec:

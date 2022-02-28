@@ -18,7 +18,7 @@ Parametric model results as derived in the Parametric model presented in
 SKA-TEL-SDP-0000013
 """
 
-from hpconfig.utils.constants import SI
+from skaworkflows.hpconfig import SI
 
 
 class PulsarSearch:

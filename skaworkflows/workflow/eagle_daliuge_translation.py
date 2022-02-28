@@ -74,7 +74,6 @@ def update_number_of_channels(lgt_path, channels):
     return lgt_dict
 
 
-
 def unroll_logical_graph(input_lgt, output_pgt_path=None, file_in=True):
     """
     Take an EAGLE LGT and produce a PGT Using the DALIUGE graph translator

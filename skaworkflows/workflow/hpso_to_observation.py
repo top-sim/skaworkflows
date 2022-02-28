@@ -36,8 +36,10 @@ import networkx as nx
 from enum import Enum
 
 import skaworkflows.workflow.eagle_daliuge_translation as edt
-from skaworkflows.common import Baselines, MAX_CHANNELS, pipeline_paths, SI, \
-    WORKFLOW_HEADER, BASE_GRAPH_PATH
+from skaworkflows.common import (
+    Baselines, MAX_BIN_CHANNELS, pipeline_paths, SI,
+    WORKFLOW_HEADER, BASE_GRAPH_PATH,
+    MAX_TEL_DEMAND, TOTAL_SIZING_LOW)
 
 
 class HPSO(Enum):
@@ -104,6 +106,9 @@ class Observation:
         self.baseline = Baselines[baseline]
         self.workflow_path = None
         self.planned = False
+        self.ingest_compute_demand = None
+        self.ingest_flop_rate = None
+        self.ingest_data_rate = None
 
     def __hash__(self):
         """
@@ -122,7 +127,7 @@ class Observation:
         -------
 
         """
-        hash(self.hpso + (
+        return hash(self.hpso + (
             str(self.demand + self.channels + self.baseline.value)))
 
     def __repr__(self):
@@ -151,6 +156,25 @@ class Observation:
 
     def add_start_time(self, start):
         self.start = start
+
+    def to_json(self):
+        """
+        Produce TOPSIM compatible JSON dictionary
+
+        Returns
+        -------
+        final_dict : dict
+            Dictionary of components
+        """
+
+        return {
+            'name': self.name,
+            'start': self.start,
+            'duration': self.duration,
+            'demand': self.demand,
+            'type': self.hpso,
+            'data_product_rate': self.ingest_data_rate
+        }
 
 
 def create_observation_plan(observations, max_telescope_usage):
@@ -215,7 +239,7 @@ def create_observation_plan(observations, max_telescope_usage):
         observations = sorted(
             observations, key=lambda obs: (obs.baseline.value, obs.duration)
         )
-        if loop_count % len(observations) == 0:
+        if (len(observations) > 1) and (loop_count % len(observations) == 0):
             largest_observation = observations[-1]
             if finish == -1:  # Then we are the first with this time
                 # plan.pop()
@@ -310,77 +334,6 @@ def create_buffer_config(itemised_spec, ratio):
     return spec
 
 
-def construct_telescope_config_from_observation_plan(
-        plan, total_system_sizing, component_system_sizing, itemised_spec
-):
-    """
-    Based on a simplified dictionaries built from the System Sizing for the
-    SDP, this function builds a mid-term plan based on the HPSO sizes.
-
-
-    Paremeters
-    ----------
-    plan: list
-        list of observation tuples, in the form
-            (start, finish, telescope demand, hpso, pipeline, channels).
-    total_system_sizing : :py:obj:`pd.DataFrame`
-        This is the system sizing that contains total system costs. It is
-        from this that we get the maximum number of arrays available,
-        and the baseline-dependent ingest rate for the selected HPSO.
-    component_system_sizing: :py:obj:`pd.DataFrame`
-        Component system sizing contains the predicted FLOPS/GBs-1 output of
-        each task within a workflow.
-
-    itemised_spec: :py:obj:
-        This is the itemised system sizing that provides node-based
-        descriptions for system specifications. This allows us to determine
-        how many nodes are required for ingest, given an observations
-        requirements.
-
-    Notes
-    -----
-    Currently, the relevant `hpconfig` objects will be the specs.sdp. In the
-    future, it may be possible to use any system specification to determine
-    what different SDP candidate specifications look like.
-
-    Returns
-    -------
-    config : dict()
-        A dictionary that is in the form required of the TOpSim simulator to
-        configure a Telescope (see topsim.core.telescope.Telescope).
-    """
-
-    # Calculate expected ingest rate and demand for the observation
-    observation_list = []
-    system_sizing = pd.read_csv(total_system_sizing)
-    for i, observation in enumerate(plan):
-        start, finish, demand, hpso, pipeline, channels, baseline = observation
-
-        # TODO Find correct system sizing from observation baseline
-        # total_system.lookup(baseline).max_telescope
-        # percentage = channels/max_channels
-
-        tel_pecentage = channels / float(MAX_CHANNELS)
-        # Calculate the ingest for this size of observation, where ingest is
-        # in Petaflops
-        # TODO use CDR class for maximum system sizing values
-        # total_system.lookup(baseline).lookup(observation).ingest
-        max_buffer_ingest = float(system_sizing[
-                                      system_sizing['HPSO'] == observation.hpso
-                                      ]['Ingest [Pflop/s]'])
-        ingest_buffer_rate = tel_pecentage * max_buffer_ingest
-
-        tmp_dict = {
-            'name': f"{hpso}-{i}",
-            'start': start,
-            'demand': demand,
-            'data_product_rate': ingest_buffer_rate
-        }
-        observation_list.append(tmp_dict)
-
-    return observation_list
-
-
 def telescope_max(system_sizing, observation):
     """
 
@@ -402,16 +355,56 @@ def telescope_max(system_sizing, observation):
     return tmax
 
 
+def assign_observation_ingest_demands(
+        observation_plan, cluster, system_sizing,
+        maximum_telescope=MAX_TEL_DEMAND
+):
+    """
+
+    Parameters
+    ----------
+    observation_plan : list
+        List of `Observation` objects
+    cluster : `hpconfic.spec`
+        This should ideally be an hpconfig spec object
+    system_sizing : pandas.DataFrame
+
+    maximum_telescope
+
+    Returns
+    -------
+
+    """
+
+    for o in observation_plan:
+        o.ingest_compute_demand, o.ingest_flops_rate, o.ingest_data_rate = (
+            calc_ingest_demand(o, maximum_telescope, system_sizing, cluster)
+        )
+
+    return observation_plan
+
+
 def generate_instrument_config(
-        observation_plan, telescope_max, config_dir,
-        system_sizing, component_sizing, cluster):
+        observation_plan,
+        maximum_telescope,
+        config_dir,
+        component_sizing,
+        system_sizing,
+        cluster
+):
     """
     Produce the `instrument level configuration for a TopSim compatible
     simulation configuration file.
 
-
     The instrument config describes within it:
 
+    Notes
+    -----
+    MAX channels and MAX telescope stations are both used to update the
+    compute of an observation. Based on the parametric model, both
+    ingest and FLOPs are functions of frequency channels and the number of
+    stations. For an :py:object:`skaworkflows.workflow.hpso_to_workflow
+    .Observation`, the stations used is observation.demand.
 
     Returns
     -------
@@ -422,14 +415,60 @@ def generate_instrument_config(
     # config_dir,
     # component_sizing,
 
-    for observation in observation_plan:
-        # create workflow
-        workflow_path = generate_workflow_from_observation(
-            observation, telescope_max, config_dir, component_sizing
-        )
-        rel_workflow_path = workflow_path.lstrip(config_dir)
+    pipeline_dict = {}
+    telescope_observations = []
+    observation_plan = assign_observation_ingest_demands(
+        observation_plan=observation_plan,
+        cluster=cluster,
+        system_sizing=system_sizing,
+        maximum_telescope=512
+    )
 
-        ingest_demand = calc_ingest_demand(observation, system_sizing, cluster)
+    for observation in observation_plan:
+        if not observation.planned:
+            raise RuntimeError(
+                "Please ensure you run 'create_observation_plan' "
+                "prior to generating instrument config."
+            )
+        # create workflow
+        final_workflow_path = None
+        workflow_path_name = _create_workflow_path_name(observation)
+        if not os.path.exists(config_dir):
+            os.mkdir(config_dir)
+        if not os.path.exists(f'{config_dir}/workflows/{workflow_path_name}'):
+            final_workflow_path = generate_workflow_from_observation(
+                observation, maximum_telescope, config_dir,
+                component_sizing, workflow_path_name
+            )
+        else:
+            final_workflow_path = f'{config_dir}/workflows/{workflow_path_name}'
+        if not observation.ingest_data_rate:
+            raise RuntimeError(
+                "Please ensure you run 'assign_observation_ingest_demands' "
+                "prior to generating instrument config."
+            )
+
+        pipeline_dict[observation.name] = {
+            "ingest_demand": observation.ingest_compute_demand,
+            "workflow": final_workflow_path
+        }
+        telescope_observations.append(observation.to_json())
+
+    telescope_observations.sort(key=lambda d: d['start'])
+    telescope_dict = {
+        'total_arrays': maximum_telescope,
+        'pipelines': pipeline_dict,
+        'observations': telescope_observations
+    }
+    return telescope_dict
+
+
+def _create_workflow_path_name(observation):
+    return (
+            f'{observation.hpso}_time-{observation.duration}'
+            + f'_channels-{observation.channels}_tel-'
+            + f'{observation.demand}.json'
+    )
 
 
 def create_single_observation_for_instrument(observation, workflow_path):
@@ -439,7 +478,7 @@ def create_single_observation_for_instrument(observation, workflow_path):
 
     * pipeline:
 
-    >>>    {
+    >>>   {{
     >>>         "observation": {
     >>>             "workflow": "path/to/workflow"
     >>>             "ingest_demand": number_of_machines_needed_for_ingest
@@ -447,11 +486,13 @@ def create_single_observation_for_instrument(observation, workflow_path):
     >>> }
 
     * Observation:
-    >>>  "name" : observation.hpso + count
-    >>>  "start": observation.start
-    >>>  "duration" : length_of_observation
-    >>>  "demand" :
-    >>>  "data_product_rate": ingest_rate
+    >>> {{
+    >>>     "name" : observation.hpso + count
+    >>>     "start": observation.start
+    >>>     "duration" : length_of_observation
+    >>>     "demand" :
+    >>>     "data_product_rate": ingest_rate
+    >>> }
 
 
     Returns
@@ -465,6 +506,7 @@ def generate_workflow_from_observation(
         telescope_max,
         config_dir,
         component_sizing,
+        workflow_path_name,
         concat=True
 ):
     """
@@ -522,11 +564,8 @@ def generate_workflow_from_observation(
 
     final_path = (
             f'{workflow_dir}/'
-            + f'{observation.hpso}_time-{observation.duration}'
-            + f'_channels-{channels}_tel-'
-            + f'{observation.demand}.json'
+            + f'{workflow_path_name}'
     )
-
     with open(final_path, 'w') as fp:
         json.dump(final_json, fp, indent=2)
 
@@ -741,6 +780,13 @@ def retrieve_component_cost(hpso, baseline, workflow, component,
     -------
 
     """
+    # Santiy check for components:
+    if workflow not in component_sizing['Pipeline'].values:
+        raise RuntimeError(
+            f"Workflow string '{workflow}' not present in DataFrame."
+            + f"Double check spelling in Observation."
+        )
+
     obs_frame = component_sizing[
         (component_sizing['hpso'] == hpso) &
         (component_sizing['Baseline'] == baseline.value)
@@ -770,10 +816,10 @@ def retrive_workflow_cost(hpso, baseline, workflow, system_sizing):
     """
 
     obs_frame = system_sizing[
-        (system_sizing['hpso'] == hpso) &
+        (system_sizing['HPSO'] == hpso) &
         (system_sizing['Baseline'] == baseline.value)
         ]
-    flops = float(obs_frame[obs_frame['Pipeline'] == workflow][component])
+    flops = float(obs_frame[workflow])
 
     return flops
 
@@ -876,7 +922,7 @@ def produce_final_workflow_structure(nx_final, observation, time=False):
 #     return final_workflow
 
 
-def calc_ingest_demand(observation, system_sizing, cluster):
+def calc_ingest_demand(observation, telescope_max, system_sizing, cluster):
     """
     Get the average compute over teh CPUs in the cluster and determine the
     number of resources necessary for the current ingest_flops
@@ -894,12 +940,13 @@ def calc_ingest_demand(observation, system_sizing, cluster):
     # ingest pipelines will run on time, as they are necessary for the
     # observation to occur.
 
+    telescope_frac = observation.demand / telescope_max
     ingest_flops = retrive_workflow_cost(
         observation.hpso,
         observation.baseline,
-        'Ingest [PFLOP/s]',
+        'Ingest [Pflop/s]',
         system_sizing
-    )
+    ) * SI.peta * telescope_frac
     resources = cluster['system']['resources']
     m = 0
     num_machines = 0
@@ -909,7 +956,14 @@ def calc_ingest_demand(observation, system_sizing, cluster):
         if m > ingest_flops:
             break
 
-    return num_machines, ingest_flops
+    ingest_bytes = retrive_workflow_cost(
+        observation.hpso,
+        observation.baseline,
+        'Ingest Rate [TB/s]',
+        system_sizing
+    ) * SI.peta * telescope_frac
+
+    return num_machines, ingest_flops, ingest_bytes
 
 
 def compile_observations_and_workflows(

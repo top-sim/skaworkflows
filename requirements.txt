@@ -1,0 +1,12 @@
+numpy>=1.2.0
+networkx>=2.0
+matplotlib>=3.0
+pandas>=0.20
+coverage
+IPython
+pydot
+coveralls
+git+https://github.com/ska-telescope/sdp-par-model
+git+https://github.com/ICRAR/daliuge.git#egg&subdirectory=daliuge-common
+git+https://github.com/ICRAR/daliuge.git#egg&subdirectory=daliuge-engine
+git+https://github.com/ICRAR/daliuge.git#egg&subdirectory=daliuge-translator

@@ -21,9 +21,9 @@ Based on the above link, the Galaxy Ivy Bridge has 8FLOPs/Cycle
 import numpy as np
 import pandas as pd
 
-from hpconfig.utils.constants import SI
-from hpconfig.utils.classes import ARCHITECTURE
-
+from skaworkflows.common import SI
+from skaworkflows.hpconfig.utils.classes import ARCHITECTURE
+from skaworkflows import __version__
 
 class SDP_LOW_CDR(ARCHITECTURE):
     """
@@ -185,20 +185,25 @@ class SDP_LOW_CDR(ARCHITECTURE):
         -------
 
         """
-        system = {"system": {"resources": {}}}
+        node_dict = {}
+        # system = {"system": {"resources": {}}}
         for i in range(0, self.nodes):
-            node_dict = {
-                f"GenericeSDP_m{i}": {
-                    f"flops": self.gpu_peak_flops * self.gpu_per_node,
-                    f"rates": self.ethernet,
-                    f"memory": self.memory_per_node
-                }
+            node_dict[f"GenericeSDP_m{i}"] = {
+                f"flops": self.gpu_peak_flops * self.gpu_per_node,
+                f"rates": self.ethernet,
+                f"memory": self.memory_per_node
             }
         cluster = {
             "header": {
-
+                "time": False,
+                "generator": "hpconfig",
+                "version": __version__
+            },
+            'system': {
+                'resources': node_dict
             }
         }
+        return cluster
 
 
 class SDP_MID_CDR(ARCHITECTURE):

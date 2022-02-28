@@ -16,9 +16,10 @@
 """
 Common data and classes for access between diferrent pipeline codes
 """
-
+import pathlib
 from enum import Enum
 from skaworkflows import __version__
+
 
 class Baselines(Enum):
     short = 4062.5
@@ -35,9 +36,11 @@ class SI:
 
 
 # These are 'binned' channels, by dividing the number of real channels by 64.
-MAX_CHANNELS = 512
-MAX_TEL_DEMAND = 256
-BASE_GRAPH_PATH = 'data/hpsos/hpso01/dprepa.graph'
+MAX_BIN_CHANNELS = 256
+MAX_TEL_DEMAND = 512
+BASE_GRAPH_PATH = 'skaworkflows/data/hpsos/hpso01/dprepa.graph'
+COMPONENT_SIZING_LOW = 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low.csv'
+TOTAL_SIZING_LOW = 'skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv'
 
 COMPUTE_KEYS = {
     'hpso': "HPSO",
@@ -76,7 +79,6 @@ compute_units = {
     'total': "Pflop/s",
     'ingest_rate': "TB/s"
 }
-
 
 WORKFLOW_HEADER = {
     'generator': {
@@ -119,15 +121,15 @@ pulsars = ['hpso4a', 'hpso5a']
 
 pipeline_paths = {
     'hpso01': {
-        'dprepa': 'data/hpsos/dprepa.graph'
+        'dprepa': 'skaworkflows/data/hpsos/dprepa.graph'
     }
 }
 
 component_paths = {
-    'low_short': 'data/pandas_sizing/component_compute_SKA1_Low_short.csv',
-    'low_mid': 'data/pandas_sizing/component_compute_SKA1_Low_mid.csv',
-    'low_long': 'data/pandas_sizing/component_compute_SKA1_Low_long.csv',
-    'mid_short': 'data/pandas_sizing/component_compute_SKA1_Mid_short.csv',
-    'mid_mid': 'data/pandas_sizing/component_compute_SKA1_Mid_mid.csv',
-    'mid_long': 'data/pandas_sizing/component_compute_SKA1_Mid_long.csv',
+    'low_short': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_short.csv',
+    'low_mid': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_mid.csv',
+    'low_long': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_long.csv',
+    'mid_short': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_short.csv',
+    'mid_mid': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_mid.csv',
+    'mid_long': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_long.csv',
 }
