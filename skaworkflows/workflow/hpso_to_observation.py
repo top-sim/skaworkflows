@@ -34,7 +34,7 @@ import pandas as pd
 import networkx as nx
 
 from enum import Enum
-
+from pathlib import Path
 import skaworkflows.workflow.eagle_daliuge_translation as edt
 from skaworkflows.common import (
     Baselines, MAX_BIN_CHANNELS, pipeline_paths, SI,
@@ -309,28 +309,26 @@ def create_buffer_config(itemised_spec, ratio):
 
     """
     spec = {
-        "buffer": {
-            "hot": {
-                "capacity": -1,
-                "max_ingest_rate": -1
-            },
-            "cold": {
-                "capacity": -1,
-                "max_data_rate": -1
-            }
+        "hot": {
+            "capacity": -1,
+            "max_ingest_rate": -1
+        },
+        "cold": {
+            "capacity": -1,
+            "max_data_rate": -1
         }
     }
     hot, cold = ratio
-    spec['buffer']['hot']['capacity'] = int(
+    spec['hot']['capacity'] = int(
         itemised_spec.total_storage * (hot / cold)
     )
-    spec['buffer']['cold']['capacity'] = int(
+    spec['cold']['capacity'] = int(
         itemised_spec.total_storage * (1 - (hot / cold))
     )
-    spec['buffer']['hot']['max_ingest_rate'] = int(
+    spec['hot']['max_ingest_rate'] = int(
         itemised_spec.total_bandwidth * (hot / cold)
     )
-    spec['buffer']['cold']['max_data_rate'] = itemised_spec.ethernet
+    spec['cold']['max_data_rate'] = itemised_spec.ethernet
     return spec
 
 
@@ -424,41 +422,45 @@ def generate_instrument_config(
         maximum_telescope=512
     )
 
-    for observation in observation_plan:
-        if not observation.planned:
+    for o in observation_plan:
+        if not o.planned:
             raise RuntimeError(
                 "Please ensure you run 'create_observation_plan' "
                 "prior to generating instrument config."
             )
         # create workflow
-        final_workflow_path = None
-        workflow_path_name = _create_workflow_path_name(observation)
+        cfg_dir_path = Path(config_dir)
+        wf_file_name = Path(_create_workflow_path_name(o))
+        wf_file_path = cfg_dir_path / 'workflows' / wf_file_name
         if not os.path.exists(config_dir):
-            os.mkdir(config_dir)
-        if not os.path.exists(f'{config_dir}/workflows/{workflow_path_name}'):
-            final_workflow_path = generate_workflow_from_observation(
-                observation, maximum_telescope, config_dir,
-                component_sizing, workflow_path_name
+            wf_file_path.mkdir(parents=True, exists_ok=True)
+            # os.mkdir(config_dir)
+        if not os.path.exists(wf_file_path):
+            wf_file_path = generate_workflow_from_observation(
+                o, maximum_telescope, config_dir,
+                component_sizing, wf_file_name
             )
         else:
-            final_workflow_path = f'{config_dir}/workflows/{workflow_path_name}'
-        if not observation.ingest_data_rate:
+            wf_file_path = wf_file_path
+        if not o.ingest_data_rate:
             raise RuntimeError(
                 "Please ensure you run 'assign_observation_ingest_demands' "
                 "prior to generating instrument config."
             )
-
-        pipeline_dict[observation.name] = {
-            "ingest_demand": observation.ingest_compute_demand,
-            "workflow": final_workflow_path
+        # relative_wf_path = final_workflow_path.replace(f'{config_dir}/', '')
+        pipeline_dict[o.name] = {
+            "ingest_demand": o.ingest_compute_demand,
+            "workflow": wf_file_path.relative_to(cfg_dir_path).as_posix()
         }
-        telescope_observations.append(observation.to_json())
+        telescope_observations.append(o.to_json())
 
     telescope_observations.sort(key=lambda d: d['start'])
     telescope_dict = {
-        'total_arrays': maximum_telescope,
-        'pipelines': pipeline_dict,
-        'observations': telescope_observations
+        'telescope': {
+            'total_arrays': maximum_telescope,
+            'pipelines': pipeline_dict,
+            'observations': telescope_observations
+        }
     }
     return telescope_dict
 
@@ -537,7 +539,7 @@ def generate_workflow_from_observation(
     workflow_dir = f'{config_dir}/workflows'
     if not os.path.exists(config_dir):
         raise FileNotFoundError(f'{config_dir} does not exist')
-    elif not os.path.exists(f'{config_dir}/workflows'):
+    if not os.path.exists(f'{config_dir}/workflows'):
         os.mkdir(f'{config_dir}/workflows')
 
     telescope_frac = observation.demand / telescope_max
@@ -569,7 +571,7 @@ def generate_workflow_from_observation(
     with open(final_path, 'w') as fp:
         json.dump(final_json, fp, indent=2)
 
-    return final_path
+    return Path(final_path)
 
 
 def generate_cost_per_product(

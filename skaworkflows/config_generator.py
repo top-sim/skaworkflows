@@ -24,7 +24,7 @@ from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR
 logging.basicConfig(level="INFO")
 LOGGER = logging.getLogger(__name__)
 
-
+# TODO update to be path and config_name or something
 def create_config(observations, telescope_max, path, component_csv,
                   system_csv, sdp, buffer_ratio, timestep, **kwargs):
     """
@@ -58,7 +58,7 @@ def create_config(observations, telescope_max, path, component_csv,
     LOGGER.info(f"Producing the instrument config")
     final_instrument_config = hto.generate_instrument_config(
         observation_plan, 512,
-        output_path,
+        path,
         component_sizing,
         system_sizing,
         cluster
@@ -75,7 +75,7 @@ def create_config(observations, telescope_max, path, component_csv,
         "timestep": timestep
     }
 
-    file_path = f'{output_path}/config.json'
+    file_path = f'{path}/config.json'
     with open(file_path,'w') as fp:
         LOGGER.info(f'Writing final config to {file_path}')
         json.dump(final_config, fp, indent=2)

@@ -16,7 +16,7 @@
 """
 Common data and classes for access between diferrent pipeline codes
 """
-import pathlib
+import importlib_resources
 from enum import Enum
 from skaworkflows import __version__
 
@@ -36,11 +36,17 @@ class SI:
 
 
 # These are 'binned' channels, by dividing the number of real channels by 64.
+skaworkflows_dir = importlib_resources.files('skaworkflows')
+
 MAX_BIN_CHANNELS = 256
 MAX_TEL_DEMAND = 512
-BASE_GRAPH_PATH = 'skaworkflows/data/hpsos/hpso01/dprepa.graph'
-COMPONENT_SIZING_LOW = 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low.csv'
-TOTAL_SIZING_LOW = 'skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv'
+BASE_GRAPH_PATH = skaworkflows_dir / 'data/hpsos/hpso01/dprepa.graph'
+COMPONENT_SIZING_LOW = (
+        skaworkflows_dir / 'data/pandas_sizing/component_compute_SKA1_Low.csv'
+)
+TOTAL_SIZING_LOW = (
+    skaworkflows_dir / 'data/pandas_sizing/total_compute_SKA1_Low.csv'
+)
 
 COMPUTE_KEYS = {
     'hpso': "HPSO",

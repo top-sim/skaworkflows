@@ -171,16 +171,16 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         )
         self.assertEqual(
             11,
-            final_instrument_config['pipelines']['hpso01_0']['ingest_demand'])
+            final_instrument_config['telescope']['pipelines']['hpso01_0'][
+                'ingest_demand'])
         self.assertEqual(
-            'tests/data/config/workflows/hpso01_time-60_channels-256_tel-512'
-            '.json',
-            final_instrument_config['pipelines']['hpso01_1']['workflow']
+            'workflows/hpso01_time-60_channels-256_tel-512.json',
+            final_instrument_config['telescope']['pipelines']['hpso01_1']['workflow']
         )
         self.assertEqual(
             {'name': 'hpso01_1', 'start': 0, 'duration': 60, 'demand': 512,
              'type': 'hpso01', 'data_product_rate': 459024629760000.0},
-            final_instrument_config['observations'][0]
+            final_instrument_config['telescope']['observations'][0]
         )
 
     def test_buffer_config_sizing(self):
@@ -204,14 +204,14 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         hot_buffer = 13.44  # 20% of buffer
         cold_buffer = 53.76  # 80% of buffer
         spec = create_buffer_config(sdp, buffer_ratio)
-        self.assertEqual(spec['buffer']['hot']['capacity'] / SI.peta,
+        self.assertEqual(spec['hot']['capacity'] / SI.peta,
                          hot_buffer)
         self.assertEqual(
-            spec['buffer']['cold']['capacity'] / SI.peta,
+            spec['cold']['capacity'] / SI.peta,
             cold_buffer
         )
         self.assertEqual(
-            spec['buffer']['hot']['max_ingest_rate'] / SI.giga,
+            spec['hot']['max_ingest_rate'] / SI.giga,
             1254.4
         )
 

@@ -200,7 +200,8 @@ class SDP_LOW_CDR(ARCHITECTURE):
                 "version": __version__
             },
             'system': {
-                'resources': node_dict
+                'resources': node_dict,
+                'bandwidth': self.ethernet
             }
         }
         return cluster

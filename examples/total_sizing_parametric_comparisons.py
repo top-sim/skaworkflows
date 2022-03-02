@@ -26,7 +26,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from skaworkflows.workflow import SI
+from skaworkflows.common import SI
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -168,7 +168,7 @@ def generate_pipeline_component_table_baselines(
         hpso,
         pipeline='DPrepA',
         telescope='Low',
-        data_dir='data/pandas_sizing',
+        data_dir='skaworkflows/data/pandas_sizing',
         search_prefix='component_compute',
 
 ):

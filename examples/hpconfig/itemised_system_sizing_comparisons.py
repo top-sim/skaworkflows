@@ -15,7 +15,7 @@
 import logging
 import math
 
-from hpconfig.specs import sdp
+from skaworkflows.hpconfig.specs import sdp
 from skaworkflows.common import SI
 
 LOGGER = logging.getLogger(__name__)
