@@ -74,7 +74,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
             'gpu_per_node': '$|P_m|$',
             'memory_per_node': '$d$ (GB)',
             'storage_per_node': '$s$ (TB)',
-            'flops_per_node': ' $p_{i}^m$ (PFLOPS)(est.)',
+            'flops_per_node': ' $p_{i}^m$ (TFLOPS)(est.)',
             'total_storage': '$\\mathrm{TS}_{\\mathrm{SDP}}$ (PB)',
             'total_processing': '$\\mathrm{TP}_{\\mathrm{SDP}}$ (PFLOPS)'
         }
@@ -205,6 +205,41 @@ class SDP_LOW_CDR(ARCHITECTURE):
             }
         }
         return cluster
+
+    def generate_parametric_model_values(self):
+        """
+        Using the Low Adjusted data produced by SDP parametric model.
+        We then want to have the resulting configuration expectation for our
+        simulator mdodel (that is, what are the specs for each device going to
+        look like).
+
+        Returns
+        -------
+        df
+        """
+        # SKALOW_nodes = 896
+        # gpu_per_node = 2
+        # gpu_peak_flops = 31 * SI.tera  # Double precision
+        # memory_per_node = 31 * SI.giga
+        hot_rate_per_size = 3 * SI.giga / 10 / SI.tera  # 3 GB/s per 10 TB
+        # [NVMe SSD]
+        cold_rate_per_size = 0.5 * SI.giga / 16 / SI.tera  # 0.5 GB/s per
+        # 16 TB [SATA SSD]
+
+        # # These values are derived from 'somewhere'.
+        df = pd.DataFrame([{
+            'PFLOP/s': 9.623,
+            # This is workflow buffer/offline
+            'Input (Cold) Buffer (PB)': 43.35,  # Byte
+            # This is ingest buffer
+            'Hot Buffer (PB)': 25.5,  # Byte # 2
+            'Delivery Buffer (PB)': 0.656,  # Byte
+            'Hot Rate (GB/s per 10TB NVMe SSD)': 3,
+            'Hot rate (TB/s, global)': 7.65,
+            'Cold rate (GB/s) per 16TB SATA SSD)': 0.5,
+            'Cold Rate (TB/s, Global)': 1.35
+        }])
+        return df
 
 
 class SDP_MID_CDR(ARCHITECTURE):

@@ -18,7 +18,7 @@ import shutil
 import random
 import json
 import os
-
+import logging
 
 import networkx as nx
 import pandas as pd
@@ -26,6 +26,8 @@ from skaworkflows import __version__
 from skaworkflows.common import SI
 import skaworkflows.workflow.hpso_to_observation as hpo
 import skaworkflows.workflow.eagle_daliuge_translation as edt
+
+logging.disable(logging.CRITICAL)
 
 BASE_DATA_DIR = "skaworkflows/data/pandas_sizing/"
 TEST_DATA_DIR = 'tests/data/'
@@ -340,7 +342,6 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
             self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[0],
             'Degrid', self.component_system_sizing
         )
-        print(component_cost)
         self.assertAlmostEqual(0.091199933169544, component_cost, places=5)
 
         component_cost, component_data = hpo.identify_component_cost(

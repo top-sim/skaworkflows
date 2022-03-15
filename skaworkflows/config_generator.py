@@ -61,7 +61,7 @@ def create_config(observations, telescope_max, path, component_csv,
         path,
         component_sizing,
         system_sizing,
-        cluster
+        cluster,
     )
     LOGGER.info(f"Producing buffer config")
     final_buffer_config = hto.create_buffer_config(sdp, buffer_ratio)
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     TELESCOPE = "LOW"
     LOGGER.info("Starting config generation...")
     hpso01 = hto.create_observation_from_hpso(
-        count=1, hpso='hpso01', demand=512, duration=60,
+        count=1, hpso='hpso01', demand=512, duration=3600,
         workflows=['DPrepA'], channels=256, baseline='long'
     )
     # hpso04a = hto.create_observation_from_hpso(

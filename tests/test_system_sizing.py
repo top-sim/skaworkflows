@@ -122,6 +122,7 @@ class TestSystemPandasOutputCompute(unittest.TestCase):
             'DPrepD [Pflop/s]': 0,
             'Ingest [Pflop/s]': 0.15301857409827246,
         })
+
         self.assertDictEqual(test_dict, hpso_dict)
 
     def test_process_common_values(self):

@@ -102,6 +102,8 @@ if __name__ == '__main__':
     LOGGER.info(collate_sdp_globaldataframe(adjusted=False,
                                             human_readable=True))
     LOGGER.info("Number of nodes needed to compute in same time as observation")
+
+
     LOGGER.info(calculate_equivalent_time_sdp().to_latex(index=False,
                                                          escape=False))
 

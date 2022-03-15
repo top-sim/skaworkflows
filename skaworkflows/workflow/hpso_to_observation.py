@@ -171,7 +171,7 @@ class Observation:
             'name': self.name,
             'start': self.start,
             'duration': self.duration,
-            'demand': self.demand,
+            'instrument_demand': self.demand,
             'type': self.hpso,
             'data_product_rate': self.ingest_data_rate
         }
@@ -388,7 +388,7 @@ def generate_instrument_config(
         config_dir,
         component_sizing,
         system_sizing,
-        cluster
+        cluster,
 ):
     """
     Produce the `instrument level configuration for a TopSim compatible
@@ -415,6 +415,7 @@ def generate_instrument_config(
 
     pipeline_dict = {}
     telescope_observations = []
+    max_ingest_resources = -1
     observation_plan = assign_observation_ingest_demands(
         observation_plan=observation_plan,
         cluster=cluster,
@@ -429,11 +430,13 @@ def generate_instrument_config(
                 "prior to generating instrument config."
             )
         # create workflow
+        if o.ingest_compute_demand > max_ingest_resources:
+            max_ingest_resources = o.ingest_compute_demand
         cfg_dir_path = Path(config_dir)
         wf_file_name = Path(_create_workflow_path_name(o))
         wf_file_path = cfg_dir_path / 'workflows' / wf_file_name
         if not os.path.exists(config_dir):
-            wf_file_path.mkdir(parents=True, exists_ok=True)
+            wf_file_path.parent.mkdir(parents=True, exist_ok=True)
             # os.mkdir(config_dir)
         if not os.path.exists(wf_file_path):
             wf_file_path = generate_workflow_from_observation(
@@ -457,6 +460,7 @@ def generate_instrument_config(
     telescope_observations.sort(key=lambda d: d['start'])
     telescope_dict = {
         'telescope': {
+            'max_ingest_resources':max_ingest_resources,
             'total_arrays': maximum_telescope,
             'pipelines': pipeline_dict,
             'observations': telescope_observations
@@ -661,7 +665,7 @@ def generate_cost_per_product(
         nx_graph[edge[0]][edge[1]]['data_size'] = (
                 observation.duration
                 * task_dict[component]['fraction_data']
-                * SI.peta
+                * SI.tera
         )
 
     return nx_graph, task_dict
@@ -963,7 +967,7 @@ def calc_ingest_demand(observation, telescope_max, system_sizing, cluster):
         observation.baseline,
         'Ingest Rate [TB/s]',
         system_sizing
-    ) * SI.peta * telescope_frac
+    ) * SI.tera * telescope_frac
 
     return num_machines, ingest_flops, ingest_bytes
 

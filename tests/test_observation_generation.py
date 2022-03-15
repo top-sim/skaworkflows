@@ -178,8 +178,9 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             final_instrument_config['telescope']['pipelines']['hpso01_1']['workflow']
         )
         self.assertEqual(
-            {'name': 'hpso01_1', 'start': 0, 'duration': 60, 'demand': 512,
-             'type': 'hpso01', 'data_product_rate': 459024629760000.0},
+            {'name': 'hpso01_1', 'start': 0, 'duration': 60,
+             'instrument_demand': 512,
+             'type': 'hpso01', 'data_product_rate': 459024629760.0},
             final_instrument_config['telescope']['observations'][0]
         )
 
