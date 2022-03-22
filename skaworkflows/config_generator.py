@@ -16,13 +16,13 @@ import pandas as pd
 import json
 import logging
 
-
 import skaworkflows.common as common
 import skaworkflows.workflow.hpso_to_observation as hto
 from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR
 
 logging.basicConfig(level="INFO")
 LOGGER = logging.getLogger(__name__)
+
 
 # TODO update to be path and config_name or something
 def create_config(observations, telescope_max, path, component_csv,
@@ -76,11 +76,12 @@ def create_config(observations, telescope_max, path, component_csv,
     }
 
     file_path = f'{path}/config.json'
-    with open(file_path,'w') as fp:
+    with open(file_path, 'w') as fp:
         LOGGER.info(f'Writing final config to {file_path}')
         json.dump(final_config, fp, indent=2)
 
     LOGGER.info(f'Configuration generation complete!')
+
 
 if __name__ == '__main__':
     TELESCOPE = "LOW"

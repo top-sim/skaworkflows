@@ -25,6 +25,7 @@ from skaworkflows.common import SI
 from skaworkflows.hpconfig.utils.classes import ARCHITECTURE
 from skaworkflows import __version__
 
+
 class SDP_LOW_CDR(ARCHITECTURE):
     """
     Itemised description of the SKA Low Science Data Processor architecture,
@@ -240,6 +241,85 @@ class SDP_LOW_CDR(ARCHITECTURE):
             'Cold Rate (TB/s, Global)': 1.35
         }])
         return df
+
+
+class SDP_PAR_MODEL(SDP_LOW_CDR):
+    buffer_ratio = (37.94, 100)
+
+    # Assumptions about read-rate. This is how we calulcate runtime I/O costs
+    # From Scheduling.ipynb in SDP: 3 GB/s per 10 TB [NVMe SSD]
+    buffer_read_rate = 3 * SI.giga / 10 / SI.tera
+
+    @property
+    def _global_io_rate(self):
+        """
+        Designed to match the HotBufferRate in the parametric model using the current Buffer ratio
+
+        **Should** be 7.5TB/s
+        Returns
+        -------
+
+        """
+        br = self.buffer_ratio[0] / self.buffer_ratio[1]
+        return round(
+            (self.total_storage / (10 ** 12))
+            * (br * self.buffer_read_rate),
+            ndigits=2
+        ) * (10 ** 12)
+
+    @property
+    def memory_bandwidth(self):
+        """
+        I/O bandwidth used by the SDP to determine the rate at which we can
+        read data at runtime.
+
+        Used in the "rates" value in the TopSim Dictionary for this architecture
+
+        Notes
+        ------
+        This is derived from the 'HotBufferRate' used in the parametric
+        model. The parametric model uses HotBuffer in a different
+        way to us.
+
+        Returns
+        -------
+
+        """
+        # Calculate the global read rate and then distribute across nodes
+        return int(self._global_io_rate / self.nodes)
+
+    def to_topsim_dictionary(self):
+        """
+        Generate dictionary expected as part of TopSim configuration file
+
+        Notes
+        -----
+        Here we substitute 'rate's for 'memory bandwidth'.
+
+        Returns
+        -------
+
+        """
+        node_dict = {}
+        # system = {"system": {"resources": {}}}
+        for i in range(0, self.nodes):
+            node_dict[f"GenericeSDP_m{i}"] = {
+                f"flops": self.gpu_peak_flops * self.gpu_per_node,
+                f"rates": self.memory_bandwidth,
+                f"memory": self.memory_per_node
+            }
+        cluster = {
+            "header": {
+                "time": False,
+                "generator": "hpconfig",
+                "version": __version__
+            },
+            'system': {
+                'resources': node_dict,
+                'bandwidth': self.ethernet
+            }
+        }
+        return cluster
 
 
 class SDP_MID_CDR(ARCHITECTURE):
