@@ -244,8 +244,6 @@ def daliuge_to_nx(dlg_json_dict, workflow):
                 task_names[label] = {'node': 1}
             labels[oid] = f"{label}_{task_names[label]['node'] - 1}"
             name = f"{workflow}_{labels[oid]}"
-            if labels[oid] == 'Flag_255':
-                continue
             node = (name, {'comp': 0})
             node_list.append(node)
 

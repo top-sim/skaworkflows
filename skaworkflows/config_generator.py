@@ -26,7 +26,7 @@ LOGGER = logging.getLogger(__name__)
 
 # TODO update to be path and config_name or something
 def create_config(observations, telescope_max, path, component_csv,
-                  system_csv, sdp, buffer_ratio, timestep, **kwargs):
+                  system_csv, sdp, buffer_ratio, timestep,data=True, **kwargs):
     """
     Parameters
     ----------
@@ -62,6 +62,7 @@ def create_config(observations, telescope_max, path, component_csv,
         component_sizing,
         system_sizing,
         cluster,
+        data
     )
     LOGGER.info(f"Producing buffer config")
     final_buffer_config = hto.create_buffer_config(sdp, buffer_ratio)
@@ -96,10 +97,10 @@ if __name__ == '__main__':
     # )
     observations = hpso01  # +hpso04a
     LOGGER.debug(f'Observation list is: {observations}')
-    output_path = 'tests/generator/config'
+    output_path = 'output/'
     sdp = SDP_LOW_CDR()
     buffer_ratio = (1, 5)
-    timestep = "minutes"
+    timestep = "seconds"
     LOGGER.info(
         f"Creating config with:\n"
         f"Telescope: SKA_{TELESCOPE}\n"
@@ -115,5 +116,6 @@ if __name__ == '__main__':
         common.TOTAL_SIZING_LOW,
         sdp,
         buffer_ratio,
-        timestep
+        timestep,
+        data=False
     )

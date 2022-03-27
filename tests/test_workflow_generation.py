@@ -309,7 +309,8 @@ class TestWorkflowFromObservation(unittest.TestCase):
             total += final_graph.nodes[node]['comp']
 
         self.assertAlmostEqual(
-            6.176684037874095e+19,
+            # Updated to include new cost values for compute
+            6.176684037874105e+19,
             total,
             places=3
         )
@@ -388,7 +389,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
             delta=1000
         )
         self.assertAlmostEqual(
-            15.683419877615755 * self.obs1.duration * SI.peta,
+            15.683419877615755 * self.obs1.duration * SI.tera,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
                 'data_size'
             ],
@@ -411,7 +412,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
             delta=1000
         )
         self.assertAlmostEqual(
-            0.24505343558774617 * self.obs1.duration * SI.peta,
+            0.24505343558774617 * self.obs1.duration * SI.tera,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
                 'data_size'
             ],
