@@ -22,6 +22,7 @@ import logging
 
 import networkx as nx
 import pandas as pd
+from pathlib import Path
 from skaworkflows import __version__
 from skaworkflows.common import SI
 import skaworkflows.workflow.hpso_to_observation as hpo
@@ -514,9 +515,9 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
 
         """
         workflow_path_name = hpo._create_workflow_path_name(self.obs1)
-
-        os.mkdir(self.config_dir)
-        self.assertTrue(os.path.exists(self.config_dir))
+        config_dir_path = Path(self.config_dir)
+        config_dir_path.mkdir()
+        assert config_dir_path.exists()
         result = hpo.generate_workflow_from_observation(
             self.obs1, self.telescope_max, self.config_dir,
             self.component_system_sizing, workflow_path_name
@@ -543,7 +544,8 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
 
         self.assertDictEqual(header, test_workflow['header'])
         nx_graph = nx.readwrite.node_link_graph(test_workflow['graph'])
+        # Divide by 2 due to 2 major loops
         self.assertAlmostEqual(
-            0.09119993316954411 * self.obs1.duration * SI.peta,
+            (0.09119993316954411 * self.obs1.duration * SI.peta)/2,
             nx_graph.nodes['DPrepA_Degrid_0']['comp'], delta=1000
         )

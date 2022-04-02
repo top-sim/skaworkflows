@@ -41,7 +41,10 @@ class SDP_LOW_CDR(ARCHITECTURE):
     - SDP Parametric Model: https://github.com/ska-telescope/sdp-par-model
 
     """
+
     nodes = 896
+
+    buffer_ratio = (1, 5)
 
     gpu_per_node = 2
     gpu_peak_flops = 31 * SI.tera  # Double precision
@@ -65,19 +68,32 @@ class SDP_LOW_CDR(ARCHITECTURE):
         """
         Report data as dataframe
 
+        # TODO update 'human_readable' to 'latex_compatible'
+        # It's confusing and prints awkwardly
         Returns
         -------
 
         """
+        # cols = {
+        #     'telescope': "Telescope",
+        #     'num_nodes': '$|M_{\\mathrm{SDP}}$',
+        #     'gpu_per_node': '$|P_m|$',
+        #     'memory_per_node': '$d$ (GB)',
+        #     'storage_per_node': '$s$ (TB)',
+        #     'flops_per_node': ' $p_{i}^m$ (TFLOPS)(est.)',
+        #     'total_storage': '$\\mathrm{TS}_{\\mathrm{SDP}}$ (PB)',
+        #     'total_processing': '$\\mathrm{TP}_{\\mathrm{SDP}}$ (PFLOPS)'
+        # }
+
         cols = {
             'telescope': "Telescope",
-            'num_nodes': '$|M_{\\mathrm{SDP}}$',
-            'gpu_per_node': '$|P_m|$',
-            'memory_per_node': '$d$ (GB)',
-            'storage_per_node': '$s$ (TB)',
-            'flops_per_node': ' $p_{i}^m$ (TFLOPS)(est.)',
-            'total_storage': '$\\mathrm{TS}_{\\mathrm{SDP}}$ (PB)',
-            'total_processing': '$\\mathrm{TP}_{\\mathrm{SDP}}$ (PFLOPS)'
+            'num_nodes': 'Number of nodes',
+            'gpu_per_node': 'GPU/Node',
+            'memory_per_node': 'Memory/Node (GB)',
+            'storage_per_node': 'Storage/Node (TB)',
+            'flops_per_node': 'FLOPS/Node',
+            'total_storage': 'Total Storage (PB)',
+            'total_processing': 'Total Compute'
         }
 
         if human_readable:
@@ -86,7 +102,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
                             self.storage_per_node // SI.tera,
                             self.gpu_peak_flops // SI.tera,
                             self.total_storage // SI.peta,
-                            self.total_compute // SI.peta])
+                            self.total_compute / SI.peta])
 
             df = pd.DataFrame([low], columns=cols.values())
         else:
@@ -250,6 +266,8 @@ class SDP_PAR_MODEL(SDP_LOW_CDR):
     # From Scheduling.ipynb in SDP: 3 GB/s per 10 TB [NVMe SSD]
     buffer_read_rate = 3 * SI.giga / 10 / SI.tera
 
+    architecture_efficiency = 0.173
+
     @property
     def _global_io_rate(self):
         """
@@ -287,6 +305,21 @@ class SDP_PAR_MODEL(SDP_LOW_CDR):
         """
         # Calculate the global read rate and then distribute across nodes
         return int(self._global_io_rate / self.nodes)
+
+    @property
+    def total_compute(self, expected=False):
+        """
+        Use archicture efficiency to change the value to be closure to
+        parametric model
+
+        Returns
+        -------
+
+        """
+        return (
+                self.nodes * self.gpu_per_node * self.gpu_peak_flops
+                * self.architecture_efficiency
+        )
 
     def to_topsim_dictionary(self):
         """

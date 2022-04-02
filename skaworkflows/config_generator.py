@@ -18,22 +18,38 @@ import logging
 
 import skaworkflows.common as common
 import skaworkflows.workflow.hpso_to_observation as hto
+
+from pathlib import Path
 from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR
 
-logging.basicConfig(level="INFO")
 LOGGER = logging.getLogger(__name__)
 
 
 # TODO update to be path and config_name or something
-def create_config(observations, telescope_max, path, component_csv,
-                  system_csv, sdp, buffer_ratio, timestep,data=True, **kwargs):
+def create_config(
+        telescope_max,
+        hpso_path,
+        output_path,
+        component_csv,
+        system_csv,
+        cluster,
+        timestep='seconds',
+        data=True,
+        **kwargs
+):
     """
     Parameters
     ----------
+    data
+    timestep
+    cluster
+    system_csv
+    component_csv
+    telescope_max
     observations : list
         Dictionary with the form {'observation_name': observation_count'}
         where observation_count is an int
-    path : string
+    output_path : pathlib.Path
         Path where the 'config' folder will be created
 
     **kwargs:
@@ -44,12 +60,23 @@ def create_config(observations, telescope_max, path, component_csv,
     -------
     Path where observation config is stored
     """
+    LOGGER.info(
+        f"\tTelescope: SKA_LOW \n"
+        f"\tCreating config with:\n"
+        f"\tOutput Directory: {output_path}\n"
+        f"\tBuffer ratio: {cluster.buffer_ratio}\n"
+        f"\tTimestep: {timestep}\n"
+        f"\tData: {data}"
+    )
+
     LOGGER.info("Reading system sizing...")
     component_sizing = pd.read_csv(component_csv)
     system_sizing = pd.read_csv(system_csv)
-    cluster = sdp.to_topsim_dictionary()
-
-    LOGGER.info("Creating an observation plan")
+    cluster_dict = sdp.to_topsim_dictionary()
+    observations = hto.process_hpso_from_spec(hpso_path)
+    if not observations:
+        RuntimeError('Observations do not exist!')
+    LOGGER.debug(f"Creating an observation plan with {observations}")
     observation_plan = hto.create_observation_plan(
         observations, telescope_max
     )
@@ -58,15 +85,15 @@ def create_config(observations, telescope_max, path, component_csv,
     LOGGER.info(f"Producing the instrument config")
     final_instrument_config = hto.generate_instrument_config(
         observation_plan, 512,
-        path,
+        output_path,
         component_sizing,
         system_sizing,
-        cluster,
+        cluster_dict,
         data
     )
     LOGGER.info(f"Producing buffer config")
-    final_buffer_config = hto.create_buffer_config(sdp, buffer_ratio)
-    final_cluster = cluster
+    final_buffer_config = hto.create_buffer_config(sdp, cluster.buffer_ratio)
+    final_cluster = cluster_dict
 
     LOGGER.info(f"Putting it all together...")
     final_config = {
@@ -76,46 +103,33 @@ def create_config(observations, telescope_max, path, component_csv,
         "timestep": timestep
     }
 
-    file_path = f'{path}/config.json'
-    with open(file_path, 'w') as fp:
+    file_path = output_path / 'config.json'
+    with file_path.open('w') as fp:
         LOGGER.info(f'Writing final config to {file_path}')
         json.dump(final_config, fp, indent=2)
 
     LOGGER.info(f'Configuration generation complete!')
 
+    return file_path
+
 
 if __name__ == '__main__':
-    TELESCOPE = "LOW"
+    logging.basicConfig(level="DEBUG")
+
     LOGGER.info("Starting config generation...")
-    hpso01 = hto.create_observation_from_hpso(
-        count=1, hpso='hpso01', demand=512, duration=3600,
-        workflows=['DPrepA'], channels=256, baseline='long'
-    )
-    # hpso04a = hto.create_observation_from_hpso(
-    #     count=1, hpso='hpso01', demand=512, duration=60,
-    #     workflows=['DPrepA'], channels=256, baseline='long'
-    # )
-    observations = hpso01  # +hpso04a
-    LOGGER.debug(f'Observation list is: {observations}')
-    output_path = 'output/'
+    hpso_path = Path('tests/data/single_hpso.json')
+    output_path = Path('output/')
     sdp = SDP_LOW_CDR()
-    buffer_ratio = (1, 5)
     timestep = "seconds"
-    LOGGER.info(
-        f"Creating config with:\n"
-        f"Telescope: SKA_{TELESCOPE}\n"
-        f"Output: {output_path}\n"
-        f"Buffer ratio: {buffer_ratio}\n"
-        f"Timestep: {timestep}\n"
-    )
+    data = False
+
     create_config(
-        observations,
         common.MAX_TEL_DEMAND,
+        hpso_path,
         output_path,
         common.COMPONENT_SIZING_LOW,
         common.TOTAL_SIZING_LOW,
         sdp,
-        buffer_ratio,
         timestep,
-        data=False
+        data=data
     )

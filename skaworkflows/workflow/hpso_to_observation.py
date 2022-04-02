@@ -29,7 +29,9 @@ information
 
 import json
 import os
+import logging
 import math
+
 import pandas as pd
 import networkx as nx
 
@@ -41,6 +43,8 @@ from skaworkflows.common import (
     WORKFLOW_HEADER, BASE_GRAPH_PATH,
     MAX_TEL_DEMAND, TOTAL_SIZING_LOW)
 
+LOGGER = logging.getLogger(__name__)
+
 
 class HPSO(Enum):
     ingest = ['ingest, rcal, ']
@@ -48,11 +52,38 @@ class HPSO(Enum):
     hpso2a = ['ingest']
 
 
+def process_hpso_from_spec(path: Path):
+    """
+    Pass a JSON dictionary of observations we want to process
+
+    Easier to edit and cleaner to generate multiple observations (doesn't
+    rely on
+
+    Parameters
+    ----------
+    path
+
+    Returns
+    -------
+
+    """
+    final_obs = []
+    with path.open() as fp:
+        hpsos = json.load(fp)
+
+    offset = 0
+    for h in hpsos['items']:
+        obslist = create_observation_from_hpso(**h, offset=offset)
+        offset += len(obslist)
+        final_obs += obslist
+    return final_obs
+
+
 def create_observation_from_hpso(
-        count, hpso, workflows, demand, duration, channels, baseline
+        count, hpso, workflows, demand, duration, channels, baseline, offset
 ):
     """
-    Observation objects store the number of observations that will appear
+     objects store the number of observations that will appear
     in the mid-term plan
 
     Returns
@@ -62,7 +93,7 @@ def create_observation_from_hpso(
     obslist = []
     for i in range(count):
         obs = Observation(
-            f'{hpso}_{i}', hpso, workflows, demand, duration, channels,
+            f'{hpso}_{i+offset}', hpso, workflows, demand, duration, channels,
             baseline
         )
         obslist.append(obs)
@@ -177,7 +208,7 @@ class Observation:
         }
 
 
-def create_observation_plan(observations, max_telescope_usage):
+def create_observation_plan(hpsos, max_telescope_usage):
     """
     Given a sequence of HPSOs that are present in the system sizing
     dictionary, generate a plan. of observations from which we can create
@@ -186,7 +217,7 @@ def create_observation_plan(observations, max_telescope_usage):
 
     Parameters
     ----------
-    observations : list
+    hpsos : list
         List of :py:obj:`~pipelines.hpso_to_observations.Observations`
 
     max_telescope_usage: float
@@ -235,12 +266,21 @@ def create_observation_plan(observations, max_telescope_usage):
     # plan = [(0, -1, 0, '', '', 0, '')]
     start = 0
     finish = -1
+    LOGGER.debug(f"{hpsos=}")
+    # if len(observations) == 1:
+    #     o = observations[-1]
+    #     o.planned=True
+    #     plan.append(o)
+    #     return plan
+    observations = [o for o in hpsos]
     while observations:
+        LOGGER.debug("Planning observations")
         observations = sorted(
             observations, key=lambda obs: (obs.baseline.value, obs.duration)
         )
         if (len(observations) > 1) and (loop_count % len(observations) == 0):
             largest_observation = observations[-1]
+            LOGGER.debug(f"{largest_observation=}")
             if finish == -1:  # Then we are the first with this time
                 # plan.pop()
                 largest_observation.add_start_time(start)
@@ -268,6 +308,7 @@ def create_observation_plan(observations, max_telescope_usage):
         else:  # we are not looking to add the largest:
             # See if we can squeeze in a few observations
             for observation in observations:
+                LOGGER.debug(f"{observation=}")
                 if observation.planned:
                     continue
                 if (current_tel_usage + observation.demand
@@ -275,6 +316,7 @@ def create_observation_plan(observations, max_telescope_usage):
                     observation.add_start_time(start)
                     observation.planned = True
                     plan.append(observation)
+                    LOGGER.debug(f"{plan=}")
                     current_tel_usage += observation.demand
                     # observations.remove(observation)
                     loop_count += 1
@@ -288,6 +330,7 @@ def create_observation_plan(observations, max_telescope_usage):
             observations if not observation.planned
         ]
 
+    LOGGER.debug(f"{plan=}")
     return plan
 
 
@@ -378,6 +421,7 @@ def assign_observation_ingest_demands(
         o.ingest_compute_demand, o.ingest_flops_rate, o.ingest_data_rate = (
             calc_ingest_demand(o, maximum_telescope, system_sizing, cluster)
         )
+        LOGGER.debug(f"{o.ingest_compute_demand=},{o.ingest_data_rate=}")
 
     return observation_plan
 
@@ -385,7 +429,7 @@ def assign_observation_ingest_demands(
 def generate_instrument_config(
         observation_plan,
         maximum_telescope,
-        config_dir,
+        config_dir_path,
         component_sizing,
         system_sizing,
         cluster,
@@ -423,7 +467,7 @@ def generate_instrument_config(
         system_sizing=system_sizing,
         maximum_telescope=512
     )
-
+    LOGGER.debug(f"{observation_plan=}")
     for o in observation_plan:
         if not o.planned:
             raise RuntimeError(
@@ -433,14 +477,14 @@ def generate_instrument_config(
         # create workflow
         if o.ingest_compute_demand > max_ingest_resources:
             max_ingest_resources = o.ingest_compute_demand
-        cfg_dir_path = Path(config_dir)
-        wf_file_name = Path(_create_workflow_path_name(o,data))
-        wf_file_path = cfg_dir_path / 'workflows' / wf_file_name
-        if not os.path.exists(config_dir):
+        # cfg_dir_path = Path(config_dir)
+        wf_file_name = Path(_create_workflow_path_name(o, data))
+        wf_file_path = config_dir_path / 'workflows' / wf_file_name
+        if not config_dir_path.exists():
             wf_file_path.parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(wf_file_path):
             wf_file_path = generate_workflow_from_observation(
-                o, maximum_telescope, config_dir,
+                o, maximum_telescope, config_dir_path,
                 component_sizing, wf_file_name, data=data
             )
         else:
@@ -453,7 +497,7 @@ def generate_instrument_config(
 
         pipeline_dict[o.name] = {
             "ingest_demand": o.ingest_compute_demand,
-            "workflow": wf_file_path.relative_to(cfg_dir_path).as_posix()
+            "workflow": wf_file_path.relative_to(config_dir_path).as_posix()
         }
         telescope_observations.append(o.to_json())
 

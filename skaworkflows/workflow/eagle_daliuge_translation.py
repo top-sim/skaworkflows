@@ -189,7 +189,7 @@ def eagle_to_nx(eagle_graph, workflow, file_in=True):
         if not os.path.exists(eagle_graph):
             raise FileExistsError(f'{eagle_graph} does not exist')
 
-    LOGGER.info(f"Preparing {eagle_graph} for LGT->PGT Translation")
+    LOGGER.info(f"Preparing {workflow} for LGT->PGT Translation")
     daliuge_json = unroll_logical_graph(eagle_graph, file_in=file_in)
     jdict = json.loads(daliuge_json)
     unrolled_nx, task_dict = daliuge_to_nx(jdict, workflow)

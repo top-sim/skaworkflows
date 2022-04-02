@@ -19,6 +19,8 @@ import random
 
 import pandas as pd
 
+from pathlib import Path
+
 from skaworkflows.workflow.hpso_to_observation import Observation, \
     create_observation_from_hpso, assign_observation_ingest_demands
 from skaworkflows.workflow.hpso_to_observation import create_observation_plan, \
@@ -64,10 +66,10 @@ class TestObservationPlanGeneration(unittest.TestCase):
         # self.observations = convert_systemsizing_csv_to_dict(low_compute_data)
         self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 'long')
         self.obslist1 = create_observation_from_hpso(
-            2, 'hpso01', ['dprepa'], 32, 60, 256, 'long'
+            2, 'hpso01', ['dprepa'], 32, 60, 256, 'long', offset=0
         )
         self.obslist2 = create_observation_from_hpso(
-            4, 'hpso04a', ['dprepa'], 16, 30, 128, 'long'
+            4, 'hpso04a', ['dprepa'], 16, 30, 128, 'long', offset=0
         )
         self.obs3 = Observation(3, 'hpso01', ['dprepa'], 32, 30, 256, 'long')
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
@@ -110,8 +112,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         self.observation_list = create_observation_from_hpso(
             count=2, hpso='hpso01', demand=512,
             duration=60, workflows=['DPrepA'], channels=256,
-            baseline='long'
-
+            baseline='long', offset=0
         )
         self.observation_plan = create_observation_plan(
             self.observation_list,512
@@ -131,11 +132,11 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         sdp = SDP_LOW_CDR()
         self.cluster = sdp.to_topsim_dictionary()
-        self.config_dir = 'tests/data/config'
-        os.mkdir(self.config_dir)
+        self.config_dir_path = Path('tests/data/config')
+        self.config_dir_path.mkdir()
 
     def tearDown(self) -> None:
-        shutil.rmtree(self.config_dir)
+        shutil.rmtree(self.config_dir_path)
 
     def testIngestDemandCalc(self):
         # Start with a spec, then determine how many machines we will need
@@ -161,10 +162,9 @@ class TestObservationTopSimTranslation(unittest.TestCase):
 
         """
         # self.observation_lis
-
         final_instrument_config = generate_instrument_config(
             self.observation_list, 512,
-            self.config_dir,
+            self.config_dir_path,
             self.component_sizing,
             self.system_sizing,
             self.cluster
