@@ -28,7 +28,7 @@ from skaworkflows.common import SI
 import skaworkflows.workflow.hpso_to_observation as hpo
 import skaworkflows.workflow.eagle_daliuge_translation as edt
 
-logging.disable(logging.CRITICAL)
+logging.disable(logging.INFO)
 
 BASE_DATA_DIR = "skaworkflows/data/pandas_sizing/"
 TEST_DATA_DIR = 'tests/data/'
@@ -269,6 +269,7 @@ class TestWorkflowFromObservation(unittest.TestCase):
             final_graphs['DPrepB'].nodes['DPrepB_Grid_0']['comp']
         )
 
+
     def testConcatWorkflowsCost(self):
         """
         Ensure that the cumulative cost of all nodes are equivalent to the
@@ -315,6 +316,9 @@ class TestWorkflowFromObservation(unittest.TestCase):
             total,
             places=3
         )
+        u= 'ICAL_Gather_0'
+        v = 'DPrepB_FrequencySplit_0'
+        self.assertEqual(0, final_graph.edges[u,v]['data_size'])
 
 
 class TestCostGenerationAndAssignment(unittest.TestCase):

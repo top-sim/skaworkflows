@@ -20,6 +20,7 @@ import skaworkflows.common as common
 import skaworkflows.workflow.hpso_to_observation as hto
 
 from pathlib import Path
+from skaworkflows.hpconfig.utils.classes import ARCHITECTURE
 from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR
 
 LOGGER = logging.getLogger(__name__)
@@ -28,11 +29,11 @@ LOGGER = logging.getLogger(__name__)
 # TODO update to be path and config_name or something
 def create_config(
         telescope_max,
-        hpso_path,
-        output_path,
-        component_csv,
-        system_csv,
-        cluster,
+        hpso_path: Path,
+        output_path: Path,
+        component: Path,
+        system: Path,
+        cluster: ARCHITECTURE,
         timestep='seconds',
         data=True,
         **kwargs
@@ -43,8 +44,8 @@ def create_config(
     data
     timestep
     cluster
-    system_csv
-    component_csv
+    system
+    component
     telescope_max
     observations : list
         Dictionary with the form {'observation_name': observation_count'}
@@ -70,9 +71,9 @@ def create_config(
     )
 
     LOGGER.info("Reading system sizing...")
-    component_sizing = pd.read_csv(component_csv)
-    system_sizing = pd.read_csv(system_csv)
-    cluster_dict = sdp.to_topsim_dictionary()
+    component_sizing = pd.read_csv(component)
+    system_sizing = pd.read_csv(system)
+    cluster_dict = cluster.to_topsim_dictionary()
     observations = hto.process_hpso_from_spec(hpso_path)
     if not observations:
         RuntimeError('Observations do not exist!')
@@ -92,7 +93,9 @@ def create_config(
         data
     )
     LOGGER.info(f"Producing buffer config")
-    final_buffer_config = hto.create_buffer_config(sdp, cluster.buffer_ratio)
+    final_buffer_config = hto.create_buffer_config(
+        cluster, cluster.buffer_ratio
+    )
     final_cluster = cluster_dict
 
     LOGGER.info(f"Putting it all together...")
@@ -113,23 +116,37 @@ def create_config(
     return file_path
 
 
+def config_to_shadow(cfg_path: Path, prefix):
+    shadow_path = None
+    with cfg_path.open() as fp:
+        cfg = json.load(fp)
+    cluster = {'system': cfg["cluster"]["system"]}
+    shadow_path = cfg_path.parent / (prefix + cfg_path.name)
+    with shadow_path.open('w') as fp:
+        json.dump(cluster, fp)
+    return shadow_path
+
+
 if __name__ == '__main__':
     logging.basicConfig(level="DEBUG")
 
     LOGGER.info("Starting config generation...")
     hpso_path = Path('tests/data/single_hpso.json')
     output_path = Path('output/')
+    component_sizing = Path(common.COMPONENT_SIZING_LOW)
+    total_sizing = Path(common.TOTAL_SIZING_LOW)
     sdp = SDP_LOW_CDR()
     timestep = "seconds"
     data = False
 
-    create_config(
+    cfg_path = create_config(
         common.MAX_TEL_DEMAND,
         hpso_path,
         output_path,
-        common.COMPONENT_SIZING_LOW,
-        common.TOTAL_SIZING_LOW,
+        component_sizing,
+        total_sizing,
         sdp,
         timestep,
         data=data
     )
+    config_to_shadow(cfg_path, 'shadow_')

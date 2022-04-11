@@ -306,7 +306,7 @@ def concatenate_workflows(
     final_graph = nx.compose_all(list(unrolled_graphs.values()))
     for workflow in workflows:
         curr_child = f'{workflow}_FrequencySplit_0'
-        final_graph.add_edge(curr_parent, curr_child)
+        final_graph.add_edge(curr_parent, curr_child, data_size=0)
         curr_parent = f'{workflow}_Gather_0'
 
     # for graph in  unrolled_graphs:

@@ -73,6 +73,7 @@ def process_hpso_from_spec(path: Path):
 
     offset = 0
     for h in hpsos['items']:
+        LOGGER.debug(f"{h=}")
         obslist = create_observation_from_hpso(**h, offset=offset)
         offset += len(obslist)
         final_obs += obslist
@@ -608,6 +609,7 @@ def generate_workflow_from_observation(
     # Unroll the graph
     final_graphs = {}
     for workflow in observation.workflows:
+        LOGGER.debug(f"Using {BASE_GRAPH_PATH} as base workflow.")
         channel_lgt = edt.update_number_of_channels(BASE_GRAPH_PATH, channels)
         intermed_graph, task_dict = edt.eagle_to_nx(
             channel_lgt, workflow, file_in=False

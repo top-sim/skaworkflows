@@ -337,7 +337,7 @@ class SDP_PAR_MODEL(SDP_LOW_CDR):
         # system = {"system": {"resources": {}}}
         for i in range(0, self.nodes):
             node_dict[f"GenericeSDP_m{i}"] = {
-                f"flops": self.gpu_peak_flops * self.gpu_per_node,
+                f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
                 f"rates": self.memory_bandwidth,
                 f"memory": self.memory_per_node
             }
