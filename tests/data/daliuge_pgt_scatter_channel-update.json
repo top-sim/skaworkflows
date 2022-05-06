@@ -13,12 +13,15 @@
     "group_end": "0",
     "filepath": "",
     "dirname": "",
+    "applicationArgs": {},
     "iid": "0",
     "lg_key": -2,
     "dt": "File",
     "nm": "InputDataFromIngest",
     "consumers": [
-      "1_-35_0"
+      {
+        "1_-35_0": "event"
+      }
     ]
   },
   {
@@ -35,15 +38,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -1,
     "dt": "PythonApp",
     "nm": "UpdateGSM",
     "inputs": [
-      "1_-18_0/0"
+      {
+        "1_-18_0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-50_0/0"
+      {
+        "1_-50_0/0": "output"
+      }
     ]
   },
   {
@@ -60,15 +68,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -1,
     "dt": "PythonApp",
     "nm": "UpdateGSM",
     "inputs": [
-      "1_-18_0/1"
+      {
+        "1_-18_0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-50_0/1"
+      {
+        "1_-50_0/1": "output"
+      }
     ]
   },
   {
@@ -85,15 +98,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -1,
     "dt": "PythonApp",
     "nm": "UpdateGSM",
     "inputs": [
-      "1_-18_0/2"
+      {
+        "1_-18_0/2": "event"
+      }
     ],
     "outputs": [
-      "1_-50_0/2"
+      {
+        "1_-50_0/2": "output"
+      }
     ]
   },
   {
@@ -110,15 +128,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -1,
     "dt": "PythonApp",
     "nm": "UpdateGSM",
     "inputs": [
-      "1_-18_0/3"
+      {
+        "1_-18_0/3": "event"
+      }
     ],
     "outputs": [
-      "1_-50_0/3"
+      {
+        "1_-50_0/3": "output"
+      }
     ]
   },
   {
@@ -135,15 +158,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -8,
     "dt": "PythonApp",
     "nm": "Solve",
     "inputs": [
-      "1_-23_0/0"
+      {
+        "1_-23_0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-30_0/0"
+      {
+        "1_-30_0/0": "event"
+      }
     ]
   },
   {
@@ -160,15 +188,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -8,
     "dt": "PythonApp",
     "nm": "Solve",
     "inputs": [
-      "1_-23_0/1"
+      {
+        "1_-23_0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-30_0/1"
+      {
+        "1_-30_0/1": "event"
+      }
     ]
   },
   {
@@ -185,15 +218,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -8,
     "dt": "PythonApp",
     "nm": "Solve",
     "inputs": [
-      "1_-23_0/2"
+      {
+        "1_-23_0/2": "event"
+      }
     ],
     "outputs": [
-      "1_-30_0/2"
+      {
+        "1_-30_0/2": "event"
+      }
     ]
   },
   {
@@ -210,15 +248,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -8,
     "dt": "PythonApp",
     "nm": "Solve",
     "inputs": [
-      "1_-23_0/3"
+      {
+        "1_-23_0/3": "event"
+      }
     ],
     "outputs": [
-      "1_-30_0/3"
+      {
+        "1_-30_0/3": "event"
+      }
     ]
   },
   {
@@ -236,15 +279,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -10,
     "dt": "PythonApp",
     "nm": "Grid",
     "inputs": [
-      "1_-39_0/0/0"
+      {
+        "1_-39_0/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-36_0/0/0"
+      {
+        "1_-36_0/0/0": "event"
+      }
     ]
   },
   {
@@ -262,15 +310,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -10,
     "dt": "PythonApp",
     "nm": "Grid",
     "inputs": [
-      "1_-39_0/0/1"
+      {
+        "1_-39_0/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-36_0/0/1"
+      {
+        "1_-36_0/0/1": "event"
+      }
     ]
   },
   {
@@ -288,15 +341,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -10,
     "dt": "PythonApp",
     "nm": "Grid",
     "inputs": [
-      "1_-39_0/1/0"
+      {
+        "1_-39_0/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-36_0/1/0"
+      {
+        "1_-36_0/1/0": "event"
+      }
     ]
   },
   {
@@ -314,15 +372,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -10,
     "dt": "PythonApp",
     "nm": "Grid",
     "inputs": [
-      "1_-39_0/1/1"
+      {
+        "1_-39_0/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-36_0/1/1"
+      {
+        "1_-36_0/1/1": "event"
+      }
     ]
   },
   {
@@ -340,15 +403,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -10,
     "dt": "PythonApp",
     "nm": "Grid",
     "inputs": [
-      "1_-39_0/2/0"
+      {
+        "1_-39_0/2/0": "event"
+      }
     ],
     "outputs": [
-      "1_-36_0/2/0"
+      {
+        "1_-36_0/2/0": "event"
+      }
     ]
   },
   {
@@ -366,15 +434,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -10,
     "dt": "PythonApp",
     "nm": "Grid",
     "inputs": [
-      "1_-39_0/2/1"
+      {
+        "1_-39_0/2/1": "event"
+      }
     ],
     "outputs": [
-      "1_-36_0/2/1"
+      {
+        "1_-36_0/2/1": "event"
+      }
     ]
   },
   {
@@ -392,15 +465,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -10,
     "dt": "PythonApp",
     "nm": "Grid",
     "inputs": [
-      "1_-39_0/3/0"
+      {
+        "1_-39_0/3/0": "event"
+      }
     ],
     "outputs": [
-      "1_-36_0/3/0"
+      {
+        "1_-36_0/3/0": "event"
+      }
     ]
   },
   {
@@ -418,15 +496,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -10,
     "dt": "PythonApp",
     "nm": "Grid",
     "inputs": [
-      "1_-39_0/3/1"
+      {
+        "1_-39_0/3/1": "event"
+      }
     ],
     "outputs": [
-      "1_-36_0/3/1"
+      {
+        "1_-36_0/3/1": "event"
+      }
     ]
   },
   {
@@ -444,15 +527,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -14,
     "dt": "PythonApp",
     "nm": "Degrid",
     "outputs": [
-      "1_-37_0/0/0"
+      {
+        "1_-37_0/0/0": "event"
+      }
     ],
     "inputs": [
-      "1_-40_0/0/0"
+      {
+        "1_-40_0/0/0": "event"
+      }
     ]
   },
   {
@@ -470,15 +558,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -14,
     "dt": "PythonApp",
     "nm": "Degrid",
     "outputs": [
-      "1_-37_0/0/1"
+      {
+        "1_-37_0/0/1": "event"
+      }
     ],
     "inputs": [
-      "1_-40_0/0/1"
+      {
+        "1_-40_0/0/1": "event"
+      }
     ]
   },
   {
@@ -496,15 +589,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -14,
     "dt": "PythonApp",
     "nm": "Degrid",
     "outputs": [
-      "1_-37_0/1/0"
+      {
+        "1_-37_0/1/0": "event"
+      }
     ],
     "inputs": [
-      "1_-40_0/1/0"
+      {
+        "1_-40_0/1/0": "event"
+      }
     ]
   },
   {
@@ -522,15 +620,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -14,
     "dt": "PythonApp",
     "nm": "Degrid",
     "outputs": [
-      "1_-37_0/1/1"
+      {
+        "1_-37_0/1/1": "event"
+      }
     ],
     "inputs": [
-      "1_-40_0/1/1"
+      {
+        "1_-40_0/1/1": "event"
+      }
     ]
   },
   {
@@ -548,15 +651,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -14,
     "dt": "PythonApp",
     "nm": "Degrid",
     "outputs": [
-      "1_-37_0/2/0"
+      {
+        "1_-37_0/2/0": "event"
+      }
     ],
     "inputs": [
-      "1_-40_0/2/0"
+      {
+        "1_-40_0/2/0": "event"
+      }
     ]
   },
   {
@@ -574,15 +682,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -14,
     "dt": "PythonApp",
     "nm": "Degrid",
     "outputs": [
-      "1_-37_0/2/1"
+      {
+        "1_-37_0/2/1": "event"
+      }
     ],
     "inputs": [
-      "1_-40_0/2/1"
+      {
+        "1_-40_0/2/1": "event"
+      }
     ]
   },
   {
@@ -600,15 +713,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -14,
     "dt": "PythonApp",
     "nm": "Degrid",
     "outputs": [
-      "1_-37_0/3/0"
+      {
+        "1_-37_0/3/0": "event"
+      }
     ],
     "inputs": [
-      "1_-40_0/3/0"
+      {
+        "1_-40_0/3/0": "event"
+      }
     ]
   },
   {
@@ -626,15 +744,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -14,
     "dt": "PythonApp",
     "nm": "Degrid",
     "outputs": [
-      "1_-37_0/3/1"
+      {
+        "1_-37_0/3/1": "event"
+      }
     ],
     "inputs": [
-      "1_-40_0/3/1"
+      {
+        "1_-40_0/3/1": "event"
+      }
     ]
   },
   {
@@ -652,15 +775,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -16,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-38_0/0/0"
+      {
+        "1_-38_0/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-39_0/0/0"
+      {
+        "1_-39_0/0/0": "event"
+      }
     ]
   },
   {
@@ -678,15 +806,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -16,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-38_0/0/1"
+      {
+        "1_-38_0/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-39_0/0/1"
+      {
+        "1_-39_0/0/1": "event"
+      }
     ]
   },
   {
@@ -704,15 +837,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -16,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-38_0/1/0"
+      {
+        "1_-38_0/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-39_0/1/0"
+      {
+        "1_-39_0/1/0": "event"
+      }
     ]
   },
   {
@@ -730,15 +868,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -16,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-38_0/1/1"
+      {
+        "1_-38_0/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-39_0/1/1"
+      {
+        "1_-39_0/1/1": "event"
+      }
     ]
   },
   {
@@ -756,15 +899,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -16,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-38_0/2/0"
+      {
+        "1_-38_0/2/0": "event"
+      }
     ],
     "outputs": [
-      "1_-39_0/2/0"
+      {
+        "1_-39_0/2/0": "event"
+      }
     ]
   },
   {
@@ -782,15 +930,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -16,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-38_0/2/1"
+      {
+        "1_-38_0/2/1": "event"
+      }
     ],
     "outputs": [
-      "1_-39_0/2/1"
+      {
+        "1_-39_0/2/1": "event"
+      }
     ]
   },
   {
@@ -808,15 +961,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -16,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-38_0/3/0"
+      {
+        "1_-38_0/3/0": "event"
+      }
     ],
     "outputs": [
-      "1_-39_0/3/0"
+      {
+        "1_-39_0/3/0": "event"
+      }
     ]
   },
   {
@@ -834,15 +992,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -16,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-38_0/3/1"
+      {
+        "1_-38_0/3/1": "event"
+      }
     ],
     "outputs": [
-      "1_-39_0/3/1"
+      {
+        "1_-39_0/3/1": "event"
+      }
     ]
   },
   {
@@ -861,15 +1024,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0/0",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/0/0/0"
+      {
+        "1_-27_0/0/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/0/0/0"
+      {
+        "1_-42_0/0/0/0": "event"
+      }
     ]
   },
   {
@@ -888,15 +1056,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0/1",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/0/0/1"
+      {
+        "1_-27_0/0/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/0/0/1"
+      {
+        "1_-42_0/0/0/1": "event"
+      }
     ]
   },
   {
@@ -915,15 +1088,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1/0",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/0/1/0"
+      {
+        "1_-27_0/0/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/0/1/0"
+      {
+        "1_-42_0/0/1/0": "event"
+      }
     ]
   },
   {
@@ -942,15 +1120,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1/1",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/0/1/1"
+      {
+        "1_-27_0/0/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/0/1/1"
+      {
+        "1_-42_0/0/1/1": "event"
+      }
     ]
   },
   {
@@ -969,15 +1152,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0/0",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/1/0/0"
+      {
+        "1_-27_0/1/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/1/0/0"
+      {
+        "1_-42_0/1/0/0": "event"
+      }
     ]
   },
   {
@@ -996,15 +1184,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0/1",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/1/0/1"
+      {
+        "1_-27_0/1/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/1/0/1"
+      {
+        "1_-42_0/1/0/1": "event"
+      }
     ]
   },
   {
@@ -1023,15 +1216,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1/0",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/1/1/0"
+      {
+        "1_-27_0/1/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/1/1/0"
+      {
+        "1_-42_0/1/1/0": "event"
+      }
     ]
   },
   {
@@ -1050,15 +1248,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1/1",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/1/1/1"
+      {
+        "1_-27_0/1/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/1/1/1"
+      {
+        "1_-42_0/1/1/1": "event"
+      }
     ]
   },
   {
@@ -1077,15 +1280,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0/0",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/2/0/0"
+      {
+        "1_-27_0/2/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/2/0/0"
+      {
+        "1_-42_0/2/0/0": "event"
+      }
     ]
   },
   {
@@ -1104,15 +1312,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0/1",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/2/0/1"
+      {
+        "1_-27_0/2/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/2/0/1"
+      {
+        "1_-42_0/2/0/1": "event"
+      }
     ]
   },
   {
@@ -1131,15 +1344,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1/0",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/2/1/0"
+      {
+        "1_-27_0/2/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/2/1/0"
+      {
+        "1_-42_0/2/1/0": "event"
+      }
     ]
   },
   {
@@ -1158,15 +1376,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1/1",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/2/1/1"
+      {
+        "1_-27_0/2/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/2/1/1"
+      {
+        "1_-42_0/2/1/1": "event"
+      }
     ]
   },
   {
@@ -1185,15 +1408,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0/0",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/3/0/0"
+      {
+        "1_-27_0/3/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/3/0/0"
+      {
+        "1_-42_0/3/0/0": "event"
+      }
     ]
   },
   {
@@ -1212,15 +1440,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0/1",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/3/0/1"
+      {
+        "1_-27_0/3/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/3/0/1"
+      {
+        "1_-42_0/3/0/1": "event"
+      }
     ]
   },
   {
@@ -1239,15 +1472,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1/0",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/3/1/0"
+      {
+        "1_-27_0/3/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/3/1/0"
+      {
+        "1_-42_0/3/1/0": "event"
+      }
     ]
   },
   {
@@ -1266,15 +1504,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1/1",
     "lg_key": -20,
     "dt": "PythonApp",
     "nm": "Subtract Image Component",
     "inputs": [
-      "1_-27_0/3/1/1"
+      {
+        "1_-27_0/3/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-42_0/3/1/1"
+      {
+        "1_-42_0/3/1/1": "event"
+      }
     ]
   },
   {
@@ -1293,15 +1536,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0/0",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/0/0/0"
+      {
+        "1_-41_0/0/0/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/0"
+      {
+        "1_-26_0/0": "event"
+      }
     ]
   },
   {
@@ -1320,16 +1568,44 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0/1",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/0/0/1"
+      {
+        "1_-41_0/0/0/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/0",
-      "1_-42_0/0/0/0"
+      {
+        "1_-26_0/0": "event"
+      },
+      {
+        "1_-42_0/0/0/0": "event"
+      },
+      {
+        "1_-42_0/0/0/0": "event"
+      },
+      {
+        "1_-42_0/0/0/0": "event"
+      },
+      {
+        "1_-42_0/0/0/0": "event"
+      },
+      {
+        "1_-42_0/0/0/0": "event"
+      },
+      {
+        "1_-42_0/0/0/0": "event"
+      },
+      {
+        "1_-42_0/0/0/0": "event"
+      },
+      {
+        "1_-42_0/0/0/0": "event"
+      }
     ]
   },
   {
@@ -1348,15 +1624,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1/0",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/0/1/0"
+      {
+        "1_-41_0/0/1/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/0"
+      {
+        "1_-26_0/0": "event"
+      }
     ]
   },
   {
@@ -1375,16 +1656,44 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1/1",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/0/1/1"
+      {
+        "1_-41_0/0/1/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/0",
-      "1_-42_0/0/1/0"
+      {
+        "1_-26_0/0": "event"
+      },
+      {
+        "1_-42_0/0/1/0": "event"
+      },
+      {
+        "1_-42_0/0/1/0": "event"
+      },
+      {
+        "1_-42_0/0/1/0": "event"
+      },
+      {
+        "1_-42_0/0/1/0": "event"
+      },
+      {
+        "1_-42_0/0/1/0": "event"
+      },
+      {
+        "1_-42_0/0/1/0": "event"
+      },
+      {
+        "1_-42_0/0/1/0": "event"
+      },
+      {
+        "1_-42_0/0/1/0": "event"
+      }
     ]
   },
   {
@@ -1403,15 +1712,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0/0",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/1/0/0"
+      {
+        "1_-41_0/1/0/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/1"
+      {
+        "1_-26_0/1": "event"
+      }
     ]
   },
   {
@@ -1430,16 +1744,44 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0/1",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/1/0/1"
+      {
+        "1_-41_0/1/0/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/1",
-      "1_-42_0/1/0/0"
+      {
+        "1_-26_0/1": "event"
+      },
+      {
+        "1_-42_0/1/0/0": "event"
+      },
+      {
+        "1_-42_0/1/0/0": "event"
+      },
+      {
+        "1_-42_0/1/0/0": "event"
+      },
+      {
+        "1_-42_0/1/0/0": "event"
+      },
+      {
+        "1_-42_0/1/0/0": "event"
+      },
+      {
+        "1_-42_0/1/0/0": "event"
+      },
+      {
+        "1_-42_0/1/0/0": "event"
+      },
+      {
+        "1_-42_0/1/0/0": "event"
+      }
     ]
   },
   {
@@ -1458,15 +1800,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1/0",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/1/1/0"
+      {
+        "1_-41_0/1/1/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/1"
+      {
+        "1_-26_0/1": "event"
+      }
     ]
   },
   {
@@ -1485,16 +1832,44 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1/1",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/1/1/1"
+      {
+        "1_-41_0/1/1/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/1",
-      "1_-42_0/1/1/0"
+      {
+        "1_-26_0/1": "event"
+      },
+      {
+        "1_-42_0/1/1/0": "event"
+      },
+      {
+        "1_-42_0/1/1/0": "event"
+      },
+      {
+        "1_-42_0/1/1/0": "event"
+      },
+      {
+        "1_-42_0/1/1/0": "event"
+      },
+      {
+        "1_-42_0/1/1/0": "event"
+      },
+      {
+        "1_-42_0/1/1/0": "event"
+      },
+      {
+        "1_-42_0/1/1/0": "event"
+      },
+      {
+        "1_-42_0/1/1/0": "event"
+      }
     ]
   },
   {
@@ -1513,15 +1888,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0/0",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/2/0/0"
+      {
+        "1_-41_0/2/0/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/2"
+      {
+        "1_-26_0/2": "event"
+      }
     ]
   },
   {
@@ -1540,16 +1920,44 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0/1",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/2/0/1"
+      {
+        "1_-41_0/2/0/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/2",
-      "1_-42_0/2/0/0"
+      {
+        "1_-26_0/2": "event"
+      },
+      {
+        "1_-42_0/2/0/0": "event"
+      },
+      {
+        "1_-42_0/2/0/0": "event"
+      },
+      {
+        "1_-42_0/2/0/0": "event"
+      },
+      {
+        "1_-42_0/2/0/0": "event"
+      },
+      {
+        "1_-42_0/2/0/0": "event"
+      },
+      {
+        "1_-42_0/2/0/0": "event"
+      },
+      {
+        "1_-42_0/2/0/0": "event"
+      },
+      {
+        "1_-42_0/2/0/0": "event"
+      }
     ]
   },
   {
@@ -1568,15 +1976,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1/0",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/2/1/0"
+      {
+        "1_-41_0/2/1/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/2"
+      {
+        "1_-26_0/2": "event"
+      }
     ]
   },
   {
@@ -1595,16 +2008,44 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1/1",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/2/1/1"
+      {
+        "1_-41_0/2/1/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/2",
-      "1_-42_0/2/1/0"
+      {
+        "1_-26_0/2": "event"
+      },
+      {
+        "1_-42_0/2/1/0": "event"
+      },
+      {
+        "1_-42_0/2/1/0": "event"
+      },
+      {
+        "1_-42_0/2/1/0": "event"
+      },
+      {
+        "1_-42_0/2/1/0": "event"
+      },
+      {
+        "1_-42_0/2/1/0": "event"
+      },
+      {
+        "1_-42_0/2/1/0": "event"
+      },
+      {
+        "1_-42_0/2/1/0": "event"
+      },
+      {
+        "1_-42_0/2/1/0": "event"
+      }
     ]
   },
   {
@@ -1623,15 +2064,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0/0",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/3/0/0"
+      {
+        "1_-41_0/3/0/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/3"
+      {
+        "1_-26_0/3": "event"
+      }
     ]
   },
   {
@@ -1650,16 +2096,44 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0/1",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/3/0/1"
+      {
+        "1_-41_0/3/0/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/3",
-      "1_-42_0/3/0/0"
+      {
+        "1_-26_0/3": "event"
+      },
+      {
+        "1_-42_0/3/0/0": "event"
+      },
+      {
+        "1_-42_0/3/0/0": "event"
+      },
+      {
+        "1_-42_0/3/0/0": "event"
+      },
+      {
+        "1_-42_0/3/0/0": "event"
+      },
+      {
+        "1_-42_0/3/0/0": "event"
+      },
+      {
+        "1_-42_0/3/0/0": "event"
+      },
+      {
+        "1_-42_0/3/0/0": "event"
+      },
+      {
+        "1_-42_0/3/0/0": "event"
+      }
     ]
   },
   {
@@ -1678,15 +2152,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1/0",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/3/1/0"
+      {
+        "1_-41_0/3/1/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/3"
+      {
+        "1_-26_0/3": "event"
+      }
     ]
   },
   {
@@ -1705,16 +2184,44 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1/1",
     "lg_key": -13,
     "dt": "PythonApp",
     "nm": "FFT",
     "outputs": [
-      "1_-41_0/3/1/1"
+      {
+        "1_-41_0/3/1/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/3",
-      "1_-42_0/3/1/0"
+      {
+        "1_-26_0/3": "event"
+      },
+      {
+        "1_-42_0/3/1/0": "event"
+      },
+      {
+        "1_-42_0/3/1/0": "event"
+      },
+      {
+        "1_-42_0/3/1/0": "event"
+      },
+      {
+        "1_-42_0/3/1/0": "event"
+      },
+      {
+        "1_-42_0/3/1/0": "event"
+      },
+      {
+        "1_-42_0/3/1/0": "event"
+      },
+      {
+        "1_-42_0/3/1/0": "event"
+      },
+      {
+        "1_-42_0/3/1/0": "event"
+      }
     ]
   },
   {
@@ -1731,15 +2238,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/0/0",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/0/0/0"
+      {
+        "1_-13_0/0/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/0/0/0"
+      {
+        "1_-19_0/0/0/0": "event"
+      }
     ]
   },
   {
@@ -1756,15 +2268,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/0/1",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/0/0/1"
+      {
+        "1_-13_0/0/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/0/0/1"
+      {
+        "1_-19_0/0/0/1": "event"
+      }
     ]
   },
   {
@@ -1781,15 +2298,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/1/0",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/0/1/0"
+      {
+        "1_-13_0/0/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/0/1/0"
+      {
+        "1_-19_0/0/1/0": "event"
+      }
     ]
   },
   {
@@ -1806,15 +2328,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/1/1",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/0/1/1"
+      {
+        "1_-13_0/0/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/0/1/1"
+      {
+        "1_-19_0/0/1/1": "event"
+      }
     ]
   },
   {
@@ -1831,15 +2358,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/0/0",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/1/0/0"
+      {
+        "1_-13_0/1/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/1/0/0"
+      {
+        "1_-19_0/1/0/0": "event"
+      }
     ]
   },
   {
@@ -1856,15 +2388,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/0/1",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/1/0/1"
+      {
+        "1_-13_0/1/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/1/0/1"
+      {
+        "1_-19_0/1/0/1": "event"
+      }
     ]
   },
   {
@@ -1881,15 +2418,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/1/0",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/1/1/0"
+      {
+        "1_-13_0/1/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/1/1/0"
+      {
+        "1_-19_0/1/1/0": "event"
+      }
     ]
   },
   {
@@ -1906,15 +2448,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/1/1",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/1/1/1"
+      {
+        "1_-13_0/1/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/1/1/1"
+      {
+        "1_-19_0/1/1/1": "event"
+      }
     ]
   },
   {
@@ -1931,15 +2478,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/0/0",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/2/0/0"
+      {
+        "1_-13_0/2/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/2/0/0"
+      {
+        "1_-19_0/2/0/0": "event"
+      }
     ]
   },
   {
@@ -1956,15 +2508,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/0/1",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/2/0/1"
+      {
+        "1_-13_0/2/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/2/0/1"
+      {
+        "1_-19_0/2/0/1": "event"
+      }
     ]
   },
   {
@@ -1981,15 +2538,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/1/0",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/2/1/0"
+      {
+        "1_-13_0/2/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/2/1/0"
+      {
+        "1_-19_0/2/1/0": "event"
+      }
     ]
   },
   {
@@ -2006,15 +2568,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/1/1",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/2/1/1"
+      {
+        "1_-13_0/2/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/2/1/1"
+      {
+        "1_-19_0/2/1/1": "event"
+      }
     ]
   },
   {
@@ -2031,15 +2598,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/0/0",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/3/0/0"
+      {
+        "1_-13_0/3/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/3/0/0"
+      {
+        "1_-19_0/3/0/0": "event"
+      }
     ]
   },
   {
@@ -2056,15 +2628,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/0/1",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/3/0/1"
+      {
+        "1_-13_0/3/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/3/0/1"
+      {
+        "1_-19_0/3/0/1": "event"
+      }
     ]
   },
   {
@@ -2081,15 +2658,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/1/0",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/3/1/0"
+      {
+        "1_-13_0/3/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/3/1/0"
+      {
+        "1_-19_0/3/1/0": "event"
+      }
     ]
   },
   {
@@ -2106,15 +2688,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/1/1",
     "lg_key": -41,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-13_0/3/1/1"
+      {
+        "1_-13_0/3/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-19_0/3/1/1"
+      {
+        "1_-19_0/3/1/1": "event"
+      }
     ]
   },
   {
@@ -2131,15 +2718,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/0/0",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/0/0/0"
+      {
+        "1_-20_0/0/0/0": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/0/0/0"
+      {
+        "1_-19_0/0/0/0": "event"
+      }
     ]
   },
   {
@@ -2156,15 +2748,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/0/1",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/0/0/1"
+      {
+        "1_-20_0/0/0/1": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/0/0/1"
+      {
+        "1_-19_0/0/0/1": "event"
+      }
     ]
   },
   {
@@ -2181,15 +2778,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/1/0",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/0/1/0"
+      {
+        "1_-20_0/0/1/0": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/0/1/0"
+      {
+        "1_-19_0/0/1/0": "event"
+      }
     ]
   },
   {
@@ -2206,15 +2808,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/1/1",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/0/1/1"
+      {
+        "1_-20_0/0/1/1": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/0/1/1"
+      {
+        "1_-19_0/0/1/1": "event"
+      }
     ]
   },
   {
@@ -2231,15 +2838,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/0/0",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/1/0/0"
+      {
+        "1_-20_0/1/0/0": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/1/0/0"
+      {
+        "1_-19_0/1/0/0": "event"
+      }
     ]
   },
   {
@@ -2256,15 +2868,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/0/1",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/1/0/1"
+      {
+        "1_-20_0/1/0/1": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/1/0/1"
+      {
+        "1_-19_0/1/0/1": "event"
+      }
     ]
   },
   {
@@ -2281,15 +2898,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/1/0",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/1/1/0"
+      {
+        "1_-20_0/1/1/0": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/1/1/0"
+      {
+        "1_-19_0/1/1/0": "event"
+      }
     ]
   },
   {
@@ -2306,15 +2928,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/1/1",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/1/1/1"
+      {
+        "1_-20_0/1/1/1": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/1/1/1"
+      {
+        "1_-19_0/1/1/1": "event"
+      }
     ]
   },
   {
@@ -2331,15 +2958,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/0/0",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/2/0/0"
+      {
+        "1_-20_0/2/0/0": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/2/0/0"
+      {
+        "1_-19_0/2/0/0": "event"
+      }
     ]
   },
   {
@@ -2356,15 +2988,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/0/1",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/2/0/1"
+      {
+        "1_-20_0/2/0/1": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/2/0/1"
+      {
+        "1_-19_0/2/0/1": "event"
+      }
     ]
   },
   {
@@ -2381,15 +3018,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/1/0",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/2/1/0"
+      {
+        "1_-20_0/2/1/0": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/2/1/0"
+      {
+        "1_-19_0/2/1/0": "event"
+      }
     ]
   },
   {
@@ -2406,15 +3048,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/1/1",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/2/1/1"
+      {
+        "1_-20_0/2/1/1": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/2/1/1"
+      {
+        "1_-19_0/2/1/1": "event"
+      }
     ]
   },
   {
@@ -2431,15 +3078,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/0/0",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/3/0/0"
+      {
+        "1_-20_0/3/0/0": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/3/0/0"
+      {
+        "1_-19_0/3/0/0": "event"
+      }
     ]
   },
   {
@@ -2456,15 +3108,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/0/1",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/3/0/1"
+      {
+        "1_-20_0/3/0/1": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/3/0/1"
+      {
+        "1_-19_0/3/0/1": "event"
+      }
     ]
   },
   {
@@ -2481,15 +3138,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/1/0",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/3/1/0"
+      {
+        "1_-20_0/3/1/0": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/3/1/0"
+      {
+        "1_-19_0/3/1/0": "event"
+      }
     ]
   },
   {
@@ -2506,15 +3168,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/1/1",
     "lg_key": -27,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-20_0/3/1/1"
+      {
+        "1_-20_0/3/1/1": "event"
+      }
     ],
     "producers": [
-      "1_-19_0/3/1/1"
+      {
+        "1_-19_0/3/1/1": "event"
+      }
     ]
   },
   {
@@ -2531,16 +3198,44 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/0/0/0",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/0/0/0"
+      {
+        "1_-20_0/0/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/0/0",
-      "1_-13_0/0/0/1"
+      {
+        "1_-28_0/0/0": "event"
+      },
+      {
+        "1_-13_0/0/0/1": "event"
+      },
+      {
+        "1_-13_0/0/0/1": "event"
+      },
+      {
+        "1_-13_0/0/0/1": "event"
+      },
+      {
+        "1_-13_0/0/0/1": "event"
+      },
+      {
+        "1_-13_0/0/0/1": "event"
+      },
+      {
+        "1_-13_0/0/0/1": "event"
+      },
+      {
+        "1_-13_0/0/0/1": "event"
+      },
+      {
+        "1_-13_0/0/0/1": "event"
+      }
     ]
   },
   {
@@ -2557,15 +3252,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/0/0/1",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/0/0/1"
+      {
+        "1_-20_0/0/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/0/0"
+      {
+        "1_-28_0/0/0": "event"
+      }
     ]
   },
   {
@@ -2582,16 +3282,44 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/0/1/0",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/0/1/0"
+      {
+        "1_-20_0/0/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/0/1",
-      "1_-13_0/0/1/1"
+      {
+        "1_-28_0/0/1": "event"
+      },
+      {
+        "1_-13_0/0/1/1": "event"
+      },
+      {
+        "1_-13_0/0/1/1": "event"
+      },
+      {
+        "1_-13_0/0/1/1": "event"
+      },
+      {
+        "1_-13_0/0/1/1": "event"
+      },
+      {
+        "1_-13_0/0/1/1": "event"
+      },
+      {
+        "1_-13_0/0/1/1": "event"
+      },
+      {
+        "1_-13_0/0/1/1": "event"
+      },
+      {
+        "1_-13_0/0/1/1": "event"
+      }
     ]
   },
   {
@@ -2608,15 +3336,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/0/1/1",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/0/1/1"
+      {
+        "1_-20_0/0/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/0/1"
+      {
+        "1_-28_0/0/1": "event"
+      }
     ]
   },
   {
@@ -2633,16 +3366,44 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/1/0/0",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/1/0/0"
+      {
+        "1_-20_0/1/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/1/0",
-      "1_-13_0/1/0/1"
+      {
+        "1_-28_0/1/0": "event"
+      },
+      {
+        "1_-13_0/1/0/1": "event"
+      },
+      {
+        "1_-13_0/1/0/1": "event"
+      },
+      {
+        "1_-13_0/1/0/1": "event"
+      },
+      {
+        "1_-13_0/1/0/1": "event"
+      },
+      {
+        "1_-13_0/1/0/1": "event"
+      },
+      {
+        "1_-13_0/1/0/1": "event"
+      },
+      {
+        "1_-13_0/1/0/1": "event"
+      },
+      {
+        "1_-13_0/1/0/1": "event"
+      }
     ]
   },
   {
@@ -2659,15 +3420,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/1/0/1",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/1/0/1"
+      {
+        "1_-20_0/1/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/1/0"
+      {
+        "1_-28_0/1/0": "event"
+      }
     ]
   },
   {
@@ -2684,16 +3450,44 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/1/1/0",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/1/1/0"
+      {
+        "1_-20_0/1/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/1/1",
-      "1_-13_0/1/1/1"
+      {
+        "1_-28_0/1/1": "event"
+      },
+      {
+        "1_-13_0/1/1/1": "event"
+      },
+      {
+        "1_-13_0/1/1/1": "event"
+      },
+      {
+        "1_-13_0/1/1/1": "event"
+      },
+      {
+        "1_-13_0/1/1/1": "event"
+      },
+      {
+        "1_-13_0/1/1/1": "event"
+      },
+      {
+        "1_-13_0/1/1/1": "event"
+      },
+      {
+        "1_-13_0/1/1/1": "event"
+      },
+      {
+        "1_-13_0/1/1/1": "event"
+      }
     ]
   },
   {
@@ -2710,15 +3504,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/1/1/1",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/1/1/1"
+      {
+        "1_-20_0/1/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/1/1"
+      {
+        "1_-28_0/1/1": "event"
+      }
     ]
   },
   {
@@ -2735,16 +3534,44 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/2/0/0",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/2/0/0"
+      {
+        "1_-20_0/2/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/2/0",
-      "1_-13_0/2/0/1"
+      {
+        "1_-28_0/2/0": "event"
+      },
+      {
+        "1_-13_0/2/0/1": "event"
+      },
+      {
+        "1_-13_0/2/0/1": "event"
+      },
+      {
+        "1_-13_0/2/0/1": "event"
+      },
+      {
+        "1_-13_0/2/0/1": "event"
+      },
+      {
+        "1_-13_0/2/0/1": "event"
+      },
+      {
+        "1_-13_0/2/0/1": "event"
+      },
+      {
+        "1_-13_0/2/0/1": "event"
+      },
+      {
+        "1_-13_0/2/0/1": "event"
+      }
     ]
   },
   {
@@ -2761,15 +3588,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/2/0/1",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/2/0/1"
+      {
+        "1_-20_0/2/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/2/0"
+      {
+        "1_-28_0/2/0": "event"
+      }
     ]
   },
   {
@@ -2786,16 +3618,44 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/2/1/0",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/2/1/0"
+      {
+        "1_-20_0/2/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/2/1",
-      "1_-13_0/2/1/1"
+      {
+        "1_-28_0/2/1": "event"
+      },
+      {
+        "1_-13_0/2/1/1": "event"
+      },
+      {
+        "1_-13_0/2/1/1": "event"
+      },
+      {
+        "1_-13_0/2/1/1": "event"
+      },
+      {
+        "1_-13_0/2/1/1": "event"
+      },
+      {
+        "1_-13_0/2/1/1": "event"
+      },
+      {
+        "1_-13_0/2/1/1": "event"
+      },
+      {
+        "1_-13_0/2/1/1": "event"
+      },
+      {
+        "1_-13_0/2/1/1": "event"
+      }
     ]
   },
   {
@@ -2812,15 +3672,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/2/1/1",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/2/1/1"
+      {
+        "1_-20_0/2/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/2/1"
+      {
+        "1_-28_0/2/1": "event"
+      }
     ]
   },
   {
@@ -2837,16 +3702,44 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/3/0/0",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/3/0/0"
+      {
+        "1_-20_0/3/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/3/0",
-      "1_-13_0/3/0/1"
+      {
+        "1_-28_0/3/0": "event"
+      },
+      {
+        "1_-13_0/3/0/1": "event"
+      },
+      {
+        "1_-13_0/3/0/1": "event"
+      },
+      {
+        "1_-13_0/3/0/1": "event"
+      },
+      {
+        "1_-13_0/3/0/1": "event"
+      },
+      {
+        "1_-13_0/3/0/1": "event"
+      },
+      {
+        "1_-13_0/3/0/1": "event"
+      },
+      {
+        "1_-13_0/3/0/1": "event"
+      },
+      {
+        "1_-13_0/3/0/1": "event"
+      }
     ]
   },
   {
@@ -2863,15 +3756,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/3/0/1",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/3/0/1"
+      {
+        "1_-20_0/3/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/3/0"
+      {
+        "1_-28_0/3/0": "event"
+      }
     ]
   },
   {
@@ -2888,16 +3786,44 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/3/1/0",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/3/1/0"
+      {
+        "1_-20_0/3/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/3/1",
-      "1_-13_0/3/1/1"
+      {
+        "1_-28_0/3/1": "event"
+      },
+      {
+        "1_-13_0/3/1/1": "event"
+      },
+      {
+        "1_-13_0/3/1/1": "event"
+      },
+      {
+        "1_-13_0/3/1/1": "event"
+      },
+      {
+        "1_-13_0/3/1/1": "event"
+      },
+      {
+        "1_-13_0/3/1/1": "event"
+      },
+      {
+        "1_-13_0/3/1/1": "event"
+      },
+      {
+        "1_-13_0/3/1/1": "event"
+      },
+      {
+        "1_-13_0/3/1/1": "event"
+      }
     ]
   },
   {
@@ -2914,15 +3840,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/3/1/1",
     "lg_key": -42,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-20_0/3/1/1"
+      {
+        "1_-20_0/3/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/3/1"
+      {
+        "1_-28_0/3/1": "event"
+      }
     ]
   },
   {
@@ -2941,15 +3872,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0/0",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/0/0/0"
+      {
+        "1_-41_0/0/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/0/0/0"
+      {
+        "1_-27_0/0/0/0": "event"
+      }
     ]
   },
   {
@@ -2968,15 +3904,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0/1",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/0/0/1"
+      {
+        "1_-41_0/0/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/0/0/1"
+      {
+        "1_-27_0/0/0/1": "event"
+      }
     ]
   },
   {
@@ -2995,15 +3936,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1/0",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/0/1/0"
+      {
+        "1_-41_0/0/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/0/1/0"
+      {
+        "1_-27_0/0/1/0": "event"
+      }
     ]
   },
   {
@@ -3022,15 +3968,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1/1",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/0/1/1"
+      {
+        "1_-41_0/0/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/0/1/1"
+      {
+        "1_-27_0/0/1/1": "event"
+      }
     ]
   },
   {
@@ -3049,15 +4000,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0/0",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/1/0/0"
+      {
+        "1_-41_0/1/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/1/0/0"
+      {
+        "1_-27_0/1/0/0": "event"
+      }
     ]
   },
   {
@@ -3076,15 +4032,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0/1",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/1/0/1"
+      {
+        "1_-41_0/1/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/1/0/1"
+      {
+        "1_-27_0/1/0/1": "event"
+      }
     ]
   },
   {
@@ -3103,15 +4064,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1/0",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/1/1/0"
+      {
+        "1_-41_0/1/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/1/1/0"
+      {
+        "1_-27_0/1/1/0": "event"
+      }
     ]
   },
   {
@@ -3130,15 +4096,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1/1",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/1/1/1"
+      {
+        "1_-41_0/1/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/1/1/1"
+      {
+        "1_-27_0/1/1/1": "event"
+      }
     ]
   },
   {
@@ -3157,15 +4128,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0/0",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/2/0/0"
+      {
+        "1_-41_0/2/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/2/0/0"
+      {
+        "1_-27_0/2/0/0": "event"
+      }
     ]
   },
   {
@@ -3184,15 +4160,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0/1",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/2/0/1"
+      {
+        "1_-41_0/2/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/2/0/1"
+      {
+        "1_-27_0/2/0/1": "event"
+      }
     ]
   },
   {
@@ -3211,15 +4192,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1/0",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/2/1/0"
+      {
+        "1_-41_0/2/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/2/1/0"
+      {
+        "1_-27_0/2/1/0": "event"
+      }
     ]
   },
   {
@@ -3238,15 +4224,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1/1",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/2/1/1"
+      {
+        "1_-41_0/2/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/2/1/1"
+      {
+        "1_-27_0/2/1/1": "event"
+      }
     ]
   },
   {
@@ -3265,15 +4256,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0/0",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/3/0/0"
+      {
+        "1_-41_0/3/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/3/0/0"
+      {
+        "1_-27_0/3/0/0": "event"
+      }
     ]
   },
   {
@@ -3292,15 +4288,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0/1",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/3/0/1"
+      {
+        "1_-41_0/3/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/3/0/1"
+      {
+        "1_-27_0/3/0/1": "event"
+      }
     ]
   },
   {
@@ -3319,15 +4320,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1/0",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/3/1/0"
+      {
+        "1_-41_0/3/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/3/1/0"
+      {
+        "1_-27_0/3/1/0": "event"
+      }
     ]
   },
   {
@@ -3346,15 +4352,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1/1",
     "lg_key": -19,
     "dt": "PythonApp",
     "nm": "Identify Component",
     "inputs": [
-      "1_-41_0/3/1/1"
+      {
+        "1_-41_0/3/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-27_0/3/1/1"
+      {
+        "1_-27_0/3/1/1": "event"
+      }
     ]
   },
   {
@@ -3372,17 +4383,26 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -28,
     "dt": "PythonApp",
     "nm": "FinishMajorCycle",
     "inputs": [
-      "1_-42_0/0/0/0",
-      "1_-42_0/0/0/1",
-      "1_-36_0/0/0"
+      {
+        "1_-42_0/0/0/0": "event"
+      },
+      {
+        "1_-42_0/0/0/1": "event"
+      },
+      {
+        "1_-36_0/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-43_0/0/0"
+      {
+        "1_-43_0/0/0": "event"
+      }
     ]
   },
   {
@@ -3400,17 +4420,26 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -28,
     "dt": "PythonApp",
     "nm": "FinishMajorCycle",
     "inputs": [
-      "1_-42_0/0/1/0",
-      "1_-42_0/0/1/1",
-      "1_-36_0/0/1"
+      {
+        "1_-42_0/0/1/0": "event"
+      },
+      {
+        "1_-42_0/0/1/1": "event"
+      },
+      {
+        "1_-36_0/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-43_0/0/1"
+      {
+        "1_-43_0/0/1": "event"
+      }
     ]
   },
   {
@@ -3428,17 +4457,26 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -28,
     "dt": "PythonApp",
     "nm": "FinishMajorCycle",
     "inputs": [
-      "1_-42_0/1/0/0",
-      "1_-42_0/1/0/1",
-      "1_-36_0/1/0"
+      {
+        "1_-42_0/1/0/0": "event"
+      },
+      {
+        "1_-42_0/1/0/1": "event"
+      },
+      {
+        "1_-36_0/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-43_0/1/0"
+      {
+        "1_-43_0/1/0": "event"
+      }
     ]
   },
   {
@@ -3456,17 +4494,26 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -28,
     "dt": "PythonApp",
     "nm": "FinishMajorCycle",
     "inputs": [
-      "1_-42_0/1/1/0",
-      "1_-42_0/1/1/1",
-      "1_-36_0/1/1"
+      {
+        "1_-42_0/1/1/0": "event"
+      },
+      {
+        "1_-42_0/1/1/1": "event"
+      },
+      {
+        "1_-36_0/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-43_0/1/1"
+      {
+        "1_-43_0/1/1": "event"
+      }
     ]
   },
   {
@@ -3484,17 +4531,26 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -28,
     "dt": "PythonApp",
     "nm": "FinishMajorCycle",
     "inputs": [
-      "1_-42_0/2/0/0",
-      "1_-42_0/2/0/1",
-      "1_-36_0/2/0"
+      {
+        "1_-42_0/2/0/0": "event"
+      },
+      {
+        "1_-42_0/2/0/1": "event"
+      },
+      {
+        "1_-36_0/2/0": "event"
+      }
     ],
     "outputs": [
-      "1_-43_0/2/0"
+      {
+        "1_-43_0/2/0": "event"
+      }
     ]
   },
   {
@@ -3512,17 +4568,26 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -28,
     "dt": "PythonApp",
     "nm": "FinishMajorCycle",
     "inputs": [
-      "1_-42_0/2/1/0",
-      "1_-42_0/2/1/1",
-      "1_-36_0/2/1"
+      {
+        "1_-42_0/2/1/0": "event"
+      },
+      {
+        "1_-42_0/2/1/1": "event"
+      },
+      {
+        "1_-36_0/2/1": "event"
+      }
     ],
     "outputs": [
-      "1_-43_0/2/1"
+      {
+        "1_-43_0/2/1": "event"
+      }
     ]
   },
   {
@@ -3540,17 +4605,26 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -28,
     "dt": "PythonApp",
     "nm": "FinishMajorCycle",
     "inputs": [
-      "1_-42_0/3/0/0",
-      "1_-42_0/3/0/1",
-      "1_-36_0/3/0"
+      {
+        "1_-42_0/3/0/0": "event"
+      },
+      {
+        "1_-42_0/3/0/1": "event"
+      },
+      {
+        "1_-36_0/3/0": "event"
+      }
     ],
     "outputs": [
-      "1_-43_0/3/0"
+      {
+        "1_-43_0/3/0": "event"
+      }
     ]
   },
   {
@@ -3568,17 +4642,26 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -28,
     "dt": "PythonApp",
     "nm": "FinishMajorCycle",
     "inputs": [
-      "1_-42_0/3/1/0",
-      "1_-42_0/3/1/1",
-      "1_-36_0/3/1"
+      {
+        "1_-42_0/3/1/0": "event"
+      },
+      {
+        "1_-42_0/3/1/1": "event"
+      },
+      {
+        "1_-36_0/3/1": "event"
+      }
     ],
     "outputs": [
-      "1_-43_0/3/1"
+      {
+        "1_-43_0/3/1": "event"
+      }
     ]
   },
   {
@@ -3596,15 +4679,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -12,
     "dt": "PythonApp",
     "nm": "BeginMajorCycle",
     "outputs": [
-      "1_-40_0/0/0"
+      {
+        "1_-40_0/0/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/0"
+      {
+        "1_-26_0/0": "event"
+      }
     ]
   },
   {
@@ -3622,16 +4710,32 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -12,
     "dt": "PythonApp",
     "nm": "BeginMajorCycle",
     "outputs": [
-      "1_-40_0/0/1"
+      {
+        "1_-40_0/0/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/0",
-      "1_-43_0/0/0"
+      {
+        "1_-26_0/0": "event"
+      },
+      {
+        "1_-43_0/0/0": "event"
+      },
+      {
+        "1_-43_0/0/0": "event"
+      },
+      {
+        "1_-43_0/0/0": "event"
+      },
+      {
+        "1_-43_0/0/0": "event"
+      }
     ]
   },
   {
@@ -3649,15 +4753,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -12,
     "dt": "PythonApp",
     "nm": "BeginMajorCycle",
     "outputs": [
-      "1_-40_0/1/0"
+      {
+        "1_-40_0/1/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/1"
+      {
+        "1_-26_0/1": "event"
+      }
     ]
   },
   {
@@ -3675,16 +4784,32 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -12,
     "dt": "PythonApp",
     "nm": "BeginMajorCycle",
     "outputs": [
-      "1_-40_0/1/1"
+      {
+        "1_-40_0/1/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/1",
-      "1_-43_0/1/0"
+      {
+        "1_-26_0/1": "event"
+      },
+      {
+        "1_-43_0/1/0": "event"
+      },
+      {
+        "1_-43_0/1/0": "event"
+      },
+      {
+        "1_-43_0/1/0": "event"
+      },
+      {
+        "1_-43_0/1/0": "event"
+      }
     ]
   },
   {
@@ -3702,15 +4827,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -12,
     "dt": "PythonApp",
     "nm": "BeginMajorCycle",
     "outputs": [
-      "1_-40_0/2/0"
+      {
+        "1_-40_0/2/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/2"
+      {
+        "1_-26_0/2": "event"
+      }
     ]
   },
   {
@@ -3728,16 +4858,32 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -12,
     "dt": "PythonApp",
     "nm": "BeginMajorCycle",
     "outputs": [
-      "1_-40_0/2/1"
+      {
+        "1_-40_0/2/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/2",
-      "1_-43_0/2/0"
+      {
+        "1_-26_0/2": "event"
+      },
+      {
+        "1_-43_0/2/0": "event"
+      },
+      {
+        "1_-43_0/2/0": "event"
+      },
+      {
+        "1_-43_0/2/0": "event"
+      },
+      {
+        "1_-43_0/2/0": "event"
+      }
     ]
   },
   {
@@ -3755,15 +4901,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -12,
     "dt": "PythonApp",
     "nm": "BeginMajorCycle",
     "outputs": [
-      "1_-40_0/3/0"
+      {
+        "1_-40_0/3/0": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/3"
+      {
+        "1_-26_0/3": "event"
+      }
     ]
   },
   {
@@ -3781,16 +4932,32 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -12,
     "dt": "PythonApp",
     "nm": "BeginMajorCycle",
     "outputs": [
-      "1_-40_0/3/1"
+      {
+        "1_-40_0/3/1": "event"
+      }
     ],
     "inputs": [
-      "1_-26_0/3",
-      "1_-43_0/3/0"
+      {
+        "1_-26_0/3": "event"
+      },
+      {
+        "1_-43_0/3/0": "event"
+      },
+      {
+        "1_-43_0/3/0": "event"
+      },
+      {
+        "1_-43_0/3/0": "event"
+      },
+      {
+        "1_-43_0/3/0": "event"
+      }
     ]
   },
   {
@@ -3806,15 +4973,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -37,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-14_0/0/0"
+      {
+        "1_-14_0/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-15_0/0/0"
+      {
+        "1_-15_0/0/0": "event"
+      }
     ]
   },
   {
@@ -3830,15 +5002,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -37,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-14_0/0/1"
+      {
+        "1_-14_0/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-15_0/0/1"
+      {
+        "1_-15_0/0/1": "event"
+      }
     ]
   },
   {
@@ -3854,15 +5031,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -37,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-14_0/1/0"
+      {
+        "1_-14_0/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-15_0/1/0"
+      {
+        "1_-15_0/1/0": "event"
+      }
     ]
   },
   {
@@ -3878,15 +5060,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -37,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-14_0/1/1"
+      {
+        "1_-14_0/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-15_0/1/1"
+      {
+        "1_-15_0/1/1": "event"
+      }
     ]
   },
   {
@@ -3902,15 +5089,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -37,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-14_0/2/0"
+      {
+        "1_-14_0/2/0": "event"
+      }
     ],
     "consumers": [
-      "1_-15_0/2/0"
+      {
+        "1_-15_0/2/0": "event"
+      }
     ]
   },
   {
@@ -3926,15 +5118,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -37,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-14_0/2/1"
+      {
+        "1_-14_0/2/1": "event"
+      }
     ],
     "consumers": [
-      "1_-15_0/2/1"
+      {
+        "1_-15_0/2/1": "event"
+      }
     ]
   },
   {
@@ -3950,15 +5147,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -37,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-14_0/3/0"
+      {
+        "1_-14_0/3/0": "event"
+      }
     ],
     "consumers": [
-      "1_-15_0/3/0"
+      {
+        "1_-15_0/3/0": "event"
+      }
     ]
   },
   {
@@ -3974,15 +5176,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -37,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-14_0/3/1"
+      {
+        "1_-14_0/3/1": "event"
+      }
     ],
     "consumers": [
-      "1_-15_0/3/1"
+      {
+        "1_-15_0/3/1": "event"
+      }
     ]
   },
   {
@@ -3998,15 +5205,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -38,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-16_0/0/0"
+      {
+        "1_-16_0/0/0": "event"
+      }
     ],
     "producers": [
-      "1_-15_0/0/0"
+      {
+        "1_-15_0/0/0": "event"
+      }
     ]
   },
   {
@@ -4022,15 +5234,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -38,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-16_0/0/1"
+      {
+        "1_-16_0/0/1": "event"
+      }
     ],
     "producers": [
-      "1_-15_0/0/1"
+      {
+        "1_-15_0/0/1": "event"
+      }
     ]
   },
   {
@@ -4046,15 +5263,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -38,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-16_0/1/0"
+      {
+        "1_-16_0/1/0": "event"
+      }
     ],
     "producers": [
-      "1_-15_0/1/0"
+      {
+        "1_-15_0/1/0": "event"
+      }
     ]
   },
   {
@@ -4070,15 +5292,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -38,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-16_0/1/1"
+      {
+        "1_-16_0/1/1": "event"
+      }
     ],
     "producers": [
-      "1_-15_0/1/1"
+      {
+        "1_-15_0/1/1": "event"
+      }
     ]
   },
   {
@@ -4094,15 +5321,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -38,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-16_0/2/0"
+      {
+        "1_-16_0/2/0": "event"
+      }
     ],
     "producers": [
-      "1_-15_0/2/0"
+      {
+        "1_-15_0/2/0": "event"
+      }
     ]
   },
   {
@@ -4118,15 +5350,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -38,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-16_0/2/1"
+      {
+        "1_-16_0/2/1": "event"
+      }
     ],
     "producers": [
-      "1_-15_0/2/1"
+      {
+        "1_-15_0/2/1": "event"
+      }
     ]
   },
   {
@@ -4142,15 +5379,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -38,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-16_0/3/0"
+      {
+        "1_-16_0/3/0": "event"
+      }
     ],
     "producers": [
-      "1_-15_0/3/0"
+      {
+        "1_-15_0/3/0": "event"
+      }
     ]
   },
   {
@@ -4166,15 +5408,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -38,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-16_0/3/1"
+      {
+        "1_-16_0/3/1": "event"
+      }
     ],
     "producers": [
-      "1_-15_0/3/1"
+      {
+        "1_-15_0/3/1": "event"
+      }
     ]
   },
   {
@@ -4190,15 +5437,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -39,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-16_0/0/0"
+      {
+        "1_-16_0/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-10_0/0/0"
+      {
+        "1_-10_0/0/0": "event"
+      }
     ]
   },
   {
@@ -4214,15 +5466,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -39,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-16_0/0/1"
+      {
+        "1_-16_0/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-10_0/0/1"
+      {
+        "1_-10_0/0/1": "event"
+      }
     ]
   },
   {
@@ -4238,15 +5495,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -39,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-16_0/1/0"
+      {
+        "1_-16_0/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-10_0/1/0"
+      {
+        "1_-10_0/1/0": "event"
+      }
     ]
   },
   {
@@ -4262,15 +5524,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -39,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-16_0/1/1"
+      {
+        "1_-16_0/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-10_0/1/1"
+      {
+        "1_-10_0/1/1": "event"
+      }
     ]
   },
   {
@@ -4286,15 +5553,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -39,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-16_0/2/0"
+      {
+        "1_-16_0/2/0": "event"
+      }
     ],
     "consumers": [
-      "1_-10_0/2/0"
+      {
+        "1_-10_0/2/0": "event"
+      }
     ]
   },
   {
@@ -4310,15 +5582,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -39,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-16_0/2/1"
+      {
+        "1_-16_0/2/1": "event"
+      }
     ],
     "consumers": [
-      "1_-10_0/2/1"
+      {
+        "1_-10_0/2/1": "event"
+      }
     ]
   },
   {
@@ -4334,15 +5611,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -39,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-16_0/3/0"
+      {
+        "1_-16_0/3/0": "event"
+      }
     ],
     "consumers": [
-      "1_-10_0/3/0"
+      {
+        "1_-10_0/3/0": "event"
+      }
     ]
   },
   {
@@ -4358,15 +5640,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -39,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-16_0/3/1"
+      {
+        "1_-16_0/3/1": "event"
+      }
     ],
     "consumers": [
-      "1_-10_0/3/1"
+      {
+        "1_-10_0/3/1": "event"
+      }
     ]
   },
   {
@@ -4382,15 +5669,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -40,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-12_0/0/0"
+      {
+        "1_-12_0/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-14_0/0/0"
+      {
+        "1_-14_0/0/0": "event"
+      }
     ]
   },
   {
@@ -4406,15 +5698,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -40,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-12_0/0/1"
+      {
+        "1_-12_0/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-14_0/0/1"
+      {
+        "1_-14_0/0/1": "event"
+      }
     ]
   },
   {
@@ -4430,15 +5727,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -40,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-12_0/1/0"
+      {
+        "1_-12_0/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-14_0/1/0"
+      {
+        "1_-14_0/1/0": "event"
+      }
     ]
   },
   {
@@ -4454,15 +5756,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -40,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-12_0/1/1"
+      {
+        "1_-12_0/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-14_0/1/1"
+      {
+        "1_-14_0/1/1": "event"
+      }
     ]
   },
   {
@@ -4478,15 +5785,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -40,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-12_0/2/0"
+      {
+        "1_-12_0/2/0": "event"
+      }
     ],
     "consumers": [
-      "1_-14_0/2/0"
+      {
+        "1_-14_0/2/0": "event"
+      }
     ]
   },
   {
@@ -4502,15 +5814,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -40,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-12_0/2/1"
+      {
+        "1_-12_0/2/1": "event"
+      }
     ],
     "consumers": [
-      "1_-14_0/2/1"
+      {
+        "1_-14_0/2/1": "event"
+      }
     ]
   },
   {
@@ -4526,15 +5843,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -40,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-12_0/3/0"
+      {
+        "1_-12_0/3/0": "event"
+      }
     ],
     "consumers": [
-      "1_-14_0/3/0"
+      {
+        "1_-14_0/3/0": "event"
+      }
     ]
   },
   {
@@ -4550,15 +5872,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -40,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-12_0/3/1"
+      {
+        "1_-12_0/3/1": "event"
+      }
     ],
     "consumers": [
-      "1_-14_0/3/1"
+      {
+        "1_-14_0/3/1": "event"
+      }
     ]
   },
   {
@@ -4574,15 +5901,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -36,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-10_0/0/0"
+      {
+        "1_-10_0/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/0/0"
+      {
+        "1_-28_0/0/0": "event"
+      }
     ]
   },
   {
@@ -4598,15 +5930,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -36,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-10_0/0/1"
+      {
+        "1_-10_0/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/0/1"
+      {
+        "1_-28_0/0/1": "event"
+      }
     ]
   },
   {
@@ -4622,15 +5959,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -36,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-10_0/1/0"
+      {
+        "1_-10_0/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/1/0"
+      {
+        "1_-28_0/1/0": "event"
+      }
     ]
   },
   {
@@ -4646,15 +5988,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -36,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-10_0/1/1"
+      {
+        "1_-10_0/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/1/1"
+      {
+        "1_-28_0/1/1": "event"
+      }
     ]
   },
   {
@@ -4670,15 +6017,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -36,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-10_0/2/0"
+      {
+        "1_-10_0/2/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/2/0"
+      {
+        "1_-28_0/2/0": "event"
+      }
     ]
   },
   {
@@ -4694,15 +6046,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -36,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-10_0/2/1"
+      {
+        "1_-10_0/2/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/2/1"
+      {
+        "1_-28_0/2/1": "event"
+      }
     ]
   },
   {
@@ -4718,15 +6075,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -36,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-10_0/3/0"
+      {
+        "1_-10_0/3/0": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/3/0"
+      {
+        "1_-28_0/3/0": "event"
+      }
     ]
   },
   {
@@ -4742,15 +6104,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -36,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-10_0/3/1"
+      {
+        "1_-10_0/3/1": "event"
+      }
     ],
     "consumers": [
-      "1_-28_0/3/1"
+      {
+        "1_-28_0/3/1": "event"
+      }
     ]
   },
   {
@@ -4766,16 +6133,32 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -43,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-28_0/0/0"
+      {
+        "1_-28_0/0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-17_0/0",
-      "1_-12_0/0/1"
+      {
+        "1_-17_0/0": "event"
+      },
+      {
+        "1_-12_0/0/1": "event"
+      },
+      {
+        "1_-12_0/0/1": "event"
+      },
+      {
+        "1_-12_0/0/1": "event"
+      },
+      {
+        "1_-12_0/0/1": "event"
+      }
     ]
   },
   {
@@ -4791,15 +6174,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -43,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-28_0/0/1"
+      {
+        "1_-28_0/0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-17_0/0"
+      {
+        "1_-17_0/0": "event"
+      }
     ]
   },
   {
@@ -4815,16 +6203,32 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -43,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-28_0/1/0"
+      {
+        "1_-28_0/1/0": "event"
+      }
     ],
     "consumers": [
-      "1_-17_0/1",
-      "1_-12_0/1/1"
+      {
+        "1_-17_0/1": "event"
+      },
+      {
+        "1_-12_0/1/1": "event"
+      },
+      {
+        "1_-12_0/1/1": "event"
+      },
+      {
+        "1_-12_0/1/1": "event"
+      },
+      {
+        "1_-12_0/1/1": "event"
+      }
     ]
   },
   {
@@ -4840,15 +6244,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -43,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-28_0/1/1"
+      {
+        "1_-28_0/1/1": "event"
+      }
     ],
     "consumers": [
-      "1_-17_0/1"
+      {
+        "1_-17_0/1": "event"
+      }
     ]
   },
   {
@@ -4864,16 +6273,32 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -43,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-28_0/2/0"
+      {
+        "1_-28_0/2/0": "event"
+      }
     ],
     "consumers": [
-      "1_-17_0/2",
-      "1_-12_0/2/1"
+      {
+        "1_-17_0/2": "event"
+      },
+      {
+        "1_-12_0/2/1": "event"
+      },
+      {
+        "1_-12_0/2/1": "event"
+      },
+      {
+        "1_-12_0/2/1": "event"
+      },
+      {
+        "1_-12_0/2/1": "event"
+      }
     ]
   },
   {
@@ -4889,15 +6314,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -43,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-28_0/2/1"
+      {
+        "1_-28_0/2/1": "event"
+      }
     ],
     "consumers": [
-      "1_-17_0/2"
+      {
+        "1_-17_0/2": "event"
+      }
     ]
   },
   {
@@ -4913,16 +6343,32 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -43,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-28_0/3/0"
+      {
+        "1_-28_0/3/0": "event"
+      }
     ],
     "consumers": [
-      "1_-17_0/3",
-      "1_-12_0/3/1"
+      {
+        "1_-17_0/3": "event"
+      },
+      {
+        "1_-12_0/3/1": "event"
+      },
+      {
+        "1_-12_0/3/1": "event"
+      },
+      {
+        "1_-12_0/3/1": "event"
+      },
+      {
+        "1_-12_0/3/1": "event"
+      }
     ]
   },
   {
@@ -4938,15 +6384,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "1",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -43,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-28_0/3/1"
+      {
+        "1_-28_0/3/1": "event"
+      }
     ],
     "consumers": [
-      "1_-17_0/3"
+      {
+        "1_-17_0/3": "event"
+      }
     ]
   },
   {
@@ -4964,15 +6415,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/0",
     "lg_key": -15,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-37_0/0/0"
+      {
+        "1_-37_0/0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-38_0/0/0"
+      {
+        "1_-38_0/0/0": "event"
+      }
     ]
   },
   {
@@ -4990,15 +6446,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0/1",
     "lg_key": -15,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-37_0/0/1"
+      {
+        "1_-37_0/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-38_0/0/1"
+      {
+        "1_-38_0/0/1": "event"
+      }
     ]
   },
   {
@@ -5016,15 +6477,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/0",
     "lg_key": -15,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-37_0/1/0"
+      {
+        "1_-37_0/1/0": "event"
+      }
     ],
     "outputs": [
-      "1_-38_0/1/0"
+      {
+        "1_-38_0/1/0": "event"
+      }
     ]
   },
   {
@@ -5042,15 +6508,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1/1",
     "lg_key": -15,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-37_0/1/1"
+      {
+        "1_-37_0/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-38_0/1/1"
+      {
+        "1_-38_0/1/1": "event"
+      }
     ]
   },
   {
@@ -5068,15 +6539,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/0",
     "lg_key": -15,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-37_0/2/0"
+      {
+        "1_-37_0/2/0": "event"
+      }
     ],
     "outputs": [
-      "1_-38_0/2/0"
+      {
+        "1_-38_0/2/0": "event"
+      }
     ]
   },
   {
@@ -5094,15 +6570,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2/1",
     "lg_key": -15,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-37_0/2/1"
+      {
+        "1_-37_0/2/1": "event"
+      }
     ],
     "outputs": [
-      "1_-38_0/2/1"
+      {
+        "1_-38_0/2/1": "event"
+      }
     ]
   },
   {
@@ -5120,15 +6601,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/0",
     "lg_key": -15,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-37_0/3/0"
+      {
+        "1_-37_0/3/0": "event"
+      }
     ],
     "outputs": [
-      "1_-38_0/3/0"
+      {
+        "1_-38_0/3/0": "event"
+      }
     ]
   },
   {
@@ -5146,15 +6632,20 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3/1",
     "lg_key": -15,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-37_0/3/1"
+      {
+        "1_-37_0/3/1": "event"
+      }
     ],
     "outputs": [
-      "1_-38_0/3/1"
+      {
+        "1_-38_0/3/1": "event"
+      }
     ]
   },
   {
@@ -5171,15 +6662,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -24,
     "dt": "PythonApp",
     "nm": "Source Find",
     "inputs": [
-      "1_-29_0/0"
+      {
+        "1_-29_0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-44_0/0"
+      {
+        "1_-44_0/0": "event"
+      }
     ]
   },
   {
@@ -5196,15 +6692,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -24,
     "dt": "PythonApp",
     "nm": "Source Find",
     "inputs": [
-      "1_-29_0/1"
+      {
+        "1_-29_0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-44_0/1"
+      {
+        "1_-44_0/1": "event"
+      }
     ]
   },
   {
@@ -5221,15 +6722,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -24,
     "dt": "PythonApp",
     "nm": "Source Find",
     "inputs": [
-      "1_-29_0/2"
+      {
+        "1_-29_0/2": "event"
+      }
     ],
     "outputs": [
-      "1_-44_0/2"
+      {
+        "1_-44_0/2": "event"
+      }
     ]
   },
   {
@@ -5246,15 +6752,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -24,
     "dt": "PythonApp",
     "nm": "Source Find",
     "inputs": [
-      "1_-29_0/3"
+      {
+        "1_-29_0/3": "event"
+      }
     ],
     "outputs": [
-      "1_-44_0/3"
+      {
+        "1_-44_0/3": "event"
+      }
     ]
   },
   {
@@ -5271,15 +6782,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -25,
     "dt": "PythonApp",
     "nm": "UpdateLSM",
     "inputs": [
-      "1_-44_0/0"
+      {
+        "1_-44_0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-18_0/0"
+      {
+        "1_-18_0/0": "event"
+      }
     ]
   },
   {
@@ -5296,15 +6812,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -25,
     "dt": "PythonApp",
     "nm": "UpdateLSM",
     "inputs": [
-      "1_-44_0/1"
+      {
+        "1_-44_0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-18_0/1"
+      {
+        "1_-18_0/1": "event"
+      }
     ]
   },
   {
@@ -5321,15 +6842,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -25,
     "dt": "PythonApp",
     "nm": "UpdateLSM",
     "inputs": [
-      "1_-44_0/2"
+      {
+        "1_-44_0/2": "event"
+      }
     ],
     "outputs": [
-      "1_-18_0/2"
+      {
+        "1_-18_0/2": "event"
+      }
     ]
   },
   {
@@ -5346,15 +6872,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -25,
     "dt": "PythonApp",
     "nm": "UpdateLSM",
     "inputs": [
-      "1_-44_0/3"
+      {
+        "1_-44_0/3": "event"
+      }
     ],
     "outputs": [
-      "1_-18_0/3"
+      {
+        "1_-18_0/3": "event"
+      }
     ]
   },
   {
@@ -5371,15 +6902,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -5,
     "dt": "PythonApp",
     "nm": "Predict",
     "outputs": [
-      "1_-23_0/0"
+      {
+        "1_-23_0/0": "event"
+      }
     ],
     "inputs": [
-      "1_-48_0/0"
+      {
+        "1_-48_0/0": "event"
+      }
     ]
   },
   {
@@ -5396,15 +6932,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -5,
     "dt": "PythonApp",
     "nm": "Predict",
     "outputs": [
-      "1_-23_0/1"
+      {
+        "1_-23_0/1": "event"
+      }
     ],
     "inputs": [
-      "1_-48_0/1"
+      {
+        "1_-48_0/1": "event"
+      }
     ]
   },
   {
@@ -5421,15 +6962,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -5,
     "dt": "PythonApp",
     "nm": "Predict",
     "outputs": [
-      "1_-23_0/2"
+      {
+        "1_-23_0/2": "event"
+      }
     ],
     "inputs": [
-      "1_-48_0/2"
+      {
+        "1_-48_0/2": "event"
+      }
     ]
   },
   {
@@ -5446,15 +6992,20 @@
     "execution_time": "5",
     "group_start": "1",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -5,
     "dt": "PythonApp",
     "nm": "Predict",
     "outputs": [
-      "1_-23_0/3"
+      {
+        "1_-23_0/3": "event"
+      }
     ],
     "inputs": [
-      "1_-48_0/3"
+      {
+        "1_-48_0/3": "event"
+      }
     ]
   },
   {
@@ -5471,15 +7022,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -6,
     "dt": "PythonApp",
     "nm": "Predict",
     "outputs": [
-      "1_-32_0/0"
+      {
+        "1_-32_0/0": "event"
+      }
     ],
     "inputs": [
-      "1_-48_0/0"
+      {
+        "1_-48_0/0": "event"
+      }
     ]
   },
   {
@@ -5496,15 +7052,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -6,
     "dt": "PythonApp",
     "nm": "Predict",
     "outputs": [
-      "1_-32_0/1"
+      {
+        "1_-32_0/1": "event"
+      }
     ],
     "inputs": [
-      "1_-48_0/1"
+      {
+        "1_-48_0/1": "event"
+      }
     ]
   },
   {
@@ -5521,15 +7082,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -6,
     "dt": "PythonApp",
     "nm": "Predict",
     "outputs": [
-      "1_-32_0/2"
+      {
+        "1_-32_0/2": "event"
+      }
     ],
     "inputs": [
-      "1_-48_0/2"
+      {
+        "1_-48_0/2": "event"
+      }
     ]
   },
   {
@@ -5546,15 +7112,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -6,
     "dt": "PythonApp",
     "nm": "Predict",
     "outputs": [
-      "1_-32_0/3"
+      {
+        "1_-32_0/3": "event"
+      }
     ],
     "inputs": [
-      "1_-48_0/3"
+      {
+        "1_-48_0/3": "event"
+      }
     ]
   },
   {
@@ -5571,15 +7142,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -11,
     "dt": "PythonApp",
     "nm": "Correct",
     "inputs": [
-      "1_-30_0/0"
+      {
+        "1_-30_0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-31_0/0"
+      {
+        "1_-31_0/0": "event"
+      }
     ]
   },
   {
@@ -5596,15 +7172,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -11,
     "dt": "PythonApp",
     "nm": "Correct",
     "inputs": [
-      "1_-30_0/1"
+      {
+        "1_-30_0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-31_0/1"
+      {
+        "1_-31_0/1": "event"
+      }
     ]
   },
   {
@@ -5621,15 +7202,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -11,
     "dt": "PythonApp",
     "nm": "Correct",
     "inputs": [
-      "1_-30_0/2"
+      {
+        "1_-30_0/2": "event"
+      }
     ],
     "outputs": [
-      "1_-31_0/2"
+      {
+        "1_-31_0/2": "event"
+      }
     ]
   },
   {
@@ -5646,15 +7232,20 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -11,
     "dt": "PythonApp",
     "nm": "Correct",
     "inputs": [
-      "1_-30_0/3"
+      {
+        "1_-30_0/3": "event"
+      }
     ],
     "outputs": [
-      "1_-31_0/3"
+      {
+        "1_-31_0/3": "event"
+      }
     ]
   },
   {
@@ -5671,16 +7262,23 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -4,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-33_0/0",
-      "1_-45_0/0"
+      {
+        "1_-33_0/0": "event"
+      },
+      {
+        "1_-45_0/0": "relationship"
+      }
     ],
     "outputs": [
-      "1_-26_0/0"
+      {
+        "1_-26_0/0": "event"
+      }
     ]
   },
   {
@@ -5697,16 +7295,23 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -4,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-33_0/1",
-      "1_-45_0/1"
+      {
+        "1_-33_0/1": "event"
+      },
+      {
+        "1_-45_0/1": "relationship"
+      }
     ],
     "outputs": [
-      "1_-26_0/1"
+      {
+        "1_-26_0/1": "event"
+      }
     ]
   },
   {
@@ -5723,16 +7328,23 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -4,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-33_0/2",
-      "1_-45_0/2"
+      {
+        "1_-33_0/2": "event"
+      },
+      {
+        "1_-45_0/2": "relationship"
+      }
     ],
     "outputs": [
-      "1_-26_0/2"
+      {
+        "1_-26_0/2": "event"
+      }
     ]
   },
   {
@@ -5749,16 +7361,23 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -4,
     "dt": "PythonApp",
     "nm": "Flag",
     "inputs": [
-      "1_-33_0/3",
-      "1_-45_0/3"
+      {
+        "1_-33_0/3": "event"
+      },
+      {
+        "1_-45_0/3": "relationship"
+      }
     ],
     "outputs": [
-      "1_-26_0/3"
+      {
+        "1_-26_0/3": "event"
+      }
     ]
   },
   {
@@ -5775,16 +7394,23 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -17,
     "dt": "PythonApp",
     "nm": "Image Spectral Fitting",
     "inputs": [
-      "1_-43_0/0/0",
-      "1_-43_0/0/1"
+      {
+        "1_-43_0/0/0": "event"
+      },
+      {
+        "1_-43_0/0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-29_0/0"
+      {
+        "1_-29_0/0": "event"
+      }
     ]
   },
   {
@@ -5801,16 +7427,23 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -17,
     "dt": "PythonApp",
     "nm": "Image Spectral Fitting",
     "inputs": [
-      "1_-43_0/1/0",
-      "1_-43_0/1/1"
+      {
+        "1_-43_0/1/0": "event"
+      },
+      {
+        "1_-43_0/1/1": "event"
+      }
     ],
     "outputs": [
-      "1_-29_0/1"
+      {
+        "1_-29_0/1": "event"
+      }
     ]
   },
   {
@@ -5827,16 +7460,23 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -17,
     "dt": "PythonApp",
     "nm": "Image Spectral Fitting",
     "inputs": [
-      "1_-43_0/2/0",
-      "1_-43_0/2/1"
+      {
+        "1_-43_0/2/0": "event"
+      },
+      {
+        "1_-43_0/2/1": "event"
+      }
     ],
     "outputs": [
-      "1_-29_0/2"
+      {
+        "1_-29_0/2": "event"
+      }
     ]
   },
   {
@@ -5853,16 +7493,23 @@
     "execution_time": "5",
     "group_start": "0",
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -17,
     "dt": "PythonApp",
     "nm": "Image Spectral Fitting",
     "inputs": [
-      "1_-43_0/3/0",
-      "1_-43_0/3/1"
+      {
+        "1_-43_0/3/0": "event"
+      },
+      {
+        "1_-43_0/3/1": "event"
+      }
     ],
     "outputs": [
-      "1_-29_0/3"
+      {
+        "1_-29_0/3": "event"
+      }
     ]
   },
   {
@@ -5877,15 +7524,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -23,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-5_0/0"
+      {
+        "1_-5_0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-8_0/0"
+      {
+        "1_-8_0/0": "event"
+      }
     ]
   },
   {
@@ -5900,15 +7552,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -23,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-5_0/1"
+      {
+        "1_-5_0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-8_0/1"
+      {
+        "1_-8_0/1": "event"
+      }
     ]
   },
   {
@@ -5923,15 +7580,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -23,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-5_0/2"
+      {
+        "1_-5_0/2": "event"
+      }
     ],
     "consumers": [
-      "1_-8_0/2"
+      {
+        "1_-8_0/2": "event"
+      }
     ]
   },
   {
@@ -5946,15 +7608,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -23,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-5_0/3"
+      {
+        "1_-5_0/3": "event"
+      }
     ],
     "consumers": [
-      "1_-8_0/3"
+      {
+        "1_-8_0/3": "event"
+      }
     ]
   },
   {
@@ -5972,15 +7639,20 @@
     "group_end": "0",
     "filepath": "",
     "dirname": "",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -30,
     "dt": "File",
     "nm": "relationship",
     "producers": [
-      "1_-8_0/0"
+      {
+        "1_-8_0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-11_0/0"
+      {
+        "1_-11_0/0": "event"
+      }
     ]
   },
   {
@@ -5998,15 +7670,20 @@
     "group_end": "0",
     "filepath": "",
     "dirname": "",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -30,
     "dt": "File",
     "nm": "relationship",
     "producers": [
-      "1_-8_0/1"
+      {
+        "1_-8_0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-11_0/1"
+      {
+        "1_-11_0/1": "event"
+      }
     ]
   },
   {
@@ -6024,15 +7701,20 @@
     "group_end": "0",
     "filepath": "",
     "dirname": "",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -30,
     "dt": "File",
     "nm": "relationship",
     "producers": [
-      "1_-8_0/2"
+      {
+        "1_-8_0/2": "event"
+      }
     ],
     "consumers": [
-      "1_-11_0/2"
+      {
+        "1_-11_0/2": "event"
+      }
     ]
   },
   {
@@ -6050,15 +7732,20 @@
     "group_end": "0",
     "filepath": "",
     "dirname": "",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -30,
     "dt": "File",
     "nm": "relationship",
     "producers": [
-      "1_-8_0/3"
+      {
+        "1_-8_0/3": "event"
+      }
     ],
     "consumers": [
-      "1_-11_0/3"
+      {
+        "1_-11_0/3": "event"
+      }
     ]
   },
   {
@@ -6073,15 +7760,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -31,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-11_0/0"
+      {
+        "1_-11_0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-9_0/0"
+      {
+        "1_-9_0/0": "event"
+      }
     ]
   },
   {
@@ -6096,15 +7788,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -31,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-11_0/1"
+      {
+        "1_-11_0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-9_0/1"
+      {
+        "1_-9_0/1": "event"
+      }
     ]
   },
   {
@@ -6119,15 +7816,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -31,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-11_0/2"
+      {
+        "1_-11_0/2": "event"
+      }
     ],
     "consumers": [
-      "1_-9_0/2"
+      {
+        "1_-9_0/2": "event"
+      }
     ]
   },
   {
@@ -6142,15 +7844,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -31,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-11_0/3"
+      {
+        "1_-11_0/3": "event"
+      }
     ],
     "consumers": [
-      "1_-9_0/3"
+      {
+        "1_-9_0/3": "event"
+      }
     ]
   },
   {
@@ -6165,15 +7872,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -32,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-6_0/0"
+      {
+        "1_-6_0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-9_0/0"
+      {
+        "1_-9_0/0": "event"
+      }
     ]
   },
   {
@@ -6188,15 +7900,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -32,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-6_0/1"
+      {
+        "1_-6_0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-9_0/1"
+      {
+        "1_-9_0/1": "event"
+      }
     ]
   },
   {
@@ -6211,15 +7928,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -32,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-6_0/2"
+      {
+        "1_-6_0/2": "event"
+      }
     ],
     "consumers": [
-      "1_-9_0/2"
+      {
+        "1_-9_0/2": "event"
+      }
     ]
   },
   {
@@ -6234,15 +7956,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -32,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-6_0/3"
+      {
+        "1_-6_0/3": "event"
+      }
     ],
     "consumers": [
-      "1_-9_0/3"
+      {
+        "1_-9_0/3": "event"
+      }
     ]
   },
   {
@@ -6257,12 +7984,15 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -33,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-4_0/0"
+      {
+        "1_-4_0/0": "event"
+      }
     ]
   },
   {
@@ -6277,12 +8007,15 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -33,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-4_0/1"
+      {
+        "1_-4_0/1": "event"
+      }
     ]
   },
   {
@@ -6297,12 +8030,15 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -33,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-4_0/2"
+      {
+        "1_-4_0/2": "event"
+      }
     ]
   },
   {
@@ -6317,12 +8053,15 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -33,
     "dt": "Memory",
     "nm": "relationship",
     "consumers": [
-      "1_-4_0/3"
+      {
+        "1_-4_0/3": "event"
+      }
     ]
   },
   {
@@ -6337,20 +8076,35 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -26,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-4_0/0"
+      {
+        "1_-4_0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-12_0/0/0",
-      "1_-12_0/0/1",
-      "1_-13_0/0/0/0",
-      "1_-13_0/0/0/1",
-      "1_-13_0/0/1/0",
-      "1_-13_0/0/1/1"
+      {
+        "1_-12_0/0/0": "event"
+      },
+      {
+        "1_-12_0/0/1": "event"
+      },
+      {
+        "1_-13_0/0/0/0": "event"
+      },
+      {
+        "1_-13_0/0/0/1": "event"
+      },
+      {
+        "1_-13_0/0/1/0": "event"
+      },
+      {
+        "1_-13_0/0/1/1": "event"
+      }
     ]
   },
   {
@@ -6365,20 +8119,35 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -26,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-4_0/1"
+      {
+        "1_-4_0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-12_0/1/0",
-      "1_-12_0/1/1",
-      "1_-13_0/1/0/0",
-      "1_-13_0/1/0/1",
-      "1_-13_0/1/1/0",
-      "1_-13_0/1/1/1"
+      {
+        "1_-12_0/1/0": "event"
+      },
+      {
+        "1_-12_0/1/1": "event"
+      },
+      {
+        "1_-13_0/1/0/0": "event"
+      },
+      {
+        "1_-13_0/1/0/1": "event"
+      },
+      {
+        "1_-13_0/1/1/0": "event"
+      },
+      {
+        "1_-13_0/1/1/1": "event"
+      }
     ]
   },
   {
@@ -6393,20 +8162,35 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -26,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-4_0/2"
+      {
+        "1_-4_0/2": "event"
+      }
     ],
     "consumers": [
-      "1_-12_0/2/0",
-      "1_-12_0/2/1",
-      "1_-13_0/2/0/0",
-      "1_-13_0/2/0/1",
-      "1_-13_0/2/1/0",
-      "1_-13_0/2/1/1"
+      {
+        "1_-12_0/2/0": "event"
+      },
+      {
+        "1_-12_0/2/1": "event"
+      },
+      {
+        "1_-13_0/2/0/0": "event"
+      },
+      {
+        "1_-13_0/2/0/1": "event"
+      },
+      {
+        "1_-13_0/2/1/0": "event"
+      },
+      {
+        "1_-13_0/2/1/1": "event"
+      }
     ]
   },
   {
@@ -6421,20 +8205,35 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -26,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-4_0/3"
+      {
+        "1_-4_0/3": "event"
+      }
     ],
     "consumers": [
-      "1_-12_0/3/0",
-      "1_-12_0/3/1",
-      "1_-13_0/3/0/0",
-      "1_-13_0/3/0/1",
-      "1_-13_0/3/1/0",
-      "1_-13_0/3/1/1"
+      {
+        "1_-12_0/3/0": "event"
+      },
+      {
+        "1_-12_0/3/1": "event"
+      },
+      {
+        "1_-13_0/3/0/0": "event"
+      },
+      {
+        "1_-13_0/3/0/1": "event"
+      },
+      {
+        "1_-13_0/3/1/0": "event"
+      },
+      {
+        "1_-13_0/3/1/1": "event"
+      }
     ]
   },
   {
@@ -6449,15 +8248,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -29,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-17_0/0"
+      {
+        "1_-17_0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-24_0/0"
+      {
+        "1_-24_0/0": "event"
+      }
     ]
   },
   {
@@ -6472,15 +8276,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -29,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-17_0/1"
+      {
+        "1_-17_0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-24_0/1"
+      {
+        "1_-24_0/1": "event"
+      }
     ]
   },
   {
@@ -6495,15 +8304,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -29,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-17_0/2"
+      {
+        "1_-17_0/2": "event"
+      }
     ],
     "consumers": [
-      "1_-24_0/2"
+      {
+        "1_-24_0/2": "event"
+      }
     ]
   },
   {
@@ -6518,15 +8332,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -29,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-17_0/3"
+      {
+        "1_-17_0/3": "event"
+      }
     ],
     "consumers": [
-      "1_-24_0/3"
+      {
+        "1_-24_0/3": "event"
+      }
     ]
   },
   {
@@ -6541,15 +8360,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -44,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-24_0/0"
+      {
+        "1_-24_0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-25_0/0"
+      {
+        "1_-25_0/0": "event"
+      }
     ]
   },
   {
@@ -6564,15 +8388,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -44,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-24_0/1"
+      {
+        "1_-24_0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-25_0/1"
+      {
+        "1_-25_0/1": "event"
+      }
     ]
   },
   {
@@ -6587,15 +8416,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -44,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-24_0/2"
+      {
+        "1_-24_0/2": "event"
+      }
     ],
     "consumers": [
-      "1_-25_0/2"
+      {
+        "1_-25_0/2": "event"
+      }
     ]
   },
   {
@@ -6610,15 +8444,20 @@
     "dw": 5,
     "data_volume": "5",
     "group_end": "0",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -44,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-24_0/3"
+      {
+        "1_-24_0/3": "event"
+      }
     ],
     "consumers": [
-      "1_-25_0/3"
+      {
+        "1_-25_0/3": "event"
+      }
     ]
   },
   {
@@ -6636,15 +8475,20 @@
     "group_end": "1",
     "filepath": "",
     "dirname": "",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -18,
     "dt": "File",
     "nm": "relationship",
     "producers": [
-      "1_-25_0/0"
+      {
+        "1_-25_0/0": "event"
+      }
     ],
     "consumers": [
-      "1_-1_0/0"
+      {
+        "1_-1_0/0": "event"
+      }
     ]
   },
   {
@@ -6662,15 +8506,20 @@
     "group_end": "1",
     "filepath": "",
     "dirname": "",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -18,
     "dt": "File",
     "nm": "relationship",
     "producers": [
-      "1_-25_0/1"
+      {
+        "1_-25_0/1": "event"
+      }
     ],
     "consumers": [
-      "1_-1_0/1"
+      {
+        "1_-1_0/1": "event"
+      }
     ]
   },
   {
@@ -6688,15 +8537,20 @@
     "group_end": "1",
     "filepath": "",
     "dirname": "",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -18,
     "dt": "File",
     "nm": "relationship",
     "producers": [
-      "1_-25_0/2"
+      {
+        "1_-25_0/2": "event"
+      }
     ],
     "consumers": [
-      "1_-1_0/2"
+      {
+        "1_-1_0/2": "event"
+      }
     ]
   },
   {
@@ -6714,15 +8568,20 @@
     "group_end": "1",
     "filepath": "",
     "dirname": "",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -18,
     "dt": "File",
     "nm": "relationship",
     "producers": [
-      "1_-25_0/3"
+      {
+        "1_-25_0/3": "event"
+      }
     ],
     "consumers": [
-      "1_-1_0/3"
+      {
+        "1_-1_0/3": "event"
+      }
     ]
   },
   {
@@ -6739,16 +8598,23 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -9,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-31_0/0",
-      "1_-32_0/0"
+      {
+        "1_-31_0/0": "event"
+      },
+      {
+        "1_-32_0/0": "event"
+      }
     ],
     "outputs": [
-      "1_-45_0/0"
+      {
+        "1_-45_0/0": "relationship"
+      }
     ]
   },
   {
@@ -6765,16 +8631,23 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -9,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-31_0/1",
-      "1_-32_0/1"
+      {
+        "1_-31_0/1": "event"
+      },
+      {
+        "1_-32_0/1": "event"
+      }
     ],
     "outputs": [
-      "1_-45_0/1"
+      {
+        "1_-45_0/1": "relationship"
+      }
     ]
   },
   {
@@ -6791,16 +8664,23 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -9,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-31_0/2",
-      "1_-32_0/2"
+      {
+        "1_-31_0/2": "event"
+      },
+      {
+        "1_-32_0/2": "event"
+      }
     ],
     "outputs": [
-      "1_-45_0/2"
+      {
+        "1_-45_0/2": "relationship"
+      }
     ]
   },
   {
@@ -6817,16 +8697,23 @@
     "execution_time": 5,
     "group_start": false,
     "appclass": "test.graphsRepository",
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -9,
     "dt": "PythonApp",
     "nm": "Subtract",
     "inputs": [
-      "1_-31_0/3",
-      "1_-32_0/3"
+      {
+        "1_-31_0/3": "event"
+      },
+      {
+        "1_-32_0/3": "event"
+      }
     ],
     "outputs": [
-      "1_-45_0/3"
+      {
+        "1_-45_0/3": "relationship"
+      }
     ]
   },
   {
@@ -6841,15 +8728,20 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -45,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-9_0/0"
+      {
+        "1_-9_0/0": "relationship"
+      }
     ],
     "consumers": [
-      "1_-4_0/0"
+      {
+        "1_-4_0/0": "relationship"
+      }
     ]
   },
   {
@@ -6864,15 +8756,20 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -45,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-9_0/1"
+      {
+        "1_-9_0/1": "relationship"
+      }
     ],
     "consumers": [
-      "1_-4_0/1"
+      {
+        "1_-4_0/1": "relationship"
+      }
     ]
   },
   {
@@ -6887,15 +8784,20 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -45,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-9_0/2"
+      {
+        "1_-9_0/2": "relationship"
+      }
     ],
     "consumers": [
-      "1_-4_0/2"
+      {
+        "1_-4_0/2": "relationship"
+      }
     ]
   },
   {
@@ -6910,15 +8812,20 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -45,
     "dt": "Memory",
     "nm": "relationship",
     "producers": [
-      "1_-9_0/3"
+      {
+        "1_-9_0/3": "relationship"
+      }
     ],
     "consumers": [
-      "1_-4_0/3"
+      {
+        "1_-4_0/3": "relationship"
+      }
     ]
   },
   {
@@ -6933,16 +8840,23 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -48,
     "dt": "Memory",
     "nm": "event",
     "producers": [
-      "1_-35_0"
+      {
+        "1_-35_0": "event"
+      }
     ],
     "consumers": [
-      "1_-5_0/0",
-      "1_-6_0/0"
+      {
+        "1_-5_0/0": "event"
+      },
+      {
+        "1_-6_0/0": "event"
+      }
     ]
   },
   {
@@ -6957,16 +8871,23 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -48,
     "dt": "Memory",
     "nm": "event",
     "producers": [
-      "1_-35_0"
+      {
+        "1_-35_0": "event"
+      }
     ],
     "consumers": [
-      "1_-5_0/1",
-      "1_-6_0/1"
+      {
+        "1_-5_0/1": "event"
+      },
+      {
+        "1_-6_0/1": "event"
+      }
     ]
   },
   {
@@ -6981,16 +8902,23 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -48,
     "dt": "Memory",
     "nm": "event",
     "producers": [
-      "1_-35_0"
+      {
+        "1_-35_0": "event"
+      }
     ],
     "consumers": [
-      "1_-5_0/2",
-      "1_-6_0/2"
+      {
+        "1_-5_0/2": "event"
+      },
+      {
+        "1_-6_0/2": "event"
+      }
     ]
   },
   {
@@ -7005,16 +8933,23 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -48,
     "dt": "Memory",
     "nm": "event",
     "producers": [
-      "1_-35_0"
+      {
+        "1_-35_0": "event"
+      }
     ],
     "consumers": [
-      "1_-5_0/3",
-      "1_-6_0/3"
+      {
+        "1_-5_0/3": "event"
+      },
+      {
+        "1_-6_0/3": "event"
+      }
     ]
   },
   {
@@ -7029,12 +8964,15 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -50,
     "dt": "Memory",
     "nm": "Memory",
     "producers": [
-      "1_-1_0/0"
+      {
+        "1_-1_0/0": "output"
+      }
     ],
     "consumers": [
       "1_-49_0/0"
@@ -7052,12 +8990,15 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/1",
     "lg_key": -50,
     "dt": "Memory",
     "nm": "Memory",
     "producers": [
-      "1_-1_0/1"
+      {
+        "1_-1_0/1": "output"
+      }
     ],
     "consumers": [
       "1_-49_0/0"
@@ -7075,12 +9016,15 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/2",
     "lg_key": -50,
     "dt": "Memory",
     "nm": "Memory",
     "producers": [
-      "1_-1_0/2"
+      {
+        "1_-1_0/2": "output"
+      }
     ],
     "consumers": [
       "1_-49_0/0"
@@ -7098,12 +9042,15 @@
     "dw": 5,
     "data_volume": 5,
     "group_end": false,
+    "applicationArgs": {},
     "iid": "0/3",
     "lg_key": -50,
     "dt": "Memory",
     "nm": "Memory",
     "producers": [
-      "1_-1_0/3"
+      {
+        "1_-1_0/3": "output"
+      }
     ],
     "consumers": [
       "1_-49_0/0"
@@ -7120,6 +9067,12 @@
     "loop_cxt": null,
     "tw": 5,
     "num_cpus": 1,
+    "execution_time": 5,
+    "group_start": false,
+    "appclass": "test.graphsRepository",
+    "num_of_inputs": 4,
+    "gather_axis": "frequency",
+    "applicationArgs": {},
     "iid": "0/0",
     "lg_key": -49,
     "dt": "PythonApp",
@@ -7141,18 +9094,34 @@
     "loop_cxt": null,
     "tw": 5,
     "num_cpus": 1,
+    "execution_time": 5,
+    "group_start": false,
+    "appclass": "test.graphsRepository",
+    "num_of_copies": 4,
+    "scatter_axis": "frequency",
+    "applicationArgs": {},
     "iid": "0",
     "lg_key": -35,
     "dt": "PythonApp",
     "nm": "FrequencySplit",
     "inputs": [
-      "1_-2_0"
+      {
+        "1_-2_0": "event"
+      }
     ],
     "outputs": [
-      "1_-48_0/0",
-      "1_-48_0/1",
-      "1_-48_0/2",
-      "1_-48_0/3"
+      {
+        "1_-48_0/0": "event"
+      },
+      {
+        "1_-48_0/1": "event"
+      },
+      {
+        "1_-48_0/2": "event"
+      },
+      {
+        "1_-48_0/3": "event"
+      }
     ]
   }
 ]

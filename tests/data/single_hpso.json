@@ -4,12 +4,12 @@
 			"count": 1,
 			"hpso": "hpso01",
 			"demand": 512,
-			"duration": 3600,
+			"duration": 18000,
 			"workflows": [
 				"ICAL", "DPrepA", "DPrepB", "DPrepC", "DPrepD"
 			],
-			"channels": 256,
-			"baseline": "long"
+			"channels": 896,
+			"baseline": 65000
 		}
 	]
 }

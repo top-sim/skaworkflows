@@ -119,6 +119,7 @@ def unroll_logical_graph(input_lgt, output_pgt_path=None, file_in=True):
     else:
         jdict = input_lgt
 
+    LOGGER.info(f"Translating EAGLE graph...")
     if output_pgt_path and file_in:
         with open(output_pgt_path, 'w+') as f:
             result = subprocess.run(cmd_list, stdout=f)
@@ -227,6 +228,7 @@ def daliuge_to_nx(dlg_json_dict, workflow):
 
 
     """
+    LOGGER.info("Converting DALiuGE to networkx...")
     unrolled_nx = nx.DiGraph()
     labels = {}
     node_list = []
@@ -251,14 +253,26 @@ def daliuge_to_nx(dlg_json_dict, workflow):
         if ('storage' in element.keys()) and (
                 'producers' in element and 'consumers' in element
         ):
-            for u in element['producers']:
+            for uentry in element['producers']:
+
+                try:
+                    uentry.keys()
+                except AttributeError:
+                    u = uentry
+                else:
+                    u = list(uentry.keys())[0]
                 component, num = labels[u].split('_')
                 if 'out_edge' in task_names[component]:
                     task_names[component]['out_edge'] += 1
                 else:
                     task_names[component]['out_edge'] = 1
-                for v in element['consumers']:
-                    edge = (labels[u], labels[v])
+                for ventry in element['consumers']:
+                    try:
+                        ventry.keys()
+                    except AttributeError:
+                        v = ventry
+                    else:
+                        v = list(ventry.keys())[0]
                     edge_list.append(
                         (
                             f'{workflow}_{labels[u]}',
@@ -271,7 +285,6 @@ def daliuge_to_nx(dlg_json_dict, workflow):
                             }
                         )
                     )
-
     unrolled_nx.add_nodes_from(node_list)
     unrolled_nx.add_edges_from(edge_list)
 
@@ -300,42 +313,15 @@ def concatenate_workflows(
 
     """
     # final_graph = nx.DiGraph()
-    start_graph = unrolled_graphs['DPrepA']
-    curr_parent = 'DPrepA_Gather_0'
-    workflows.remove('DPrepA')
+    start = workflows[0]
+    start_graph = unrolled_graphs[start]
+    curr_parent = f'{start}_Gather_0'
+    workflows.remove(start)
     final_graph = nx.compose_all(list(unrolled_graphs.values()))
     for workflow in workflows:
         curr_child = f'{workflow}_FrequencySplit_0'
         final_graph.add_edge(curr_parent, curr_child, data_size=0)
         curr_parent = f'{workflow}_Gather_0'
 
-    # for graph in  unrolled_graphs:
-    #     final_graph
-
-    # FrequencySplit
-    # Gather
-
     return final_graph
 
-
-if __name__ == '__main__':
-    LOGGER.info("Generating test data and unrolling")
-    res = unroll_logical_graph(
-        'tests/data/eagle_lgt_scatter_minimal.graph',
-        'tests/data/daliuge_pgt_scatter_minimal.json'
-    )
-    logging.basicConfig(level="DEBUG")
-    # lgt_object = update_number_of_channels(
-    #     'tests/data/eagle_lgt_scatter_minimal.graph', 4
-    # )
-    # pgt_object = unroll_logical_graph(
-    #     lgt_object, file_in=False
-    # )
-
-    # TODO UPDATE THE CODE FOR _DALIGUE_TO_NX TO COUNT EACH DIFFERENT KEY
-    # This way we can keep track of the number of each task, rather than
-    # having random assignments for each
-    # USEFUL FOR ERROR CHECKING 
-    # LOGGER.info(f"Test PGT generated at: {res}")
-    jdict = eagle_to_nx('tests/data/eagle_lgt_scatter.graph')
-    LOGGER.info(json.dumps(jdict, indent=2))

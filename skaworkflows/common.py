@@ -21,7 +21,7 @@ from enum import Enum
 from skaworkflows import __version__
 
 
-class Baselines(Enum):
+class LOWBaselines(Enum):
     short = 4062.5
     mid = 32500
     long = 65000

@@ -217,7 +217,7 @@ class TestWorkflowFromObservation(unittest.TestCase):
         self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         self.obs1 = hpo.Observation(
             1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
-            'long'
+            65000.0
         )
 
     def testConcatWorkflows(self):
@@ -254,12 +254,12 @@ class TestWorkflowFromObservation(unittest.TestCase):
 
         # Need to ensure that the DPrepA costs are Different to DPrepB
         self.assertAlmostEqual(
-            0.04563405420422631 * self.obs1.duration*SI.peta,
+            0.04563405420422631 * self.obs1.duration * SI.peta,
             final_graphs['DPrepA'].nodes['DPrepA_Grid_0']['comp'],
             places=6
         )
         self.assertAlmostEqual(
-            0.04761499141720525 * self.obs1.duration*SI.peta,
+            0.04761499141720525 * self.obs1.duration * SI.peta,
             final_graphs['DPrepB'].nodes['DPrepB_Grid_0']['comp'],
             places=6
         )
@@ -268,7 +268,6 @@ class TestWorkflowFromObservation(unittest.TestCase):
             final_graphs['DPrepA'].nodes['DPrepA_Grid_0']['comp'],
             final_graphs['DPrepB'].nodes['DPrepB_Grid_0']['comp']
         )
-
 
     def testConcatWorkflowsCost(self):
         """
@@ -316,9 +315,9 @@ class TestWorkflowFromObservation(unittest.TestCase):
             total,
             places=3
         )
-        u= 'ICAL_Gather_0'
+        u = 'ICAL_Gather_0'
         v = 'DPrepB_FrequencySplit_0'
-        self.assertEqual(0, final_graph.edges[u,v]['data_size'])
+        self.assertEqual(0, final_graph.edges[u, v]['data_size'])
 
 
 class TestCostGenerationAndAssignment(unittest.TestCase):
@@ -329,7 +328,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         channels = 64
         self.obs1 = hpo.Observation(
             1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
-            'long'
+            65000.0
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
 
@@ -448,6 +447,32 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         )
 
 
+class TestSKAMidCosts(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.observation = hpo.Observation(
+            1, 'hpso13', ['DPrepA', 'DPrepB'], 512, 3600, 256,
+            35000.0, telescope="mid"
+        )
+        self.mid_component_sizing = pd.read_csv(
+            "skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid.csv"
+        )
+
+    def test_total_component_sum(self):
+        wf = self.observation.workflows[0]
+        nx_graph, task_dict = edt.eagle_to_nx(LGT_PATH, wf)
+        # We've got basic workflow graph here without number of channels updated
+        final_workflow, task_dict = hpo.generate_cost_per_product(
+            nx_graph, task_dict, self.observation, wf, self.mid_component_sizing
+        )
+        self.assertAlmostEqual(
+            0.0025108947344674015 * self.observation.duration * SI.peta,
+            final_workflow.nodes['DPrepA_Degrid_0']['comp'],
+            delta=1000
+        )
+        # channel_lgt = edt.update_number_of_channels(LGT_PATH, channels)
+
+
 class TestFileGenerationAndAssignment(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -456,7 +481,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         channels = 1
         self.obs1 = hpo.Observation(
             1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
-            'long'
+            65000.0
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
 
@@ -485,12 +510,15 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         """
         # Get an observation object and create a file for the associated HPSO
         self.assertEqual(512, self.telescope_max)
+        base_graph = Path('skaworkflows/data/hpsos/dprepa.graph')
+        base_graph_paths = {"DPrepA": base_graph, "DPrepB": base_graph}
         workflow_path_name = hpo._create_workflow_path_name(self.obs1)
         self.assertRaises(
             FileNotFoundError,
             hpo.generate_workflow_from_observation,
             self.obs1, self.telescope_max, self.config_dir,
-            self.component_system_sizing, workflow_path_name
+            self.component_system_sizing, workflow_path_name,
+            base_graph_paths
         )
 
         # The creation of the config directory needs to
@@ -498,7 +526,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         self.assertTrue(os.path.exists(self.config_dir))
         hpo.generate_workflow_from_observation(
             self.obs1, self.telescope_max, self.config_dir,
-            self.component_system_sizing, workflow_path_name
+            self.component_system_sizing, workflow_path_name, base_graph_paths
         )
 
         final_dir = f'{self.config_dir}/workflows'
@@ -520,11 +548,15 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         """
         workflow_path_name = hpo._create_workflow_path_name(self.obs1)
         config_dir_path = Path(self.config_dir)
-        config_dir_path.mkdir()
+        config_dir_path.mkdir(exist_ok=True)
         assert config_dir_path.exists()
+        base_graph = Path('skaworkflows/data/hpsos/dprepa.graph')
+        base_graph_paths = {"DPrepA": base_graph, "DPrepB": base_graph}
+
         result = hpo.generate_workflow_from_observation(
             self.obs1, self.telescope_max, self.config_dir,
-            self.component_system_sizing, workflow_path_name
+            self.component_system_sizing, workflow_path_name,
+            base_graph_paths
         )
 
         header = {
@@ -550,6 +582,6 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         nx_graph = nx.readwrite.node_link_graph(test_workflow['graph'])
         # Divide by 2 due to 2 major loops
         self.assertAlmostEqual(
-            (0.09119993316954411 * self.obs1.duration * SI.peta)/2,
+            (0.09119993316954411 * self.obs1.duration * SI.peta) / 2,
             nx_graph.nodes['DPrepA_Degrid_0']['comp'], delta=1000
         )

@@ -21,7 +21,8 @@ import skaworkflows.workflow.hpso_to_observation as hto
 
 from pathlib import Path
 from skaworkflows.hpconfig.utils.classes import ARCHITECTURE
-from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR
+from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR, SDP_PAR_MODEL_LOW, \
+    SDP_PAR_MODEL_MID
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,10 +31,12 @@ LOGGER = logging.getLogger(__name__)
 def create_config(
         telescope_max,
         hpso_path: Path,
-        output_path: Path,
+        output_dir: Path,
+        cfg_name: str,
         component: Path,
         system: Path,
         cluster: ARCHITECTURE,
+        base_graph_paths,
         timestep='seconds',
         data=True,
         **kwargs
@@ -50,7 +53,7 @@ def create_config(
     observations : list
         Dictionary with the form {'observation_name': observation_count'}
         where observation_count is an int
-    output_path : pathlib.Path
+    output_dir : pathlib.Path
         Path where the 'config' folder will be created
 
     **kwargs:
@@ -64,7 +67,7 @@ def create_config(
     LOGGER.info(
         f"\tTelescope: SKA_LOW \n"
         f"\tCreating config with:\n"
-        f"\tOutput Directory: {output_path}\n"
+        f"\tOutput Directory: {output_dir}\n"
         f"\tBuffer ratio: {cluster.buffer_ratio}\n"
         f"\tTimestep: {timestep}\n"
         f"\tData: {data}"
@@ -86,10 +89,11 @@ def create_config(
     LOGGER.info(f"Producing the instrument config")
     final_instrument_config = hto.generate_instrument_config(
         observation_plan, 512,
-        output_path,
+        output_dir,
         component_sizing,
         system_sizing,
         cluster_dict,
+        base_graph_paths,
         data
     )
     LOGGER.info(f"Producing buffer config")
@@ -106,7 +110,7 @@ def create_config(
         "timestep": timestep
     }
 
-    file_path = output_path / 'config.json'
+    file_path = output_dir / cfg_name  # 'config.json'
     with file_path.open('w') as fp:
         LOGGER.info(f'Writing final config to {file_path}')
         json.dump(final_config, fp, indent=2)
@@ -128,24 +132,36 @@ def config_to_shadow(cfg_path: Path, prefix):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level="DEBUG")
+    logging.basicConfig(level="INFO")
 
     LOGGER.info("Starting config generation...")
-    hpso_path = Path('tests/data/single_hpso.json')
-    output_path = Path('output/')
-    component_sizing = Path(common.COMPONENT_SIZING_LOW)
-    total_sizing = Path(common.TOTAL_SIZING_LOW)
-    sdp = SDP_LOW_CDR()
+    hpso_path = Path('tests/data/single_hpso_mid.json')
+    output_dir = Path('output/ska_low')
+    cfg_name = 'test_mid.json'
+    component_sizing = Path(
+        "skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid.csv"
+    )
+    total_sizing = Path(
+        "skaworkflows/data/pandas_sizing/total_compute_SKA1_Mid.csv"
+    )
+    wf = Path('skaworkflows/data/hpsos/dprepa.graph')
+    workflow_paths = {
+        "ICARL": wf, "DPrepA": wf, "DPrepB": wf, "DPrepC": wf, "DPrepD": wf
+    }
+
+    sdp = SDP_PAR_MODEL_MID()
     timestep = "seconds"
     data = False
 
     cfg_path = create_config(
         common.MAX_TEL_DEMAND,
         hpso_path,
-        output_path,
+        output_dir,
+        cfg_name,
         component_sizing,
         total_sizing,
         sdp,
+        workflow_paths,
         timestep,
         data=data
     )

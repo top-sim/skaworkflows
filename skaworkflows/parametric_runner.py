@@ -111,7 +111,6 @@ def calculate_realtime_flop_requirements(csv, telescope):
         if rt_flops > realtime_flops:
             realtime_flops = rt_flops
             realtime_flops_hpso = hpso
-    print(realtime_flops)
     return realtime_flops
 
 
@@ -130,7 +129,6 @@ def determine_global_batch_flops(total_flops, realtime_flops):
 
     """
     batch_flops = total_flops - realtime_flops
-    print(batch_flops, total_flops, realtime_flops)
     return batch_flops
 
 
@@ -236,13 +234,10 @@ def generate_nodes_from_sequence(sequence, csv, capacities):
 
 
 def calculate_total_offline_flops(csv, scenario, hpso):
-    offline_imaging = "ICAL + DPrepA + DPrepB + DPrepC + DPrepD"
+    offline_imaging = "ICAL + DPrepA" # Minimum requirement for a batch task
     # offline_pulsar_transient = "PST"
     # offline_pulsar_search = "PSS"
 
-    offline_tasks = [
-        offline_imaging #, offline_pulsar_search, offline_pulsar_transient
-    ]
     (
         telescope,
         total_flops,
@@ -272,9 +267,9 @@ def calculate_total_offline_flops(csv, scenario, hpso):
     result = {'total_flops': 0, 'time': 0, 'batch_flops': 0, "duration": 0}
 
     for task in nodes:
-        if task.name in offline_tasks:
+        if offline_imaging in task.name:
             tflops = task.time * batch_flops
-            print(f'{task.name}: {tflops:e} {task.time}')
+            print(f'{task.name=}: {tflops:e=} {task.time=}')
             result['total_flops'] = tflops
             result['time'] = task.time
             result['batch_flops'] = batch_flops
@@ -296,8 +291,9 @@ if __name__ == '__main__':
     LONG_SYSTEM_SIZING = Path(
         "/home/rwb/github/sdp-par-model/2021-06-02_LongBaseline_HPSOs.csv"
     )
-    hpsos = [HPSOs.hpso04a,  HPSOs.hpso01,HPSOs.hpso05a, HPSOs.hpso02a]
-    scenario = 'low-adjusted'
+    hpsos = [HPSOs.hpso13] # , HPSOs.hpso05a, HPSOs.hpso02a]
+    scenario = 'mid-adjusted'
     result = calculate_parametric_runtime_estimates(
         LONG_SYSTEM_SIZING, scenario, hpsos
     )
+    print(result)

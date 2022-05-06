@@ -18,6 +18,8 @@ import json
 import pandas as pd
 import networkx as nx
 
+from pathlib import Path
+
 
 def generate_workflow_stats(wf_path):
     """
@@ -95,22 +97,14 @@ def calculate_expected_flops(hpso, workflows, duration, sizing, baseline=65000):
     return expected_flops
 
 
-def generate_sdp_flops(hpso):
-    total_flops = 0
-    return total_flops
-
-
-if __name__ == '__main__':
-    flops = calculate_total_flops(
-        'output/workflows/hpso01_time-18000_channels-256_tel-512_no_data.json'
-    )
-    print(flops)
-    with open('output/config.json') as fp:
+def generate_sdp_flops(config: Path):
+    with config.open() as fp:
         total_config = json.load(fp)
     compute = total_config['cluster']
     total_compute = 0
     for machine in compute['system']['resources']:
         total_compute += compute['system']['resources'][machine]['flops']
-    print(total_compute)
-    time = flops / total_compute
-    print(time)
+    return total_compute
+
+
+

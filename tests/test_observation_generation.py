@@ -48,8 +48,8 @@ PATH_NOT_EXISTS = 'path/doesnt/exist'
 class TestObservationClass(unittest.TestCase):
 
     def setUp(self):
-        self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 'long')
-        self.obs2 = Observation(4, 'hpso04a', ['dprepa'], 16, 30, 256, 'long')
+        self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 65000.0)
+        self.obs2 = Observation(4, 'hpso04a', ['dprepa'], 16, 30, 256, 65000.0)
 
 
     def test_add_workflow_path(self):
@@ -64,14 +64,14 @@ class TestObservationPlanGeneration(unittest.TestCase):
     def setUp(self):
         # low_compute_data = "csv/SKA1_Low_COMPUTE.csv"
         # self.observations = convert_systemsizing_csv_to_dict(low_compute_data)
-        self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 'long')
+        self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 65000.0)
         self.obslist1 = create_observation_from_hpso(
-            2, 'hpso01', ['dprepa'], 32, 60, 256, 'long', offset=0
+            2, 'hpso01', ['dprepa'], 32, 60, 256, 65000.0, offset=0
         )
         self.obslist2 = create_observation_from_hpso(
-            4, 'hpso04a', ['dprepa'], 16, 30, 128, 'long', offset=0
+            4, 'hpso04a', ['dprepa'], 16, 30, 128, 65000.0, offset=0
         )
-        self.obs3 = Observation(3, 'hpso01', ['dprepa'], 32, 30, 256, 'long')
+        self.obs3 = Observation(3, 'hpso01', ['dprepa'], 32, 30, 256, 65000.0)
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         self.max_telescope_usage = 32  # 1/16th of the telescope
 
@@ -106,34 +106,34 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         self.obs1 = Observation(
             name='hpso01_0', hpso='hpso01', demand=512,
             duration=60, workflows=['DPrepA'], channels=256,
-            baseline='long'
+            baseline=65000.0
         )
 
         self.observation_list = create_observation_from_hpso(
             count=2, hpso='hpso01', demand=512,
             duration=60, workflows=['DPrepA'], channels=256,
-            baseline='long', offset=0
+            baseline=65000.0, offset=0
         )
         self.observation_plan = create_observation_plan(
             self.observation_list,512
         )
         self.max_telescope_usage = 32  # 1/16th of telescope
         self.plan = [
-            (0, 60, 32, 'hpso01', 'dprepa', 256, 'long'),
-            (60, 120, 32, 'hpso01', 'dprepa', 256, 'long')
+            (0, 60, 32, 'hpso01', 'dprepa', 256, 65000.0),
+            (60, 120, 32, 'hpso01', 'dprepa', 256, 65000.0)
         ]
         self.obs2 = Observation(
             'hpso01_2', hpso='hpso01', workflows=['DPrepA'],
-            demand=32, duration=60, channels=256, baseline='long')
+            demand=32, duration=60, channels=256, baseline=65000.0)
         self.obs3 = Observation(
-            'hpso01_5', 'hpso04a', ['DPrepA'], 16, 30, 256, 'long'
+            'hpso01_5', 'hpso04a', ['DPrepA'], 16, 30, 256, 65000.0
         )
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         sdp = SDP_LOW_CDR()
         self.cluster = sdp.to_topsim_dictionary()
         self.config_dir_path = Path('tests/data/config')
-        self.config_dir_path.mkdir()
+        self.config_dir_path.mkdir(exist_ok=True)
 
     def tearDown(self) -> None:
         shutil.rmtree(self.config_dir_path)
@@ -162,12 +162,15 @@ class TestObservationTopSimTranslation(unittest.TestCase):
 
         """
         # self.observation_lis
+        base_graph = Path('skaworkflows/data/hpsos/dprepa.graph')
+        base_graph_paths = {"DPrepA": base_graph, "DPrepB": base_graph}
         final_instrument_config = generate_instrument_config(
             self.observation_list, 512,
             self.config_dir_path,
             self.component_sizing,
             self.system_sizing,
-            self.cluster
+            self.cluster,
+            base_graph_paths
         )
         self.assertEqual(
             11,
