@@ -164,7 +164,7 @@ def generate_capacities(
 
     capacities = {
         graph.Resources.Observatory: 1,
-        graph.Resources.BatchCompute: batch_flops,
+        graph.Resources.BatchCompute: batch_flops + realtime_flops,
         graph.Resources.RealtimeCompute: realtime_flops,
         graph.Resources.InputBuffer: input_buffer_size,
         graph.Resources.HotBuffer: hot_buffer_size,

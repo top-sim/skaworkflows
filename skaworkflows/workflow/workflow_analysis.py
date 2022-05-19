@@ -85,7 +85,9 @@ def calculate_expected_flops(hpso, workflows, duration, sizing, baseline=65000):
     expected_flops = 0
 
     df = pd.read_csv(sizing)
-    cols = ['HPSO', 'Baseline'] + workflows
+
+    cols = ['HPSO', 'Baseline'] + [f"{w} [Pflop/s]" for w in workflows]
+
     df_workflows = df[cols]
     hpso_costs = (
         df_workflows[
@@ -94,7 +96,7 @@ def calculate_expected_flops(hpso, workflows, duration, sizing, baseline=65000):
             ].loc[:, "ICAL [""Pflop/s]":]
     )
     expected_flops = hpso_costs.sum(axis="columns") * duration * (10 ** 15)
-    return expected_flops
+    return float(expected_flops)
 
 
 def generate_sdp_flops(config: Path):

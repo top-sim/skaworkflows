@@ -98,7 +98,7 @@ def create_config(
     )
     LOGGER.info(f"Producing buffer config")
     final_buffer_config = hto.create_buffer_config(
-        cluster, cluster.buffer_ratio
+        cluster
     )
     final_cluster = cluster_dict
 
@@ -146,10 +146,10 @@ if __name__ == '__main__':
     )
     wf = Path('skaworkflows/data/hpsos/dprepa.graph')
     workflow_paths = {
-        "ICARL": wf, "DPrepA": wf, "DPrepB": wf, "DPrepC": wf, "DPrepD": wf
+        "ICAL": wf, "DPrepA": wf, "DPrepB": wf, "DPrepC": wf, "DPrepD": wf
     }
 
-    sdp = SDP_PAR_MODEL_MID()
+    sdp = SDP_PAR_MODEL_LOW()
     timestep = "seconds"
     data = False
 

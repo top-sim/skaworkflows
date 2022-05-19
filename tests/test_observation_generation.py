@@ -29,7 +29,7 @@ from skaworkflows.workflow.hpso_to_observation import create_observation_plan, \
 
 from skaworkflows.common import SI
 
-from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR
+from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR, SDP_PAR_MODEL_LOW, SDP_PAR_MODEL_MID
 
 DATA_DIR = 'data/parametric_model'
 LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
@@ -50,7 +50,6 @@ class TestObservationClass(unittest.TestCase):
     def setUp(self):
         self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 65000.0)
         self.obs2 = Observation(4, 'hpso04a', ['dprepa'], 16, 30, 256, 65000.0)
-
 
     def test_add_workflow_path(self):
         self.assertRaises(
@@ -115,7 +114,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             baseline=65000.0, offset=0
         )
         self.observation_plan = create_observation_plan(
-            self.observation_list,512
+            self.observation_list, 512
         )
         self.max_telescope_usage = 32  # 1/16th of telescope
         self.plan = [
@@ -178,7 +177,8 @@ class TestObservationTopSimTranslation(unittest.TestCase):
                 'ingest_demand'])
         self.assertEqual(
             'workflows/hpso01_time-60_channels-256_tel-512.json',
-            final_instrument_config['telescope']['pipelines']['hpso01_1']['workflow']
+            final_instrument_config['telescope']['pipelines']['hpso01_1'][
+                'workflow']
         )
         self.assertEqual(
             {'name': 'hpso01_1', 'start': 0, 'duration': 60,
@@ -207,7 +207,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         # TODO get values from sdp.total_storage instead
         hot_buffer = 13.44  # 20% of buffer
         cold_buffer = 53.76  # 80% of buffer
-        spec = create_buffer_config(sdp, buffer_ratio)
+        spec = create_buffer_config(sdp)
         self.assertEqual(spec['hot']['capacity'] / SI.peta,
                          hot_buffer)
         self.assertEqual(
@@ -216,7 +216,86 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         )
         self.assertEqual(
             spec['hot']['max_ingest_rate'] / SI.giga,
-            1254.4
+            460
+        )
+
+
+class testLowParametricBufferConfig(unittest.TestCase):
+
+    def setUp(self):
+        self.sdp = SDP_PAR_MODEL_LOW()
+        self.cluster = self.sdp.to_topsim_dictionary()
+
+        self.spec = create_buffer_config(self.sdp)
+
+    def testCapacityCorrect(self):
+        # Input buffer
+        self.assertEqual(
+            43350000000000000,
+            self.spec['hot']['capacity'],
+        )
+
+        # Offline buffer
+        self.assertEqual(
+            25500000000000000,
+            self.spec['cold']['capacity']
+        )
+
+    def testLowDataRates(self):
+        # Ensure this aligns with input transfer rate
+        self.assertEqual(
+            894687500000.0,
+            self.spec['cold']['max_data_rate']
+        )
+
+        # Ensure that offline data rates (internal I/O rates for offline
+        # workflows) are correct
+        self.assertEqual(
+            6747312499999.0,
+            self.sdp.total_compute_buffer_rate
+        )
+        self.assertEqual(
+            int(self.sdp.total_compute_buffer_rate/self.sdp.nodes),
+            self.cluster['system']['resources']['GenericSDP_m0']['rates'],
+        )
+
+class testMidParametricBufferConfig(unittest.TestCase):
+
+    def setUp(self):
+        self.sdp = SDP_PAR_MODEL_MID()
+        self.cluster = self.sdp.to_topsim_dictionary()
+
+        self.spec = create_buffer_config(self.sdp)
+
+    def testMidCapacityCorrect(self):
+        # Input buffer
+        self.assertEqual(
+            4.8455e+16,
+            self.spec['hot']['capacity'],
+        )
+
+        # Offline buffer
+        self.assertEqual(
+            4.0531e+16,
+            self.spec['cold']['capacity']
+        )
+
+    def testMidDataRates(self):
+        # Ensure this aligns with input transfer rate
+        self.assertEqual(
+            1054218750000.0,
+            self.spec['cold']['max_data_rate']
+        )
+
+        # Ensure that offline data rates (internal I/O rates for offline
+        # workflows) are correct
+        self.assertEqual(
+            11083112499999.0,
+            self.sdp.total_compute_buffer_rate
+        )
+        self.assertEqual(
+            int(self.sdp.total_compute_buffer_rate/self.sdp.nodes),
+            self.cluster['system']['resources']['GenericSDP_m0']['rates'],
         )
 
 

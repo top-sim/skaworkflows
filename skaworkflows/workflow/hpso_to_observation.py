@@ -331,7 +331,7 @@ def create_observation_plan(hpsos, max_telescope_usage):
     return plan
 
 
-def create_buffer_config(itemised_spec, ratio):
+def create_buffer_config(itemised_spec):
     """
     Generate the buffer configuration from spec, given the provided ratio of
     HotBuffer:ColdBuffer
@@ -358,17 +358,36 @@ def create_buffer_config(itemised_spec, ratio):
             "max_data_rate": -1
         }
     }
-    hot, cold = ratio
-    spec['hot']['capacity'] = int(
-        itemised_spec.total_storage * (hot / cold)
-    )
-    spec['cold']['capacity'] = int(
-        itemised_spec.total_storage * (1 - (hot / cold))
-    )
-    spec['hot']['max_ingest_rate'] = int(
-        itemised_spec.total_bandwidth * (hot / cold)
-    )
-    spec['cold']['max_data_rate'] = itemised_spec.ethernet
+
+
+    if itemised_spec.buffer_ratio: # Calculate capacities based on buffer
+        hot, cold = itemised_spec.buffer_ratio
+        spec['hot']['capacity'] = int(
+            itemised_spec.total_storage * (hot / cold)
+        )
+        spec['cold']['capacity'] = int(
+            itemised_spec.total_storage * (1 - (hot / cold))
+        )
+        spec['hot']['max_ingest_rate'] = int(
+            itemised_spec.ingest_rate
+        )
+        spec['cold']['max_data_rate'] = int(
+            itemised_spec.input_transfer_rate/itemised_spec.nodes
+        )
+    else:
+        spec['hot']['capacity'] = int(
+            itemised_spec.total_input_buffer
+        )
+        spec['cold']['capacity'] = int(
+            itemised_spec.total_compute_buffer
+        )
+        spec['hot']['max_ingest_rate'] = int(
+            itemised_spec.ingest_rate
+        )
+        spec['cold']['max_data_rate'] = int(
+            itemised_spec.input_transfer_rate
+        )
+
     return spec
 
 
@@ -790,7 +809,7 @@ def identify_component_cost(hpso, baseline, workflow, component,
     elif component == 'Grid':
         for compnt in [
             'Grid', 'Phase Rotation Predict', 'Visibility Weighting',
-            'Gridding Kernel Update'
+            'Gridding Kernel Update', 'Phase Rotation'
         ]:
             cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
@@ -1156,4 +1175,4 @@ zx
     # pass
 
     # Generate buffer spec
-    buffer_spec = create_buffer_config(itemised_spec, buffer_ratio)
+    buffer_spec = create_buffer_config(itemised_spec)

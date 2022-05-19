@@ -58,7 +58,8 @@ class SDP_LOW_CDR(ARCHITECTURE):
 
     ethernet = 56 / 8 * SI.giga  # GbE
 
-    required_ingest_rate_per_node = 3.5 / 8 * SI.giga  # Gb/s
+    # required_ingest_rate_per_node = 3.5 / 8 * SI.giga  # Gb/s
+    ingest_rate = 0.46 * SI.tera
 
     #: Largest science use case (in FLOPS)
     maximal_use_case = 1.5 * (10 ** 21)
@@ -172,6 +173,22 @@ class SDP_LOW_CDR(ARCHITECTURE):
         """
         return int(self.nodes * self.ethernet)
 
+    @property
+    def input_transfer_rate(self):
+        """
+        When we move something between 'input' and 'processing' buffers, this is
+        the rate.
+
+        Derived from parametric model
+
+        Returns
+        -------
+
+        """
+        input_transfer_rate = 1 - self.total_storage*(self.buffer_ratio[
+                                                          0]/self.buffer_ratio[1])
+        return input_transfer_rate - self.ingest_rate
+
     def to_topsim_dictionary(self):
         """
         Generate dictionary expected as part of TopSim configuration file
@@ -205,12 +222,12 @@ class SDP_LOW_CDR(ARCHITECTURE):
         node_dict = {}
         # system = {"system": {"resources": {}}}
         for i in range(0, self.nodes):
-            node_dict[f"GenericeSDP_m{i}"] = {
+            node_dict[f"GenericSDP_m{i}"] = {
                 f"flops": self.gpu_peak_flops * self.gpu_per_node,
                 f"rates": self.ethernet,
                 f"memory": self.memory_per_node
             }
-        cluster = {
+            cluster = {
             "header": {
                 "time": False,
                 "generator": "hpconfig",
@@ -260,51 +277,65 @@ class SDP_LOW_CDR(ARCHITECTURE):
 
 
 class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
-    buffer_ratio = (37.94, 100)
+    buffer_ratio = None
 
     # Assumptions about read-rate. This is how we calulcate runtime I/O costs
     # From Scheduling.ipynb in SDP: 3 GB/s per 10 TB [NVMe SSD]
-    buffer_read_rate = 3 * SI.giga / 10 / SI.tera
 
+    compute_buffer_rate = 3 * SI.giga / 10 / SI.tera
+    # 0.5 GB/s per 16 TB [SATA SSD]
+    input_buffer_rate = 0.5 * SI.giga / 16 / SI.tera
+    ingest_rate = 0.46 * SI.tera
+    delivery_rate = 100 / 8 * SI.giga  # assuming this is 100Gb ethernet speed?
     architecture_efficiency = 0.173
+    total_input_buffer = int(43.35 * SI.peta)
+    total_compute_buffer = int(25.50 * SI.peta)
+    total_output_buffer = int(0.656 * SI.peta)
 
     @property
-    def _global_io_rate(self):
+    def total_compute_buffer_rate(self):
         """
-        Designed to match the HotBufferRate in the parametric model using the current Buffer ratio
+        Designed to match the HotBufferRate in the parametric model using the
+        current Buffer ratio
 
-        **Should** be 7.5TB/s
+        **Should** be 6747312499999.0
         Returns
         -------
 
         """
-        br = self.buffer_ratio[0] / self.buffer_ratio[1]
-        return round(
-            (self.total_storage / (10 ** 12))
-            * (br * self.buffer_read_rate),
-            ndigits=2
-        ) * (10 ** 12)
+        compute_buffer_rate = (
+                self.total_compute_buffer * self.compute_buffer_rate
+        )
+        return int(
+                compute_buffer_rate
+                - self.input_transfer_rate
+                - self.total_output_transfer_rate
+        )
 
     @property
-    def memory_bandwidth(self):
+    def input_transfer_rate(self):
         """
-        I/O bandwidth used by the SDP to determine the rate at which we can
-        read data at runtime.
+        When we move something between 'input' and 'processing' buffers, this is
+        the rate.
 
-        Used in the "rates" value in the TopSim Dictionary for this architecture
-
-        Notes
-        ------
-        This is derived from the 'HotBufferRate' used in the parametric
-        model. The parametric model uses HotBuffer in a different
-        way to us.
+        Should be 894687500000.0
 
         Returns
         -------
 
         """
-        # Calculate the global read rate and then distribute across nodes
-        return int(self._global_io_rate / self.nodes)
+
+        input_transfer_rate = self.total_input_buffer * self.input_buffer_rate
+
+        return input_transfer_rate - self.ingest_rate
+
+    @property
+    def total_output_transfer_rate(self):
+        output_rate = (
+                self.total_output_buffer * self.input_buffer_rate
+                - self.delivery_rate
+        )
+        return output_rate
 
     @property
     def total_compute(self, expected=False):
@@ -336,9 +367,9 @@ class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
         node_dict = {}
         # system = {"system": {"resources": {}}}
         for i in range(0, self.nodes):
-            node_dict[f"GenericeSDP_m{i}"] = {
+            node_dict[f"GenericSDP_m{i}"] = {
                 f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
-                f"rates": self.memory_bandwidth,
+                f"rates": int(self.total_compute_buffer_rate / self.nodes),
                 f"memory": self.memory_per_node
             }
         cluster = {
@@ -381,7 +412,6 @@ class SDP_MID_CDR(ARCHITECTURE):
     estimated_efficiency = 0.25
 
     ethernet = 25 / 8 * SI.giga  # GbE
-
     required_ingest_rate_per_node = 3.8 / 8 * SI.giga  # Gb/s
 
     #: Largest science use case (in FLOPS)
@@ -447,8 +477,6 @@ class SDP_MID_CDR(ARCHITECTURE):
         """
         return int(self.nodes * self.ethernet)
 
-
-
     def to_topsim_dictionary(self):
         """
         Generate dictionary expected as part of TopSim configuration file
@@ -497,31 +525,66 @@ class SDP_MID_CDR(ARCHITECTURE):
 
         return df
 
-class SDP_PAR_MODEL_MID(SDP_MID_CDR):
 
+class SDP_PAR_MODEL_MID(SDP_MID_CDR):
     architecture_efficiency = 0.121
-    buffer_ratio = (35.1, 100)
+    # We don't use buffer ratio for parametric model
+    buffer_ratio = None
 
     # Assumptions about read-rate. This is how we calulcate runtime I/O costs
     # From Scheduling.ipynb in SDP: 3 GB/s per 10 TB [NVMe SSD]
-    buffer_read_rate = 3 * SI.giga / 10 / SI.tera
+    compute_buffer_rate = 3 * SI.giga / 10 / SI.tera
+    # 0.5 GB/s per 16 TB [SATA SSD]
+    input_buffer_rate = 0.5 * SI.giga / 16 / SI.tera
+    ingest_rate = 0.46 * SI.tera
+    delivery_rate = 100 / 8 * SI.giga  # assuming this is 100Gb ethernet speed?
+    total_input_buffer = int(48.455 * SI.peta)
+    total_compute_buffer = int(40.531 * SI.peta)
+    total_output_buffer = int(1.103 * SI.peta)
+
 
     @property
-    def _global_io_rate(self):
+    def total_compute_buffer_rate(self):
         """
-        Designed to match the HotBufferRate in the parametric model using the current Buffer ratio
+        Designed to match the HotBufferRate in the parametric model using the
+        current Buffer ratio
 
-        **Should** be 7.5TB/s
         Returns
         -------
 
         """
-        br = self.buffer_ratio[0] / self.buffer_ratio[1]
-        return round(
-            (self.total_storage / (10 ** 12))
-            * (br * self.buffer_read_rate),
-            ndigits=2
-        ) * (10 ** 12)
+        compute_buffer_rate = (
+                self.total_compute_buffer * self.compute_buffer_rate
+        )
+        return int(
+                compute_buffer_rate
+                - self.input_transfer_rate
+                - self.total_output_transfer_rate
+        )
+
+    @property
+    def input_transfer_rate(self):
+        """
+        When we move something between 'input' and 'processing' buffers, this is
+        the rate.
+
+        Returns
+        -------
+
+        """
+
+        input_transfer_rate = self.total_input_buffer * self.input_buffer_rate
+
+        return input_transfer_rate - self.ingest_rate
+
+    @property
+    def total_output_transfer_rate(self):
+        output_rate = (
+                self.total_output_buffer * self.input_buffer_rate
+                - self.delivery_rate
+        )
+        return output_rate
+
 
     @property
     def memory_bandwidth(self):
@@ -574,9 +637,9 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
         node_dict = {}
         # system = {"system": {"resources": {}}}
         for i in range(0, self.nodes):
-            node_dict[f"GenericeSDP_m{i}"] = {
+            node_dict[f"GenericSDP_m{i}"] = {
                 f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
-                f"rates": self.memory_bandwidth,
+                f"rates": int(self.total_compute_buffer_rate / self.nodes),
                 f"memory": self.memory_per_node
             }
         cluster = {
