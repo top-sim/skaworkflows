@@ -348,6 +348,9 @@ def _isolate_products(df_tel, hpso):
         baseline = float(column['Max Baseline [km]']) * 1000
         pipeline_overview['Baseline'] = baseline
         pipeline_data_overview['Baseline'] = baseline
+        buffer_read_rate = float(column['Buffer Read Rate [TeraBytes/s]'])
+        pipeline_data_overview['Visibility read rate'] = buffer_read_rate
+        pipeline_overview['Visibility read rate'] = buffer_read_rate
         for product in PRODUCTS:
             compute_entry = column.loc[
                 [f'-> {product} [PetaFLOP/s]']]
@@ -365,6 +368,9 @@ def _isolate_products(df_tel, hpso):
             pipeline_products[
                 f'{pipeline}_data'
             ] = pipeline_data_overview
+
+
+
 
     return pipeline_products
 
@@ -469,7 +475,7 @@ def compile_baseline_sizing(data_dir, total=True, component=True):
 
 if __name__ == '__main__':
     # System sizing for each baseline:
-    logging.basicConfig(level='WARNING')
+    logging.basicConfig(level='INFO')
     IN_DIR = f'skaworkflows/data/sdp-par-model_output/'
     OUTPUT_DIR = f'skaworkflows/data/pandas_sizing/'
     total_sizing, component_sizing = compile_baseline_sizing(IN_DIR)

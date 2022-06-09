@@ -861,6 +861,55 @@ def identify_component_cost(hpso, baseline, workflow, component,
     return total_cost, total_data
 
 
+def calculate_major_loop_data(task_dict, component_sizing,
+                              hpso, baseline, workflow, distribute=False):
+    """
+    If we want to take data into account in the way that the parametric model does,
+    we use their visibility read rate (Rio) value in their model.
+
+    This is supposed to 'be read' only once per major cycle, but there is
+    ambiguity around whether that is allocated to a single task, once per
+    'set' of major cycle tasks, or once per major cycle & minor cycle tasks.
+
+    The following tasks are in the major cycle (but not in the minor cycle):
+
+        * DeGrid
+        * Subtract
+        * Flag
+        * Grid
+
+    By default we assign the data to the DeGrid as part of its compute task,
+    and then to the edges of each subsequent node as a potential 'transfer'
+    cost. If `distribute` is `True`, then we average the data across each
+    major-loop task above, to determine if it has any impact on the runtime.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    task_dict : `dict`
+        Modified task dictionary - keeps the functionality pure.
+    """
+    data = 0
+    obs_frame = component_sizing[
+        (component_sizing['hpso'] == hpso) &
+        (component_sizing['Baseline'] == baseline)
+        ]
+
+    if distribute:
+        raise NotImplementedError(
+            'Current functionality does not support distributed data costs'
+        )
+    else:
+        task_dict['Degrid']['total_io_cost'] = float(
+            obs_frame[
+                obs_frame['Pipeline'] == f'{workflow}'
+            ]['Visibility read rate']
+        )
+    return task_dict
+
+
 def retrieve_component_cost(hpso, baseline, workflow, component,
                             component_sizing):
     """
@@ -897,10 +946,11 @@ def retrieve_component_cost(hpso, baseline, workflow, component,
 
     if workflow not in component_sizing['Pipeline'].values:
         raise RuntimeError(
-            f"HPSO does not require {pipeline} - check HPSO config."
+            f"HPSO does not require {workflow} - check HPSO config."
         )
 
     compute = float(obs_frame[obs_frame['Pipeline'] == workflow][component])
+
     data = float(
         obs_frame[obs_frame['Pipeline'] == f'{workflow}_data'][component]
     )

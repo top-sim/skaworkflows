@@ -269,7 +269,7 @@ def calculate_total_offline_flops(csv, scenario, hpso):
     for task in nodes:
         if offline_imaging in task.name:
             tflops = task.time * batch_flops
-            print(f'{task.name=}: {tflops:e=} {task.time=}')
+            # print(f'{task.name=}: {tflops:e=} {task.time=}')
             result['total_flops'] = tflops
             result['time'] = task.time
             result['batch_flops'] = batch_flops

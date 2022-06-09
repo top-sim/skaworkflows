@@ -32,6 +32,9 @@ class ARCHITECTURE(ABC):
     # def __init__(self):
     #     pass
 
+    def set_nodes(self, nodes):
+        self.nodes = nodes
+
     @property
     @abstractmethod
     def total_storage(self):

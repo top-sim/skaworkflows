@@ -135,14 +135,14 @@ if __name__ == '__main__':
     logging.basicConfig(level="INFO")
 
     LOGGER.info("Starting config generation...")
-    hpso_path = Path('tests/data/single_hpso_mid.json')
+    hpso_path = Path('tests/data/single_hpso_low.json')
     output_dir = Path('output/ska_low')
     cfg_name = 'test_mid.json'
     component_sizing = Path(
-        "skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid.csv"
+        "skaworkflows/data/pandas_sizing/component_compute_SKA1_Low.csv"
     )
     total_sizing = Path(
-        "skaworkflows/data/pandas_sizing/total_compute_SKA1_Mid.csv"
+        "skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv"
     )
     wf = Path('skaworkflows/data/hpsos/dprepa.graph')
     workflow_paths = {

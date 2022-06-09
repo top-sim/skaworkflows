@@ -65,6 +65,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
     maximal_use_case = 1.5 * (10 ** 21)
     maximal_obs_time = 6 * 3600  # 6 hours, in seconds
 
+
     def to_df(self, human_readable=True):
         """
         Report data as dataframe
@@ -565,8 +566,8 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
     @property
     def input_transfer_rate(self):
         """
-        When we move something between 'input' and 'processing' buffers, this is
-        the rate.
+        When we move something between 'input' and 'processing' buffers,
+        this is the rate.
 
         Returns
         -------
