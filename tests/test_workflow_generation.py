@@ -316,8 +316,9 @@ class TestWorkflowFromObservation(unittest.TestCase):
             places=3
         )
         u = 'ICAL_Gather_0'
-        v = 'DPrepB_FrequencySplit_0'
+        v = 'DPrepA_FrequencySplit_0'
         self.assertEqual(0, final_graph.edges[u, v]['data_size'])
+
 
 
 class TestCostGenerationAndAssignment(unittest.TestCase):
@@ -375,8 +376,8 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         -------
 
         """
-        # generate a workflow based on number of channels in the observation
         wf = self.obs1.workflows[0]
+        # generate a workflow without updating channels
         channels = self.obs1.channels
         nx_graph, task_dict = edt.eagle_to_nx(LGT_PATH, wf)
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
@@ -392,8 +393,15 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
             final_workflow.nodes['DPrepA_Degrid_0']['comp'],
             delta=1000
         )
+        # Check that the total task memory rates (i/o) is correct
         self.assertAlmostEqual(
-            15.683419877615755 * self.obs1.duration * SI.tera,
+            0.4087230428987958 * self.obs1.duration * SI.tera,
+            final_workflow.nodes['DPrepA_Degrid_0']['rates'],
+            delta=1000
+        )
+
+        self.assertAlmostEqual(
+            0.4087230428987958 * self.obs1.duration * SI.tera,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
                 'data_size'
             ],
@@ -416,7 +424,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
             delta=1000
         )
         self.assertAlmostEqual(
-            0.24505343558774617 * self.obs1.duration * SI.tera,
+            0.006386297545293684 * self.obs1.duration * SI.tera,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
                 'data_size'
             ],

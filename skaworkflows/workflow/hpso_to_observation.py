@@ -693,7 +693,7 @@ def generate_cost_per_product(
     -------
 
     """
-
+    # TODO lets re-engineer this to directly allocate costs to the nodes
     ignore_components = [
         'UpdateGSM', 'BeginMajorCycle', 'FinishMajorCycle',
         'FinishMinorCycle', 'BeginMinorCycle', 'Gather', 'Scatter',
@@ -706,23 +706,26 @@ def generate_cost_per_product(
     # total_data = -1
     # If we have a cost of 0, we fill with arbitrary FLOPS
     generic_cost = 1
+
+    # TODO process_task_cost (Comp and I/O)
     for component in task_dict:
         if component in ignore_components:
             continue
         else:
-            total_cost, total_data = identify_component_cost(
+
+            total_compute, total_data = identify_component_cost(
                 observation.hpso, observation.baseline, workflow,
                 component, component_sizing
             )
+        task_dict[component]['total_compute'] = total_compute
+        task_dict[component]['fraction_compute_cost'] = (
+                total_compute / task_dict[component]['node']
+        )
 
-        task_dict[component]['total_cost'] = total_cost
-        task_dict[component]['fraction_cost'] = (
-                total_cost / task_dict[component]['node']
-        )
-        task_dict[component]['total_data'] = total_data
-        task_dict[component]['fraction_data'] = (
-                total_data / task_dict[component]['out_edge']
-        )
+    major_loop_data = calculate_major_loop_data(
+        task_dict,
+        component_sizing,observation.hpso,observation.baseline, workflow
+    )
 
     for node in nx_graph.nodes:
         workflow, component, index = node.split('_')
@@ -730,37 +733,44 @@ def generate_cost_per_product(
             nx_graph.nodes[node]['comp'] = observation.duration
         else:
             compute = (
-                    observation.duration
-                    * task_dict[component]['fraction_cost']
-                    * SI.peta
+                observation.duration
+                * task_dict[component]['fraction_compute_cost']
+                * SI.peta
             )
             if compute > 0:
                 nx_graph.nodes[node]['comp'] = compute
             else:
                 nx_graph.nodes[node]['comp'] = observation.duration
 
+            if component == 'Degrid':
+                nx_graph.nodes[node]['rates'] = (
+                    observation.duration
+                    * major_loop_data[component]['fraction_io_cost']
+                    * SI.tera
+                )
+
+    #  Allocate edge costs (data)
+
     for edge in nx_graph.edges:
         producer = edge[0]
         workflow, component, index = producer.split('_')
         if not data:
             nx_graph[edge[0]][edge[1]]['data_size'] = 0
-        elif component in ignore_components:
+        elif component in major_loop_data:
             nx_graph[edge[0]][edge[1]]['data_size'] = (
                 observation.duration
+                * major_loop_data[component]['fraction_data_cost']
+                * SI.tera
             )
         else:
-            compute = (
-                    observation.duration
-                    * task_dict[component]['fraction_data']
-                    * SI.tera
-            )
-            if compute > 0:
-                nx_graph[edge[0]][edge[1]]['data_size'] = compute
-            else:
-                nx_graph[edge[0]][edge[1]]['data_size'] = \
-                    observation.duration * SI.kilo
+            nx_graph[edge[0]][edge[1]]['data_size'] = 0
 
     return nx_graph, task_dict
+
+
+def _process_task_cost(task_dict, graph):
+
+    return task_dict, graph
 
 
 def identify_component_cost(hpso, baseline, workflow, component,
@@ -892,6 +902,7 @@ def calculate_major_loop_data(task_dict, component_sizing,
         Modified task dictionary - keeps the functionality pure.
     """
     data = 0
+    data_dict = {'Degrid':{}, 'Subtract':{}, 'Flag':{}, 'Grid':{}}
     obs_frame = component_sizing[
         (component_sizing['hpso'] == hpso) &
         (component_sizing['Baseline'] == baseline)
@@ -902,12 +913,30 @@ def calculate_major_loop_data(task_dict, component_sizing,
             'Current functionality does not support distributed data costs'
         )
     else:
-        task_dict['Degrid']['total_io_cost'] = float(
+        data = float(
             obs_frame[
                 obs_frame['Pipeline'] == f'{workflow}'
             ]['Visibility read rate']
         )
-    return task_dict
+        data_dict['Degrid']['total_io_cost'] = data
+        data_dict['Degrid']['fraction_io_cost'] = (
+            data/task_dict['Degrid']['node']
+        )
+        for component in data_dict:
+            if component == 'Degrid':
+                data_dict[component]['total_io_cost'] = data
+                data_dict[component]['fraction_io_cost'] = (
+                        data / task_dict['Degrid']['node'])
+            else:
+                data_dict[component]['total_io_cost'] = 0
+                data_dict[component]['fraction_io_cost'] = 0
+
+            data_dict[component]['total_data_cost'] = data
+            data_dict[component]['fraction_data_cost'] = (
+                    data / task_dict[component]['node']
+            )
+
+    return data_dict
 
 
 def retrieve_component_cost(hpso, baseline, workflow, component,

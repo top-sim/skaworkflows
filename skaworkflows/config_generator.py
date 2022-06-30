@@ -131,6 +131,18 @@ def config_to_shadow(cfg_path: Path, prefix):
     return shadow_path
 
 
+def cli_generic_mid():
+    """
+    For the CLI interface, generate a generic SKA mid using
+    single_hpso_low.json
+
+    Returns
+    -------
+
+    """
+    return None
+
+
 if __name__ == '__main__':
     logging.basicConfig(level="INFO")
 
