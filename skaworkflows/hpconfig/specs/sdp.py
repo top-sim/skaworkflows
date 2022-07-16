@@ -65,6 +65,8 @@ class SDP_LOW_CDR(ARCHITECTURE):
     maximal_use_case = 1.5 * (10 ** 21)
     maximal_obs_time = 6 * 3600  # 6 hours, in seconds
 
+    def set_nodes(self, nodes):
+        self.nodes = nodes
 
     def to_df(self, human_readable=True):
         """
@@ -418,6 +420,9 @@ class SDP_MID_CDR(ARCHITECTURE):
     #: Largest science use case (in FLOPS)
     maximal_use_case = 1.5 * (10 ** 21)
     maximal_obs_time = 6 * 3600  # 6 hours, in seconds
+
+    def set_nodes(self, nodes):
+        self.nodes = nodes
 
     @property
     def total_storage(self):

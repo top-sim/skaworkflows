@@ -111,6 +111,8 @@ def create_config(
     }
 
     file_path = output_dir / cfg_name  # 'config.json'
+    if not file_path.parent.exists():
+        file_path.parent.mkdir(parents=True)
     with file_path.open('w') as fp:
         LOGGER.info(f'Writing final config to {file_path}')
         json.dump(final_config, fp, indent=2)

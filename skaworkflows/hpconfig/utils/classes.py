@@ -31,9 +31,11 @@ class ARCHITECTURE(ABC):
 
     # def __init__(self):
     #     pass
-
+    @abstractmethod
     def set_nodes(self, nodes):
-        self.nodes = nodes
+        pass
+        # self.nodes = nodes
+
 
     @property
     @abstractmethod
