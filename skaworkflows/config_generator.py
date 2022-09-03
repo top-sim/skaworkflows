@@ -21,42 +21,33 @@ import skaworkflows.workflow.hpso_to_observation as hto
 
 from pathlib import Path
 from skaworkflows.hpconfig.utils.classes import ARCHITECTURE
-from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR, SDP_PAR_MODEL_LOW, \
-    SDP_PAR_MODEL_MID
-
+from skaworkflows.hpconfig.specs.sdp import (
+    SDP_LOW_CDR, SDP_MID_CDR, SDP_PAR_MODEL_LOW, SDP_PAR_MODEL_MID
+)
 LOGGER = logging.getLogger(__name__)
 
 
 # TODO update to be path and config_name or something
 def create_config(
-        telescope_max,
+        telescope,
+        infrastructure,
+        nodes,
         hpso_path: Path,
         output_dir: Path,
         cfg_name: str,
-        component: Path,
-        system: Path,
-        cluster: ARCHITECTURE,
         base_graph_paths,
         timestep='seconds',
-        data=True,
-        **kwargs
+        data=False,
+        overwrite=False,
+        data_distribution='standard'
 ):
     """
     Parameters
     ----------
-    data
-    timestep
-    cluster
-    system
-    component
-    telescope_max
-    observations : list
-        Dictionary with the form {'observation_name': observation_count'}
-        where observation_count is an int
     output_dir : pathlib.Path
         Path where the 'config' folder will be created
 
-    **kwargs:
+    **data_distribution:
         Intended to be for non-standard system sizing directories - not
         currently implemented.
 
@@ -64,8 +55,50 @@ def create_config(
     -------
     Path where observation config is stored
     """
+
+    # Set defaults to SKA Low
+    if data:
+        data_suffix = ''
+    else:
+        data_suffix = 'no_data_'
+
+    if 'data_distribution' in data_distribution:
+        data_distribution = True
+
+    file_path = output_dir / f"{data_suffix}{cfg_name}" # 'config.json'
+    if file_path.exists() and not overwrite:
+        LOGGER.info("Config %s exists, skipping instruction...", file_path)
+        return file_path
+
+    component = common.LOW_COMPONENT_SIZING
+    system = common.LOW_TOTAL_SIZING
+    telescope_max = common.MAX_TEL_DEMAND_LOW
+    cluster = SDP_LOW_CDR()
+
+    if telescope == "low":
+        if infrastructure == "parametric":
+            cluster = SDP_PAR_MODEL_LOW()
+            cluster.set_nodes(nodes)
+        elif infrastructure == "cdr":
+            cluster.set_nodes(nodes)
+        else:
+            raise RuntimeError(f"{infrastructure} not supported")
+    elif telescope == "mid":
+        component = common.MID_TOTAL_SIZING
+        system = common.MID_TOTAL_SIZING
+        telescope_max = common.MAX_TEL_DEMAND_MID
+        if infrastructure == "parametric":
+            cluster = SDP_PAR_MODEL_MID()
+            cluster.set_nodes(nodes)
+        elif infrastructure == "cdr":
+            cluster = SDP_MID_CDR()
+            cluster.set_nodes(nodes)
+            raise RuntimeError(f"{infrastructure} not supported")
+    else:
+        raise RuntimeError(f"No telescope {telescope} found")
+
     LOGGER.info(
-        f"\tTelescope: SKA_LOW \n"
+        f"\tTelescope: \n"
         f"\tCreating config with:\n"
         f"\tOutput Directory: {output_dir}\n"
         f"\tBuffer ratio: {cluster.buffer_ratio}\n"
@@ -78,6 +111,7 @@ def create_config(
     system_sizing = pd.read_csv(system)
     cluster_dict = cluster.to_topsim_dictionary()
     observations = hto.process_hpso_from_spec(hpso_path)
+
     if not observations:
         RuntimeError('Observations do not exist!')
     LOGGER.debug(f"Creating an observation plan with {observations}")
@@ -88,14 +122,16 @@ def create_config(
 
     LOGGER.info(f"Producing the instrument config")
     final_instrument_config = hto.generate_instrument_config(
-        observation_plan, 512,
+        observation_plan, telescope_max,
         output_dir,
         component_sizing,
         system_sizing,
         cluster_dict,
         base_graph_paths,
-        data
+        data,
+        data_distribution
     )
+
     LOGGER.info(f"Producing buffer config")
     final_buffer_config = hto.create_buffer_config(
         cluster
@@ -110,7 +146,6 @@ def create_config(
         "timestep": timestep
     }
 
-    file_path = output_dir / cfg_name  # 'config.json'
     if not file_path.parent.exists():
         file_path.parent.mkdir(parents=True)
     with file_path.open('w') as fp:
@@ -149,7 +184,7 @@ if __name__ == '__main__':
     logging.basicConfig(level="INFO")
 
     LOGGER.info("Starting config generation...")
-    hpso_path = Path('tests/data/single_hpso_low.json')
+    hpso_path = Path('tests/data/single_hpso.json')
     output_dir = Path('output/ska_low')
     cfg_name = 'test_mid.json'
     component_sizing = Path(
@@ -168,15 +203,15 @@ if __name__ == '__main__':
     data = False
 
     cfg_path = create_config(
-        common.MAX_TEL_DEMAND,
-        hpso_path,
-        output_dir,
-        cfg_name,
-        component_sizing,
-        total_sizing,
-        sdp,
-        workflow_paths,
-        timestep,
-        data=data
+        telescope='low',
+        infrastructure='parametric',
+        nodes=896,
+        hpso_path=hpso_path,
+        output_dir=output_dir,
+        cfg_name=cfg_name,
+        base_graph_paths=workflow_paths,
+        timestep=timestep,
+        data=data,
+        data_distribution='jaf;lsdf'
     )
     config_to_shadow(cfg_path, 'shadow_')

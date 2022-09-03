@@ -17,8 +17,10 @@
 Common data and classes for access between diferrent pipeline codes
 """
 import importlib_resources
+from pathlib import Path
 from enum import Enum
 from skaworkflows import __version__
+import skaworkflows.data.pandas_sizing
 
 
 class LOWBaselines(Enum):
@@ -35,18 +37,44 @@ class SI:
     peta = 10 ** 15
 
 
-# These are 'binned' channels, by dividing the number of real channels by 64.
-skaworkflows_dir = importlib_resources.files('skaworkflows')
+data_pandas_sizing = importlib_resources.files("skaworkflows.data.pandas_sizing")
 
+# Telescope limits
+# These are 'binned' channels, by dividing the number of real channels by 64.
 MAX_BIN_CHANNELS = 256
-MAX_TEL_DEMAND = 512
-BASE_GRAPH_PATH = skaworkflows_dir / 'data/hpsos/hpso01/dprepa.graph'
-COMPONENT_SIZING_LOW = (
-        skaworkflows_dir / 'data/pandas_sizing/component_compute_SKA1_Low.csv'
+
+# Amount of the telescope an observation can request (e.g. 512 arrays)
+MAX_TEL_DEMAND_LOW = 512
+MAX_TEL_DEMAND_MID = 197
+
+# System sizing data paths
+LOW_TOTAL_SIZING = data_pandas_sizing.joinpath("total_compute_SKA1_Low.csv")
+
+
+LOW_COMPONENT_SIZING = Path(
+    data_pandas_sizing.joinpath("component_compute_SKA1_Low.csv")
 )
-TOTAL_SIZING_LOW = (
-    skaworkflows_dir / 'data/pandas_sizing/total_compute_SKA1_Low.csv'
+
+MID_TOTAL_SIZING = Path(
+    data_pandas_sizing.joinpath("total_compute_SKA1_Mid.csv")
 )
+
+MID_COMPONENT_SIZING = Path(
+    data_pandas_sizing.joinpath("component_compute_SKA1_Mid.csv")
+)
+
+graph_dir = importlib_resources.files("skaworkflows.data.hpsos")
+# Graph bases for workflows
+PROTOTYPE_GRAPH = graph_dir.joinpath("dprepa.graph")
+SCATTER_GRAPH = graph_dir.joinpath("drpepa_parallel.graph")
+BASE_GRAPH_PATH = graph_dir.joinpath('hpso01/dprepa.graph')
+
+# COMPONENT_SIZING_LOW = (
+#         skaworkflows_dir / 'data/pandas_sizing/component_compute_SKA1_Low.csv'
+# )
+# TOTAL_SIZING_LOW = (
+#     skaworkflows_dir / 'data/pandas_sizing/total_compute_SKA1_Low.csv'
+# )
 
 COMPUTE_KEYS = {
     'hpso': "HPSO",
@@ -131,11 +159,12 @@ pipeline_paths = {
     }
 }
 
-component_paths = {
-    'low_short': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_short.csv',
-    'low_mid': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_mid.csv',
-    'low_long': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_long.csv',
-    'mid_short': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_short.csv',
-    'mid_mid': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_mid.csv',
-    'mid_long': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_long.csv',
-}
+
+# component_paths = {
+#     'low_short': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_short.csv',
+#     'low_mid': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_mid.csv',
+#     'low_long': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_long.csv',
+#     'mid_short': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_short.csv',
+#     'mid_mid': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_mid.csv',
+#     'mid_long': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_long.csv',
+# }

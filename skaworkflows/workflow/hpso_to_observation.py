@@ -38,16 +38,16 @@ import networkx as nx
 from enum import Enum
 from pathlib import Path
 import skaworkflows.workflow.eagle_daliuge_translation as edt
-from skaworkflows.common import (
-    MAX_BIN_CHANNELS, pipeline_paths, SI,
-    WORKFLOW_HEADER, BASE_GRAPH_PATH,
-    MAX_TEL_DEMAND, TOTAL_SIZING_LOW)
+from skaworkflows.common import SI, WORKFLOW_HEADER, PROTOTYPE_GRAPH, SCATTER_GRAPH
 
 LOGGER = logging.getLogger(__name__)
 
 
 class HPSO(Enum):
-    ingest = ['ingest, rcal, ']
+    """
+    Describes which workflows are run for each HPSO
+    """
+    ingest = ['ingest, rcal']
     hpso1 = ['ingest', 'dprepa, dprepb,dprepc,dprepd']
     hpso2a = ['ingest']
 
@@ -414,7 +414,7 @@ def telescope_max(system_sizing, observation):
 
 def assign_observation_ingest_demands(
         observation_plan, cluster, system_sizing,
-        maximum_telescope=MAX_TEL_DEMAND
+        maximum_telescope
 ):
     """
 
@@ -450,7 +450,8 @@ def generate_instrument_config(
         system_sizing,
         cluster,
         base_graph_paths,
-        data=True
+        data=True,
+        data_distribution='standard'
 ):
     """
     Produce the `instrument level configuration for a TopSim compatible
@@ -482,9 +483,10 @@ def generate_instrument_config(
         observation_plan=observation_plan,
         cluster=cluster,
         system_sizing=system_sizing,
-        maximum_telescope=512
+        maximum_telescope=maximum_telescope
     )
     LOGGER.debug(f"{observation_plan=}")
+
     for o in observation_plan:
         if not o.planned:
             raise RuntimeError(
@@ -502,7 +504,8 @@ def generate_instrument_config(
         if not os.path.exists(wf_file_path):
             wf_file_path = generate_workflow_from_observation(
                 o, maximum_telescope, config_dir_path,
-                component_sizing, wf_file_name, base_graph_paths, data=data
+                component_sizing, wf_file_name, base_graph_paths, data=data,
+                data_distribution=data_distribution
             )
         else:
             wf_file_path = wf_file_path
@@ -571,7 +574,6 @@ def create_single_observation_for_instrument(observation, workflow_path):
 
     """
 
-
 def generate_workflow_from_observation(
         observation,
         telescope_max,
@@ -580,7 +582,8 @@ def generate_workflow_from_observation(
         workflow_path_name,
         base_graph_paths,
         concat=True,
-        data=True
+        data=True,
+        data_distribution='standard'
 ):
     """
     Given a pipeline and observation specification, generate a workflow file
@@ -628,6 +631,7 @@ def generate_workflow_from_observation(
     final_graphs = {}
     for workflow in observation.workflows:
         base_graph = base_graph_paths[workflow]
+        _match_graph_options(base_graph)
         LOGGER.debug(f"Using {base_graph} as base workflow.")
         channel_lgt = edt.update_number_of_channels(base_graph, channels)
         intermed_graph, task_dict = edt.eagle_to_nx(
@@ -635,8 +639,8 @@ def generate_workflow_from_observation(
         )
         intermed_graph, task_dict = generate_cost_per_product(
             intermed_graph, task_dict, observation, workflow,
-            component_sizing, data=data
-        )
+                component_sizing, data=data, data_distribution=data_distribution
+            )
         final_graphs[workflow] = intermed_graph
 
     final_workflow = edt.concatenate_workflows(final_graphs,
@@ -654,13 +658,35 @@ def generate_workflow_from_observation(
     return Path(final_path)
 
 
+def _match_graph_options(graph_type: str):
+    """
+    Given the path
+    Parameters
+    ----------
+    graph_type: str
+        Which base graph options we have
+
+    Returns
+    -------
+
+    """
+    if graph_type == 'prototype':
+        return PROTOTYPE_GRAPH
+    elif graph_type == 'scatter':
+        return SCATTER_GRAPH
+    else:
+        raise RuntimeError(f'graph_type {graph_type} unsupported\n'
+                           f'Currently support prototype or scatter.')
+
+
 def generate_cost_per_product(
         nx_graph,
         task_dict,
         observation,
         workflow,
         component_sizing,
-        data=True
+        data=True,
+        **data_distribution
 ):
     """
     Produce a cost value per node within the workflow graph for the given
@@ -724,7 +750,11 @@ def generate_cost_per_product(
 
     major_loop_data = calculate_major_loop_data(
         task_dict,
-        component_sizing,observation.hpso,observation.baseline, workflow
+        component_sizing,
+        observation.hpso,
+        observation.baseline,
+        workflow,
+        data_distribution
     )
 
     for node in nx_graph.nodes:
@@ -872,7 +902,7 @@ def identify_component_cost(hpso, baseline, workflow, component,
 
 
 def calculate_major_loop_data(task_dict, component_sizing,
-                              hpso, baseline, workflow, distribute=False):
+                              hpso, baseline, workflow, data_distribution):
     """
     If we want to take data into account in the way that the parametric model does,
     we use their visibility read rate (Rio) value in their model.
@@ -908,11 +938,11 @@ def calculate_major_loop_data(task_dict, component_sizing,
         (component_sizing['Baseline'] == baseline)
         ]
 
-    if distribute:
+    if data_distribution == 'distribute':
         raise NotImplementedError(
             'Current functionality does not support distributed data costs'
         )
-    else:
+    elif data_distribution == 'standard':
         data = float(
             obs_frame[
                 obs_frame['Pipeline'] == f'{workflow}'
@@ -926,15 +956,18 @@ def calculate_major_loop_data(task_dict, component_sizing,
             if component == 'Degrid':
                 data_dict[component]['total_io_cost'] = data
                 data_dict[component]['fraction_io_cost'] = (
-                        data / task_dict['Degrid']['node'])
+                    data / task_dict['Degrid']['node']
+                )
             else:
                 data_dict[component]['total_io_cost'] = 0
                 data_dict[component]['fraction_io_cost'] = 0
 
             data_dict[component]['total_data_cost'] = data
             data_dict[component]['fraction_data_cost'] = (
-                    data / task_dict[component]['node']
+                data / task_dict[component]['node']
             )
+    else:
+        raise RuntimeError('Passing incorrect data distribution method')
 
     return data_dict
 
