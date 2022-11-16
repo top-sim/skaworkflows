@@ -161,8 +161,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
 
         """
         # self.observation_lis
-        base_graph = Path('skaworkflows/data/hpsos/dprepa.graph')
-        base_graph_paths = {"DPrepA": base_graph, "DPrepB": base_graph}
+        base_graph_paths = {"DPrepA": "prototype", "DPrepB": "prototype"}
         final_instrument_config = generate_instrument_config(
             self.observation_list, 512,
             self.config_dir_path,

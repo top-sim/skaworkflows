@@ -630,8 +630,8 @@ def generate_workflow_from_observation(
     # Unroll the graph
     final_graphs = {}
     for workflow in observation.workflows:
-        base_graph = base_graph_paths[workflow]
-        _match_graph_options(base_graph)
+        base_graph_type = base_graph_paths[workflow]
+        base_graph = _match_graph_options(base_graph_type)
         LOGGER.debug(f"Using {base_graph} as base workflow.")
         channel_lgt = edt.update_number_of_channels(base_graph, channels)
         intermed_graph, task_dict = edt.eagle_to_nx(
@@ -686,7 +686,7 @@ def generate_cost_per_product(
         workflow,
         component_sizing,
         data=True,
-        **data_distribution
+        data_distribution="standard"
 ):
     """
     Produce a cost value per node within the workflow graph for the given

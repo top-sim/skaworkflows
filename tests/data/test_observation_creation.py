@@ -19,6 +19,7 @@ from pathlib import Path
 
 import skaworkflows.workflow.hpso_to_observation as hto
 
+from skaworkflows.common import LOWBaselines
 
 @pytest.fixture()
 def read_hpso_spec():
@@ -39,7 +40,6 @@ def test_obs_list_length_from_spec(read_hpso_spec):
     obslist = hto.process_hpso_from_spec(read_hpso_spec)
     assert len(obslist) == 5
 
-
 def test_obs_list_hpso_attributes(read_hpso_spec):
     obslist = hto.process_hpso_from_spec(read_hpso_spec)
     o = obslist[0]
@@ -49,5 +49,5 @@ def test_obs_list_hpso_attributes(read_hpso_spec):
     o = obslist[2]
     assert o.name == 'hpso01_2'
     assert o.demand == 256
-    assert o.baseline == hto.Baselines['short']
+    assert o.baseline == LOWBaselines.short.name
 

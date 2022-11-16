@@ -245,7 +245,7 @@ class TestWorkflowFromObservation(unittest.TestCase):
             )
             intermed_graph, task_dict = hpo.generate_cost_per_product(
                 nx_graph, task_dict, self.obs1, workflow,
-                self.component_sizing
+                self.component_sizing,
             )
             final_graphs[workflow] = intermed_graph
         final_graph = edt.concatenate_workflows(final_graphs,
@@ -518,8 +518,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         """
         # Get an observation object and create a file for the associated HPSO
         self.assertEqual(512, self.telescope_max)
-        base_graph = Path('skaworkflows/data/hpsos/dprepa.graph')
-        base_graph_paths = {"DPrepA": base_graph, "DPrepB": base_graph}
+        base_graph_paths = {"DPrepA": "prototype", "DPrepB": "prototype"}
         workflow_path_name = hpo._create_workflow_path_name(self.obs1)
         self.assertRaises(
             FileNotFoundError,
@@ -558,8 +557,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         config_dir_path = Path(self.config_dir)
         config_dir_path.mkdir(exist_ok=True)
         assert config_dir_path.exists()
-        base_graph = Path('skaworkflows/data/hpsos/dprepa.graph')
-        base_graph_paths = {"DPrepA": base_graph, "DPrepB": base_graph}
+        base_graph_paths = {"DPrepA": "prototype", "DPrepB": "prototype"}
 
         result = hpo.generate_workflow_from_observation(
             self.obs1, self.telescope_max, self.config_dir,
