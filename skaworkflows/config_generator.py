@@ -180,6 +180,22 @@ def cli_generic_mid():
     return None
 
 
+def create_config_from_file(path: Path):
+    """
+    Generate TopSim-compatible configuration from JSON
+    ----------
+    path : Path to the configuration
+
+    Returns
+    -------
+    Path names for the created config
+    """
+
+    with path.open() as f:
+        configuration_dict = json.loads(f)
+
+
+
 if __name__ == '__main__':
     logging.basicConfig(level="INFO")
 

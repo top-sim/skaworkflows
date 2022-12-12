@@ -99,13 +99,13 @@ class ARCHITECTURE(ABC):
             "resources": {
                 "cat0_m0": {
                     "flops": 84,
-                    "rates": 10
+                    "compute_bandwidth": 10
                 },
                 .....
                 },
                 "cat1_m16": {
                     "flops": 128,
-                    "rates": 16
+                    "compute_bandwidth": 16
                 },
 
         Returns

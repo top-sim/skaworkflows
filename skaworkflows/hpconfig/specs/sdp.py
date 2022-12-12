@@ -211,7 +211,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
                 "resources": {
                     "XeonIvyBridge_m0": {
                         "flops": 48000000.0,
-                        "rates": 10.0
+                        "compute_bandwidth": 10.0
                     },
                 }
             }
@@ -227,7 +227,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
         for i in range(0, self.nodes):
             node_dict[f"GenericSDP_m{i}"] = {
                 f"flops": self.gpu_peak_flops * self.gpu_per_node,
-                f"rates": self.ethernet,
+                f"compute_bandwidth": self.ethernet,
                 f"memory": self.memory_per_node
             }
             cluster = {
@@ -238,7 +238,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
             },
             'system': {
                 'resources': node_dict,
-                'bandwidth': self.ethernet
+                'system_bandwidth': self.ethernet
             }
         }
         return cluster
@@ -372,7 +372,7 @@ class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
         for i in range(0, self.nodes):
             node_dict[f"GenericSDP_m{i}"] = {
                 f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
-                f"rates": int(self.total_compute_buffer_rate / self.nodes),
+                f"compute_bandwidth": int(self.total_compute_buffer_rate / self.nodes),
                 f"memory": self.memory_per_node
             }
         cluster = {
@@ -383,7 +383,7 @@ class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
             },
             'system': {
                 'resources': node_dict,
-                'bandwidth': self.ethernet
+                'system_bandwidth': self.ethernet
             }
         }
         return cluster
@@ -598,7 +598,7 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
         I/O bandwidth used by the SDP to determine the rate at which we can
         read data at runtime.
 
-        Used in the "rates" value in the TopSim Dictionary for this architecture
+        Used in the "compute_bandwidth" value in the TopSim Dictionary for this architecture
 
         Notes
         ------
@@ -645,7 +645,7 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
         for i in range(0, self.nodes):
             node_dict[f"GenericSDP_m{i}"] = {
                 f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
-                f"rates": int(self.total_compute_buffer_rate / self.nodes),
+                f"compute_bandwidth": int(self.total_compute_buffer_rate / self.nodes),
                 f"memory": self.memory_per_node
             }
         cluster = {
@@ -656,7 +656,7 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
             },
             'system': {
                 'resources': node_dict,
-                'bandwidth': self.ethernet
+                'system_bandwidth': self.ethernet
             }
         }
         return cluster

@@ -151,7 +151,7 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         self.assertFalse('DPrepA_Flag_3' in nx_graph.nodes)
         # make sure the data is consistent
         example_edge_attr = {
-            "data_size": 0,
+            "transfer_data": 0,
             "u": "1_-4_0/0",
             "v": "1_-13_0/0/1/0",
             "data_drop_oid": "1_-26_0/0",
@@ -176,7 +176,7 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         final_graph, task_dict = edt.eagle_to_nx(LGT_PATH, 'DPrepA')
 
         example_edge_data = {
-            "data_size": 0,
+            "transfer_data": 0,
             "u": "1_-4_0/0",
             "v": "1_-13_0/0/1/0",
             "data_drop_oid": "1_-26_0/0",
@@ -317,7 +317,7 @@ class TestWorkflowFromObservation(unittest.TestCase):
         )
         u = 'ICAL_Gather_0'
         v = 'DPrepA_FrequencySplit_0'
-        self.assertEqual(0, final_graph.edges[u, v]['data_size'])
+        self.assertEqual(0, final_graph.edges[u, v]["transfer_data"])
 
 
 
@@ -393,17 +393,18 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
             final_workflow.nodes['DPrepA_Degrid_0']['comp'],
             delta=1000
         )
-        # Check that the total task memory rates (i/o) is correct
+
+        # Check that the total task data (i/o) is correct
         self.assertAlmostEqual(
             0.4087230428987958 * self.obs1.duration * SI.tera,
-            final_workflow.nodes['DPrepA_Degrid_0']['rates'],
+            final_workflow.nodes['DPrepA_Degrid_0']['task_data'],
             delta=1000
         )
 
         self.assertAlmostEqual(
             0.4087230428987958 * self.obs1.duration * SI.tera,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
-                'data_size'
+                "transfer_data"
             ],
             delta=1000
         )
@@ -426,7 +427,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         self.assertAlmostEqual(
             0.006386297545293684 * self.obs1.duration * SI.tera,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
-                'data_size'
+                "transfer_data"
             ],
             delta=1000
         )

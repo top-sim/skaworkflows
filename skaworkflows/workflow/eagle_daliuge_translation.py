@@ -278,7 +278,7 @@ def daliuge_to_nx(dlg_json_dict, workflow):
                             f'{workflow}_{labels[u]}',
                             f'{workflow}_{labels[v]}',
                             {
-                                'data_size': 0,
+                                "transfer_data": 0,
                                 'u': u,
                                 'v': v,
                                 'data_drop_oid': element['oid']

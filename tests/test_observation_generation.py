@@ -255,7 +255,7 @@ class testLowParametricBufferConfig(unittest.TestCase):
         )
         self.assertEqual(
             int(self.sdp.total_compute_buffer_rate/self.sdp.nodes),
-            self.cluster['system']['resources']['GenericSDP_m0']['rates'],
+            self.cluster['system']['resources']['GenericSDP_m0']["compute_bandwidth"],
         )
 
 class testMidParametricBufferConfig(unittest.TestCase):
@@ -294,7 +294,7 @@ class testMidParametricBufferConfig(unittest.TestCase):
         )
         self.assertEqual(
             int(self.sdp.total_compute_buffer_rate/self.sdp.nodes),
-            self.cluster['system']['resources']['GenericSDP_m0']['rates'],
+            self.cluster['system']['resources']['GenericSDP_m0']["compute_bandwidth"],
         )
 
 

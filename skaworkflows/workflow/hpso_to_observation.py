@@ -773,7 +773,7 @@ def generate_cost_per_product(
                 nx_graph.nodes[node]['comp'] = observation.duration
 
             if component == 'Degrid':
-                nx_graph.nodes[node]['rates'] = (
+                nx_graph.nodes[node]['task_data'] = (
                     observation.duration
                     * major_loop_data[component]['fraction_io_cost']
                     * SI.tera
@@ -785,15 +785,15 @@ def generate_cost_per_product(
         producer = edge[0]
         workflow, component, index = producer.split('_')
         if not data:
-            nx_graph[edge[0]][edge[1]]['data_size'] = 0
+            nx_graph[edge[0]][edge[1]]["transfer_data"] = 0
         elif component in major_loop_data:
-            nx_graph[edge[0]][edge[1]]['data_size'] = (
+            nx_graph[edge[0]][edge[1]]["transfer_data"] = (
                 observation.duration
                 * major_loop_data[component]['fraction_data_cost']
                 * SI.tera
             )
         else:
-            nx_graph[edge[0]][edge[1]]['data_size'] = 0
+            nx_graph[edge[0]][edge[1]]["transfer_data"] = 0
 
     return nx_graph, task_dict
 
@@ -1254,10 +1254,10 @@ zx
     >>>            "resources": {
     >>>                    "cat0_m0": {
     >>>                        "flops": 35000,
-    >>>                        "rates": 10
+    >>>                        "compute_bandwidth": 10
     >>>                    },
     >>>            },
-    >>>            "bandwidth": 1.0
+    >>>            "system_bandwidth": 1.0
     >>>        }
     >>>    },
 

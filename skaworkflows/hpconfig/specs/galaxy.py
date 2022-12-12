@@ -120,14 +120,14 @@ class PawseyGalaxy:
             for i in range(num):
                 resources[f'{str(cpu_type)}_m{i}'] = {
                     'flops': cpu_type.total_flops(),
-                    'rates': 1.0  # TODO update when uncover the value
+                    "compute_bandwidth": 1.0  # TODO update when uncover the value
                 }
         for gpu_type, num in self.architecture['gpu'].items():
             for i in range(num):
                 resources[f'{str(gpu_type)}_m{i}'] = {
                     'single_flops': gpu_type.single_pflops,
                     'doulbe_flops': gpu_type.double_pflops,
-                    'rates': 1.0  # TODO update when uncover the value
+                    "compute_bandwidth": 1.0  # TODO update when uncover the value
                 }
 
         arch = {}
@@ -150,7 +150,7 @@ class PawseyGalaxy:
                 },
                 "system": {
                     "resources": resources,
-                    "bandwidth": 1.0  # TODO update when uncover the value
+                    "system_bandwidth": 1.0  # TODO update when uncover the value
                 }
             }
         }

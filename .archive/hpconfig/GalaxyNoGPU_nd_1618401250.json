@@ -15,86 +15,86 @@
             "resources": {
                 "XeonIvyBridge_m0": {
                     "flops": 48000000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonIvyBridge_m1": {
                     "flops": 48000000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonIvyBridge_m2": {
                     "flops": 48000000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonIvyBridge_m3": {
                     "flops": 48000000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonIvyBridge_m4": {
                     "flops": 48000000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonIvyBridge_m5": {
                     "flops": 48000000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonIvyBridge_m6": {
                     "flops": 48000000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonIvyBridge_m7": {
                     "flops": 48000000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonIvyBridge_m8": {
                     "flops": 48000000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonIvyBridge_m9": {
                     "flops": 48000000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonSandyBridge_m0": {
                     "flops": 16640000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonSandyBridge_m1": {
                     "flops": 16640000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonSandyBridge_m2": {
                     "flops": 16640000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonSandyBridge_m3": {
                     "flops": 16640000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonSandyBridge_m4": {
                     "flops": 16640000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonSandyBridge_m5": {
                     "flops": 16640000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonSandyBridge_m6": {
                     "flops": 16640000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonSandyBridge_m7": {
                     "flops": 16640000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonSandyBridge_m8": {
                     "flops": 16640000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 },
                 "XeonSandyBridge_m9": {
                     "flops": 16640000.0,
-                    "rates": 1.0
+                    "compute_bandwidth": 1.0
                 }
             },
-            "bandwidth": 1.0
+            "system_bandwidth": 1.0
         }
     }
 }
