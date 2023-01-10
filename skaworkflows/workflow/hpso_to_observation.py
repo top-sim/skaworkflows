@@ -629,13 +629,17 @@ def generate_workflow_from_observation(
     channels = observation.channels
     # Unroll the graph
     final_graphs = {}
+    cached_base_graph = {}
     for workflow in observation.workflows:
         base_graph_type = base_graph_paths[workflow]
         base_graph = _match_graph_options(base_graph_type)
+        if base_graph not in cached_base_graph:
+            cached_base_graph[base_graph] = None
         LOGGER.debug(f"Using {base_graph} as base workflow.")
         channel_lgt = edt.update_number_of_channels(base_graph, channels)
-        intermed_graph, task_dict = edt.eagle_to_nx(
-            channel_lgt, workflow, file_in=False
+        intermed_graph, task_dict, cached_base_graph[base_graph]  = edt.eagle_to_nx(
+            channel_lgt, workflow, file_in=False,
+            cached_workflow=cached_base_graph[base_graph]
         )
         intermed_graph, task_dict = generate_cost_per_product(
             intermed_graph, task_dict, observation, workflow,

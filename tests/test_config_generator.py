@@ -14,21 +14,47 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from skaworkflows.config_generator import create_config
+import filecmp
+from pathlib import Path
 
-import unittest
+from skaworkflows import config_generator
 
-class TestConfigGeneratedNoData(unittest.TestCase):
 
-    def setUp(self) -> None:
-        pass
+def setUp():
+    hpso_path = (
+        "tests/data/maximal_low_imaging_896channels.json")
 
-    def TestGenerationExitsGracefully(self):
+    BASE_DIR = Path(f"tests")
 
-        # create_config('abc',)
-        pass
+    PROTOTYPE_WORKFLOW_PATHS = {"ICAL": "prototype", "DPrepA": "prototype",
+                                "DPrepB": "prototype",
+                                "DPrepC": "prototype",
+                                "DPrepD": "prototype"}
+    #
+    # SCATTER_WORKFLOW_PATHS = {"ICAL": "scatter", "DPrepA": "scatter",
+    #                           "DPrepB": "scatter", "DPrepC": "scatter",
+    #                           "DPrepD": "scatter"}
 
-    def TestConfigGenerationLow(self):
-        pass
+    LOW_CONFIG = Path("low_sdp_config")
 
-    def TestConfigGenerationMid(self):
-        pass
+    # TODO we are going to use the file-based config generation for this
+
+    base_graph_paths = PROTOTYPE_WORKFLOW_PATHS
+    low_path_str = BASE_DIR / 'tmp'
+    # Generate configuration with prototype SKA Workflow
+    config_generator.create_config('low', 'parametric', 896,
+                                   hpso_path=Path(hpso_path),
+                                   output_dir=Path(low_path_str),
+                                   cfg_name=f'{LOW_CONFIG}_n{896}.json',
+                                   base_graph_paths=PROTOTYPE_WORKFLOW_PATHS,
+                                   timestep='seconds', data=True)
+
+def test_config_generation_low():
+    setUp()
+    tmp_path = Path("tests/tmp/low_sdp_config_n896.json")
+    valid_json_path  = Path("tests/data/maximal_workflows/low_sdp_config_n896.json")
+    assert filecmp.cmp(valid_json_path, tmp_path)
+
+
+def TestConfigGenerationMid():
+    pass

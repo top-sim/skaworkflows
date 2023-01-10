@@ -173,7 +173,7 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         """
         self.assertRaises(FileExistsError, edt.eagle_to_nx, NO_PATH,
                           'DPrepA')
-        final_graph, task_dict = edt.eagle_to_nx(LGT_PATH, 'DPrepA')
+        final_graph, task_dict, cached_workflow_dict = edt.eagle_to_nx(LGT_PATH, 'DPrepA')
 
         example_edge_data = {
             "transfer_data": 0,
@@ -240,7 +240,7 @@ class TestWorkflowFromObservation(unittest.TestCase):
         #     base_graph, self.obs1.channels
         # )
         for workflow in self.obs1.workflows:
-            nx_graph, task_dict = edt.eagle_to_nx(
+            nx_graph, task_dict, cached_workflow_dict= edt.eagle_to_nx(
                 base_graph, workflow, file_in=True
             )
             intermed_graph, task_dict = hpo.generate_cost_per_product(
@@ -295,7 +295,7 @@ class TestWorkflowFromObservation(unittest.TestCase):
         base_graph = LGT_PATH
         self.obs1.workflows = workflows
         for workflow in self.obs1.workflows:
-            nx_graph, task_dict = edt.eagle_to_nx(
+            nx_graph, task_dict, cached_workflow_dict= edt.eagle_to_nx(
                 base_graph, workflow, file_in=True
             )
             intermed_graph, task_dict = hpo.generate_cost_per_product(
@@ -379,7 +379,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         wf = self.obs1.workflows[0]
         # generate a workflow without updating channels
         channels = self.obs1.channels
-        nx_graph, task_dict = edt.eagle_to_nx(LGT_PATH, wf)
+        nx_graph, task_dict, cached_workflow_dict= edt.eagle_to_nx(LGT_PATH, wf)
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_product(
             nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
@@ -412,7 +412,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         # UPDATE CHANNELS TO A MUCH LARGER NUMBER
         # self.assertTrue(False)
         channel_lgt = edt.update_number_of_channels(LGT_PATH, channels)
-        nx_graph, task_dict = edt.eagle_to_nx(channel_lgt, wf, file_in=False)
+        nx_graph, task_dict, cached_workflow_dict= edt.eagle_to_nx(channel_lgt, wf, file_in=False)
         self.assertEqual(128, task_dict['Degrid']['node'])
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_product(
@@ -442,7 +442,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         """
         wf = self.obs1.workflows[0]
 
-        nx_graph, task_dict = edt.eagle_to_nx(LGT_PATH, wf)
+        nx_graph, task_dict, cached_workflow_dict= edt.eagle_to_nx(LGT_PATH, wf)
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_product(
             nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
@@ -469,7 +469,7 @@ class TestSKAMidCosts(unittest.TestCase):
 
     def test_total_component_sum(self):
         wf = self.observation.workflows[0]
-        nx_graph, task_dict = edt.eagle_to_nx(LGT_PATH, wf)
+        nx_graph, task_dict, cached_workflow_dict= edt.eagle_to_nx(LGT_PATH, wf)
         # We've got basic workflow graph here without number of channels updated
         final_workflow, task_dict = hpo.generate_cost_per_product(
             nx_graph, task_dict, self.observation, wf, self.mid_component_sizing

@@ -155,7 +155,7 @@ def generate_graphic_from_networkx_graph(nx_graph, output_path):
     # cmd_list = ['dot', 'unroll', '-fv', '-L', ]
 
 
-def eagle_to_nx(eagle_graph, workflow, file_in=True):
+def eagle_to_nx(eagle_graph, workflow, file_in=True, cached_workflow=None):
     """
     Produce a JSON-compatible dictionary of a topsim graph
 
@@ -191,14 +191,19 @@ def eagle_to_nx(eagle_graph, workflow, file_in=True):
             raise FileExistsError(f'{eagle_graph} does not exist')
 
     LOGGER.info(f"Preparing {workflow} for LGT->PGT Translation")
-    daliuge_json = unroll_logical_graph(eagle_graph, file_in=file_in)
-    jdict = json.loads(daliuge_json)
+    if cached_workflow is None:
+        daliuge_json = unroll_logical_graph(eagle_graph, file_in=file_in)
+        jdict = json.loads(daliuge_json)
+    else:
+        LOGGER.info(f"Using cached translation of {eagle_graph} for workflow")
+        jdict = cached_workflow
+
     unrolled_nx, task_dict = daliuge_to_nx(jdict, workflow)
 
     # Convering DALiuGE nodes to readable nodes
     LOGGER.info(f"Graph converted to TopSim-compliant data")
 
-    return unrolled_nx, task_dict
+    return unrolled_nx, task_dict, jdict
 
 
 def daliuge_to_nx(dlg_json_dict, workflow):
@@ -320,7 +325,7 @@ def concatenate_workflows(
     final_graph = nx.compose_all(list(unrolled_graphs.values()))
     for workflow in workflows:
         curr_child = f'{workflow}_FrequencySplit_0'
-        final_graph.add_edge(curr_parent, curr_child, data_size=0)
+        final_graph.add_edge(curr_parent, curr_child, transfer_data=0)
         curr_parent = f'{workflow}_Gather_0'
 
     return final_graph
