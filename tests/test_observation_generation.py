@@ -32,7 +32,7 @@ from skaworkflows.common import SI
 from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR, SDP_PAR_MODEL_LOW, SDP_PAR_MODEL_MID
 
 DATA_DIR = 'data/parametric_model'
-LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
+LONG = f'{DATA_DIR}/2023-03-25_long_HPSOs.csv'
 
 SYSTEM_SIZING_DIR = 'skaworkflows/data/pandas_sizing'
 TOTAL_SYSTEM_SIZING = 'skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv'

@@ -126,7 +126,7 @@ def unroll_logical_graph(input_lgt, output_pgt_path=None, file_in=True):
         return result
     elif not file_in:
         result = subprocess.run(
-            ['dlg', 'unroll', '-L', '/dev/stdin'],
+            ['dlg', 'unroll', '-fv','-L', '/dev/stdin'],
             input=json.dumps(jdict), capture_output=True, text=True
         )
         return result.stdout
@@ -193,7 +193,10 @@ def eagle_to_nx(eagle_graph, workflow, file_in=True, cached_workflow=None):
     LOGGER.info(f"Preparing {workflow} for LGT->PGT Translation")
     if cached_workflow is None:
         daliuge_json = unroll_logical_graph(eagle_graph, file_in=file_in)
+        LOGGER.info("Finished translating graph")
         jdict = json.loads(daliuge_json)
+        with open(f"unrolled_{file_in}.json", 'w') as fp:
+            json.dump(jdict, fp, indent=2)
     else:
         LOGGER.info(f"Using cached translation of {eagle_graph} for workflow")
         jdict = cached_workflow
@@ -242,7 +245,7 @@ def daliuge_to_nx(dlg_json_dict, workflow):
     task_names = {}
 
     for element in dlg_json_dict:
-        if 'app' in element.keys():
+        if 'app' in element.keys() or 'appclass' in element.keys():
             oid = element['oid']
             label = element['nm']
             if label in task_names:
@@ -320,13 +323,14 @@ def concatenate_workflows(
     # final_graph = nx.DiGraph()
     start = workflows[0]
     start_graph = unrolled_graphs[start]
-    curr_parent = f'{start}_Gather_0'
+    curr_parent = f'{start}_End_0'
     workflows.remove(start)
     final_graph = nx.compose_all(list(unrolled_graphs.values()))
     for workflow in workflows:
-        curr_child = f'{workflow}_FrequencySplit_0'
-        final_graph.add_edge(curr_parent, curr_child, transfer_data=0)
-        curr_parent = f'{workflow}_Gather_0'
+        for i in range(str(final_graph.nodes).count(f"{workflow}_ExtractLSM")):
+            curr_child = f'{workflow}_ExtractLSM_{i}'
+            final_graph.add_edge(curr_parent, curr_child, transfer_data=0)
+        curr_parent = f'{workflow}_End_0'
 
     return final_graph
 

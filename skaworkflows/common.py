@@ -63,11 +63,13 @@ MID_COMPONENT_SIZING = Path(
     data_pandas_sizing.joinpath("component_compute_SKA1_Mid.csv")
 )
 
+BYTES_PER_VIS = 12.0
+
 graph_dir = importlib_resources.files("skaworkflows.data.hpsos")
 # Graph bases for workflows
-PROTOTYPE_GRAPH = graph_dir.joinpath("dprepa.graph")
-SCATTER_GRAPH = graph_dir.joinpath("drpepa_parallel.graph")
-BASE_GRAPH_PATH = graph_dir.joinpath('hpso01/dprepa.graph')
+PROTOTYPE_GRAPH = graph_dir.joinpath("cont_img_mvp_skaworkflows.graph")
+# PROTOTYPE_GRAPH = graph_dir.joinpath("dprepa.graph")
+SCATTER_GRAPH = graph_dir.joinpath("dprepa_parallel.graph")
 
 # COMPONENT_SIZING_LOW = (
 #         skaworkflows_dir / 'data/pandas_sizing/component_compute_SKA1_Low.csv'

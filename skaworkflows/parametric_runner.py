@@ -289,7 +289,7 @@ def calculate_parametric_runtime_estimates(csv_path, scenario, hpsos):
 if __name__ == '__main__':
     random.seed(0)
     LONG_SYSTEM_SIZING = Path(
-        "/home/rwb/github/sdp-par-model/2021-06-02_LongBaseline_HPSOs.csv"
+        "/home/rwb/github/sdp-par-model/2023-03-25_longBaseline_HPSOs.csv"
     )
     hpsos = [HPSOs.hpso13] # , HPSOs.hpso05a, HPSOs.hpso02a]
     scenario = 'mid-adjusted'

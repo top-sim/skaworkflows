@@ -6,9 +6,9 @@
 			"demand": 512,
 			"duration": 18000,
 			"workflows": [
-				"ical", "dprepa", "dprepb", "dprepc", "dprepd"
+				"ICAL", "DPrepA", "DPrepB", "DPrepC", "DPrepD"
 			],
-			"channels": 896,
+			"channels": 16,
 			"baseline": 65000
 		}
 	]

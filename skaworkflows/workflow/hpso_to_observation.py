@@ -38,7 +38,7 @@ import networkx as nx
 from enum import Enum
 from pathlib import Path
 import skaworkflows.workflow.eagle_daliuge_translation as edt
-from skaworkflows.common import SI, WORKFLOW_HEADER, PROTOTYPE_GRAPH, SCATTER_GRAPH
+from skaworkflows.common import SI, WORKFLOW_HEADER, PROTOTYPE_GRAPH, SCATTER_GRAPH, BYTES_PER_VIS
 
 LOGGER = logging.getLogger(__name__)
 
@@ -641,23 +641,28 @@ def generate_workflow_from_observation(
             channel_lgt, workflow, file_in=False,
             cached_workflow=cached_base_graph[base_graph]
         )
+
+        final_path = (f'{workflow_dir}/' + f'{workflow_path_name}')
+
         intermed_graph, task_dict = generate_cost_per_product(
             intermed_graph, task_dict, observation, workflow,
-                component_sizing, data=data, data_distribution=data_distribution
-            )
+            component_sizing, data=data, data_distribution=data_distribution
+        )
         final_graphs[workflow] = intermed_graph
+        workflow_data_path = f"{final_path}_{workflow}_data"
+        with open(workflow_data_path, 'w') as fp:
+            json.dump(task_dict, fp, indent=2)
 
     final_workflow = edt.concatenate_workflows(final_graphs,
                                                observation.workflows)
     final_json = produce_final_workflow_structure(final_workflow,
                                                   observation, time=False)
 
-    final_path = (
-            f'{workflow_dir}/'
-            + f'{workflow_path_name}'
-    )
+
     with open(final_path, 'w') as fp:
         json.dump(final_json, fp, indent=2)
+
+
 
     return Path(final_path)
 
@@ -690,7 +695,8 @@ def generate_cost_per_product(
         workflow,
         component_sizing,
         data=True,
-        data_distribution="standard"
+        data_distribution="standard",
+        final_path=None
 ):
     """
     Produce a cost value per node within the workflow graph for the given
@@ -727,7 +733,8 @@ def generate_cost_per_product(
     ignore_components = [
         'UpdateGSM', 'BeginMajorCycle', 'FinishMajorCycle',
         'FinishMinorCycle', 'BeginMinorCycle', 'Gather', 'Scatter',
-        'FrequencySplit'
+        'FrequencySplit','End', 'CalSourceFinding', 'SelfCalConverge',
+        'ExtractLSM','Raw-Vis-Copy','IdentifyComponent','lstnr'
     ]
     # EAGLE : System Sizing
     # total_product_costs = {}
@@ -751,16 +758,18 @@ def generate_cost_per_product(
         task_dict[component]['fraction_compute_cost'] = (
                 total_compute / task_dict[component]['node']
         )
+        task_dict[component]['total_data'] = total_data
+        task_dict[component]['fraction_data_cost'] = (
+                total_data / task_dict[component]['node'])
 
-    major_loop_data = calculate_major_loop_data(
-        task_dict,
-        component_sizing,
-        observation.hpso,
-        observation.baseline,
-        workflow,
-        data_distribution
-    )
-
+    # major_loop_data = calculate_major_loop_data(
+    #     task_dict,
+    #     component_sizing,
+    #     observation.hpso,
+    #     observation.baseline,
+    #     workflow,
+    #     data_distribution
+    # )
     for node in nx_graph.nodes:
         workflow, component, index = node.split('_')
         if component in ignore_components:
@@ -771,33 +780,50 @@ def generate_cost_per_product(
                 * task_dict[component]['fraction_compute_cost']
                 * SI.peta
             )
+            data_cost = (
+                    observation.duration
+                    * task_dict[component]['fraction_data_cost']
+                    * SI.mega
+                    * BYTES_PER_VIS
+            )
             if compute > 0:
                 nx_graph.nodes[node]['comp'] = compute
             else:
                 nx_graph.nodes[node]['comp'] = observation.duration
+            if data_cost > 0 and data:
+                nx_graph.nodes[node]['task_data'] = data_cost
+            else:
+                nx_graph.nodes[node]['task_data'] = 0
 
-            if component == 'Degrid':
-                nx_graph.nodes[node]['task_data'] = (
-                    observation.duration
-                    * major_loop_data[component]['fraction_io_cost']
-                    * SI.tera
-                )
+            # data = (
+            #     observation.duration
+            #     * task_dict[component]['fraction_data_cost']
+            #     * SI.mega
+            # )
 
     #  Allocate edge costs (data)
 
     for edge in nx_graph.edges:
         producer = edge[0]
         workflow, component, index = producer.split('_')
-        if not data:
+        if component in ignore_components:
             nx_graph[edge[0]][edge[1]]["transfer_data"] = 0
-        elif component in major_loop_data:
-            nx_graph[edge[0]][edge[1]]["transfer_data"] = (
-                observation.duration
-                * major_loop_data[component]['fraction_data_cost']
-                * SI.tera
-            )
         else:
-            nx_graph[edge[0]][edge[1]]["transfer_data"] = 0
+            data_cost = (
+                observation.duration
+                * task_dict[component]['fraction_data_cost']
+                * SI.mega * BYTES_PER_VIS
+            )
+            if not data:
+                nx_graph[edge[0]][edge[1]]["transfer_data"] = 0
+            # elif component in major_loop_data:
+            #     nx_graph[edge[0]][edge[1]]["transfer_data"] = (
+            #         observation.duration
+            #         * major_loop_data[component]['fraction_data_cost']
+            #         * SI.tera
+            #     )
+            else:
+                nx_graph[edge[0]][edge[1]]["transfer_data"] = data_cost
 
     return nx_graph, task_dict
 
@@ -888,7 +914,7 @@ def identify_component_cost(hpso, baseline, workflow, component,
             total_data += data
 
     elif component == 'Correct':
-        for compnt in ['Correct', 'Average']:
+        for compnt in ['Correct']:
             cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )

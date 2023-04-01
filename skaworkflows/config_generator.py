@@ -182,7 +182,7 @@ def cli_generic_mid():
 
 def create_config_from_file(path: Path):
     """
-    Generate TopSim-compatible configuration from JSON
+    Generate TopSim-compatible configuration from JSON specification
     ----------
     path : Path to the configuration
 
@@ -209,7 +209,7 @@ if __name__ == '__main__':
     total_sizing = Path(
         "skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv"
     )
-    wf = Path('skaworkflows/data/hpsos/dprepa.graph')
+    wf = 'prototype'
     workflow_paths = {
         "ICAL": wf, "DPrepA": wf, "DPrepB": wf, "DPrepC": wf, "DPrepD": wf
     }

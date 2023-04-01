@@ -35,9 +35,9 @@ from sdp_par_model import reports
 from sdp_par_model.parameters.definitions import *
 
 DATA_DIR = 'skaworkflows/data/sdp-par-model_output'
-SHORT = f'{DATA_DIR}/2021-06-02_short_HPSOs.csv'
-MID = f'{DATA_DIR}/2021-06-02_mid_HPSOs.csv'
-LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
+SHORT = f'{DATA_DIR}/2023-03-19_short_HPSOs.csv'
+MID = f'{DATA_DIR}/2023-03-19_mid_HPSOs.csv'
+LONG = f'{DATA_DIR}/2023-03-25_long_HPSOs.csv'
 # Copied from sdp-par-model repository; to make sure our self-generated
 # numbers are accurate.
 BACK_COMPATIBLE = f'tests/data/2021-02-03-895254e_hpsos.csv'
@@ -364,9 +364,9 @@ class TestParametricModelGeneration(unittest.TestCase):
         -------
         """
 
-        self.short_file = "2021-06-02_LowBaseline_HPSOs.csv"
-        self.mid_file = "2021-06-02_MidBaseline_HPSOs.csv"
-        self.long_file = "2021-06-02_HighBaseline_HPSOs.csv"
+        self.short_file = "2023-03-19_LowBaseline_HPSOs.csv"
+        self.mid_file = "2023-03-19_MidBaseline_HPSOs.csv"
+        self.long_file = "2023-03-19_HighBaseline_HPSOs.csv"
 
         self.short = {"Bmax": 4062.6}
         self.mid = {"Bmax": 32500}

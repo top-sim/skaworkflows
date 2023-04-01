@@ -22,10 +22,10 @@ from pathlib import Path
 from skaworkflows import config_generator
 
 hpso_path = (
-    "tests/generator/maximal_low_imaging_896channels.json"
+    "tests/data/maximal_workflows/maximal_low_imaging_896channels.json"
 )
 
-BASE_DIR = Path(f"tests/generator")
+BASE_DIR = Path(f"tests/data/maximal_workflows")
 
 PROTOTYPE_WORKFLOW_PATHS = {"ICAL": "prototype", "DPrepA": "prototype",
                             "DPrepB": "prototype", "DPrepC": "prototype",
@@ -35,7 +35,7 @@ PROTOTYPE_WORKFLOW_PATHS = {"ICAL": "prototype", "DPrepA": "prototype",
 LOW_CONFIG = Path("low_sdp_config")
 
 base_graph_paths = PROTOTYPE_WORKFLOW_PATHS
-low_path_str = BASE_DIR / 'compute_and_data_runtime'
+low_path_str = BASE_DIR
 
 config_generator.create_config('low', 'parametric', 896,
                                hpso_path=Path(hpso_path),
