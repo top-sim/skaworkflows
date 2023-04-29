@@ -734,7 +734,8 @@ def generate_cost_per_product(
         'UpdateGSM', 'BeginMajorCycle', 'FinishMajorCycle',
         'FinishMinorCycle', 'BeginMinorCycle', 'Gather', 'Scatter',
         'FrequencySplit','End', 'CalSourceFinding', 'SelfCalConverge',
-        'ExtractLSM','Raw-Vis-Copy','IdentifyComponent','lstnr'
+        'ExtractLSM','Raw-Vis-Copy','IdentifyComponent','lstnr','Phase Rotation Predict', 'Visibility Weighting',
+            'Gridding Kernel Update', 'Phase Rotation'
     ]
     # EAGLE : System Sizing
     # total_product_costs = {}

@@ -289,10 +289,10 @@ def calculate_parametric_runtime_estimates(csv_path, scenario, hpsos):
 if __name__ == '__main__':
     random.seed(0)
     LONG_SYSTEM_SIZING = Path(
-        "/home/rwb/github/sdp-par-model/2023-03-25_longBaseline_HPSOs.csv"
+        "skaworkflows/data/sdp-par-model_output/2023-04-22_long_HPSOs.csv"
     )
-    hpsos = [HPSOs.hpso13] # , HPSOs.hpso05a, HPSOs.hpso02a]
-    scenario = 'mid-adjusted'
+    hpsos = [HPSOs.hpso02a]
+    scenario = 'low-adjusted'
     result = calculate_parametric_runtime_estimates(
         LONG_SYSTEM_SIZING, scenario, hpsos
     )

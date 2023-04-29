@@ -84,7 +84,7 @@ def create_config(
         else:
             raise RuntimeError(f"{infrastructure} not supported")
     elif telescope == "mid":
-        component = common.MID_TOTAL_SIZING
+        component = common.MID_COMPONENT_SIZING
         system = common.MID_TOTAL_SIZING
         telescope_max = common.MAX_TEL_DEMAND_MID
         if infrastructure == "parametric":
