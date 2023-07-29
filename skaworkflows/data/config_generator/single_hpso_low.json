@@ -1,0 +1,15 @@
+{
+	"items": [
+		{
+			"count": 1,
+			"hpso": "hpso1",
+			"demand": 512,
+			"duration": 18000,
+			"workflows": [
+				"ICAL", "DPrepA", "DPrepB", "DPrepC", "DprepD"
+			],
+			"channels": 256,
+			"baseline": 65000.0
+		}
+	]
+}

@@ -17,10 +17,8 @@ from setuptools import setup, find_packages
 setup(
     name='skaworkflows',
     version='0.1.0',
-    packages=find_packages(
-        exclude=["*test*", "*hpconfig*", "examples", "docs", "data"]
-    ),
-    include_package_data=True,
+    packages=find_packages(exclude=["docs"]),
+    # include_package_data=True,
     install_requires=[
         'numpy>=1.2.0',
         'networkx>=2.0',
@@ -31,19 +29,11 @@ setup(
         'pydot',
         'coveralls',
         'sdp-par-model @ git+https://github.com/ska-telescope/sdp-par-model',
-        'daliuge-common @ git+https://github.com/ICRAR/daliuge.git#egg'
-        '&subdirectory=daliuge-common',
-        'daliuge-engine @ git+https://github.com/ICRAR/daliuge.git#egg'
-        '&subdirectory=daliuge-engine',
-        'daliuge-translator @ git+https://github.com/ICRAR/daliuge.git#egg'
-        '&subdirectory=daliuge-translator'
+        'daliuge-common @ git+https://github.com/ICRAR/daliuge.git#egg&subdirectory=daliuge-common',
+        'daliuge-engine @ git+https://github.com/ICRAR/daliuge.git#egg&subdirectory=daliuge-engine',
+        'daliuge-translator @ git+https://github.com/ICRAR/daliuge.git#egg&subdirectory=daliuge-translator',
     ],
-    # dependency_links=[
-    #     'https://github.com/ska-telescope/sdp-par-model.git"'
-    # ],
-
-    # package_dir={'': 'shadow'},
-    # url='https://github.com/top-sim/topsim',
+    url='https://github.com/top-sim/skaworkflows',
     license='GNU',
     author='Ryan Bunney',
     author_email='ryan.bunney@icrar.org',

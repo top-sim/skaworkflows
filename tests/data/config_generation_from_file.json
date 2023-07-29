@@ -1,0 +1,16 @@
+{
+  "telescope": "low",
+  "infrastructure": {
+    "name": "cdr",
+    "nodes": 896
+  },
+  "observation_plan_path": "single_hpso.json",
+  "output_directory": "output/",
+  "base_graphs": {
+    "ICAL": "prototype",
+    "DPrepA": "prototype",
+    "DPrepB": "prototype",
+    "DPrepC": "prototype",
+    "DPrepD": "prototype"
+  }
+}

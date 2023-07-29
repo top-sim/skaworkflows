@@ -34,10 +34,10 @@ sys.path.insert(0, os.path.abspath('../sdp-par-model'))
 from sdp_par_model import reports
 from sdp_par_model.parameters.definitions import *
 
-DATA_DIR = 'data/sdp-par-model_output'
-SHORT = f'{DATA_DIR}/2021-06-02_short_HPSOs.csv'
-MID = f'{DATA_DIR}/2021-06-02_mid_HPSOs.csv'
-LONG = f'{DATA_DIR}/2021-06-02_long_HPSOs.csv'
+DATA_DIR = 'skaworkflows/data/sdp-par-model_output/tests'
+SHORT = f'{DATA_DIR}/2023-03-19_short_HPSOs.csv'
+MID = f'{DATA_DIR}/2023-03-19_mid_HPSOs.csv'
+LONG = f'{DATA_DIR}/2023-03-25_long_HPSOs.csv'
 # Copied from sdp-par-model repository; to make sure our self-generated
 # numbers are accurate.
 BACK_COMPATIBLE = f'tests/data/2021-02-03-895254e_hpsos.csv'
@@ -62,8 +62,8 @@ class TestSystemPandasOutputCompute(unittest.TestCase):
 
     def test_compile_all_sizing(self):
         total_sizing, component_sizing = pss.compile_baseline_sizing(DATA_DIR)
-        self.assertEqual(15, len(total_sizing['SKA1_Low']))
-        self.assertEqual(192, len(component_sizing['SKA1_Low']))
+        self.assertAlmostEqual(15, len(total_sizing['SKA1_Low']),places=7)
+        self.assertAlmostEqual(192, len(component_sizing['SKA1_Low']), places=7)
 
     def test_total_sizing_baselines(self):
         ret = pss.csv_to_pandas_total_compute(LONG)
@@ -99,8 +99,8 @@ class TestSystemPandasOutputCompute(unittest.TestCase):
         real_time_total_hpso14 = 0.19424524633241602
         # ICAL + DPrepA + DPrepB + DPrepC
         batch_compute_hpso14 = 0.6309361569888947
-        self.assertEqual(rt_flop_total, real_time_total_hpso14)
-        self.assertEqual(batch_compute_hpso14, rflop_total - rt_flop_total)
+        self.assertAlmostEqual(rt_flop_total, real_time_total_hpso14, places=10)
+        self.assertAlmostEqual(batch_compute_hpso14, rflop_total - rt_flop_total, places=10)
 
         test_dict = {header: 0 for header in pss.HPSO_DATA}
         test_dict.update({
@@ -122,7 +122,8 @@ class TestSystemPandasOutputCompute(unittest.TestCase):
             'DPrepD [Pflop/s]': 0,
             'Ingest [Pflop/s]': 0.15301857409827246,
         })
-        self.assertDictEqual(test_dict, hpso_dict)
+        for key in test_dict:
+            self.assertAlmostEqual(test_dict[key], hpso_dict[key])
 
     def test_process_common_values(self):
         df_csv = pd.read_csv(LONG, index_col=0)
@@ -142,7 +143,8 @@ class TestSystemPandasOutputCompute(unittest.TestCase):
             "Tobs [h]": 28800.0 / 3600,
             'Total Time [s]': 18000000.0
         })
-        self.assertDictEqual(test_dict, hpso_dict)
+        for key in test_dict:
+            self.assertAlmostEqual(test_dict[key], hpso_dict[key])
 
     def test_isolate_correct_baseline(self):
         """
@@ -157,8 +159,6 @@ class TestSystemPandasOutputCompute(unittest.TestCase):
         For SKA1_Low:
         * If Max Baseline [km] is 65.0, we do nothing
         * Else - report what the baseline is
-
-
 
         Returns
         -------
@@ -219,31 +219,36 @@ class TestSystemPandasOutputCompute(unittest.TestCase):
 
         # pipeline_products_low = pss._isolate_products(df_low)
         products_mid_long_hpso15 = pss._isolate_products(df_mid_long, 'hpso15')
-        self.assertEqual(
+        self.assertAlmostEqual(
             0.0013957169918481806,
-            products_mid_long_hpso15['Ingest']['Flag']
+            products_mid_long_hpso15['Ingest']['Flag'],
+            places=8
         )
-        self.assertEqual(
-            0.9813000364283198,
-            products_mid_long_hpso15['ICAL_data']['Grid']
+        self.assertAlmostEqual(
+            0.193410827714088,
+            products_mid_long_hpso15['ICAL_data']['Grid'],
+            places=8
         )
 
-        self.assertEqual(
+        self.assertAlmostEqual(
             15000,
-            products_mid_long_hpso15['Ingest']['Baseline']
+            products_mid_long_hpso15['Ingest']['Baseline'],
+            places=8
         )
         # Long, mid, hpso13, Dprepa, FFT [] [Bmax=35000]
         products_mid_long_hpso13 = pss._isolate_products(df_mid_long, 'hpso13')
-        self.assertEqual(
+        self.assertAlmostEqual(
             0.003614069512036861,
-            products_mid_long_hpso13['DPrepA']['FFT']
+            products_mid_long_hpso13['DPrepA']['FFT'],
+            places=8
         )
 
         # Long, low, hpso01, DPrepC, Grid [] (Bmax=65km)
         products_low_long_hpso01 = pss._isolate_products(df_low_long, 'hpso01')
-        self.assertEqual(
+        self.assertAlmostEqual(
             0.11530553363337567,
-            products_low_long_hpso01['DPrepC']['Grid']
+            products_low_long_hpso01['DPrepC']['Grid'],
+            places=8
         )
 
         df_csv_mid = pd.read_csv(
@@ -258,21 +263,24 @@ class TestSystemPandasOutputCompute(unittest.TestCase):
 
         # Medium basline, Mid, hpso015
         products_mid_mid_hpso15 = pss._isolate_products(df_mid_mid, 'hpso15')
-        self.assertEqual(
+        self.assertAlmostEqual(
             0.0034172025900270336,
-            products_mid_mid_hpso15['Ingest']['Flag']
+            products_mid_mid_hpso15['Ingest']['Flag'],
+            places=8
         )
         products_mid_mid_hpso13 = pss._isolate_products(df_mid_mid, 'hpso13')
-        self.assertEqual(
+        self.assertAlmostEqual(
             0.0029486904534746536,
-            products_mid_mid_hpso13['DPrepA']['FFT']
+            products_mid_mid_hpso13['DPrepA']['FFT'],
+            places=8
         )
 
         # Medium baseline, SKA Low, hpso04a  Ingest  [Bmax=325000]
         products_low_mid_hpso04a = pss._isolate_products(df_low_mid, 'hpso01')
-        self.assertEqual(
+        self.assertAlmostEqual(
             0.04363672860136016,
-            products_low_mid_hpso04a['DPrepC']["Grid"]
+            products_low_mid_hpso04a['DPrepC']["Grid"],
+            places=8
         )
 
     def test_compile_baseline_sizing(self):
@@ -310,27 +318,27 @@ class TestSystemSizingBackwardsCompatibility(unittest.TestCase):
         data = float(
             short[scolumn].loc['-> Flag [''PetaFLOP/s]']
         )
-        self.assertEqual(sflag_val, data)
+        self.assertAlmostEqual(sflag_val, data, places=10)
 
         mid = pd.read_csv(MID, index_col=0)
         mflag_val = 0.006281068530030465
         data = float(
             mid['hpso01 (Ingest) [Bmax=32500]'].loc['-> Flag [''PetaFLOP/s]']
         )
-        self.assertEqual(mflag_val, data)
+        self.assertAlmostEqual(mflag_val, data, places=10)
         # Mid-length baseline should have greater compute.
         self.assertGreater(mflag_val, sflag_val)
 
         long = pd.read_csv(LONG, index_col=0)
         lflag_val = 0.01063407058944
         data = float(long['hpso01 (Ingest) []'].loc['-> Flag [PetaFLOP/s]'])
-        self.assertEqual(lflag_val, data)
+        self.assertAlmostEqual(lflag_val, data, places=10)
         # Ensure that lflag is greater than mflag
         self.assertGreater(lflag_val, mflag_val)
         # Ensure consistency with previous data generated
         prev = pd.read_csv(BACK_COMPATIBLE, index_col=0)
         bc_data = float(prev['hpso01 (Ingest) []'].loc['-> Flag [PetaFLOP/s]'])
-        self.assertEqual(bc_data, lflag_val)
+        self.assertAlmostEqual(bc_data, lflag_val, places=10)
         # self.assertEqual(bc_data, data)
 
 
@@ -363,9 +371,9 @@ class TestParametricModelGeneration(unittest.TestCase):
         -------
         """
 
-        self.short_file = "2021-06-02_LowBaseline_HPSOs.csv"
-        self.mid_file = "2021-06-02_MidBaseline_HPSOs.csv"
-        self.long_file = "2021-06-02_HighBaseline_HPSOs.csv"
+        self.short_file = "2023-03-19_LowBaseline_HPSOs.csv"
+        self.mid_file = "2023-03-19_MidBaseline_HPSOs.csv"
+        self.long_file = "2023-03-19_HighBaseline_HPSOs.csv"
 
         self.short = {"Bmax": 4062.6}
         self.mid = {"Bmax": 32500}

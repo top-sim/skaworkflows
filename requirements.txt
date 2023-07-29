@@ -1,0 +1,13 @@
+numpy>=1.2.0
+networkx>=2.0
+matplotlib>=3.0
+pandas>=0.20
+coverage
+IPython
+ipywidgets
+pydot
+coveralls
+git+https://github.com/top-sim/sdp-par-model
+git+https://github.com/ICRAR/daliuge.git#egg&subdirectory=daliuge-common
+git+https://github.com/ICRAR/daliuge.git#egg&subdirectory=daliuge-engine
+git+https://github.com/ICRAR/daliuge.git#egg&subdirectory=daliuge-translator

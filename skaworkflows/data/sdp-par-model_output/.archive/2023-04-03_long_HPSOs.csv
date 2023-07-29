@@ -1,0 +1,281 @@
+,hpso01 (Ingest) [],hpso01 (RCAL) []
+-- Parameters --,,
+Telescope,SKA1_Low,SKA1_Low
+Band,Low,Low
+Frequency Min [GHz],0.05,0.05
+Frequency Max [GHz],0.2,0.2
+Pipeline,Ingest,RCAL
+Baseline coalescing,True,True
+On-the-fly kernels,False,False
+Scale predict by facet,True,True
+Max # of channels,32768,32768
+Max Baseline [km],65.0,65.0
+Dump time [s],0.9,0.9
+Observation Time [s],18000.0,18000.0
+Pointing Time [s],7200000.0,7200000.0
+Total Time [s],18000000.0,18000000.0
+Snapshot Time [s],600,600
+Facets,(undefined),1.0
+w-stacking planes,(undefined),167.45099337115516
+w-stacking planes predict,(undefined),167.45099337115516
+Stations/antennas,512,512
+Max Baseline [per bin]0 [km],4.0625,4.0625
+Max Baseline [per bin]1 [km],8.125,8.125
+Max Baseline [per bin]2 [km],16.25,16.25
+Max Baseline [per bin]3 [km],32.5,32.5
+Max Baseline [per bin]4 [km],65.0,65.0
+Baseline fraction [per bin]0 [%],46.30065759,46.30065759
+Baseline fraction [per bin]1 [%],13.06774736,13.06774736
+Baseline fraction [per bin]2 [%],14.783606060000002,14.783606060000002
+Baseline fraction [per bin]3 [%],18.58770454,18.58770454
+Baseline fraction [per bin]4 [%],7.26028445,7.26028445
+-- Image --,,
+Facet FoV size [deg],(undefined),42.72857525988047
+Total FoV size [deg],15.825398244400175,42.72857525988047
+Output FoV size [deg],(undefined),(undefined)
+PSF size [arcs],15.528437284632478,15.528437284632478
+Pixel size [arcs],3.1056874569264954,3.1056874569264954
+Facet side length [pixels],(undefined),49529.41114293534
+Image side length [pixels],18344.226349235312,49529.41114293534
+Output image side length [pixels],(undefined),(undefined)
+Grid side dimension [lambda],66415.18475629989,66415.18475629989
+Baselines dimension [lambda],39849.11085377993,39849.11085377993
+Epsilon (approx),0.6666666666666672,0.6666666666666672
+Qbw,2.2049999999999983,2.2049999999999983
+Max subband ratio,1.35,1.35
+Number subbands,5.0,5.0
+Station/antenna diameter,38,38
+-- Time Coalescing --,,
+Ionospheric timescale [s],10.0,10.0
+Coalesce time full0 [s],29.7,10.8
+Coalesce time full1 [s],14.4,5.4
+Coalesce time full2 [s],7.2,2.7
+Coalesce time full3 [s],3.6,0.9
+Coalesce time full4 [s],1.8,0.9
+Coalesce time pred0 [s],(undefined),10.0
+Coalesce time pred1 [s],,5.4
+Coalesce time pred2 [s],,2.7
+Coalesce time pred3 [s],,0.9
+Coalesce time pred4 [s],,0.9
+Coalesce time bw0 [s],(undefined),10.0
+Coalesce time bw1 [s],,5.4
+Coalesce time bw2 [s],,2.7
+Coalesce time bw3 [s],,0.9
+Coalesce time bw4 [s],,0.9
+Combined samples full0,33.0,12.0
+Combined samples full1,16.0,6.0
+Combined samples full2,8.0,3.0
+Combined samples full3,4.0,1.0
+Combined samples full4,2.0,1.0
+Combined samples facet0,(undefined),12.0
+Combined samples facet1,,6.0
+Combined samples facet2,,3.0
+Combined samples facet3,,1.0
+Combined samples facet4,,1.0
+Kernel time pred0 [s],10.0,10.0
+Kernel time pred1 [s],10.0,10.0
+Kernel time pred2 [s],10.0,10.0
+Kernel time pred3 [s],10.0,10.0
+Kernel time pred4 [s],10.0,10.0
+Kernel time backward0 [s],10.0,10.0
+Kernel time backward1 [s],10.0,10.0
+Kernel time backward2 [s],10.0,10.0
+Kernel time backward3 [s],10.0,10.0
+Kernel time backward4 [s],10.0,10.0
+Visibilities kernel pred0,(undefined),6.017714258950438
+Visibilities kernel pred1,,22.283145065880998
+Visibilities kernel pred2,,89.12320823273265
+Visibilities kernel pred3,,534.7111318252174
+Visibilities kernel pred4,,1069.3941453405644
+Visibilities kernel bw0,(undefined),6.017714258950438
+Visibilities kernel bw1,,22.283145065880998
+Visibilities kernel bw2,,89.12320823273265
+Visibilities kernel bw3,,534.7111318252174
+Visibilities kernel bw4,,1069.3941453405644
+Oversampling used pred0,(undefined),5.78669300796814
+Oversampling used pred1,,18.941566912390144
+Oversampling used pred2,,48.273628981612184
+Oversampling used pred3,,63.98590504991095
+Oversampling used pred4,,63.999996894443576
+Oversampling used bw0,(undefined),5.78669300796814
+Oversampling used bw1,,18.941566912390144
+Oversampling used bw2,,48.273628981612184
+Oversampling used bw3,,63.98590504991095
+Oversampling used bw4,,63.999996894443576
+-- Channelization --,,
+"Channels predict, no-smear0",(undefined),1648.215074483811
+"Channels predict, no-smear1",,3295.7371475272034
+"Channels predict, no-smear2",,6590.78122076136
+"Channels predict, no-smear3",,13180.869330776477
+"Channels predict, no-smear4",,26361.045532597625
+"Channels backward, no-smear0",(undefined),1648.215074483811
+"Channels backward, no-smear1",,3295.7371475272034
+"Channels backward, no-smear2",,6590.78122076136
+"Channels backward, no-smear3",,13180.869330776477
+"Channels backward, no-smear4",,26361.045532597625
+Frequencies predict ifft,32768.0,200.0
+Frequencies predict kernels0,(undefined),273.8938745774346
+Frequencies predict kernels1,,273.8938745774346
+Frequencies predict kernels2,,273.8938745774346
+Frequencies predict kernels3,,273.8938745774346
+Frequencies predict kernels4,,273.8938745774346
+Frequencies predict de-grid0,32768.0,1648.215074483811
+Frequencies predict de-grid1,32768.0,3295.7371475272034
+Frequencies predict de-grid2,32768.0,6590.78122076136
+Frequencies predict de-grid3,32768.0,13180.869330776477
+Frequencies predict de-grid4,32768.0,26361.045532597625
+Frequencies total0,32768.0,26361.045532597625
+Frequencies total1,32768.0,26361.045532597625
+Frequencies total2,32768.0,26361.045532597625
+Frequencies total3,32768.0,26361.045532597625
+Frequencies total4,32768.0,26361.045532597625
+Frequencies backward kernels0,(undefined),273.8938745774346
+Frequencies backward kernels1,,273.8938745774346
+Frequencies backward kernels2,,273.8938745774346
+Frequencies backward kernels3,,273.8938745774346
+Frequencies backward kernels4,,273.8938745774346
+Frequencies backward grid0,32768.0,1648.215074483811
+Frequencies backward grid1,32768.0,3295.7371475272034
+Frequencies backward grid2,32768.0,6590.78122076136
+Frequencies backward grid3,32768.0,13180.869330776477
+Frequencies backward grid4,32768.0,26361.045532597625
+Frequencies backward fft,65536,40
+Channels out,65536,40
+-- Visibility --,,
+Ingest rate [M/s],4781.50656,4781.50656
+Averaged rate0 [M/s],2205.2379118408826,1774.059356819092
+Averaged rate1 [M/s],622.3991925949363,500.7047563307835
+Averaged rate2 [M/s],704.1232296509295,566.449722820674
+Averaged rate3 [M/s],885.3073126667203,712.2078362899492
+Averaged rate4 [M/s],345.79756213542004,278.18558595315744
+Predict rate0 [M/s],(undefined),9.98301920229312
+Predict rate1 [M/s],,10.43326893934158
+Predict rate2 [M/s],,47.207867015433585
+Predict rate3 [M/s],,356.1132814282506
+Predict rate4 [M/s],,278.18558595315744
+Backward rate0 [M/s],(undefined),9.98301920229312
+Backward rate1 [M/s],,10.43326893934158
+Backward rate2 [M/s],,47.207867015433585
+Backward rate3 [M/s],,356.1132814282506
+Backward rate4 [M/s],,278.18558595315744
+-- Kernel Sizes --,,
+Delta W earth0 [lambda],0.08631221653969713,0.08631221653969713
+Delta W earth1 [lambda],0.3452488661587885,0.3452488661587885
+Delta W earth2 [lambda],1.380995464635154,1.380995464635154
+Delta W earth3 [lambda],5.523981858540616,5.523981858540616
+Delta W earth4 [lambda],22.095927434162466,22.095927434162466
+Delta W snapshot0 [lambda],23.70821469784657,23.70821469784657
+Delta W snapshot1 [lambda],47.41642939569314,47.41642939569314
+Delta W snapshot2 [lambda],94.83285879138629,94.83285879138629
+Delta W snapshot3 [lambda],189.66571758277257,189.66571758277257
+Delta W snapshot4 [lambda],379.33143516554514,379.33143516554514
+Delta W max0 [lambda],23.70821469784657,23.70821469784657
+Delta W max1 [lambda],47.41642939569314,47.41642939569314
+Delta W max2 [lambda],94.83285879138629,94.83285879138629
+Delta W max3 [lambda],189.66571758277257,189.66571758277257
+Delta W max4 [lambda],379.33143516554514,379.33143516554514
+Delta W stack [lambda],(undefined),2.2653280672080394
+Delta W theory [lambda],(undefined),1.0
+-- Kernel Sizes --,,
+W kernel support pred0 [uv-pixels],(undefined),9.571439561603464
+W kernel support pred1 [uv-pixels],,9.571439561603464
+W kernel support pred2 [uv-pixels],,9.571439561603464
+W kernel support pred3 [uv-pixels],,9.571439561603464
+W kernel support pred4 [uv-pixels],,9.571439561603464
+AW kernel support pred0 [uv-pixels],(undefined),13.13820593846161
+AW kernel support pred1 [uv-pixels],,13.13820593846161
+AW kernel support pred2 [uv-pixels],,13.13820593846161
+AW kernel support pred3 [uv-pixels],,13.13820593846161
+AW kernel support pred4 [uv-pixels],,13.13820593846161
+W kernel support bw0 [uv-pixels],(undefined),9.571439561603464
+W kernel support bw1 [uv-pixels],,9.571439561603464
+W kernel support bw2 [uv-pixels],,9.571439561603464
+W kernel support bw3 [uv-pixels],,9.571439561603464
+W kernel support bw4 [uv-pixels],,9.571439561603464
+AW kernel support bw0 [uv-pixels],(undefined),13.13820593846161
+AW kernel support bw1 [uv-pixels],,13.13820593846161
+AW kernel support bw2 [uv-pixels],,13.13820593846161
+AW kernel support bw3 [uv-pixels],,13.13820593846161
+AW kernel support bw4 [uv-pixels],,13.13820593846161
+-- Data --,,
+Snapshot vis size0 [GB],0.9690986917269505,1277.3227369097463
+Snapshot vis size1 [GB],0.27351527018332167,360.50742455816413
+Snapshot vis size2 [GB],0.3094291536551937,407.8438004308853
+Snapshot vis size3 [GB],0.3890510651367424,512.7896421287635
+Snapshot vis size4 [GB],0.15196181929779204,200.29362188627337
+Facet size [GB],(undefined),19.62530054532742
+Image size [GB],2.692085122815833,19.625300545327423
+Image cube size [GB],1411427.9248708675,6280.096174504775
+Calibration output [GB],0.0,2.359296
+Calibration process interval [s],600,10
+Calibration process in [MB],0.0,100.466688
+Calibration process out [MB],0.0,0.262144
+Cleaning memory [PetaBytes],(undefined),(undefined)
+Working (cache) memory [TeraBytes],(undefined),7.183262341663025e-05
+-- I/O --,,
+Input Buffer Size [PetaBytes],8.26244333568,8.26244333568
+Total buffer ingest rate [TeraBytes/s],0.45902462976,0.45902462976
+Output size [TB],0.0,0.0
+Buffer Read Rate [TeraBytes/s],0.45723506005333336,0.735668593577022
+Facet visibility rate [TeraBytes/s],0.0,0.06738461016369374
+Image Write Rate [TeraBytes/s],0.0,0.010466826957507957
+-- Compute --,,
+Total Compute Requirement [PetaFLOP/s],0.6324280932397511,0.7480448678218885
+-> Receive [PetaFLOP/s],0.00015305372103111112,
+-> DFT [PetaFLOP/s],,0.501349268591246
+-> Reprojection [PetaFLOP/s],,6.541766848442473e-05
+-> Degrid [PetaFLOP/s],,0.031017128022765433
+-> Phase Rotation Predict [PetaFLOP/s],,0.0
+-> Visibility Weighting [PetaFLOP/s],,8.984614688492499e-05
+-> Correct [PetaFLOP/s],,0.029426743743080883
+-> Reprojection Predict [PetaFLOP/s],,0.00032708834242212365
+-> FFT [PetaFLOP/s],,0.017084251513535414
+-> IFFT [PetaFLOP/s],,0.08542125756767707
+-> Flag [PetaFLOP/s],0.01063407058944,0.008552147400332883
+-> Demix [PetaFLOP/s],0.62133495250944,
+-> Phase Rotation [PetaFLOP/s],,0.0
+-> Subtract Visibility [PetaFLOP/s],,6.130571613141851e-05
+-> Solve [PetaFLOP/s],,0.0012301408544683702
+-> Degridding Kernel Update [PetaFLOP/s],,0.02120157211604704
+-> Average [PetaFLOP/s],0.00030601641983999994,
+-> Gridding Kernel Update [PetaFLOP/s],,0.02120157211604704
+-> Grid [PetaFLOP/s],,0.031017128022765433
+-> Receive [Tera/s],0.45902462976,
+-> DFT [Tera/s],,0.36783429678851104
+-> Reprojection [Tera/s],,0.010466826957507957
+-> Degrid [Tera/s],,0.06738461016369374
+-> Phase Rotation Predict [Tera/s],,0.0
+-> Visibility Weighting [Tera/s],,0.0041437903801186384
+-> Correct [Tera/s],,0.36783429678851104
+-> Reprojection Predict [Tera/s],,0.05233413478753979
+-> FFT [Tera/s],,0.010466826957507957
+-> IFFT [Tera/s],,0.05233624804241522
+-> Flag [Tera/s],0.45902462976,0.36783429678851104
+-> Demix [Tera/s],0.45902462976,
+-> Phase Rotation [Tera/s],,0.0
+-> Subtract Visibility [Tera/s],,0.36783429678851104
+-> Solve [Tera/s],,2.62144e-07
+-> Degridding Kernel Update [Tera/s],,102.94965704044932
+-> Average [Tera/s],0.4572350600533334,
+-> Gridding Kernel Update [Tera/s],,102.94965704044932
+-> Grid [Tera/s],,13.36580067462845
+Total visibilities [Mvis/s],,
+-> Receive [Mvis/s],0.0,
+-> DFT [Mvis/s],,0.02929005059177514
+-> Reprojection [Mvis/s],,2453.1625681659275
+-> Degrid [Mvis/s],,0.05107664830614648
+-> Phase Rotation Predict [Mvis/s],,0.026361045532597625
+-> Visibility Weighting [Mvis/s],,0.05107664830614648
+-> Correct [Mvis/s],,3831.6072582136567
+-> Reprojection Predict [Mvis/s],,12265.812840829638
+-> FFT [Mvis/s],,0.049529411142935346
+-> IFFT [Mvis/s],,0.24764705571467674
+-> Flag [Mvis/s],,3831.6072582136567
+-> Demix [Mvis/s],0.0,
+-> Phase Rotation [Mvis/s],,0.026361045532597625
+-> Subtract Visibility [Mvis/s],,0.02929005059177514
+-> Solve [Mvis/s],,3831.607258213656
+-> Degridding Kernel Update [Mvis/s],,0.14645025295887568
+-> Average [Mvis/s],0.0,
+-> Gridding Kernel Update [Mvis/s],,0.14645025295887568
+-> Grid [Mvis/s],,5615.384180307812

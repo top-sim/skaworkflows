@@ -16,11 +16,14 @@
 """
 Common data and classes for access between diferrent pipeline codes
 """
-
+import importlib_resources
+from pathlib import Path
 from enum import Enum
+from skaworkflows import __version__
+import skaworkflows.data.pandas_sizing
 
 
-class Baselines(Enum):
+class LOWBaselines(Enum):
     short = 4062.5
     mid = 32500
     long = 65000
@@ -34,10 +37,46 @@ class SI:
     peta = 10 ** 15
 
 
-# These are 'binned' channels, by dividing the number of real channels by 64.
-MAX_CHANNELS = 512
-MAX_TEL_DEMAND = 256
+data_pandas_sizing = importlib_resources.files("skaworkflows.data.pandas_sizing")
 
+# Telescope limits
+# These are 'binned' channels, by dividing the number of real channels by 64.
+MAX_BIN_CHANNELS = 256
+
+# Amount of the telescope an observation can request (e.g. 512 arrays)
+MAX_TEL_DEMAND_LOW = 512
+MAX_TEL_DEMAND_MID = 197
+
+# System sizing data paths
+LOW_TOTAL_SIZING = data_pandas_sizing.joinpath("total_compute_SKA1_Low.csv")
+
+
+LOW_COMPONENT_SIZING = Path(
+    data_pandas_sizing.joinpath("component_compute_SKA1_Low.csv")
+)
+
+MID_TOTAL_SIZING = Path(
+    data_pandas_sizing.joinpath("total_compute_SKA1_Mid.csv")
+)
+
+MID_COMPONENT_SIZING = Path(
+    data_pandas_sizing.joinpath("component_compute_SKA1_Mid.csv")
+)
+
+BYTES_PER_VIS = 12.0
+
+graph_dir = importlib_resources.files("skaworkflows.data.hpsos")
+# Graph bases for workflows
+BASIC_PROTOTYPE_GRAPH = graph_dir.joinpath("dprepa.graph")
+CONT_IMG_MVP_GRAPH = graph_dir.joinpath("cont_img_mvp_skaworkflows_updated.graph")
+SCATTER_GRAPH = graph_dir.joinpath("dprepa_parallel.graph")
+
+# COMPONENT_SIZING_LOW = (
+#         skaworkflows_dir / 'data/pandas_sizing/component_compute_SKA1_Low.csv'
+# )
+# TOTAL_SIZING_LOW = (
+#     skaworkflows_dir / 'data/pandas_sizing/total_compute_SKA1_Low.csv'
+# )
 
 COMPUTE_KEYS = {
     'hpso': "HPSO",
@@ -77,6 +116,21 @@ compute_units = {
     'ingest_rate': "TB/s"
 }
 
+WORKFLOW_HEADER = {
+    'generator': {
+        'name': 'skaworkflows',
+        'version': __version__,
+    },
+    'parameters': {
+        'max_arrays': 512,
+        'channels': None,
+        'arrays': None,
+        'baseline': None,
+        'duration': None,
+    },
+    'time': 'False'
+}
+
 # Keys for DATA csv
 data_keys = {
     'telescope': "Telescope",
@@ -103,15 +157,16 @@ pulsars = ['hpso4a', 'hpso5a']
 
 pipeline_paths = {
     'hpso01': {
-        'dprepa': 'data/hpsos/dprepa.graph'
+        'dprepa': 'skaworkflows/data/hpsos/dprepa.graph'
     }
 }
 
-component_paths = {
-    'low_short': 'data/pandas_sizing/component_compute_SKA1_Low_short.csv',
-    'low_mid': 'data/pandas_sizing/component_compute_SKA1_Low_mid.csv',
-    'low_long': 'data/pandas_sizing/component_compute_SKA1_Low_long.csv',
-    'mid_short': 'data/pandas_sizing/component_compute_SKA1_Mid_short.csv',
-    'mid_mid': 'data/pandas_sizing/component_compute_SKA1_Mid_mid.csv',
-    'mid_long': 'data/pandas_sizing/component_compute_SKA1_Mid_long.csv',
-}
+
+# component_paths = {
+#     'low_short': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_short.csv',
+#     'low_mid': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_mid.csv',
+#     'low_long': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_long.csv',
+#     'mid_short': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_short.csv',
+#     'mid_mid': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_mid.csv',
+#     'mid_long': 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_long.csv',
+# }

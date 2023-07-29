@@ -14,7 +14,7 @@ To do so, this provides the following modules, which may work separately or in c
 `data/`
 - data/pandas_system_sizing.py`
     - The `sdp-par-model` code produces a human readable .csv file with a significant amount of data. The purpose of this code is to filter this information and collate only what is necessary for component-based sizing, which will allow us to produce per-task FLOPs weights for each observation workflow. 
-    - The most up-to-date runs of `pandas_system_sizing.py` is stored in `data/pandas_sizing`.
+    - The most up-to-date runs of `pandas_system_sizing.py` is stored in `skaworkflows/data/pandas_sizing`.
 - data/csv  
 
  - `sdp_system_sizing.py` adapts code from the SDP Parametric model to produce

@@ -5,7 +5,7 @@ In order to produce an observation workflow with appropriate node and edge costs
 
 
 - [x] Relevant Parametric model output for Telescope (low or mid) and the baseline length (short, mid, long)
-    - This is (ideally) pre-calculated and stored in `data/pandas_sizing` directory.
+    - This is (ideally) pre-calculated and stored in `skaworkflows/data/pandas_sizing` directory.
 - [ ] Compute system config
     - Stored in JSON format
     - ~~Systems generated for tests and experiments using this set of modules use the `hpconfig` library.~~
