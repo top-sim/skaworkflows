@@ -59,7 +59,7 @@ def update_number_of_channels(lgt_path, channels):
     for node in lgt_dict[node_data_key]:
         if (
                 node['category'] == 'Scatter'
-                and node['text'] == 'FrequencySplit'
+                and node['name'] == 'FrequencySplit'
         ):
             for field in node['fields']:
                 if field['name'] == 'num_of_copies':
@@ -195,8 +195,8 @@ def eagle_to_nx(eagle_graph, workflow, file_in=True, cached_workflow=None):
         daliuge_json = unroll_logical_graph(eagle_graph, file_in=file_in)
         LOGGER.info("Finished translating graph")
         jdict = json.loads(daliuge_json)
-        with open(f"unrolled_{file_in}.json", 'w') as fp:
-            json.dump(jdict, fp, indent=2)
+        # with open(f"unrolled_{file_in}.json", 'w') as fp:
+        #     json.dump(jdict, fp, indent=2)
     else:
         LOGGER.info(f"Using cached translation of {eagle_graph} for workflow")
         jdict = cached_workflow
@@ -245,54 +245,55 @@ def daliuge_to_nx(dlg_json_dict, workflow):
     task_names = {}
 
     for element in dlg_json_dict:
-        if 'app' in element.keys() or 'appclass' in element.keys():
-            oid = element['oid']
-            label = element['nm']
-            if label in task_names:
-                task_names[label]['node'] += 1
-            else:
-                task_names[label] = {'node': 1}
-            labels[oid] = f"{label}_{task_names[label]['node'] - 1}"
-            name = f"{workflow}_{labels[oid]}"
-            node = (name, {'comp': 0})
-            node_list.append(node)
+        if 'categoryType' in element:
+            if element['categoryType'] == 'Application' or element['categoryType'] == 'Control':
+                oid = element['oid']
+                label = element['name']
+                if label in task_names:
+                    task_names[label]['node'] += 1
+                else:
+                    task_names[label] = {'node': 1}
+                labels[oid] = f"{label}_{task_names[label]['node'] - 1}"
+                name = f"{workflow}_{labels[oid]}"
+                node = (name, {'comp': 0})
+                node_list.append(node)
 
     for element in dlg_json_dict:
-        if ('storage' in element.keys()) and (
-                'producers' in element and 'consumers' in element
-        ):
-            for uentry in element['producers']:
-
-                try:
-                    uentry.keys()
-                except AttributeError:
-                    u = uentry
-                else:
-                    u = list(uentry.keys())[0]
-                component, num = labels[u].split('_')
-                if 'out_edge' in task_names[component]:
-                    task_names[component]['out_edge'] += 1
-                else:
-                    task_names[component]['out_edge'] = 1
-                for ventry in element['consumers']:
+        if 'categoryType' in element:
+            if (element['categoryType'] == 'Data') and (
+                    'producers' in element and 'consumers' in element
+            ):
+                for uentry in element['producers']:
                     try:
-                        ventry.keys()
+                        uentry.keys()
                     except AttributeError:
-                        v = ventry
+                        u = uentry
                     else:
-                        v = list(ventry.keys())[0]
-                    edge_list.append(
-                        (
-                            f'{workflow}_{labels[u]}',
-                            f'{workflow}_{labels[v]}',
-                            {
-                                "transfer_data": 0,
-                                'u': u,
-                                'v': v,
-                                'data_drop_oid': element['oid']
-                            }
+                        u = list(uentry.keys())[0]
+                    component, num = labels[u].split('_')
+                    if 'out_edge' in task_names[component]:
+                        task_names[component]['out_edge'] += 1
+                    else:
+                        task_names[component]['out_edge'] = 1
+                    for ventry in element['consumers']:
+                        try:
+                            ventry.keys()
+                        except AttributeError:
+                            v = ventry
+                        else:
+                            v = list(ventry.keys())[0]
+                        edge_list.append(
+                            (
+                                f'{workflow}_{labels[u]}',
+                                f'{workflow}_{labels[v]}',
+                                {
+                                    "transfer_data": 0,
+                                    'u': u,
+                                    'v': v,
+                                    'data_drop_oid': element['oid']
+                                }
+                            )
                         )
-                    )
     unrolled_nx.add_nodes_from(node_list)
     unrolled_nx.add_edges_from(edge_list)
 

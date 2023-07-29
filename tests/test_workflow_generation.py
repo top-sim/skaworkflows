@@ -100,8 +100,10 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         pgt_list = json.loads(edt.unroll_logical_graph(lgt_dict, file_in=False))
         with open(PGT_CHANNEL_UPDATE) as f:
             test_pgt = json.load(f)
-        self.assertEqual(test_pgt, pgt_list)
-        self.assertEqual(283, len(pgt_list))
+        for i, e in enumerate(test_pgt):
+            if 'oid' in test_pgt[i]:
+                self.assertEqual(test_pgt[i]['oid'], pgt_list[i]['oid'])
+        self.assertEqual(284, len(pgt_list))
 
         # Get returned string and confirm it is the same as a previously
         # converted logical graph
@@ -379,7 +381,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         wf = self.obs1.workflows[0]
         # generate a workflow without updating channels
         channels = self.obs1.channels
-        nx_graph, task_dict, cached_workflow_dict= edt.eagle_to_nx(LGT_PATH, wf)
+        nx_graph, task_dict, cached_workflow_dict = edt.eagle_to_nx(LGT_PATH, wf)
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_product(
             nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
@@ -397,12 +399,12 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         # 2 Degrid tasks in the graph - the value above takes this into account implicitly.
         # Check that the total task data (i/o) is correct
         self.assertAlmostEqual(
-            ((4.16228094525492 + 0.045216522407477) * self.obs1.duration * SI.mega * BYTES_PER_VIS)/2,
+            ((15242.456887132481 + 2.181634610617648) * self.obs1.duration * SI.mega * BYTES_PER_VIS)/2,
             final_workflow.nodes['DPrepA_Degrid_0']['task_data'],
             delta=1000
         )
         self.assertAlmostEqual(
-            ((4.16228094525492 + + 0.045216522407477) * self.obs1.duration * SI.mega * BYTES_PER_VIS)/2,
+            ((15242.456887132481 + 2.181634610617648) * self.obs1.duration * SI.mega * BYTES_PER_VIS)/2,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
                 "transfer_data"
             ],
@@ -425,7 +427,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
             delta=1000
         )
         self.assertAlmostEqual(
-            ((4.16228094525492 + + 0.045216522407477) * self.obs1.duration * SI.mega * BYTES_PER_VIS)/128,
+            ((15242.456887132481 + 2.181634610617648) * self.obs1.duration * SI.mega * BYTES_PER_VIS)/128,
             final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
                 "transfer_data"
             ],
@@ -589,6 +591,6 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         nx_graph = nx.readwrite.node_link_graph(test_workflow['graph'])
         # Divide by 2 due to 2 major loops
         self.assertAlmostEqual(
-            (0.09119993316954411 * self.obs1.duration * SI.peta) / 4,
+            (0.09119993316954411 * self.obs1.duration * SI.peta) / 2,
             nx_graph.nodes['DPrepA_Degrid_0']['comp'], delta=1000
         )

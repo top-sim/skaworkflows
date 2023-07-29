@@ -67,8 +67,8 @@ BYTES_PER_VIS = 12.0
 
 graph_dir = importlib_resources.files("skaworkflows.data.hpsos")
 # Graph bases for workflows
-PROTOTYPE_GRAPH = graph_dir.joinpath("cont_img_mvp_skaworkflows.graph")
-# PROTOTYPE_GRAPH = graph_dir.joinpath("dprepa.graph")
+BASIC_PROTOTYPE_GRAPH = graph_dir.joinpath("dprepa.graph")
+CONT_IMG_MVP_GRAPH = graph_dir.joinpath("cont_img_mvp_skaworkflows_updated.graph")
 SCATTER_GRAPH = graph_dir.joinpath("dprepa_parallel.graph")
 
 # COMPONENT_SIZING_LOW = (

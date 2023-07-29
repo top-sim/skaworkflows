@@ -38,7 +38,10 @@ import networkx as nx
 from enum import Enum
 from pathlib import Path
 import skaworkflows.workflow.eagle_daliuge_translation as edt
-from skaworkflows.common import SI, WORKFLOW_HEADER, PROTOTYPE_GRAPH, SCATTER_GRAPH, BYTES_PER_VIS
+from skaworkflows.common import (
+    SI, WORKFLOW_HEADER, CONT_IMG_MVP_GRAPH,
+    BASIC_PROTOTYPE_GRAPH, SCATTER_GRAPH, BYTES_PER_VIS
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -680,7 +683,9 @@ def _match_graph_options(graph_type: str):
 
     """
     if graph_type == 'prototype':
-        return PROTOTYPE_GRAPH
+        return BASIC_PROTOTYPE_GRAPH
+    elif graph_type == 'cont_img_mvp_graph':
+        return CONT_IMG_MVP_GRAPH
     elif graph_type == 'scatter':
         return SCATTER_GRAPH
     else:
