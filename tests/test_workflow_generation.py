@@ -213,13 +213,13 @@ class TestPipelineStructureTranslation(unittest.TestCase):
 class TestWorkflowFromObservation(unittest.TestCase):
 
     def setUp(self) -> None:
-        demand = 32
+        demand = 512
         duration = 3600
         channels = 1
         self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         self.obs1 = hpo.Observation(
             1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
-            65000.0
+            65000.0, 'low'
         )
 
     def testConcatWorkflows(self):
@@ -232,15 +232,10 @@ class TestWorkflowFromObservation(unittest.TestCase):
 
         """
         workflows = ['DPrepA', 'DPrepB']
-        # minimal_pgt = 'tests/data/daliuge_pgt_scatter_minimal.json'
-        # with open(minimal_pgt) as f:
-        #     jdict = json.load(f)
         # # We know this has 21 nodes and edges
         final_graphs = {}
         base_graph = LGT_PATH
-        # channel_lgt = edt.update_number_of_channels(
-        #     base_graph, self.obs1.channels
-        # )
+
         for workflow in self.obs1.workflows:
             nx_graph, task_dict, cached_workflow_dict= edt.eagle_to_nx(
                 base_graph, workflow, file_in=True
@@ -256,14 +251,14 @@ class TestWorkflowFromObservation(unittest.TestCase):
 
         # Need to ensure that the DPrepA costs are Different to DPrepB
         self.assertAlmostEqual(
-            0.04563405420422631 * self.obs1.duration * SI.peta,
-            final_graphs['DPrepA'].nodes['DPrepA_Grid_0']['comp'],
-            delta=5000
+            (0.04563405420422631 * self.obs1.duration * SI.peta)/(10**17),
+            final_graphs['DPrepA'].nodes['DPrepA_Grid_0']['comp']/(10**17),
+            places=2
         )
         self.assertAlmostEqual(
-            0.04761499141720525 * self.obs1.duration * SI.peta,
-            final_graphs['DPrepB'].nodes['DPrepB_Grid_0']['comp'],
-            delta=1000
+            0.04761499141720525 * self.obs1.duration * SI.peta / (10**17),
+            final_graphs['DPrepB'].nodes['DPrepB_Grid_0']['comp']/ (10**17),
+            places=1
         )
 
         self.assertNotEqual(
@@ -331,7 +326,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         channels = 64
         self.obs1 = hpo.Observation(
             1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
-            65000.0
+            65000.0, 'low'
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
 
@@ -347,13 +342,15 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         # long baseline, DPrepA - component is Degrid
         component_cost, component_data = hpo.identify_component_cost(
-            self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[0],
+            self.obs1.hpso, self.obs1.baseline,  self.obs1.workflows[0], self.obs1.demand,
+            self.obs1.channels, self.obs1.telescope,
             'Degrid', self.component_system_sizing
         )
         self.assertAlmostEqual(0.091199933169544, component_cost, places=5)
 
         component_cost, component_data = hpo.identify_component_cost(
-            self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[1],
+            self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[1], self.obs1.demand,
+            self.obs1.channels, self.obs1.telescope,
             'Degrid', self.component_system_sizing
         )
         self.assertAlmostEqual(0.0950936323565933, component_cost, places=5)
@@ -384,7 +381,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         nx_graph, task_dict, cached_workflow_dict = edt.eagle_to_nx(LGT_PATH, wf)
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_product(
-            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
+            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing, data=True, data_distribution='edges'
         )
         # We want to make sure the comp cost has been updated
 
@@ -418,7 +415,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         self.assertEqual(128, task_dict['Degrid']['node'])
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_product(
-            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
+            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing, data=False, data_distribution='edges'
         )
 
         self.assertAlmostEqual(
@@ -462,7 +459,7 @@ class TestSKAMidCosts(unittest.TestCase):
 
     def setUp(self) -> None:
         self.observation = hpo.Observation(
-            1, 'hpso13', ['DPrepA', 'DPrepB'], 512, 3600, 256,
+            1, 'hpso13', ['DPrepA', 'DPrepB'], 197, 3600, 256,
             35000.0, telescope="mid"
         )
         self.mid_component_sizing = pd.read_csv(
@@ -477,7 +474,7 @@ class TestSKAMidCosts(unittest.TestCase):
             nx_graph, task_dict, self.observation, wf, self.mid_component_sizing
         )
         self.assertAlmostEqual(
-            0.0025108947344674015 * self.observation.duration * SI.peta,
+            0.0025108947344674015 * self.observation.duration * SI.peta ,
             final_workflow.nodes['DPrepA_Degrid_0']['comp'],
             delta=1000
         )
@@ -492,7 +489,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         channels = 1
         self.obs1 = hpo.Observation(
             1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
-            65000.0
+            65000.0, 'low'
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
 
@@ -542,7 +539,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         final_dir = f'{self.config_dir}/workflows'
         # we want to see test/data/sim_config/hpso01_workflow.json
         'hpso01_channels-1_tel-512.json'
-        final_path = f'{final_dir}/hpso01_time-60_channels-1_tel-512.json'
+        final_path = f'{final_dir}/hpso01_time-60_channels-1_tel-512-standard.json'
         self.assertTrue(os.path.exists(final_path))
 
     def testWorkflowFileCorrectness(self):
@@ -584,7 +581,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         }
         final_dir = f'{self.config_dir}/workflows'
 
-        with open(f'{final_dir}/hpso01_time-60_channels-1_tel-512.json') as fp:
+        with open(f'{final_dir}/hpso01_time-60_channels-1_tel-512-standard.json') as fp:
             test_workflow = json.load(fp)
 
         self.assertDictEqual(header, test_workflow['header'])

@@ -21,56 +21,65 @@ import pandas as pd
 
 from pathlib import Path
 
-from skaworkflows.workflow.hpso_to_observation import Observation, \
-    create_observation_from_hpso, assign_observation_ingest_demands
-from skaworkflows.workflow.hpso_to_observation import create_observation_plan, \
-    create_buffer_config, compile_observations_and_workflows, \
-    calc_ingest_demand, generate_instrument_config
+from skaworkflows.workflow.hpso_to_observation import (
+    Observation,
+    create_observation_from_hpso,
+    assign_observation_ingest_demands,
+)
+from skaworkflows.workflow.hpso_to_observation import (
+    create_observation_plan,
+    create_buffer_config,
+    compile_observations_and_workflows,
+    calc_ingest_demand,
+    generate_instrument_config,
+)
 
 from skaworkflows.common import SI
 
-from skaworkflows.hpconfig.specs.sdp import SDP_LOW_CDR, SDP_PAR_MODEL_LOW, SDP_PAR_MODEL_MID
+from skaworkflows.hpconfig.specs.sdp import (
+    SDP_LOW_CDR,
+    SDP_PAR_MODEL_LOW,
+    SDP_PAR_MODEL_MID,
+)
 
-DATA_DIR = 'data/parametric_model'
-LONG = f'{DATA_DIR}/2023-03-25_long_HPSOs.csv'
+DATA_DIR = "data/parametric_model"
+LONG = f"{DATA_DIR}/2023-03-25_long_HPSOs.csv"
 
-SYSTEM_SIZING_DIR = 'skaworkflows/data/pandas_sizing'
-TOTAL_SYSTEM_SIZING = 'skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv'
+SYSTEM_SIZING_DIR = "skaworkflows/data/pandas_sizing"
+TOTAL_SYSTEM_SIZING = "skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv"
 
-COMPONENT_SYSTEM_SIZING = 'skaworkflows/data/pandas_sizing/component_compute_SKA1_Low.csv'
+COMPONENT_SYSTEM_SIZING = (
+    "skaworkflows/data/pandas_sizing/component_compute_SKA1_Low.csv"
+)
 # CLUSTER = 'tests/PawseyGalaxy_nd_1619058732.json'
 
-EAGLE_LGT = 'tests/data/eagle_lgt.graph'
+EAGLE_LGT = "tests/data/eagle_lgt.graph"
 
-PATH_NOT_EXISTS = 'path/doesnt/exist'
+PATH_NOT_EXISTS = "path/doesnt/exist"
 
 
 class TestObservationClass(unittest.TestCase):
-
     def setUp(self):
-        self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 65000.0)
-        self.obs2 = Observation(4, 'hpso04a', ['dprepa'], 16, 30, 256, 65000.0)
+        self.obs1 = Observation(2, "hpso01", ["dprepa"], 32, 60, 256, 65000.0, 'low')
+        self.obs2 = Observation(4, "hpso04a", ["dprepa"], 16, 30, 256, 65000.0, 'low' )
 
     def test_add_workflow_path(self):
-        self.assertRaises(
-            RuntimeError, self.obs1.add_workflow_path, PATH_NOT_EXISTS
-        )
+        self.assertRaises(RuntimeError, self.obs1.add_workflow_path, PATH_NOT_EXISTS)
         # self.assert()
 
 
 class TestObservationPlanGeneration(unittest.TestCase):
-
     def setUp(self):
         # low_compute_data = "csv/SKA1_Low_COMPUTE.csv"
         # self.observations = convert_systemsizing_csv_to_dict(low_compute_data)
-        self.obs1 = Observation(2, 'hpso01', ['dprepa'], 32, 60, 256, 65000.0)
+        self.obs1 = Observation(2, "hpso01", ["dprepa"], 32, 60, 256, 65000.0,'low')
         self.obslist1 = create_observation_from_hpso(
-            2, 'hpso01', ['dprepa'], 32, 60, 256, 65000.0, offset=0
+            2, "hpso01", ["dprepa"], 32, 60, 256, 65000.0, 'low', offset=0
         )
         self.obslist2 = create_observation_from_hpso(
-            4, 'hpso04a', ['dprepa'], 16, 30, 128, 65000.0, offset=0
+            4, "hpso04a", ["dprepa"], 16, 30, 128, 65000.0, 'low', offset=0
         )
-        self.obs3 = Observation(3, 'hpso01', ['dprepa'], 32, 30, 256, 65000.0)
+        self.obs3 = Observation(3, "hpso01", ["dprepa"], 32, 30, 256, 65000.0,'low')
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         self.max_telescope_usage = 32  # 1/16th of the telescope
 
@@ -94,44 +103,57 @@ class TestObservationPlanGeneration(unittest.TestCase):
         #            + self.obs2.unroll_observations())
         obslist = self.obslist1 + self.obslist2
         plan = create_observation_plan(obslist, self.max_telescope_usage)
-        self.assertEqual('hpso01_1', plan[0].name)
+        self.assertEqual("hpso01_1", plan[0].name)
         self.assertEqual(0, plan[0].start)
         self.assertEqual(150, plan[5].start)
 
 
 class TestObservationTopSimTranslation(unittest.TestCase):
-
     def setUp(self):
         self.obs1 = Observation(
-            name='hpso01_0', hpso='hpso01', demand=512,
-            duration=60, workflows=['DPrepA'], channels=256,
-            baseline=65000.0
+            name="hpso01_0",
+            hpso="hpso01",
+            demand=512,
+            duration=60,
+            workflows=["DPrepA"],
+            channels=256,
+            baseline=65000.0,
+            telescope='low'
         )
 
         self.observation_list = create_observation_from_hpso(
-            count=2, hpso='hpso01', demand=512,
-            duration=60, workflows=['DPrepA'], channels=256,
-            baseline=65000.0, offset=0
+            count=2,
+            hpso="hpso01",
+            demand=512,
+            duration=60,
+            workflows=["DPrepA"],
+            channels=256,
+            baseline=65000.0,
+            telescope='low',
+            offset=0,
         )
-        self.observation_plan = create_observation_plan(
-            self.observation_list, 512
-        )
+        self.observation_plan = create_observation_plan(self.observation_list, 512)
         self.max_telescope_usage = 32  # 1/16th of telescope
         self.plan = [
-            (0, 60, 32, 'hpso01', 'dprepa', 256, 65000.0),
-            (60, 120, 32, 'hpso01', 'dprepa', 256, 65000.0)
+            (0, 60, 32, "hpso01", "dprepa", 256, 65000.0),
+            (60, 120, 32, "hpso01", "dprepa", 256, 65000.0),
         ]
         self.obs2 = Observation(
-            'hpso01_2', hpso='hpso01', workflows=['DPrepA'],
-            demand=32, duration=60, channels=256, baseline=65000.0)
-        self.obs3 = Observation(
-            'hpso01_5', 'hpso04a', ['DPrepA'], 16, 30, 256, 65000.0
+            "hpso01_2",
+            hpso="hpso01",
+            workflows=["DPrepA"],
+            demand=32,
+            duration=60,
+            channels=256,
+            baseline=65000.0,
+            telescope='low'
         )
+        self.obs3 = Observation("hpso01_5", "hpso04a", ["DPrepA"], 16, 30, 256, 65000.0, 'low')
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         sdp = SDP_LOW_CDR()
         self.cluster = sdp.to_topsim_dictionary()
-        self.config_dir_path = Path('tests/data/config')
+        self.config_dir_path = Path("tests/data/config")
         self.config_dir_path.mkdir(exist_ok=True)
 
     def tearDown(self) -> None:
@@ -163,27 +185,34 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         # self.observation_lis
         base_graph_paths = {"DPrepA": "prototype", "DPrepB": "prototype"}
         final_instrument_config = generate_instrument_config(
-            self.observation_list, 512,
+            self.observation_list,
+            512,
             self.config_dir_path,
             self.component_sizing,
             self.system_sizing,
             self.cluster,
-            base_graph_paths
+            base_graph_paths,
         )
         self.assertEqual(
             11,
-            final_instrument_config['telescope']['pipelines']['hpso01_0'][
-                'ingest_demand'])
-        self.assertEqual(
-            'workflows/hpso01_time-60_channels-256_tel-512.json',
-            final_instrument_config['telescope']['pipelines']['hpso01_1'][
-                'workflow']
+            final_instrument_config["telescope"]["pipelines"]["hpso01_0"][
+                "ingest_demand"
+            ],
         )
         self.assertEqual(
-            {'name': 'hpso01_1', 'start': 0, 'duration': 60,
-             'instrument_demand': 512,
-             'type': 'hpso01', 'data_product_rate': 459024629760.0},
-            final_instrument_config['telescope']['observations'][0]
+            "workflows/hpso01_time-60_channels-256_tel-512-standard.json",
+            final_instrument_config["telescope"]["pipelines"]["hpso01_1"]["workflow"],
+        )
+        self.assertEqual(
+            {
+                "name": "hpso01_1",
+                "start": 0,
+                "duration": 60,
+                "instrument_demand": 512,
+                "type": "hpso01",
+                "data_product_rate": 459024629760.0,
+            },
+            final_instrument_config["telescope"]["observations"][0],
         )
 
     def test_buffer_config_sizing(self):
@@ -207,20 +236,12 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         hot_buffer = 13.44  # 20% of buffer
         cold_buffer = 53.76  # 80% of buffer
         spec = create_buffer_config(sdp)
-        self.assertEqual(spec['hot']['capacity'] / SI.peta,
-                         hot_buffer)
-        self.assertEqual(
-            spec['cold']['capacity'] / SI.peta,
-            cold_buffer
-        )
-        self.assertEqual(
-            spec['hot']['max_ingest_rate'] / SI.giga,
-            460
-        )
+        self.assertEqual(spec["hot"]["capacity"] / SI.peta, hot_buffer)
+        self.assertEqual(spec["cold"]["capacity"] / SI.peta, cold_buffer)
+        self.assertEqual(spec["hot"]["max_ingest_rate"] / SI.giga, 460)
 
 
 class testLowParametricBufferConfig(unittest.TestCase):
-
     def setUp(self):
         self.sdp = SDP_PAR_MODEL_LOW()
         self.cluster = self.sdp.to_topsim_dictionary()
@@ -231,35 +252,26 @@ class testLowParametricBufferConfig(unittest.TestCase):
         # Input buffer
         self.assertEqual(
             43350000000000000,
-            self.spec['hot']['capacity'],
+            self.spec["hot"]["capacity"],
         )
 
         # Offline buffer
-        self.assertEqual(
-            25500000000000000,
-            self.spec['cold']['capacity']
-        )
+        self.assertEqual(25500000000000000, self.spec["cold"]["capacity"])
 
     def testLowDataRates(self):
         # Ensure this aligns with input transfer rate
-        self.assertEqual(
-            894687500000.0,
-            self.spec['cold']['max_data_rate']
-        )
+        self.assertEqual(894687500000.0, self.spec["cold"]["max_data_rate"])
 
         # Ensure that offline data rates (internal I/O rates for offline
         # workflows) are correct
+        self.assertEqual(6747312499999.0, self.sdp.total_compute_buffer_rate)
         self.assertEqual(
-            6747312499999.0,
-            self.sdp.total_compute_buffer_rate
+            int(self.sdp.total_compute_buffer_rate / self.sdp.nodes),
+            self.cluster["system"]["resources"]["GenericSDP_m0"]["compute_bandwidth"],
         )
-        self.assertEqual(
-            int(self.sdp.total_compute_buffer_rate/self.sdp.nodes),
-            self.cluster['system']['resources']['GenericSDP_m0']["compute_bandwidth"],
-        )
+
 
 class testMidParametricBufferConfig(unittest.TestCase):
-
     def setUp(self):
         self.sdp = SDP_PAR_MODEL_MID()
         self.cluster = self.sdp.to_topsim_dictionary()
@@ -269,32 +281,21 @@ class testMidParametricBufferConfig(unittest.TestCase):
     def testMidCapacityCorrect(self):
         # Input buffer
         self.assertEqual(
-            4.8455e+16,
-            self.spec['hot']['capacity'],
+            4.8455e16,
+            self.spec["hot"]["capacity"],
         )
 
         # Offline buffer
-        self.assertEqual(
-            4.0531e+16,
-            self.spec['cold']['capacity']
-        )
+        self.assertEqual(4.0531e16, self.spec["cold"]["capacity"])
 
     def testMidDataRates(self):
         # Ensure this aligns with input transfer rate
-        self.assertEqual(
-            1054218750000.0,
-            self.spec['cold']['max_data_rate']
-        )
+        self.assertEqual(1054218750000.0, self.spec["cold"]["max_data_rate"])
 
         # Ensure that offline data rates (internal I/O rates for offline
         # workflows) are correct
+        self.assertEqual(11083112499999.0, self.sdp.total_compute_buffer_rate)
         self.assertEqual(
-            11083112499999.0,
-            self.sdp.total_compute_buffer_rate
+            int(self.sdp.total_compute_buffer_rate / self.sdp.nodes),
+            self.cluster["system"]["resources"]["GenericSDP_m0"]["compute_bandwidth"],
         )
-        self.assertEqual(
-            int(self.sdp.total_compute_buffer_rate/self.sdp.nodes),
-            self.cluster['system']['resources']['GenericSDP_m0']["compute_bandwidth"],
-        )
-
-

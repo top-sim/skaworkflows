@@ -27,7 +27,6 @@ from skaworkflows.hpconfig.specs.sdp import (
 LOGGER = logging.getLogger(__name__)
 
 
-# TODO update to be path and config_name or something
 def create_config(
         telescope,
         infrastructure,

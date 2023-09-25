@@ -19,13 +19,14 @@ import os
 import json
 import random
 import logging
+import math
 
 import networkx as nx
 
 LOGGER = logging.getLogger(__name__)
 
 
-def update_number_of_channels(lgt_path, channels):
+def update_number_of_channels(lgt_path, channels, telescope_demand=512):
     """
     Update the number of channels in an EAGLE graph
 
@@ -51,10 +52,15 @@ def update_number_of_channels(lgt_path, channels):
     Dictionary with updated channel values
     """
 
+    channel_demand_mapping = {256:488, 128:395, 64:368, 32:361}
+
     node_data_key = 'nodeDataArray'
     with open(lgt_path, 'r') as f:
         lgt_dict = json.load(f)
 
+    if telescope_demand < 512:
+        closest_power = 2**math.ceil(math.log(telescope_demand, 2))
+        channels = channel_demand_mapping[closest_power]
     # Finds scatter & gather category
     for node in lgt_dict[node_data_key]:
         if (
