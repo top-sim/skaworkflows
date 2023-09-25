@@ -2952,7 +2952,7 @@
             "inputApplicationType": "None",
             "isGroup": false,
             "key": -12,
-            "name": "BeginMajorCycle",
+            "name": "IFFT",
             "outputAppFields": [],
             "outputApplicationDescription": "",
             "outputApplicationKey": null,

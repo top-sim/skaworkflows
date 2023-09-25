@@ -34,13 +34,21 @@ import math
 
 import pandas as pd
 import networkx as nx
+import numpy as np
 
 from enum import Enum
 from pathlib import Path
 import skaworkflows.workflow.eagle_daliuge_translation as edt
 from skaworkflows.common import (
-    SI, WORKFLOW_HEADER, CONT_IMG_MVP_GRAPH,
-    BASIC_PROTOTYPE_GRAPH, SCATTER_GRAPH, BYTES_PER_VIS
+    SI,
+    WORKFLOW_HEADER,
+    CONT_IMG_MVP_GRAPH,
+    BASIC_PROTOTYPE_GRAPH,
+    SCATTER_GRAPH,
+    BYTES_PER_VIS,
+    MAX_CHANNELS,
+    MAX_TEL_DEMAND_LOW,
+    MAX_TEL_DEMAND_MID,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -50,9 +58,10 @@ class HPSO(Enum):
     """
     Describes which workflows are run for each HPSO
     """
-    ingest = ['ingest, rcal']
-    hpso1 = ['ingest', 'dprepa, dprepb,dprepc,dprepd']
-    hpso2a = ['ingest']
+
+    ingest = ["ingest, rcal"]
+    hpso1 = ["ingest", "dprepa, dprepb,dprepc,dprepd"]
+    hpso2a = ["ingest"]
 
 
 def process_hpso_from_spec(path: Path):
@@ -75,7 +84,7 @@ def process_hpso_from_spec(path: Path):
         hpsos = json.load(fp)
 
     offset = 0
-    for h in hpsos['items']:
+    for h in hpsos["items"]:
         LOGGER.debug(f"{h=}")
         obslist = create_observation_from_hpso(**h, offset=offset)
         offset += len(obslist)
@@ -84,7 +93,7 @@ def process_hpso_from_spec(path: Path):
 
 
 def create_observation_from_hpso(
-        count, hpso, workflows, demand, duration, channels, baseline, offset
+    count, hpso, workflows, demand, duration, channels, baseline, telescope, offset
 ):
     """
      objects store the number of observations that will appear
@@ -104,8 +113,14 @@ def create_observation_from_hpso(
     obslist = []
     for i in range(count):
         obs = Observation(
-            f'{hpso}_{i + offset}', hpso, workflows, demand, duration, channels,
-            baseline
+            f"{hpso}_{i + offset}",
+            hpso,
+            workflows,
+            demand,
+            duration,
+            channels,
+            baseline,
+            telescope,
         )
         obslist.append(obs)
     return obslist
@@ -132,9 +147,7 @@ class Observation:
     """
 
     def __init__(
-            self,
-            name, hpso, workflows, demand, duration,
-            channels, baseline, telescope="low"
+        self, name, hpso, workflows, demand, duration, channels, baseline, telescope
     ):
         self.name = name
         self.telescope = telescope
@@ -168,8 +181,7 @@ class Observation:
         -------
 
         """
-        return hash(self.hpso + (
-            str(self.demand + self.channels + self.baseline)))
+        return hash(self.hpso + (str(self.demand + self.channels + self.baseline)))
 
     def __repr__(self):
         return self.name
@@ -190,7 +202,7 @@ class Observation:
 
         """
         if path:
-            raise RuntimeError('Path already defined')
+            raise RuntimeError("Path already defined")
         else:
             self.workflow_path = path
             return True
@@ -209,12 +221,12 @@ class Observation:
         """
 
         return {
-            'name': self.name,
-            'start': self.start,
-            'duration': self.duration,
-            'instrument_demand': self.demand,
-            'type': self.hpso,
-            'data_product_rate': self.ingest_data_rate
+            "name": self.name,
+            "start": self.start,
+            "duration": self.duration,
+            "instrument_demand": self.demand,
+            "type": self.hpso,
+            "data_product_rate": self.ingest_data_rate,
         }
 
 
@@ -291,10 +303,7 @@ def create_observation_plan(hpsos, max_telescope_usage):
                 loop_count += 1
                 finish = start + largest_observation.duration
             else:  # We have to check the telescope capacity
-                if (
-                        current_tel_usage + largest_observation.demand
-                        > max_telescope_usage
-                ):
+                if current_tel_usage + largest_observation.demand > max_telescope_usage:
                     loop_count += 1
                 else:
                     largest_observation.add_start_time(start)
@@ -311,8 +320,7 @@ def create_observation_plan(hpsos, max_telescope_usage):
                 LOGGER.debug(f"{observation=}")
                 if observation.planned:
                     continue
-                if (current_tel_usage + observation.demand
-                        <= max_telescope_usage):
+                if current_tel_usage + observation.demand <= max_telescope_usage:
                     observation.add_start_time(start)
                     observation.planned = True
                     plan.append(observation)
@@ -326,8 +334,7 @@ def create_observation_plan(hpsos, max_telescope_usage):
             finish = -1
             current_tel_usage = 0
         observations = [
-            observation for observation in
-            observations if not observation.planned
+            observation for observation in observations if not observation.planned
         ]
 
     LOGGER.debug(f"{plan=}")
@@ -352,44 +359,23 @@ def create_buffer_config(itemised_spec):
 
     """
     spec = {
-        "hot": {
-            "capacity": -1,
-            "max_ingest_rate": -1
-        },
-        "cold": {
-            "capacity": -1,
-            "max_data_rate": -1
-        }
+        "hot": {"capacity": -1, "max_ingest_rate": -1},
+        "cold": {"capacity": -1, "max_data_rate": -1},
     }
 
-
-    if itemised_spec.buffer_ratio: # Calculate capacities based on buffer
+    if itemised_spec.buffer_ratio:  # Calculate capacities based on buffer
         hot, cold = itemised_spec.buffer_ratio
-        spec['hot']['capacity'] = int(
-            itemised_spec.total_storage * (hot / cold)
-        )
-        spec['cold']['capacity'] = int(
-            itemised_spec.total_storage * (1 - (hot / cold))
-        )
-        spec['hot']['max_ingest_rate'] = int(
-            itemised_spec.ingest_rate
-        )
-        spec['cold']['max_data_rate'] = int(
-            itemised_spec.input_transfer_rate/itemised_spec.nodes
+        spec["hot"]["capacity"] = int(itemised_spec.total_storage * (hot / cold))
+        spec["cold"]["capacity"] = int(itemised_spec.total_storage * (1 - (hot / cold)))
+        spec["hot"]["max_ingest_rate"] = int(itemised_spec.ingest_rate)
+        spec["cold"]["max_data_rate"] = int(
+            itemised_spec.input_transfer_rate / itemised_spec.nodes
         )
     else:
-        spec['hot']['capacity'] = int(
-            itemised_spec.total_input_buffer
-        )
-        spec['cold']['capacity'] = int(
-            itemised_spec.total_compute_buffer
-        )
-        spec['hot']['max_ingest_rate'] = int(
-            itemised_spec.ingest_rate
-        )
-        spec['cold']['max_data_rate'] = int(
-            itemised_spec.input_transfer_rate
-        )
+        spec["hot"]["capacity"] = int(itemised_spec.total_input_buffer)
+        spec["cold"]["capacity"] = int(itemised_spec.total_compute_buffer)
+        spec["hot"]["max_ingest_rate"] = int(itemised_spec.ingest_rate)
+        spec["cold"]["max_data_rate"] = int(itemised_spec.input_transfer_rate)
 
     return spec
 
@@ -410,14 +396,13 @@ def telescope_max(system_sizing, observation):
     """
 
     bl = observation.baseline
-    tmax = max(system_sizing[system_sizing['Baseline'] == bl]['Stations'])
+    tmax = max(system_sizing[system_sizing["Baseline"] == bl]["Stations"])
 
     return tmax
 
 
 def assign_observation_ingest_demands(
-        observation_plan, cluster, system_sizing,
-        maximum_telescope
+    observation_plan, cluster, system_sizing, maximum_telescope
 ):
     """
 
@@ -437,24 +422,26 @@ def assign_observation_ingest_demands(
     """
 
     for o in observation_plan:
-        o.ingest_compute_demand, o.ingest_flops_rate, o.ingest_data_rate = (
-            calc_ingest_demand(o, maximum_telescope, system_sizing, cluster)
-        )
+        (
+            o.ingest_compute_demand,
+            o.ingest_flops_rate,
+            o.ingest_data_rate,
+        ) = calc_ingest_demand(o, maximum_telescope, system_sizing, cluster)
         LOGGER.debug(f"{o.ingest_compute_demand=},{o.ingest_data_rate=}")
 
     return observation_plan
 
 
 def generate_instrument_config(
-        observation_plan,
-        maximum_telescope,
-        config_dir_path,
-        component_sizing,
-        system_sizing,
-        cluster,
-        base_graph_paths,
-        data=True,
-        data_distribution='standard'
+    observation_plan,
+    maximum_telescope,
+    config_dir_path,
+    component_sizing,
+    system_sizing,
+    cluster,
+    base_graph_paths,
+    data=True,
+    data_distribution="standard",
 ):
     """
     Produce the `instrument level configuration for a TopSim compatible
@@ -486,7 +473,7 @@ def generate_instrument_config(
         observation_plan=observation_plan,
         cluster=cluster,
         system_sizing=system_sizing,
-        maximum_telescope=maximum_telescope
+        maximum_telescope=maximum_telescope,
     )
     LOGGER.debug(f"{observation_plan=}")
 
@@ -500,15 +487,21 @@ def generate_instrument_config(
         if o.ingest_compute_demand > max_ingest_resources:
             max_ingest_resources = o.ingest_compute_demand
         # cfg_dir_path = Path(config_dir)
-        wf_file_name = Path(_create_workflow_path_name(o, data))
-        wf_file_path = config_dir_path / 'workflows' / wf_file_name
+        wf_file_name = Path(_create_workflow_path_name(o, data, data_distribution))
+
+        wf_file_path = config_dir_path / "workflows" / wf_file_name
         if not config_dir_path.exists():
             wf_file_path.parent.mkdir(parents=True, exist_ok=True)
         if not os.path.exists(wf_file_path):
             wf_file_path = generate_workflow_from_observation(
-                o, maximum_telescope, config_dir_path,
-                component_sizing, wf_file_name, base_graph_paths, data=data,
-                data_distribution=data_distribution
+                o,
+                maximum_telescope,
+                config_dir_path,
+                component_sizing,
+                wf_file_name,
+                base_graph_paths,
+                data=data,
+                data_distribution=data_distribution,
             )
         else:
             wf_file_path = wf_file_path
@@ -520,31 +513,31 @@ def generate_instrument_config(
 
         pipeline_dict[o.name] = {
             "ingest_demand": o.ingest_compute_demand,
-            "workflow": wf_file_path.relative_to(config_dir_path).as_posix()
+            "workflow": wf_file_path.relative_to(config_dir_path).as_posix(),
         }
         telescope_observations.append(o.to_json())
 
-    telescope_observations.sort(key=lambda d: d['start'])
+    telescope_observations.sort(key=lambda d: d["start"])
     telescope_dict = {
-        'telescope': {
-            'max_ingest_resources': max_ingest_resources,
-            'total_arrays': maximum_telescope,
-            'pipelines': pipeline_dict,
-            'observations': telescope_observations
+        "telescope": {
+            "max_ingest_resources": max_ingest_resources,
+            "total_arrays": maximum_telescope,
+            "pipelines": pipeline_dict,
+            "observations": telescope_observations,
         }
     }
     return telescope_dict
 
 
-def _create_workflow_path_name(observation, data=True):
+def _create_workflow_path_name(observation, data=True, data_distribution='standard'):
     if data:
-        data_suffix = ''
+        data_suffix = ""
     else:
-        data_suffix = '_no_data'
+        data_suffix = "_no_data"
     return (
-            f'{observation.hpso}_time-{observation.duration}'
-            + f'_channels-{observation.channels}_tel-'
-            + f'{observation.demand}{data_suffix}.json'
+        f"{observation.hpso}_time-{observation.duration}"
+        + f"_channels-{observation.channels}_tel-"
+        + f"{observation.demand}{data_suffix}-{data_distribution}.json"
     )
 
 
@@ -577,16 +570,17 @@ def create_single_observation_for_instrument(observation, workflow_path):
 
     """
 
+
 def generate_workflow_from_observation(
-        observation,
-        telescope_max,
-        config_dir,
-        component_sizing,
-        workflow_path_name,
-        base_graph_paths,
-        concat=True,
-        data=True,
-        data_distribution='standard'
+    observation,
+    telescope_max,
+    config_dir,
+    component_sizing,
+    workflow_path_name,
+    base_graph_paths,
+    concat=True,
+    data=True,
+    data_distribution="standard",
 ):
     """
     Given a pipeline and observation specification, generate a workflow file
@@ -621,11 +615,11 @@ def generate_workflow_from_observation(
 
     """
 
-    workflow_dir = f'{config_dir}/workflows'
+    workflow_dir = f"{config_dir}/workflows"
     if not os.path.exists(config_dir):
-        raise FileNotFoundError(f'{config_dir} does not exist')
-    if not os.path.exists(f'{config_dir}/workflows'):
-        os.mkdir(f'{config_dir}/workflows')
+        raise FileNotFoundError(f"{config_dir} does not exist")
+    if not os.path.exists(f"{config_dir}/workflows"):
+        os.mkdir(f"{config_dir}/workflows")
 
     telescope_frac = observation.demand / telescope_max
 
@@ -639,33 +633,42 @@ def generate_workflow_from_observation(
         if base_graph not in cached_base_graph:
             cached_base_graph[base_graph] = None
         LOGGER.debug(f"Using {base_graph} as base workflow.")
-        channel_lgt = edt.update_number_of_channels(base_graph, channels)
-        intermed_graph, task_dict, cached_base_graph[base_graph]  = edt.eagle_to_nx(
-            channel_lgt, workflow, file_in=False,
-            cached_workflow=cached_base_graph[base_graph]
+        channel_lgt = edt.update_number_of_channels(
+            base_graph, channels, observation.demand
+        )
+        intermed_graph, task_dict, cached_base_graph[base_graph] = edt.eagle_to_nx(
+            channel_lgt,
+            workflow,
+            file_in=False,
+            cached_workflow=cached_base_graph[base_graph],
         )
 
-        final_path = (f'{workflow_dir}/' + f'{workflow_path_name}')
+        final_path = f"{workflow_dir}/" + f"{workflow_path_name}"
 
         intermed_graph, task_dict = generate_cost_per_product(
-            intermed_graph, task_dict, observation, workflow,
-            component_sizing, data=data, data_distribution=data_distribution
+            intermed_graph,
+            task_dict,
+            observation,
+            workflow,
+            component_sizing,
+            data=data,
+            data_distribution=data_distribution,
         )
         final_graphs[workflow] = intermed_graph
-        workflow_data_path = f"{final_path}_{workflow}_data"
-        with open(workflow_data_path, 'w') as fp:
+        stats_path = Path(f"{workflow_dir}/workflow_stats")
+        if not stats_path.exists():
+            os.mkdir(stats_path)
+        workflow_data_path = stats_path / f"{workflow_path_name}_data"
+        with open(workflow_data_path, "w") as fp:
             json.dump(task_dict, fp, indent=2)
 
-    final_workflow = edt.concatenate_workflows(final_graphs,
-                                               observation.workflows)
-    final_json = produce_final_workflow_structure(final_workflow,
-                                                  observation, time=False)
+    final_workflow = edt.concatenate_workflows(final_graphs, observation.workflows)
+    final_json = produce_final_workflow_structure(
+        final_workflow, observation, time=False
+    )
 
-
-    with open(final_path, 'w') as fp:
+    with open(final_path, "w") as fp:
         json.dump(final_json, fp, indent=2)
-
-
 
     return Path(final_path)
 
@@ -682,26 +685,28 @@ def _match_graph_options(graph_type: str):
     -------
 
     """
-    if graph_type == 'prototype':
+    if graph_type == "prototype":
         return BASIC_PROTOTYPE_GRAPH
-    elif graph_type == 'cont_img_mvp_graph':
+    elif graph_type == "cont_img_mvp_graph":
         return CONT_IMG_MVP_GRAPH
-    elif graph_type == 'scatter':
+    elif graph_type == "scatter":
         return SCATTER_GRAPH
     else:
-        raise RuntimeError(f'graph_type {graph_type} unsupported\n'
-                           f'Currently support prototype or scatter.')
+        raise RuntimeError(
+            f"graph_type {graph_type} unsupported\n"
+            f"Currently support prototype or scatter."
+        )
 
 
 def generate_cost_per_product(
-        nx_graph,
-        task_dict,
-        observation,
-        workflow,
-        component_sizing,
-        data=True,
-        data_distribution="standard",
-        final_path=None
+    nx_graph,
+    task_dict,
+    observation,
+    workflow,
+    component_sizing,
+    data=True,
+    data_distribution="standard",
+    final_path=None,
 ):
     """
     Produce a cost value per node within the workflow graph for the given
@@ -736,100 +741,93 @@ def generate_cost_per_product(
     """
     # TODO lets re-engineer this to directly allocate costs to the nodes
     ignore_components = [
-        'UpdateGSM', 'BeginMajorCycle', 'FinishMajorCycle',
-        'FinishMinorCycle', 'BeginMinorCycle', 'Gather', 'Scatter',
-        'FrequencySplit','End', 'CalSourceFinding', 'SelfCalConverge',
-        'ExtractLSM','Raw-Vis-Copy','IdentifyComponent','lstnr','Phase Rotation Predict', 'Visibility Weighting',
-            'Gridding Kernel Update', 'Phase Rotation'
+        "UpdateGSM",
+        "BeginMajorCycle",
+        "FinishMajorCycle",
+        "FinishMinorCycle",
+        "BeginMinorCycle",
+        "Gather",
+        "Scatter",
+        "FrequencySplit",
+        "End",
+        "CalSourceFinding",
+        "SelfCalConverge",
+        "ExtractLSM",
+        "Raw-Vis-Copy",
+        "lstnr",
+        "Phase Rotation Predict",
+        "Visibility Weighting",
+        "Gridding Kernel Update",
+        "Phase Rotation",
     ]
-    # EAGLE : System Sizing
-    # total_product_costs = {}
-    # Precompute per-component costs, assuming equal split accross component
-    # total_cost = -1
-    # total_data = -1
-    # If we have a cost of 0, we fill with arbitrary FLOPS
-    generic_cost = 1
 
-    # TODO process_task_cost (Comp and I/O)
     for component in task_dict:
         if component in ignore_components:
             continue
         else:
-
             total_compute, total_data = identify_component_cost(
-                observation.hpso, observation.baseline, workflow,
-                component, component_sizing
+                observation.hpso,
+                observation.baseline,
+                workflow,
+                observation.demand,
+                observation.channels,
+                observation.telescope,
+                component,
+                component_sizing,
             )
-        task_dict[component]['total_compute'] = total_compute
-        task_dict[component]['fraction_compute_cost'] = (
-                total_compute / task_dict[component]['node']
-        )
-        task_dict[component]['total_data'] = total_data
-        task_dict[component]['fraction_data_cost'] = (
-                total_data / task_dict[component]['node'])
 
-    # major_loop_data = calculate_major_loop_data(
-    #     task_dict,
-    #     component_sizing,
-    #     observation.hpso,
-    #     observation.baseline,
-    #     workflow,
-    #     data_distribution
-    # )
+        task_dict[component]["total_compute"] = total_compute
+        task_dict[component]["fraction_compute_cost"] = (
+            total_compute / task_dict[component]["node"]
+        )
+        task_dict[component]["total_data"] = total_data
+        task_dict[component]["fraction_data_cost"] = (
+            total_data / task_dict[component]["node"]
+        )
+
     for node in nx_graph.nodes:
-        workflow, component, index = node.split('_')
+        workflow, component, index = node.split("_")
         if component in ignore_components:
-            nx_graph.nodes[node]['comp'] = observation.duration
+            nx_graph.nodes[node]["comp"] = observation.duration
         else:
             compute = (
                 observation.duration
-                * task_dict[component]['fraction_compute_cost']
+                * task_dict[component]["fraction_compute_cost"]
                 * SI.peta
             )
             data_cost = (
-                    observation.duration
-                    * task_dict[component]['fraction_data_cost']
-                    * SI.mega
-                    * BYTES_PER_VIS
+                observation.duration
+                * task_dict[component]["fraction_data_cost"]
+                * SI.mega
+                * BYTES_PER_VIS
             )
             if compute > 0:
-                nx_graph.nodes[node]['comp'] = compute
+                nx_graph.nodes[node]["comp"] = compute
             else:
-                nx_graph.nodes[node]['comp'] = observation.duration
+                nx_graph.nodes[node]["comp"] = observation.duration
             if data_cost > 0 and data:
-                nx_graph.nodes[node]['task_data'] = data_cost
+                nx_graph.nodes[node]["task_data"] = data_cost
             else:
-                nx_graph.nodes[node]['task_data'] = 0
-
-            # data = (
-            #     observation.duration
-            #     * task_dict[component]['fraction_data_cost']
-            #     * SI.mega
-            # )
+                nx_graph.nodes[node]["task_data"] = 0
 
     #  Allocate edge costs (data)
 
     for edge in nx_graph.edges:
         producer = edge[0]
-        workflow, component, index = producer.split('_')
+        workflow, component, index = producer.split("_")
         if component in ignore_components:
             nx_graph[edge[0]][edge[1]]["transfer_data"] = 0
         else:
             data_cost = (
                 observation.duration
-                * task_dict[component]['fraction_data_cost']
-                * SI.mega * BYTES_PER_VIS
+                * task_dict[component]["fraction_data_cost"]
+                * SI.mega
+                * BYTES_PER_VIS
             )
-            if not data:
-                nx_graph[edge[0]][edge[1]]["transfer_data"] = 0
-            # elif component in major_loop_data:
-            #     nx_graph[edge[0]][edge[1]]["transfer_data"] = (
-            #         observation.duration
-            #         * major_loop_data[component]['fraction_data_cost']
-            #         * SI.tera
-            #     )
-            else:
+            if data_distribution == "edges":
                 nx_graph[edge[0]][edge[1]]["transfer_data"] = data_cost
+            else:
+                nx_graph[edge[0]][edge[1]]["transfer_data"] = 0
 
     return nx_graph, task_dict
 
@@ -839,8 +837,16 @@ def _process_task_cost(task_dict, graph):
     return task_dict, graph
 
 
-def identify_component_cost(hpso, baseline, workflow, component,
-                            component_sizing):
+def identify_component_cost(
+    hpso,
+    baseline,
+    workflow,
+    telescope_demand,
+    channels,
+    telescope,
+    component,
+    component_sizing,
+):
     """
     Use HPSO and pipeline information to generate the correct workflow
     information
@@ -871,59 +877,89 @@ def identify_component_cost(hpso, baseline, workflow, component,
     -------
 
     """
+    tel_max = MAX_TEL_DEMAND_LOW
+    if telescope == "mid":
+        tel_max = MAX_TEL_DEMAND_MID
+    telescope_frac = (telescope_demand ** 2 + telescope_demand) / (
+        tel_max ** 2 + tel_max
+    )
 
     total_cost = 0
     total_data = 0
-    if component == 'UpdateLSM':
-        for compnt in ['Reprojection Predict', 'Reprojection']:
+    if component == "UpdateLSM":
+        for compnt in ["Reprojection Predict", "Reprojection"]:
             cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
+            )
+            cost, data = scale_based_on_obsevation_demand(
+                telescope_frac, compnt, cost, data
             )
             total_cost += cost
             total_data += data
 
-    elif component == 'Grid':
+    elif component == "Grid":
         for compnt in [
-            'Grid', 'Phase Rotation Predict', 'Visibility Weighting',
-            'Gridding Kernel Update', 'Phase Rotation'
+            "Grid",
+            "Phase Rotation Predict",
+            "Visibility Weighting",
+            "Gridding Kernel Update",
+            "Phase Rotation",
         ]:
             cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
+            cost, data = scale_based_on_obsevation_demand(
+                telescope_frac, compnt, cost, data
+            )
+
             total_cost += cost
             total_data += data
 
-    elif component == 'Degrid':
-        for compnt in [
-            'Degrid', 'Degridding Kernel Update'
-        ]:
+    elif component == "Degrid":
+        for compnt in ["Degrid", "Degridding Kernel Update"]:
             cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
+            cost, data = scale_based_on_obsevation_demand(
+                telescope_frac, compnt, cost, data
+            )
+
             total_cost += cost
             total_data += data
 
-    elif component == 'Predict':
-        for compnt in ['DFT', 'IFFT']:
+    elif component == "Predict":
+        for compnt in ["DFT", "IFFT"]:
             cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
+            cost, data = scale_based_on_obsevation_demand(
+                telescope_frac, compnt, cost, data
+            )
+
             total_cost += cost
             total_data += data
 
-    elif component == 'Subtract':
-        for compnt in ['Subtract Visibility']:
+    elif component == "Subtract":
+        for compnt in ["Subtract Visibility"]:
             cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
+            cost, data = scale_based_on_obsevation_demand(
+                telescope_frac, compnt, cost, data
+            )
+
             total_cost += cost
             total_data += data
 
-    elif component == 'Correct':
-        for compnt in ['Correct']:
+    elif component == "Correct":
+        for compnt in ["Correct"]:
             cost, data = retrieve_component_cost(
                 hpso, baseline, workflow, compnt, component_sizing
             )
+            cost, data = scale_based_on_obsevation_demand(
+                telescope_frac, compnt, cost, data
+            )
+
             total_cost += cost
             total_data += data
 
@@ -931,14 +967,40 @@ def identify_component_cost(hpso, baseline, workflow, component,
         cost, data = retrieve_component_cost(
             hpso, baseline, workflow, component, component_sizing
         )
+        cost, data = scale_based_on_obsevation_demand(
+            telescope_frac, component, cost, data
+        )
+
         total_cost += cost
         total_data += data
 
     return total_cost, total_data
 
 
-def calculate_major_loop_data(task_dict, component_sizing,
-                              hpso, baseline, workflow, data_distribution):
+def scale_based_on_obsevation_demand(tel_frac, component, comp, data):
+
+    if component in [
+        "Correct",
+        "Grid",
+        "Degrid",
+        "DFT",
+        "FFT",
+        "Flag",
+        "IFFT",
+        "Solve",
+        "Subtract Visibility",
+        "Visibility Weighting",
+    ]:
+        return comp * tel_frac, data * tel_frac
+    # elif component in ['Subtract Visiblity', 'Solve', 'Flag', 'DFFT', 'Correct']:
+    #     return comp * channel_frac, data * channel_frac
+    else:
+        return comp, data
+
+
+def calculate_major_loop_data(
+    task_dict, component_sizing, hpso, baseline, workflow, data_distribution
+):
     """
     If we want to take data into account in the way that the parametric model does,
     we use their visibility read rate (Rio) value in their model.
@@ -968,48 +1030,42 @@ def calculate_major_loop_data(task_dict, component_sizing,
         Modified task dictionary - keeps the functionality pure.
     """
     data = 0
-    data_dict = {'Degrid':{}, 'Subtract':{}, 'Flag':{}, 'Grid':{}}
+    data_dict = {"Degrid": {}, "Subtract": {}, "Flag": {}, "Grid": {}}
     obs_frame = component_sizing[
-        (component_sizing['hpso'] == hpso) &
-        (component_sizing['Baseline'] == baseline)
-        ]
+        (component_sizing["hpso"] == hpso) & (component_sizing["Baseline"] == baseline)
+    ]
 
-    if data_distribution == 'distribute':
+    if data_distribution == "distribute":
         raise NotImplementedError(
-            'Current functionality does not support distributed data costs'
+            "Current functionality does not support distributed data costs"
         )
-    elif data_distribution == 'standard':
+    elif data_distribution == "standard":
         data = float(
-            obs_frame[
-                obs_frame['Pipeline'] == f'{workflow}'
-            ]['Visibility read rate']
+            obs_frame[obs_frame["Pipeline"] == f"{workflow}"]["Visibility read rate"]
         )
-        data_dict['Degrid']['total_io_cost'] = data
-        data_dict['Degrid']['fraction_io_cost'] = (
-            data/task_dict['Degrid']['node']
-        )
+        data_dict["Degrid"]["total_io_cost"] = data
+        data_dict["Degrid"]["fraction_io_cost"] = data / task_dict["Degrid"]["node"]
         for component in data_dict:
-            if component == 'Degrid':
-                data_dict[component]['total_io_cost'] = data
-                data_dict[component]['fraction_io_cost'] = (
-                    data / task_dict['Degrid']['node']
+            if component == "Degrid":
+                data_dict[component]["total_io_cost"] = data
+                data_dict[component]["fraction_io_cost"] = (
+                    data / task_dict["Degrid"]["node"]
                 )
             else:
-                data_dict[component]['total_io_cost'] = 0
-                data_dict[component]['fraction_io_cost'] = 0
+                data_dict[component]["total_io_cost"] = 0
+                data_dict[component]["fraction_io_cost"] = 0
 
-            data_dict[component]['total_data_cost'] = data
-            data_dict[component]['fraction_data_cost'] = (
-                data / task_dict[component]['node']
+            data_dict[component]["total_data_cost"] = data
+            data_dict[component]["fraction_data_cost"] = (
+                data / task_dict[component]["node"]
             )
     else:
-        raise RuntimeError('Passing incorrect data distribution method')
+        raise RuntimeError("Passing incorrect data distribution method")
 
     return data_dict
 
 
-def retrieve_component_cost(hpso, baseline, workflow, component,
-                            component_sizing):
+def retrieve_component_cost(hpso, baseline, workflow, component, component_sizing):
     """
 
     Parameters
@@ -1025,16 +1081,15 @@ def retrieve_component_cost(hpso, baseline, workflow, component,
 
     """
     # Santiy check for components:
-    if workflow not in component_sizing['Pipeline'].values:
+    if workflow not in component_sizing["Pipeline"].values:
         raise RuntimeError(
             f"Workflow string '{workflow}' not present in DataFrame."
             + f"Double check spelling in Observation."
         )
 
     obs_frame = component_sizing[
-        (component_sizing['hpso'] == hpso) &
-        (component_sizing['Baseline'] == baseline)
-        ]
+        (component_sizing["hpso"] == hpso) & (component_sizing["Baseline"] == baseline)
+    ]
 
     if obs_frame.empty:
         raise ValueError(
@@ -1042,16 +1097,12 @@ def retrieve_component_cost(hpso, baseline, workflow, component,
             f"please review for errors in user input. "
         )
 
-    if workflow not in component_sizing['Pipeline'].values:
-        raise RuntimeError(
-            f"HPSO does not require {workflow} - check HPSO config."
-        )
+    if workflow not in component_sizing["Pipeline"].values:
+        raise RuntimeError(f"HPSO does not require {workflow} - check HPSO config.")
 
-    compute = float(obs_frame[obs_frame['Pipeline'] == workflow][component])
+    compute = float(obs_frame[obs_frame["Pipeline"] == workflow][component])
 
-    data = float(
-        obs_frame[obs_frame['Pipeline'] == f'{workflow}_data'][component]
-    )
+    data = float(obs_frame[obs_frame["Pipeline"] == f"{workflow}_data"][component])
 
     return compute, data
 
@@ -1073,13 +1124,12 @@ def retrive_workflow_cost(hpso, baseline, workflow, system_sizing):
     """
     # TODO check that HPSO exists in system_sizing
 
-    if hpso not in system_sizing['HPSO'].values:
+    if hpso not in system_sizing["HPSO"].values:
         raise RuntimeError(f"HPSO: {hpso} not present")
 
     obs_frame = system_sizing[
-        (system_sizing['HPSO'] == hpso) &
-        (system_sizing['Baseline'] == baseline)
-        ]
+        (system_sizing["HPSO"] == hpso) & (system_sizing["Baseline"] == baseline)
+    ]
     flops = float(obs_frame[workflow])
 
     return flops
@@ -1104,15 +1154,12 @@ def produce_final_workflow_structure(nx_final, observation, time=False):
     """
 
     header = WORKFLOW_HEADER
-    header['time'] = time
-    header['parameters']['channels'] = observation.channels
-    header['parameters']['arrays'] = observation.demand
-    header['parameters']['baseline'] = observation.baseline
-    header['parameters']['duration'] = observation.duration
-    jgraph = {
-        "header": header,
-        "graph": nx.readwrite.node_link_data(nx_final)
-    }
+    header["time"] = time
+    header["parameters"]["channels"] = observation.channels
+    header["parameters"]["arrays"] = observation.demand
+    header["parameters"]["baseline"] = observation.baseline
+    header["parameters"]["duration"] = observation.duration
+    jgraph = {"header": header, "graph": nx.readwrite.node_link_data(nx_final)}
     return jgraph
 
 
@@ -1189,131 +1236,121 @@ def calc_ingest_demand(observation, telescope_max, system_sizing, cluster):
     number of resources necessary for the current ingest_flops
 
     """
-    #
-    # arch = cluster['cluster']['header']['architecture']
-    # cpus = arch['cpu'].keys()
-    # m = 0
 
-    # TODO To get ingest flops, sum all the flops for the ingest and then
-    # divide based on the machine numbers. This is a partial solution,
-    # as we don't want to also simulate scheduling the ingest (this is too
-    # much overhead for the simulation - especially when we have to assume
-    # ingest pipelines will run on time, as they are necessary for the
-    # observation to occur.
-
-    telescope_frac = observation.demand / telescope_max
-    ingest_flops = retrive_workflow_cost(
-        observation.hpso,
-        observation.baseline,
-        'Ingest [Pflop/s]',
-        system_sizing
-    ) * SI.peta * telescope_frac
-    resources = cluster['system']['resources']
+    telescope_frac = (observation.demand ** 2 + observation.demand) / (
+        telescope_max ** 2 + telescope_max
+    )
+    # frequency_frac = observation.channels / MAX_CHANNELS
+    ingest_flops = (
+        retrive_workflow_cost(
+            observation.hpso, observation.baseline, "Ingest [Pflop/s]", system_sizing
+        )
+        * SI.peta
+        * telescope_frac
+    )
+    resources = cluster["system"]["resources"]
     m = 0
     num_machines = 0
     for machine in resources:
-        m += resources[machine]['flops']
+        m += resources[machine]["flops"]
         num_machines += 1
         if m > ingest_flops:
             break
 
-    ingest_bytes = retrive_workflow_cost(
-        observation.hpso,
-        observation.baseline,
-        'Ingest Rate [TB/s]',
-        system_sizing
-    ) * SI.tera * telescope_frac
+    ingest_bytes = (
+        retrive_workflow_cost(
+            observation.hpso, observation.baseline, "Ingest Rate [TB/s]", system_sizing
+        )
+        * SI.tera
+        * telescope_frac
+    )
 
     return num_machines, ingest_flops, ingest_bytes
 
 
 def compile_observations_and_workflows(
-        input_dir='./',
-        output_dir='out/',
-        itemised_spec=None,
-        buffer_ratio=None
-
+    input_dir="./", output_dir="out/", itemised_spec=None, buffer_ratio=None
 ):
     """
-    Generate a configuration file given a set of observation descriptions and
-    the workflow file paths, as well as the cluster.
+        Generate a configuration file given a set of observation descriptions and
+        the workflow file paths, as well as the cluster.
 
-    Parameters
-    ----------
-    input_dir : str
-    output_dir : str
-        Destination directory for the config and workflow files
+        Parameters
+        ----------
+        input_dir : str
+        output_dir : str
+            Destination directory for the config and workflow files
 
-    Notes
-    ------
-    The telescope system sizing is generated by
-    :py:obj:`construct_telescope_config_from_observation_plan`,
-    which builds the following:
+        Notes
+        ------
+        The telescope system sizing is generated by
+        :py:obj:`construct_telescope_config_from_observation_plan`,
+        which builds the following:
 
-    >>> {
-    >>>    "telescope": {
-    >>>       "total_arrays": 512,
-    >>>       "pipelines": {
-    >>>           "DPrepA": {
-    >>>               "ingest_demand": 128,
-    >>>                "workflow": "final/directory/for/workflow",
-    >>>           },
-    >>>           "DPrepC": {
-    >>>               "ingest_demand": 84,
-    >>>                "workflow": "final/directory/for/workflow",
-    >>>       },
+        >>> {
+        >>>    "telescope": {
+        >>>       "total_arrays": 512,
+        >>>       "pipelines": {
+        >>>           "DPrepA": {
+        >>>               "ingest_demand": 128,
+        >>>                "workflow": "final/directory/for/workflow",
+        >>>           },
+        >>>           "DPrepC": {
+        >>>               "ingest_demand": 84,
+        >>>                "workflow": "final/directory/for/workflow",
+        >>>       },
 
-    :py:obj: `total_arrays` are specified at the beginning of generation.
-    Pipelines are constructed based on the observation plan, and their
-    :py:obj: `ingest_demand` is calculated based on the Ingest rate of the
-    observation in conjunction with the system sizing that is provided.
-
-
-    >>>    {"observations": [
-    >>>            {
-    >>>                "name": "hpso01_1",
-    >>>                "start": 0,
-    >>>                "duration": 10,
-    >>>                "demand": 256,
-    >>>                "type": "continuum",
-    >>>                "data_product_rate": 4
-    >>>            }
-    >>>        ]
-    >>>    },
-
-zx
-    >>>    {"cluster": {
-    >>>        "header": {
-    >>>            "time": "false",
-    >>>        },
-    >>>        "system": {
-    >>>            "resources": {
-    >>>                    "cat0_m0": {
-    >>>                        "flops": 35000,
-    >>>                        "compute_bandwidth": 10
-    >>>                    },
-    >>>            },
-    >>>            "system_bandwidth": 1.0
-    >>>        }
-    >>>    },
-
-    >>>     {"buffer": {
-    >>>         "hot": {
-    >>>             "capacity": 2000000,
-    >>>             "max_ingest_rate": 1000
-    >>>         },
-    >>>         "cold": {
-    >>>             "capacity": 5000000,
-    >>>             "max_data_rate": 500
-    >>>         }
-    >>>     }
-    >>> }
+        :py:obj: `total_arrays` are specified at the beginning of generation.
+        Pipelines are constructed based on the observation plan, and their
+        :py:obj: `ingest_demand` is calculated based on the Ingest rate of the
+        observation in conjunction with the system sizing that is provided.
 
 
+        >>>    {"observations": [
+        >>>            {
+        >>>                "name": "hpso01_1",
+        >>>                "start": 0,
+        >>>                "duration": 10,
+        >>>                "demand": 256,
+        >>>                "type": "continuum",
+        >>>                "data_product_rate": 4
+        >>>            }
+        >>>        ]
+        >>>    },
 
-    Returns
-    -------
-    Path to a JSON config file.
+    zx
+        >>>    {"cluster": {
+        >>>        "header": {
+        >>>            "time": "false",
+        >>>        },
+        >>>        "system": {
+        >>>            "resources": {
+        >>>                    "cat0_m0": {
+        >>>                        "flops": 35000,
+        >>>                        "compute_bandwidth": 10
+        >>>                    },
+        >>>            },
+        >>>            "system_bandwidth": 1.0
+        >>>        }
+        >>>    },
+
+        >>>     {"buffer": {
+        >>>         "hot": {
+        >>>             "capacity": 2000000,
+        >>>             "max_ingest_rate": 1000
+        >>>         },
+        >>>         "cold": {
+        >>>             "capacity": 5000000,
+        >>>             "max_data_rate": 500
+        >>>         }
+        >>>     }
+        >>> }
+
+
+
+        Returns
+        -------
+        Path to a JSON config file.
     """
 
     # construct_telescope_config_from_observation_plan()

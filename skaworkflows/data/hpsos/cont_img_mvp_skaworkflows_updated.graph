@@ -1491,7 +1491,7 @@
             "inputApplicationType": "None",
             "isGroup": false,
             "key": -23,
-            "name": "IFFT",
+            "name": "BeginMajorCycle",
             "outputAppFields": [],
             "outputApplicationDescription": "",
             "outputApplicationKey": null,
@@ -3112,7 +3112,7 @@
                     "readonly": false,
                     "type": "Unknown",
                     "usage": "NoPort",
-                    "value": "2"
+                    "value": "1"
                 }
             ],
             "flipPorts": false,
@@ -3235,7 +3235,7 @@
             "inputApplicationType": "None",
             "isGroup": false,
             "key": -2,
-            "name": "IdentifyComponent",
+            "name": "Identify Component",
             "outputAppFields": [],
             "outputApplicationDescription": "",
             "outputApplicationKey": null,
