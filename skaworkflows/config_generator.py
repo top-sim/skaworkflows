@@ -12,15 +12,15 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import pandas as pd
 import json
 import logging
+import pandas as pd
+
+from pathlib import Path
 
 import skaworkflows.common as common
 import skaworkflows.workflow.hpso_to_observation as hto
 
-from pathlib import Path
-from skaworkflows.hpconfig.utils.classes import ARCHITECTURE
 from skaworkflows.hpconfig.specs.sdp import (
     SDP_LOW_CDR, SDP_MID_CDR, SDP_PAR_MODEL_LOW, SDP_PAR_MODEL_MID
 )
@@ -54,6 +54,8 @@ def create_config(
     -------
     Path where observation config is stored
     """
+
+    LOGGER.info("Generating %s...", cfg_name)
 
     # Set defaults to SKA Low
     if data:
@@ -119,7 +121,7 @@ def create_config(
     )
     LOGGER.debug(f"Observation plan: {observation_plan}")
 
-    LOGGER.info(f"Producing the instrument config")
+    LOGGER.info("Producing the instrument config")
     final_instrument_config = hto.generate_instrument_config(
         observation_plan, telescope_max,
         output_dir,

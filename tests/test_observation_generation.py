@@ -24,12 +24,11 @@ from pathlib import Path
 from skaworkflows.workflow.hpso_to_observation import (
     Observation,
     create_observation_from_hpso,
-    assign_observation_ingest_demands,
 )
+
 from skaworkflows.workflow.hpso_to_observation import (
     create_observation_plan,
     create_buffer_config,
-    compile_observations_and_workflows,
     calc_ingest_demand,
     generate_instrument_config,
 )
@@ -42,14 +41,12 @@ from skaworkflows.hpconfig.specs.sdp import (
     SDP_PAR_MODEL_MID,
 )
 
-DATA_DIR = "data/parametric_model"
-LONG = f"{DATA_DIR}/2023-03-25_long_HPSOs.csv"
-
 SYSTEM_SIZING_DIR = "skaworkflows/data/pandas_sizing"
-TOTAL_SYSTEM_SIZING = "skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv"
+TOTAL_SYSTEM_SIZING = ("skaworkflows/data/pandas_sizing/"
+                       "total_compute_SKA1_Low_2024-03-25.csv")
 
 COMPONENT_SYSTEM_SIZING = (
-    "skaworkflows/data/pandas_sizing/component_compute_SKA1_Low.csv"
+    "skaworkflows/data/pandas_sizing/component_compute_SKA1_Low_2024-03-25.csv"
 )
 # CLUSTER = 'tests/PawseyGalaxy_nd_1619058732.json'
 
@@ -60,8 +57,19 @@ PATH_NOT_EXISTS = "path/doesnt/exist"
 
 class TestObservationClass(unittest.TestCase):
     def setUp(self):
-        self.obs1 = Observation(2, "hpso01", ["dprepa"], 32, 60, 256, 65000.0, 'low')
-        self.obs2 = Observation(4, "hpso04a", ["dprepa"], 16, 30, 256, 65000.0, 'low' )
+        self.obs1 = Observation(
+            name = 2,
+            hpso = "hpso01",
+            workflows= ["dprepa"],
+            demand=32,
+            duration=60,
+            channels=256*128,
+            coarse_channels=256,
+            baseline=65000.0,
+            telescope='low'
+        )
+
+        self.obs2 = Observation(4, "hpso04a", ["dprepa"], 16, 30, 256*128, 256, 65000.0, 'low' )
 
     def test_add_workflow_path(self):
         self.assertRaises(RuntimeError, self.obs1.add_workflow_path, PATH_NOT_EXISTS)
@@ -72,14 +80,14 @@ class TestObservationPlanGeneration(unittest.TestCase):
     def setUp(self):
         # low_compute_data = "csv/SKA1_Low_COMPUTE.csv"
         # self.observations = convert_systemsizing_csv_to_dict(low_compute_data)
-        self.obs1 = Observation(2, "hpso01", ["dprepa"], 32, 60, 256, 65000.0,'low')
+        self.obs1 = Observation(2, "hpso01", ["dprepa"], 32, 60, 256*128, 256, 65000.0,'low')
         self.obslist1 = create_observation_from_hpso(
-            2, "hpso01", ["dprepa"], 32, 60, 256, 65000.0, 'low', offset=0
+            2, "hpso01", ["dprepa"], 32, 60, 256*128, 256, 65000.0, 'low', offset=0
         )
         self.obslist2 = create_observation_from_hpso(
-            4, "hpso04a", ["dprepa"], 16, 30, 128, 65000.0, 'low', offset=0
+            4, "hpso04a", ["dprepa"], 16, 30, 256*128, 128, 65000.0, 'low', offset=0
         )
-        self.obs3 = Observation(3, "hpso01", ["dprepa"], 32, 30, 256, 65000.0,'low')
+        self.obs3 = Observation(3, "hpso01", ["dprepa"], 32, 30, 256*128, 256, 65000.0,'low')
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         self.max_telescope_usage = 32  # 1/16th of the telescope
 
@@ -116,7 +124,8 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             demand=512,
             duration=60,
             workflows=["DPrepA"],
-            channels=256,
+            channels=256*128,
+            coarse_channels=256,
             baseline=65000.0,
             telescope='low'
         )
@@ -127,7 +136,8 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             demand=512,
             duration=60,
             workflows=["DPrepA"],
-            channels=256,
+            channels=256*128,
+            coarse_channels=256,
             baseline=65000.0,
             telescope='low',
             offset=0,
@@ -144,11 +154,22 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             workflows=["DPrepA"],
             demand=32,
             duration=60,
-            channels=256,
+            channels=256*128,
+            coarse_channels=256,
             baseline=65000.0,
             telescope='low'
         )
-        self.obs3 = Observation("hpso01_5", "hpso04a", ["DPrepA"], 16, 30, 256, 65000.0, 'low')
+        self.obs3 = Observation(
+            "hpso01_5",
+            "hpso04a",
+            ["DPrepA"],
+            16,
+            30,
+            256*128,
+            256,
+            65000.0,
+            'low'
+        )
         self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
         self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         sdp = SDP_LOW_CDR()
@@ -164,7 +185,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         # based on the ingest size
         # ingest_flops = 32 / 512 * (float(max_ingest) * SI.peta)
         machines, ingest_flops, ingest_data = calc_ingest_demand(
-            self.obs1, 512, self.system_sizing, self.cluster
+            self.obs1, self.system_sizing, self.cluster
         )
         self.assertEqual(11, machines)
         self.assertEqual(632428093239751.1, ingest_flops)
