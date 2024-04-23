@@ -30,12 +30,13 @@ information
 import json
 import os
 import logging
-import math
-
+import datetime
 import pandas as pd
 import networkx as nx
 import numpy as np
 
+
+from typing import List, Dict
 from enum import Enum
 from pathlib import Path
 import skaworkflows.workflow.eagle_daliuge_translation as edt
@@ -462,16 +463,17 @@ def assign_observation_ingest_demands(
 
 
 def generate_instrument_config(
-    observation_plan,
-    maximum_telescope,
-    config_dir_path,
-    component_sizing,
-    system_sizing,
-    cluster,
-    base_graph_paths,
-    data=True,
-    data_distribution="standard",
-):
+        telescope: str,
+        maximum_telescope,
+        observation_plan: List[Observation],
+        config_dir_path,
+        component_sizing,
+        system_sizing,
+        cluster,
+        base_graph_paths,
+        data=True,
+        data_distribution: str = "standard",
+) -> dict:
     """
     Produce the `instrument level configuration for a TopSim compatible
     simulation configuration file.
@@ -486,14 +488,28 @@ def generate_instrument_config(
     stations. For an :py:object:`skaworkflows.workflow.hpso_to_workflow
     .Observation`, the stations used is observation.demand.
 
-    Returns
+    Parameters
+    ----------
+    observation_plan  of Observation objects
+    observation_plan
+    telescope
+    maximum_telescope
+    config_dir_path
+    component_sizing
+    system_sizing
+    cluster
+    base_graph_paths
+    data
+    data_distribution: str
+        Describes where data is allocated on the workflow.
+        "standard" will apply data to tasks only.
+        "edges" will apply data to both tasks and esges.
+
+
+    Returns 
     -------
-
+    dict: dictionary of relevant information
     """
-
-    # telescope_max,
-    # config_dir,
-    # component_sizing,
 
     pipeline_dict = {}
     telescope_observations = []
@@ -515,7 +531,7 @@ def generate_instrument_config(
         if o.ingest_compute_demand > max_ingest_resources:
             max_ingest_resources = o.ingest_compute_demand
         # cfg_dir_path = Path(config_dir)
-        wf_file_name = Path(_create_workflow_path_name(o, data, data_distribution))
+        wf_file_name = Path(_create_workflow_path_name(o))
 
         wf_file_path = config_dir_path / "workflows" / wf_file_name
         if not config_dir_path.exists():
@@ -540,14 +556,23 @@ def generate_instrument_config(
             )
 
         pipeline_dict[o.name] = {
-            "ingest_demand": o.ingest_compute_demand,
             "workflow": wf_file_path.relative_to(config_dir_path).as_posix(),
+            "ingest_demand": o.ingest_compute_demand,
+            "duration": o.duration,
+            "channels": o.channels,
+            "coarse_channels": o.coarse_channels,
+            "demand": o.demand,
+            "workflow_type": list(set(base_graph_paths.values())),
+            "graph_type": list(set(base_graph_paths.keys())),
+            "data": data,
+            "data_distribution": data_distribution
         }
         telescope_observations.append(o.to_json())
 
     telescope_observations.sort(key=lambda d: d["start"])
     telescope_dict = {
         "telescope": {
+            "observatory": telescope,
             "max_ingest_resources": max_ingest_resources,
             "total_arrays": maximum_telescope,
             "pipelines": pipeline_dict,
@@ -557,16 +582,11 @@ def generate_instrument_config(
     return telescope_dict
 
 
-def _create_workflow_path_name(observation, data=True, data_distribution="standard"):
-    if data:
-        data_suffix = ""
-    else:
-        data_suffix = "_no_data"
-    return (
-        f"{observation.hpso}_time-{observation.duration}"
-        + f"_channels-{observation.coarse_channels}_tel-"
-        + f"{observation.demand}{data_suffix}-{data_distribution}.json"
-    )
+def _create_workflow_path_name(
+        observation
+):
+    str_date = datetime.datetime.now().isoformat('_', "seconds")
+    return f"{hash(observation)}_{str_date}"
 
 
 def create_single_observation_for_instrument(observation, workflow_path):
@@ -655,6 +675,7 @@ def generate_workflow_from_observation(
     # Unroll the graph
     final_graphs = {}
     cached_base_graph = {}
+    workflow_stats = {}
     for workflow in observation.workflows:
         base_graph_type = base_graph_paths[workflow]
         base_graph = _match_graph_options(base_graph_type)
@@ -685,13 +706,8 @@ def generate_workflow_from_observation(
             data_distribution=data_distribution,
         )
         final_graphs[workflow] = intermed_graph
-        stats_path = Path(f"{workflow_dir}/workflow_stats")
-        if not stats_path.exists():
-            os.mkdir(stats_path)
-        workflow_data_path = stats_path / f"{workflow_path_name}_{workflow}_data"
-        with open(workflow_data_path, "w") as fp:
-            json.dump(task_dict, fp, indent=2)
-
+        workflow_stats[workflow] = task_dict
+    write_workflow_stats_to_csv(workflow_stats, final_path)
     final_workflow = edt.concatenate_workflows(final_graphs, observation.workflows)
     final_json = produce_final_workflow_structure(
         final_workflow, observation, time=False
@@ -805,7 +821,10 @@ def generate_cost_per_product(
 
     for component in task_dict:
         if component in ignore_components:
-            continue
+            task_dict[component]["total_compute"] = 0
+            task_dict[component]["fraction_compute_cost"] = 0
+            task_dict[component]["total_data"] = 0
+            task_dict[component]["fraction_data_cost"] = 0
         else:
             total_compute, total_data = identify_component_cost(
                 observation,
@@ -814,14 +833,14 @@ def generate_cost_per_product(
                 component_sizing,
             )
 
-        task_dict[component]["total_compute"] = total_compute
-        task_dict[component]["fraction_compute_cost"] = (
-            total_compute / task_dict[component]["node"]
-        )
-        task_dict[component]["total_data"] = total_data
-        task_dict[component]["fraction_data_cost"] = (
-            total_data / task_dict[component]["node"]
-        )
+            task_dict[component]["total_compute"] = total_compute
+            task_dict[component]["fraction_compute_cost"] = (
+                total_compute / task_dict[component]["node"]
+            )
+            task_dict[component]["total_data"] = total_data
+            task_dict[component]["fraction_data_cost"] = (
+                total_data / task_dict[component]["node"]
+            )
 
     for node in nx_graph.nodes:
         workflow, component, index = node.split("_")
@@ -1050,10 +1069,8 @@ def retrieve_component_cost(observation, workflow, component, component_sizing):
 
     Parameters
     ----------
-    hpso : str
-        'Name' of the observation, which doubles as the HPSO
-    baseline: :py:object:`common.Baseline`
-    workflow : str
+    observation
+    workflow : Path
     component : str
     component_sizing : :py:obj:`pd.DataFrame`
     Returns
@@ -1147,6 +1164,47 @@ def produce_final_workflow_structure(nx_final, observation, time=False):
     jgraph = {"header": header, "graph": nx.readwrite.node_link_data(nx_final)}
     return jgraph
 
+
+def write_workflow_stats_to_csv(
+        workflow_stats: List[Dict],
+        workflow_path_name
+):
+    """
+    Create a and save a CSV table of information for each product and graph
+    type used in the final workflow. Intended to facilitate analysis of
+    the different system and workflow sizings.
+
+    Parameters
+    ----------
+    workflow_stats :
+        list of dictionaries, each of which describes useful information about
+        the task characteristics for a given graph. E.g.
+        "ICAL" : {total_compute: 0.5879, fraction_compute_cost: 0.0025...}
+    workflow_path_name:
+        The path we are putting the workflow; we use this path for our .csv file
+
+    Returns
+    -------
+    None:
+        This produces a csv file.
+    """
+    columns = ['workflow_type', 'product', "total_compute",
+               "fraction_compute_cost", 'node',
+               'total_data', 'fraction_data_cost']
+
+    d = {c: [] for c in columns}
+    for graph in workflow_stats:
+        for key, value in workflow_stats[graph].items():
+            d["workflow_type"].append(graph)
+            d["product"].append(key)
+            for k, v in value.items():
+                if k in columns:
+                    d[k].append(v)
+
+    df = pd.DataFrame(d)
+    df = df.rename(columns={"node": "num_tasks"})
+    workflow_data_path = f"{workflow_path_name}.csv"
+    df.to_csv(workflow_data_path, index=False)
 
 #
 # def assign_costs_to_workflow(workflow, costs, observation, system_sizing):

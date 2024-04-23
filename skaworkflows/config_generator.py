@@ -14,6 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import json
 import logging
+import datetime
 import pandas as pd
 
 from pathlib import Path
@@ -33,7 +34,6 @@ def create_config(
         nodes,
         hpso_path: Path,
         output_dir: Path,
-        cfg_name: str,
         base_graph_paths,
         timestep='seconds',
         data=False,
@@ -54,8 +54,9 @@ def create_config(
     -------
     Path where observation config is stored
     """
-
-    LOGGER.info("Generating %s...", cfg_name)
+    dt = datetime.datetime.now().isoformat('_', "seconds")
+    cfg_name = Path(f"skaworkflows_{dt}")
+    LOGGER.info("Generating %s...", cfg_name.name)
 
     # Set defaults to SKA Low
     if data:
@@ -66,7 +67,7 @@ def create_config(
     if 'data_distribution' in data_distribution:
         data_distribution = True
 
-    file_path = output_dir / f"{data_suffix}{cfg_name}" # 'config.json'
+    file_path = output_dir / cfg_name
     if file_path.exists() and not overwrite:
         LOGGER.info("Config %s exists, skipping instruction...", file_path)
         return file_path
@@ -123,7 +124,9 @@ def create_config(
 
     LOGGER.info("Producing the instrument config")
     final_instrument_config = hto.generate_instrument_config(
-        observation_plan, telescope_max,
+        telescope,
+        telescope_max,
+        observation_plan,
         output_dir,
         component_sizing,
         system_sizing,
@@ -158,15 +161,22 @@ def create_config(
     return file_path
 
 
-def config_to_shadow(cfg_path: Path, prefix):
-    shadow_path = None
+def config_to_shadow(cfg_path: Path) -> dict:
+    """
+    Convert the SDP system configuration to SHADOW format
+    See: https://github.com/myxie/shadow
+    Parameters
+    ----------
+    cfg_path :
+
+    Returns
+    -------
+    cluster : dictionary of the cluster machines as nodes
+    """
     with cfg_path.open() as fp:
         cfg = json.load(fp)
     cluster = {'system': cfg["cluster"]["system"]}
-    shadow_path = cfg_path.parent / (prefix + cfg_path.name)
-    with shadow_path.open('w') as fp:
-        json.dump(cluster, fp)
-    return shadow_path
+    return cluster
 
 
 def cli_generic_mid():
@@ -194,41 +204,3 @@ def create_config_from_file(path: Path):
 
     with path.open() as f:
         configuration_dict = json.loads(f)
-
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level="INFO")
-
-    LOGGER.info("Starting config generation...")
-    hpso_path = Path('tests/data/single_hpso.json')
-    output_dir = Path('output/ska_low')
-    cfg_name = 'test_mid.json'
-    component_sizing = Path(
-        "skaworkflows/data/pandas_sizing/component_compute_SKA1_Low.csv"
-    )
-    total_sizing = Path(
-        "skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv"
-    )
-    wf = 'prototype'
-    workflow_paths = {
-        "ICAL": wf, "DPrepA": wf, "DPrepB": wf, "DPrepC": wf, "DPrepD": wf
-    }
-
-    sdp = SDP_PAR_MODEL_LOW()
-    timestep = "seconds"
-    data = False
-
-    cfg_path = create_config(
-        telescope='low',
-        infrastructure='parametric',
-        nodes=896,
-        hpso_path=hpso_path,
-        output_dir=output_dir,
-        cfg_name=cfg_name,
-        base_graph_paths=workflow_paths,
-        timestep=timestep,
-        data=data,
-        data_distribution='jaf;lsdf'
-    )
-    config_to_shadow(cfg_path, 'shadow_')
