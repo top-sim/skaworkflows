@@ -26,7 +26,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from skaworkflows.workflow import SI
+from skaworkflows.common import SI
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -141,26 +141,24 @@ def format_low_parametric():
     # gpu_per_node = 2
     # gpu_peak_flops = 31 * SI.tera  # Double precision
     # memory_per_node = 31 * SI.giga
+    hot_rate_per_size = 3 * SI.giga / 10 / SI.tera  # 3 GB/s per 10 TB
+    # [NVMe SSD]
+    cold_rate_per_size = 0.5 * SI.giga / 16 / SI.tera  # 0.5 GB/s per
+    # 16 TB [SATA SSD]
 
-    df = pd.DataFrame()
     # # These values are derived from 'somewhere'.
-    # low_adjusted = {
-    #     'total_flops': 9.623 * SI.peta,
-    #     # This is workflow buffer/offline
-    #     'cold_buffer_size': int(43.35 * SI.peta),  # Byte
-    #     # This is ingest buffer
-    #     'hot_buffer_size': int(25.5 * SI.peta),  # Byte # 2
-    #     'delivery_buffer_size': int(0.656 * SI.peta),  # Byte
-    #     'hot_rate_total': hot_rate_per_size *
-    # }
-    # low_cdr = {
-    #     'hot_rate_per_size': hot_rate_per_size,
-    #     "total_flops": int(13.8 * SI.peta),  # FLOP/s
-    #     "input_buffer_size": int((0.5 * 46.0 - 0.6) * SI.peta),  # Byte
-    #     "hot_buffer_size": (0.5 * 46.0 * SI.peta),  # Byte
-    #     "delivery_buffer_size": (0.656 * SI.peta),  # Byte
-    # }
-    #
+    df = pd.DataFrame([{
+        'PFLOP/s': 9.623,
+        # This is workflow buffer/offline
+        'Input (Cold) Buffer (PB)': 43.35,  # Byte
+        # This is ingest buffer
+        'Hot Buffer (PB)': 25.5,  # Byte # 2
+        'Delivery Buffer (PB)': 0.656,  # Byte
+        'Hot Rate (GB/s per 10TB NVMe SSD)': 3,
+        'Hot rate (TB/s, global)': 7.65,
+        'Cold rate (GB/s) per 16TB SATA SSD)': 0.5,
+        'Cold Rate (TB/s, Global)': 1.35
+    }])
     return df
 
 
@@ -168,7 +166,7 @@ def generate_pipeline_component_table_baselines(
         hpso,
         pipeline='DPrepA',
         telescope='Low',
-        data_dir='data/pandas_sizing',
+        data_dir='skaworkflows/data/pandas_sizing',
         search_prefix='component_compute',
 
 ):
@@ -231,5 +229,6 @@ if __name__ == '__main__':
         low_cdr = TotalSizingLowCDR()
         LOGGER.info(f'{low_cdr.to_df(False).columns}')
 
-    LOGGER.info(generate_pipeline_component_table_baselines(
-        hpso='hpso01').to_latex(formatters=None, caption='hpso01'))
+    LOGGER.info(format_low_parametric().to_latex(escape=True,index=False))
+    # LOGGER.info(generate_pipeline_component_table_baselines(
+    #     hpso='hpso01').to_latex(formatters=None, caption='hpso01'))

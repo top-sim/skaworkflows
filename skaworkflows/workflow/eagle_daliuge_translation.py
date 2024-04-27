@@ -19,13 +19,14 @@ import os
 import json
 import random
 import logging
+import math
 
 import networkx as nx
 
 LOGGER = logging.getLogger(__name__)
 
 
-def update_number_of_channels(lgt_path, channels):
+def update_number_of_channels(lgt_path, channels, telescope_demand=512):
     """
     Update the number of channels in an EAGLE graph
 
@@ -54,12 +55,13 @@ def update_number_of_channels(lgt_path, channels):
     node_data_key = 'nodeDataArray'
     with open(lgt_path, 'r') as f:
         lgt_dict = json.load(f)
+    LOGGER.info("Updating coarse channel parallelism to %s", channels)
 
     # Finds scatter & gather category
     for node in lgt_dict[node_data_key]:
         if (
                 node['category'] == 'Scatter'
-                and node['text'] == 'FrequencySplit'
+                and node['name'] == 'FrequencySplit'
         ):
             for field in node['fields']:
                 if field['name'] == 'num_of_copies':
@@ -119,13 +121,14 @@ def unroll_logical_graph(input_lgt, output_pgt_path=None, file_in=True):
     else:
         jdict = input_lgt
 
+    LOGGER.info(f"Translating EAGLE graph...")
     if output_pgt_path and file_in:
         with open(output_pgt_path, 'w+') as f:
             result = subprocess.run(cmd_list, stdout=f)
         return result
     elif not file_in:
         result = subprocess.run(
-            ['dlg', 'unroll', '-L', '/dev/stdin'],
+            ['dlg', 'unroll', '-fv','-L', '/dev/stdin'],
             input=json.dumps(jdict), capture_output=True, text=True
         )
         return result.stdout
@@ -154,7 +157,7 @@ def generate_graphic_from_networkx_graph(nx_graph, output_path):
     # cmd_list = ['dot', 'unroll', '-fv', '-L', ]
 
 
-def eagle_to_nx(eagle_graph, workflow, file_in=True):
+def eagle_to_nx(eagle_graph, workflow, file_in=True, cached_workflow=None):
     """
     Produce a JSON-compatible dictionary of a topsim graph
 
@@ -179,8 +182,8 @@ def eagle_to_nx(eagle_graph, workflow, file_in=True):
     Returns
     -------
     unrolled_nx : :py:object:`networkx.DiGraph`
-    task_dict : dict
-
+    task_dict : dictc
+    cached_graph : dict
 
     """
 
@@ -189,15 +192,23 @@ def eagle_to_nx(eagle_graph, workflow, file_in=True):
         if not os.path.exists(eagle_graph):
             raise FileExistsError(f'{eagle_graph} does not exist')
 
-    LOGGER.info(f"Preparing {eagle_graph} for LGT->PGT Translation")
-    daliuge_json = unroll_logical_graph(eagle_graph, file_in=file_in)
-    jdict = json.loads(daliuge_json)
+    LOGGER.info(f"Preparing {workflow} for LGT->PGT Translation")
+    if cached_workflow is None:
+        daliuge_json = unroll_logical_graph(eagle_graph, file_in=file_in)
+        LOGGER.info("Finished translating graph")
+        jdict = json.loads(daliuge_json)
+        # with open(f"unrolled_{file_in}.json", 'w') as fp:
+        #     json.dump(jdict, fp, indent=2)
+    else:
+        LOGGER.info(f"Using cached translation for workflow")
+        jdict = cached_workflow
+
     unrolled_nx, task_dict = daliuge_to_nx(jdict, workflow)
 
     # Convering DALiuGE nodes to readable nodes
     LOGGER.info(f"Graph converted to TopSim-compliant data")
 
-    return unrolled_nx, task_dict
+    return unrolled_nx, task_dict, jdict
 
 
 def daliuge_to_nx(dlg_json_dict, workflow):
@@ -227,6 +238,7 @@ def daliuge_to_nx(dlg_json_dict, workflow):
 
 
     """
+    LOGGER.info("Converting DALiuGE to networkx...")
     unrolled_nx = nx.DiGraph()
     labels = {}
     node_list = []
@@ -235,43 +247,55 @@ def daliuge_to_nx(dlg_json_dict, workflow):
     task_names = {}
 
     for element in dlg_json_dict:
-        if 'app' in element.keys():
-            oid = element['oid']
-            label = element['nm']
-            if label in task_names:
-                task_names[label]['node'] += 1
-            else:
-                task_names[label] = {'node': 1}
-            labels[oid] = f"{label}_{task_names[label]['node'] - 1}"
-            name = f"{workflow}_{labels[oid]}"
-            node = (name, {'comp': 0})
-            node_list.append(node)
+        if 'categoryType' in element:
+            if element['categoryType'] == 'Application' or element['categoryType'] == 'Control':
+                oid = element['oid']
+                label = element['name']
+                if label in task_names:
+                    task_names[label]['node'] += 1
+                else:
+                    task_names[label] = {'node': 1}
+                labels[oid] = f"{label}_{task_names[label]['node'] - 1}"
+                name = f"{workflow}_{labels[oid]}"
+                node = (name, {'comp': 0})
+                node_list.append(node)
 
     for element in dlg_json_dict:
-        if ('storage' in element.keys()) and (
-                'producers' in element and 'consumers' in element
-        ):
-            for u in element['producers']:
-                component, num = labels[u].split('_')
-                if 'out_edge' in task_names[component]:
-                    task_names[component]['out_edge'] += 1
-                else:
-                    task_names[component]['out_edge'] = 1
-                for v in element['consumers']:
-                    edge = (labels[u], labels[v])
-                    edge_list.append(
-                        (
-                            f'{workflow}_{labels[u]}',
-                            f'{workflow}_{labels[v]}',
-                            {
-                                'data_size': 0,
-                                'u': u,
-                                'v': v,
-                                'data_drop_oid': element['oid']
-                            }
+        if 'categoryType' in element:
+            if (element['categoryType'] == 'Data') and (
+                    'producers' in element and 'consumers' in element
+            ):
+                for uentry in element['producers']:
+                    try:
+                        uentry.keys()
+                    except AttributeError:
+                        u = uentry
+                    else:
+                        u = list(uentry.keys())[0]
+                    component, num = labels[u].split('_')
+                    if 'out_edge' in task_names[component]:
+                        task_names[component]['out_edge'] += 1
+                    else:
+                        task_names[component]['out_edge'] = 1
+                    for ventry in element['consumers']:
+                        try:
+                            ventry.keys()
+                        except AttributeError:
+                            v = ventry
+                        else:
+                            v = list(ventry.keys())[0]
+                        edge_list.append(
+                            (
+                                f'{workflow}_{labels[u]}',
+                                f'{workflow}_{labels[v]}',
+                                {
+                                    "transfer_data": 0,
+                                    'u': u,
+                                    'v': v,
+                                    'data_drop_oid': element['oid']
+                                }
+                            )
                         )
-                    )
-
     unrolled_nx.add_nodes_from(node_list)
     unrolled_nx.add_edges_from(edge_list)
 
@@ -300,42 +324,16 @@ def concatenate_workflows(
 
     """
     # final_graph = nx.DiGraph()
-    start_graph = unrolled_graphs['DPrepA']
-    curr_parent = 'DPrepA_Gather_0'
-    workflows.remove('DPrepA')
+    start = workflows[0]
+    start_graph = unrolled_graphs[start]
+    curr_parent = f'{start}_End_0'
+    workflows.remove(start)
     final_graph = nx.compose_all(list(unrolled_graphs.values()))
     for workflow in workflows:
-        curr_child = f'{workflow}_FrequencySplit_0'
-        final_graph.add_edge(curr_parent, curr_child)
-        curr_parent = f'{workflow}_Gather_0'
-
-    # for graph in  unrolled_graphs:
-    #     final_graph
-
-    # FrequencySplit
-    # Gather
+        for i in range(str(final_graph.nodes).count(f"{workflow}_ExtractLSM")):
+            curr_child = f'{workflow}_ExtractLSM_{i}'
+            final_graph.add_edge(curr_parent, curr_child, transfer_data=0)
+        curr_parent = f'{workflow}_End_0'
 
     return final_graph
 
-
-if __name__ == '__main__':
-    LOGGER.info("Generating test data and unrolling")
-    res = unroll_logical_graph(
-        'tests/data/eagle_lgt_scatter_minimal.graph',
-        'tests/data/daliuge_pgt_scatter_minimal.json'
-    )
-    logging.basicConfig(level="DEBUG")
-    # lgt_object = update_number_of_channels(
-    #     'tests/data/eagle_lgt_scatter_minimal.graph', 4
-    # )
-    # pgt_object = unroll_logical_graph(
-    #     lgt_object, file_in=False
-    # )
-
-    # TODO UPDATE THE CODE FOR _DALIGUE_TO_NX TO COUNT EACH DIFFERENT KEY
-    # This way we can keep track of the number of each task, rather than
-    # having random assignments for each
-    # USEFUL FOR ERROR CHECKING 
-    # LOGGER.info(f"Test PGT generated at: {res}")
-    jdict = eagle_to_nx('tests/data/eagle_lgt_scatter.graph')
-    LOGGER.info(json.dumps(jdict, indent=2))
