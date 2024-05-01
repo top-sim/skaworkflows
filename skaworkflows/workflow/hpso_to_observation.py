@@ -1132,6 +1132,7 @@ def retrieve_workflow_cost(observation, workflow, system_sizing):
         & (system_sizing["Channels"] == observation.channels)
         & (system_sizing["Stations"] == observation.demand)
     ]
+    print(observation.demand, observation.hpso, observation.baseline)
     flops = float(obs_frame[workflow])
 
     return flops

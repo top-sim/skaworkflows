@@ -1,0 +1,30 @@
+{
+    "items": [
+        {
+            "count": 2,
+            "hpso": "hpso01",
+            "demand": 512,
+            "duration": 18000,
+            "workflows": [
+                "DPrepA"
+            ],
+            "channels": 512,
+            "baseline": "long",
+            "telescope": "low"
+        },
+        {
+            "count": 3,
+            "hpso": "hpso01",
+            "demand": 256,
+            "duration": 18000,
+            "workflows": [
+                "DPrepA",
+                "DPrepB",
+                "ICAL"
+            ],
+            "channels": 128,
+            "baseline": "short",
+            "telescope": "low"
+        }
+    ]
+}
