@@ -45,7 +45,6 @@ def setUp():
     config_generator.create_config('low', 'parametric', 896,
                                    hpso_path=Path(hpso_path),
                                    output_dir=Path(low_path_str),
-                                   cfg_name=f'{LOW_CONFIG}_n{896}.json',
                                    base_graph_paths=PROTOTYPE_WORKFLOW_PATHS,
                                    timestep='seconds', data=True)
 

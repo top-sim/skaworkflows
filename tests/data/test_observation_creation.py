@@ -49,5 +49,5 @@ def test_obs_list_hpso_attributes(read_hpso_spec):
     o = obslist[2]
     assert o.name == 'hpso01_2'
     assert o.demand == 256
-    assert o.baseline == LOWBaselines.short.name
+    assert o.baseline == 65000.0
 

@@ -9,7 +9,9 @@
 				"DPrepA"
 			],
 			"channels": 256,
-			"baseline": "long"
+			"coarse_channels": 256,
+			"baseline": 65000.0,
+			"telescope": "low"
 		},
 		{
 			"count": 3,
@@ -22,7 +24,9 @@
 				"ICAL"
 			],
 			"channels": 128,
-			"baseline": "short"
+			"coarse_channels": 128,
+			"baseline": 65000.0,
+			"telescope": "low"
 		}
 	]
 }

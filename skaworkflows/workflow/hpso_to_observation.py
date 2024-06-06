@@ -41,8 +41,6 @@ from enum import Enum
 from pathlib import Path
 import skaworkflows.workflow.eagle_daliuge_translation as edt
 
-import skaworkflows.observation.observation_plan_generator as obg
-
 from skaworkflows.common import (
     SI,
     WORKFLOW_HEADER,
@@ -585,7 +583,7 @@ def generate_instrument_config(
 def _create_workflow_path_name(
         observation
 ):
-    str_date = datetime.datetime.now().isoformat('_', "seconds")
+    str_date = datetime.datetime.now().isoformat('_', "%Y-%m-%d_%H-%M-%S")
     return f"{hash(observation)}_{str_date}"
 
 
@@ -858,6 +856,7 @@ def generate_cost_per_product(
                 * SI.mega
                 * BYTES_PER_VIS
             )
+
             if compute > 0:
                 nx_graph.nodes[node]["comp"] = compute
             else:
@@ -867,24 +866,24 @@ def generate_cost_per_product(
             else:
                 nx_graph.nodes[node]["task_data"] = 0
 
-    #  Allocate edge costs (data)
-    # Todo inves
-    for edge in nx_graph.edges:
-        producer = edge[0]
-        workflow, component, index = producer.split("_")
-        if component in ignore_components:
-            nx_graph[edge[0]][edge[1]]["transfer_data"] = 0
-        else:
-            data_cost = (
-                observation.duration
-                * task_dict[component]["fraction_data_cost"]
-                * SI.mega
-                * BYTES_PER_VIS
-            )
-            if data_distribution == "edges":
-                nx_graph[edge[0]][edge[1]]["transfer_data"] = data_cost
+        num_edges = len(list(nx_graph.predecessors(node)))
+        for producer in nx_graph.predecessors(node):
+            pworkflow, pcomponent, pindex = producer.split("_")
+
+            if component in ignore_components:
+                nx_graph[producer][node]["transfer_data"] = 0
             else:
-                nx_graph[edge[0]][edge[1]]["transfer_data"] = 0
+                data_cost = (
+                        observation.duration
+                        * task_dict[component]["fraction_data_cost"]
+                        * SI.mega
+                        * BYTES_PER_VIS
+                )
+                if data_distribution == "edges":
+                    nx_graph[producer][node]["transfer_data"] = data_cost / num_edges
+                else:
+                    nx_graph[producer][node]["transfer_data"] = 0
+
 
     return nx_graph, task_dict
 

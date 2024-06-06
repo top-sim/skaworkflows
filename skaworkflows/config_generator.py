@@ -54,8 +54,8 @@ def create_config(
     -------
     Path where observation config is stored
     """
-    dt = datetime.datetime.now().isoformat('_', "seconds")
-    cfg_name = Path(f"skaworkflows_{dt}")
+    dt = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    cfg_name = Path(f"skaworkflows_{dt}.json")
     LOGGER.info("Generating %s...", cfg_name.name)
 
     # Set defaults to SKA Low
