@@ -583,7 +583,7 @@ def generate_instrument_config(
 def _create_workflow_path_name(
         observation
 ):
-    str_date = datetime.datetime.now().isoformat('_', "%Y-%m-%d_%H-%M-%S")
+    str_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     return f"{hash(observation)}_{str_date}"
 
 
@@ -833,11 +833,11 @@ def generate_cost_per_product(
 
             task_dict[component]["total_compute"] = total_compute
             task_dict[component]["fraction_compute_cost"] = (
-                total_compute / task_dict[component]["node"]
+                    total_compute / task_dict[component]["node"]
             )
             task_dict[component]["total_data"] = total_data
             task_dict[component]["fraction_data_cost"] = (
-                total_data / task_dict[component]["node"]
+                    total_data / task_dict[component]["node"]
             )
 
     for node in nx_graph.nodes:
@@ -846,15 +846,15 @@ def generate_cost_per_product(
             nx_graph.nodes[node]["comp"] = observation.duration
         else:
             compute = (
-                observation.duration
-                * task_dict[component]["fraction_compute_cost"]
-                * SI.peta
+                    observation.duration
+                    * task_dict[component]["fraction_compute_cost"]
+                    * SI.peta
             )
             data_cost = (
-                observation.duration
-                * task_dict[component]["fraction_data_cost"]
-                * SI.mega
-                * BYTES_PER_VIS
+                    observation.duration
+                    * task_dict[component]["fraction_data_cost"]
+                    * SI.mega
+                    * BYTES_PER_VIS
             )
 
             if compute > 0:
@@ -884,20 +884,18 @@ def generate_cost_per_product(
                 else:
                     nx_graph[producer][node]["transfer_data"] = 0
 
-
     return nx_graph, task_dict
 
 
 def _process_task_cost(task_dict, graph):
-
     return task_dict, graph
 
 
 def identify_component_cost(
-    observation: Observation,
-    workflow: Path,
-    component,
-    component_sizing,
+        observation: Observation,
+        workflow: Path,
+        component,
+        component_sizing,
 ):
     """
     Use HPSO and pipeline information to generate the correct workflow
@@ -997,7 +995,7 @@ def identify_component_cost(
 
 
 def calculate_major_loop_data(
-    task_dict, component_sizing, hpso, baseline, workflow, data_distribution
+        task_dict, component_sizing, hpso, baseline, workflow, data_distribution
 ):
     """
     If we want to take data into account in the way that the parametric model does,
@@ -1031,7 +1029,7 @@ def calculate_major_loop_data(
     data_dict = {"Degrid": {}, "Subtract": {}, "Flag": {}, "Grid": {}}
     obs_frame = component_sizing[
         (component_sizing["hpso"] == hpso) & (component_sizing["Baseline"] == baseline)
-    ]
+        ]
 
     if data_distribution == "distribute":
         raise NotImplementedError(
@@ -1047,7 +1045,7 @@ def calculate_major_loop_data(
             if component == "Degrid":
                 data_dict[component]["total_io_cost"] = data
                 data_dict[component]["fraction_io_cost"] = (
-                    data / task_dict["Degrid"]["node"]
+                        data / task_dict["Degrid"]["node"]
                 )
             else:
                 data_dict[component]["total_io_cost"] = 0
@@ -1055,7 +1053,7 @@ def calculate_major_loop_data(
 
             data_dict[component]["total_data_cost"] = data
             data_dict[component]["fraction_data_cost"] = (
-                data / task_dict[component]["node"]
+                    data / task_dict[component]["node"]
             )
     else:
         raise RuntimeError("Passing incorrect data distribution method")
@@ -1078,17 +1076,22 @@ def retrieve_component_cost(observation, workflow, component, component_sizing):
     """
     # Santiy check for components:
     if workflow not in component_sizing["Pipeline"].values:
-        raise RuntimeError(
-            f"Workflow string '{workflow}' not present in DataFrame."
-            + f"Double check spelling in Observation."
-        )
+        LOGGER.warning(
+            "Workflow string %s not present in DataFrame. Double check spelling in "
+            "Observation.", workflow)
+        return
+
+    hpso_sizing = component_sizing[component_sizing["hpso"] == observation.hpso]
+    # Find closest baseline to the one that is specified
+    baseline = min(list(hpso_sizing["Baseline"]),
+                   key=lambda x: abs(x - observation.baseline))
 
     obs_frame = component_sizing[
         (component_sizing["hpso"] == observation.hpso)
-        & (component_sizing["Baseline"] == observation.baseline)
+        & (component_sizing["Baseline"] == baseline)
         & (component_sizing["Channels"] == observation.channels)
         & (component_sizing["Antenna stations"] == observation.demand)
-    ]
+        ]
 
     if obs_frame.empty:
         raise ValueError(
@@ -1124,13 +1127,17 @@ def retrieve_workflow_cost(observation, workflow, system_sizing):
     if observation.hpso not in system_sizing["HPSO"].values:
         raise RuntimeError(f"HPSO: {observation.hpso} not present")
 
+    hpso_sizing = system_sizing[system_sizing["HPSO"] == observation.hpso]
+    # Find closest baseline to the one that is specified
+    baseline = min(list(hpso_sizing["Baseline"]),
+                   key=lambda x: abs(x - observation.baseline))
+
     obs_frame = system_sizing[
         (system_sizing["HPSO"] == observation.hpso)
-        & (system_sizing["Baseline"] == observation.baseline)
-        & (system_sizing["Channels"] == observation.channels)
+        & (system_sizing["Baseline"] == baseline)
         & (system_sizing["Channels"] == observation.channels)
         & (system_sizing["Stations"] == observation.demand)
-    ]
+        ]
     flops = float(obs_frame[workflow])
 
     return flops
@@ -1204,6 +1211,7 @@ def write_workflow_stats_to_csv(
     df = df.rename(columns={"node": "num_tasks"})
     workflow_data_path = f"{workflow_path_name}.csv"
     df.to_csv(workflow_data_path, index=False)
+
 
 #
 # def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
@@ -1279,9 +1287,9 @@ def calc_ingest_demand(observation, system_sizing, cluster):
 
     """
     ingest_flops = (
-        retrieve_workflow_cost(
-            observation, "Ingest [Pflop/s]", system_sizing
-        ) * SI.peta
+            retrieve_workflow_cost(
+                observation, "Ingest [Pflop/s]", system_sizing
+            ) * SI.peta
     )
     resources = cluster["system"]["resources"]
     m = 0
@@ -1293,16 +1301,16 @@ def calc_ingest_demand(observation, system_sizing, cluster):
             break
 
     ingest_bytes = (
-        retrieve_workflow_cost(
-            observation, "Ingest Rate [TB/s]", system_sizing
-        ) * SI.tera
+            retrieve_workflow_cost(
+                observation, "Ingest Rate [TB/s]", system_sizing
+            ) * SI.tera
     )
 
     return num_machines, ingest_flops, ingest_bytes
 
 
 def compile_observations_and_workflows(
-    input_dir="./", output_dir="out/", itemised_spec=None, buffer_ratio=None
+        input_dir="./", output_dir="out/", itemised_spec=None, buffer_ratio=None
 ):
     """
         Generate a configuration file given a set of observation descriptions and
