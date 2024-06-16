@@ -186,8 +186,8 @@ def eagle_to_nx(eagle_graph, workflow, file_in=True, cached_workflow=None):
     Returns
     -------
     unrolled_nx : :py:object:`networkx.DiGraph`
-    task_dict : dict
-
+    task_dict : dictc
+    cached_graph : dict
 
     """
 

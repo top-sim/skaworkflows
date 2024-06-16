@@ -23,7 +23,9 @@ out his system sizing analysis into csv file (for ease of repeatability).
 """
 
 import os
+import sys
 import logging
+import datetime
 import pandas as pd
 
 # logging.basicConfig(level="INFO")
@@ -165,21 +167,23 @@ def csv_to_pandas_total_compute(csv_path):
     df_csv = df_csv.fillna(0)
     # hpso_dict = {header: [] for header in hpso_data}
     # df_hpso = pd.DataFrame(data=hpso_dict)
-    final_dict = {telescope: None for telescope in TELESCOPE_IDS}
-    retval = None
-    for telescope in TELESCOPE_IDS:
-        df_tel = df_csv.T[df_csv.T['Telescope'] == telescope].T
-        hpso_dict = {header: [] for header in HPSO_DATA}
-        df_from_hpso_dict = pd.DataFrame(data=hpso_dict)
-        for i, hpso in enumerate(SKA_HPSOS[telescope]):
-            LOGGER.info(f'Processing total sizing for {hpso}')
-            tmp_dict = {header: 0 for header in HPSO_DATA}
-            rflop_total, rt_flop_total, tmp_dict = (
-                _isolate_total_sizing(df_tel, tmp_dict, hpso)
-            )
-            df_from_hpso_dict = df_from_hpso_dict.append(
-                tmp_dict, ignore_index=True)
-        final_dict[telescope] = df_from_hpso_dict
+    if "Low" in csv_path:
+        telescope = TELESCOPE_IDS[0]
+    else: 
+        telescope = TELESCOPE_IDS[1]
+    final_dict = {}
+    df_tel = df_csv.T[df_csv.T['Telescope'] == telescope].T
+    hpso_dict = {header: [] for header in HPSO_DATA}
+    df_from_hpso_dict = pd.DataFrame(data=hpso_dict)
+    for i, hpso in enumerate(SKA_HPSOS[telescope]):
+        LOGGER.info(f'Processing total sizing for {hpso}')
+        tmp_dict = {header: 0 for header in HPSO_DATA}
+        rflop_total, rt_flop_total, tmp_dict = (
+            _isolate_total_sizing(df_tel, tmp_dict, hpso)
+        )
+        df_from_hpso_dict = df_from_hpso_dict.append(
+            tmp_dict, ignore_index=True)
+    final_dict[telescope] = df_from_hpso_dict
     return final_dict
 
 
@@ -253,6 +257,8 @@ def _process_common_values(df_tel, col, hpso_dict):
     hpso_dict['Stations'] = stations
     baseline = float(df_tel.loc[['Max Baseline [km]'], col]) * 1000
     hpso_dict['Baseline'] = baseline
+    channels = float(df_tel.loc[['Max # of channels'], col])
+    hpso_dict['Channels'] = channels
     t_obs = float(df_tel.loc[['Observation Time [s]'], col])
     hpso_dict['Tobs [h]'] = t_obs / 3600
     t_exp = float(df_tel.loc[['Total Time [s]'], col])
@@ -292,22 +298,25 @@ def csv_to_pandas_pipeline_components(csv_path):
     )
 
     final_dict = {}
-    for telescope in TELESCOPE_IDS:
-        df_ska = df_csv.T[df_csv.T['Telescope'] == telescope].T.fillna(0)
-        pipeline_df = pd.DataFrame()
-        max_baseline = max((df_ska.loc['Max Baseline [km]']).astype(float))
-        for hpso in sorted(SKA_HPSOS[telescope]):
-            LOGGER.info(f'Processing component sizing for {hpso}')
-            pipeline_products = _isolate_products(df_ska, hpso)
-            df = pd.DataFrame(pipeline_products).T
-            df.index.name = 'Pipeline'
-            newcol = [hpso for x in range(0, len(df))]
-            df.insert(0, 'hpso', newcol)
-            # basecol = [max_baseline for x in range(0, len(df))]
-            # df.insert(1, 'Baseline', basecol)
-            pipeline_df = pipeline_df.append(df, sort=False)
-        final_dict[telescope] = pipeline_df
-
+    # for telescope in TELESCOPE_IDS:
+    if "Low" in csv_path: 
+        telescope = TELESCOPE_IDS[0]
+    else: 
+        telescope = TELESCOPE_IDS[1]
+    df_ska = df_csv.T[df_csv.T['Telescope'] == telescope].T.fillna(0)
+    pipeline_df = pd.DataFrame()
+    max_baseline = max((df_ska.loc['Max Baseline [km]']).astype(float))
+    for hpso in sorted(SKA_HPSOS[telescope]):
+        LOGGER.info(f'Processing component sizing for {hpso}')
+        pipeline_products = _isolate_products(df_ska, hpso)
+        df = pd.DataFrame(pipeline_products).T
+        df.index.name = 'Pipeline'
+        newcol = [hpso for x in range(0, len(df))]
+        df.insert(0, 'hpso', newcol)
+        # basecol = [max_baseline for x in range(0, len(df))]
+        # df.insert(1, 'Baseline', basecol)
+        pipeline_df = pipeline_df.append(df, sort=False)
+    final_dict[telescope] = pipeline_df
     return final_dict
 
 
@@ -346,15 +355,26 @@ def _isolate_products(df_tel, hpso):
             splt.remove('[]')
         pipeline = splt[1].strip('()')
         baseline = float(column['Max Baseline [km]']) * 1000
+        channels = float(column["Max # of channels"])
+        antennas = float(column['Stations/antennas'])
         pipeline_overview['Baseline'] = baseline
         pipeline_data_overview['Baseline'] = baseline
+        pipeline_overview['Antenna stations'] = antennas
+        pipeline_data_overview['Antenna stations'] = antennas
+        pipeline_overview['Channels'] = channels
+        pipeline_data_overview['Channels'] = channels
         buffer_read_rate = float(column['Buffer Read Rate [TeraBytes/s]'])
         pipeline_data_overview['Visibility read rate'] = buffer_read_rate
         pipeline_overview['Visibility read rate'] = buffer_read_rate
         for product in PRODUCTS:
-            compute_entry = column.loc[
-                [f'-> {product} [PetaFLOP/s]']]
-            data_entry = column.loc[[f'-> {product} [Mvis/s]']]
+            compute_entry = ['']
+            data_entry = ['']
+            try: 
+                compute_entry = column.loc[[f'-> {product} [PetaFLOP/s]']]
+                data_entry = column.loc[[f'-> {product} [Mvis/s]']]
+            except KeyError:
+                LOGGER.info(f"Product: {product} was not located in generated .csv")
+        
             if compute_entry[0] == ' ' or compute_entry[0] == '':
                 pipeline_overview[product] = -1
             else:
@@ -419,14 +439,16 @@ def generate_pandas_system_sizing(
             pipe_dict[telescope].to_csv(fn)
 
 
-def compile_baseline_sizing(data_dir, total=True, component=True):
+def compile_sizing(data_paths: list, total=True, component=True):
     """
     Given a directory, produce pandas system sizing for each baseline and
     produce a dataframe that contains all baselines
 
     Parameters
     ----------
-    data_dir
+    data_paths: list
+        List of paths that contain output from the parametric model 
+        system sizing
     total : bool
         If False, do not generate total system sizing data frame
     component : bool
@@ -437,20 +459,23 @@ def compile_baseline_sizing(data_dir, total=True, component=True):
     total_sizing, component_sizing : dict
         Python dicitonary for each sizing, for each telescope
     """
-    files = os.listdir(data_dir)
-    LOGGER.info(f'Searching {data_dir} for sdp-par-model reports...')
+    # files = os.listdir(data_dir)
+    LOGGER.info(f'Searching {data_paths} for sdp-par-model reports...')
     total_sizing = {}
     component_sizing = {}
-    for baseline in files:
-        if 'archive' in baseline:
+    # Modify this from baseline to channels/antennas? Need to add this to CSV Processing
+
+    for path in data_paths:
+        print(path)
+        if 'archive' in path:
             continue
-        LOGGER.info(f'Processing {baseline} generated by sdp-par-model:')
-        length = baseline.split("_")[1]
+        LOGGER.info(f'Processing {path} generated by sdp-par-model:')
+        length = path.split("_")[1]
         total_dict = csv_to_pandas_total_compute(
-            f'{data_dir}/{baseline}',
+            path
         )
         pipe_dict = csv_to_pandas_pipeline_components(
-            f'{data_dir}/{baseline}',
+            path
         )
         for tel in total_dict:
             if tel in total_sizing:
@@ -474,25 +499,47 @@ def compile_baseline_sizing(data_dir, total=True, component=True):
                 # LOGGER.info(")
     return total_sizing, component_sizing
 
-
 if __name__ == '__main__':
+
+    if(len(sys.argv) > 1):
+        x=1
+    else:
+        sys.exit()
+
+    curr_date = str(datetime.date.today())
     # System sizing for each baseline:
     logging.basicConfig(level='INFO')
-    IN_DIR = f'skaworkflows/data/sdp-par-model_output/'
-    OUTPUT_DIR = f'skaworkflows/data/pandas_sizing/'
-    total_sizing, component_sizing = compile_baseline_sizing(IN_DIR)
+    
+    SKA_Low_antenna = [32, 64, 128, 256, 512]
+    SKA_channels = [128, 256, 512]
+
+    SKA_Mid_antenna = [64, 102, 140, 197]
+
+    IN_DIR = 'skaworkflows/data/sdp-par-model_output/'
+    OUTPUT_DIR = 'skaworkflows/data/pandas_sizing/'
+    # path_name = f"{IN_DIR}/ParametricOutput_Low_antenna-32_channels-512.csv"
+    # print(csv_to_pandas_pipeline_components(path_name))
+    paths = []
+    for a in SKA_Low_antenna:
+        for c in SKA_channels: 
+            channels = c*128
+            paths.append(f"{IN_DIR}/ParametricOutput_Low_antenna-{a}_channels-{channels}.csv")
+    for a in SKA_Mid_antenna:
+        for c in SKA_channels: 
+            channels = c*128
+            paths.append(f"{IN_DIR}/ParametricOutput_Mid_antenna-{a}_channels-{channels}.csv")
+    total_sizing, component_sizing = compile_sizing(paths)
+
     for tel in total_sizing:
-        fn_total = f'{OUTPUT_DIR}/total_compute_{tel}.csv'
+        fn_total = f'{OUTPUT_DIR}/total_compute_{tel}_{curr_date}.csv'
         LOGGER.info(f'Writing total system sizing for {tel}to {fn_total}')
         total_sizing[tel].to_csv(fn_total)
     for tel in component_sizing:
-        fn_component = f'{OUTPUT_DIR}/component_compute_{tel}.csv'
+        fn_component = f'{OUTPUT_DIR}/component_compute_{tel}_{curr_date}.csv'
         LOGGER.info(
             f'Writing component compute sizing for {tel} to {fn_component}'
         )
         component_sizing[tel].to_csv(fn_component)
-
+    
     LOGGER.info(f"Final Output data in {OUTPUT_DIR}/:")
-    for file in os.listdir(OUTPUT_DIR):
-        LOGGER.info(file)
     LOGGER.info("Pandas system sizing translation complete.")

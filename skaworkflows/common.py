@@ -22,7 +22,7 @@ Included in this modules are the following class definitions:
 """
 
 from pathlib import Path
-from enum import Enum
+from enum import Enum, IntEnum
 import importlib_resources as imp_res
 from skaworkflows import __version__
 
@@ -41,7 +41,7 @@ class LOWBaselines(Enum):
     long = 65000
 
 
-class SI:
+class SI(IntEnum):
     """
     Convenience class for SI units
     """
@@ -59,23 +59,23 @@ MAX_TEL_DEMAND_MID = 197
 MAX_CHANNELS = 512
 
 # System sizing data paths
-_data_pandas_sizing = imp_res.files("skaworkflows.data.pandas_sizing")
-LOW_TOTAL_SIZING = _data_pandas_sizing.joinpath("total_compute_SKA1_Low.csv")
+DATA_PANDAS_SIZING = imp_res.files("skaworkflows.data.pandas_sizing")
+LOW_TOTAL_SIZING = DATA_PANDAS_SIZING.joinpath("total_compute_SKA1_Low_2024-03-25.csv")
 LOW_COMPONENT_SIZING = Path(
-    _data_pandas_sizing.joinpath("component_compute_SKA1_Low.csv")
+    DATA_PANDAS_SIZING.joinpath("component_compute_SKA1_Low_2024-03-25.csv")
 )
-MID_TOTAL_SIZING = Path(_data_pandas_sizing.joinpath("total_compute_SKA1_Mid.csv"))
+MID_TOTAL_SIZING = Path(DATA_PANDAS_SIZING.joinpath("total_compute_SKA1_Mid_2024-03-25.csv"))
 MID_COMPONENT_SIZING = Path(
-    _data_pandas_sizing.joinpath("component_compute_SKA1_Mid.csv")
+    DATA_PANDAS_SIZING.joinpath("component_compute_SKA1_Mid_2024-03-25.csv")
 )
 
 # Bytes per obseved visibility
 BYTES_PER_VIS = 12.0
 
-_gdir = imp_res.files("skaworkflows.data.hpsos")
-BASIC_PROTOTYPE_GRAPH = _gdir.joinpath("dprepa.graph")
-CONT_IMG_MVP_GRAPH = _gdir.joinpath("cont_img_mvp_skaworkflows_updated.graph")
-SCATTER_GRAPH = _gdir.joinpath("dprepa_parallel.graph")
+GRAPH_DIR = imp_res.files("skaworkflows.data.hpsos")
+BASIC_PROTOTYPE_GRAPH = GRAPH_DIR.joinpath("dprepa.graph")
+CONT_IMG_MVP_GRAPH = GRAPH_DIR.joinpath("cont_img_mvp_skaworkflows_updated.graph")
+SCATTER_GRAPH = GRAPH_DIR.joinpath("dprepa_parallel.graph")
 
 # Default JSON "header" elemetn used when generating workflow files
 WORKFLOW_HEADER = {

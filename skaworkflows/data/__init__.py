@@ -12,21 +12,3 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-from pathlib import Path
-
-LOW_TOTAL_SIZING = Path(
-    "skaworkflows/data/pandas_sizing/total_compute_SKA1_Low.csv"
-)
-
-LOW_COMPONENT_SIZING = Path(
-    f"skaworkflows/data/pandas_sizing/component_compute_SKA1_Low.csv"
-)
-
-MID_TOTAL_SIZING = Path(
-    "skaworkflows/data/pandas_sizing/total_compute_SKA1_Mid.csv"
-)
-
-MID_COMPONENT_SIZING = Path(
-    f"skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid.csv"
-)

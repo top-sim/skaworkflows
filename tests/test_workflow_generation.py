@@ -33,7 +33,7 @@ logging.disable(logging.INFO)
 BASE_DATA_DIR = "skaworkflows/data/pandas_sizing/"
 TEST_DATA_DIR = 'tests/data/'
 
-TOTAL_SYSTEM_SIZING = f'{BASE_DATA_DIR}/total_compute_SKA1_Low.csv'
+TOTAL_SYSTEM_SIZING = f'{BASE_DATA_DIR}/total_compute_SKA1_Low_2024-03-25.csv'
 LGT_PATH = 'tests/data/eagle_lgt_scatter.graph'
 PGT_PATH = 'tests/data/daliuge_pgt_scatter.json'
 PGT_PATH_GENERATED = f'{TEST_DATA_DIR}/daliuge_pgt_scatter_generated.json'
@@ -41,23 +41,8 @@ LGT_CHANNEL_UPDATE = f'{TEST_DATA_DIR}/eagle_lgt_scatter_channel-update.graph'
 PGT_CHANNEL_UPDATE = f'{TEST_DATA_DIR}/daliuge_pgt_scatter_channel-update.json'
 TOPSIM_PGT_GRAPH = 'tests/data/topsim_compliant_pgt.json'
 NO_PATH = "dodgy.path"
-COMPONENT_SYSTEM_SIZING = f'{BASE_DATA_DIR}/component_compute_SKA1_Low.csv'
-
-
-# SKA Low Pipelines
-#
-#         # hpso01:  (Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
-#         #           Pipelines.ICAL, Pipelines.DPrepA,
-#         #           Pipelines.DPrepB, Pipelines.DPrepC, Pipelines.DPrepD),
-#         # hpso02a: (Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
-#         #           Pipelines.ICAL, Pipelines.DPrepA,
-#         #           Pipelines.DPrepB, Pipelines.DPrepC, Pipelines.DPrepD),
-#         # hpso02b: (Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
-#         #           Pipelines.ICAL, Pipelines.DPrepA,
-#         #           Pipelines.DPrepB, Pipelines.DPrepC, Pipelines.DPrepD),
-#         # hpso04a: (Pipelines.Ingest, Pipelines.RCAL, Pipelines.FastImg,
-#         #           Pipelines.PSS),
-#
+COMPONENT_SYSTEM_SIZING = (f'{BASE_DATA_DIR}/'
+                           f'component_compute_SKA1_Low_2024-03-25.csv')
 
 
 class TestPipelineStructureTranslation(unittest.TestCase):
@@ -215,10 +200,11 @@ class TestWorkflowFromObservation(unittest.TestCase):
     def setUp(self) -> None:
         demand = 512
         duration = 3600
-        channels = 1
+        channels = 512*128
+        coarse_channels = 1
         self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         self.obs1 = hpo.Observation(
-            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
+            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, coarse_channels,
             65000.0, 'low'
         )
 
@@ -323,9 +309,12 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
     def setUp(self) -> None:
         demand = 512
         duration = 60  # seconds
-        channels = 64
+        # TODO Figure out how we do coarse grained channels and fine grained channels
+        # e.g. in this example, we are splitting on 64 channels but we have been using 512*128 channels worth of compute/data
+        channels = 512*128
+        coarse_channels = 64 # historically we've used smaller numbers because our parallelism is coarse-grained all channels by 128 to get their actual value
         self.obs1 = hpo.Observation(
-            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
+            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, coarse_channels,
             65000.0, 'low'
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
@@ -342,15 +331,13 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 
         # long baseline, DPrepA - component is Degrid
         component_cost, component_data = hpo.identify_component_cost(
-            self.obs1.hpso, self.obs1.baseline,  self.obs1.workflows[0], self.obs1.demand,
-            self.obs1.channels, self.obs1.telescope,
+            self.obs1,  self.obs1.workflows[0],
             'Degrid', self.component_system_sizing
         )
         self.assertAlmostEqual(0.091199933169544, component_cost, places=5)
 
         component_cost, component_data = hpo.identify_component_cost(
-            self.obs1.hpso, self.obs1.baseline, self.obs1.workflows[1], self.obs1.demand,
-            self.obs1.channels, self.obs1.telescope,
+            self.obs1, self.obs1.workflows[1],
             'Degrid', self.component_system_sizing
         )
         self.assertAlmostEqual(0.0950936323565933, component_cost, places=5)
@@ -377,7 +364,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         """
         wf = self.obs1.workflows[0]
         # generate a workflow without updating channels
-        channels = self.obs1.channels
+        channels = self.obs1.coarse_channels
         nx_graph, task_dict, cached_workflow_dict = edt.eagle_to_nx(LGT_PATH, wf)
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_product(
@@ -459,11 +446,11 @@ class TestSKAMidCosts(unittest.TestCase):
 
     def setUp(self) -> None:
         self.observation = hpo.Observation(
-            1, 'hpso13', ['DPrepA', 'DPrepB'], 197, 3600, 256,
+            1, 'hpso13', ['DPrepA', 'DPrepB'], 197, 3600, 512*128, 256,
             35000.0, telescope="mid"
         )
         self.mid_component_sizing = pd.read_csv(
-            "skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid.csv"
+            "skaworkflows/data/pandas_sizing/component_compute_SKA1_Mid_2024-03-25.csv"
         )
 
     def test_total_component_sum(self):
@@ -486,9 +473,10 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
     def setUp(self) -> None:
         demand = 512
         duration = 60  # seconds
-        channels = 1
+        channels = 512*128
+        coarse_channels = 1
         self.obs1 = hpo.Observation(
-            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels,
+            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, coarse_channels,
             65000.0, 'low'
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
