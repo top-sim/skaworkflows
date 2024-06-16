@@ -389,7 +389,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         )
         self.assertAlmostEqual(
             ((15242.456887132481 + 2.181634610617648) * self.obs1.duration * SI.mega * BYTES_PER_VIS)/2,
-            final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
+            final_workflow['DPrepA_BeginMajorCycle_0']['DPrepA_Degrid_0'][
                 "transfer_data"
             ],
             delta=1000
@@ -412,7 +412,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         )
         self.assertAlmostEqual(
             ((15242.456887132481 + 2.181634610617648) * self.obs1.duration * SI.mega * BYTES_PER_VIS)/128,
-            final_workflow['DPrepA_Degrid_0']['DPrepA_Subtract_0'][
+            final_workflow['DPrepA_BeginMajorCycle_0']['DPrepA_Degrid_0'][
                 "transfer_data"
             ],
             delta=1000
@@ -519,16 +519,12 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         # The creation of the config directory needs to
         os.mkdir(self.config_dir)
         self.assertTrue(os.path.exists(self.config_dir))
-        hpo.generate_workflow_from_observation(
+        workflow_path_name = hpo.generate_workflow_from_observation(
             self.obs1, self.telescope_max, self.config_dir,
             self.component_system_sizing, workflow_path_name, base_graph_paths
         )
-
-        final_dir = f'{self.config_dir}/workflows'
-        # we want to see test/data/sim_config/hpso01_workflow.json
-        'hpso01_channels-1_tel-512.json'
-        final_path = f'{final_dir}/hpso01_time-60_channels-1_tel-512-standard.json'
-        self.assertTrue(os.path.exists(final_path))
+        print(f"{workflow_path_name=}")
+        self.assertTrue(workflow_path_name.exists())
 
     def testWorkflowFileCorrectness(self):
         """
@@ -567,9 +563,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
             },
             'time': False
         }
-        final_dir = f'{self.config_dir}/workflows'
-
-        with open(f'{final_dir}/hpso01_time-60_channels-1_tel-512-standard.json') as fp:
+        with result.open() as fp:
             test_workflow = json.load(fp)
 
         self.assertDictEqual(header, test_workflow['header'])
