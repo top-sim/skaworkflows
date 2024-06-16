@@ -333,17 +333,17 @@ def calculate_parametric_runtime_estimates(csv_path, scenario, hpsos, pipeline_s
 if __name__ == "__main__":
     random.seed(0)
     LONG_SYSTEM_SIZING = Path(
-        "skaworkflows/data/sdp-par-model_output/tests/2023-03-25_long_HPSOs.csv"
+        "skaworkflows/data/sdp-par-model_output/ParametricOutput_Low_antenna-512_channels-65536.csv"
     )
     # hpsos = [HPSOs.hpso02a, HPSOs.hpso01, HPSOs.hpso02b]
-    hpsos = [HPSOs.hpso32]
-    scenario = "mid-adjusted"
+    hpsos = [HPSOs.hpso01]
+    scenario = "low-adjusted"
     result = calculate_parametric_runtime_estimates(
-        LONG_SYSTEM_SIZING, scenario, hpsos, ["ICAL"]  # , "DPrepA"]
+        LONG_SYSTEM_SIZING, scenario, hpsos, ["ICAL", "DPrepA"]
     )
     print(result)
     for hpso in result:
         print(
             hpso,
-            result[hpso]["total_flops"] / (result[hpso]["batch_flops"]),
+            result[hpso]["total_flops"] / (result[hpso]["batch_flops"]) / 3600,
         )

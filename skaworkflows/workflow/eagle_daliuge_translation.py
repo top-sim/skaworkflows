@@ -52,15 +52,11 @@ def update_number_of_channels(lgt_path, channels, telescope_demand=512):
     Dictionary with updated channel values
     """
 
-    channel_demand_mapping = {256:488, 128:395, 64:368, 32:361}
-
     node_data_key = 'nodeDataArray'
     with open(lgt_path, 'r') as f:
         lgt_dict = json.load(f)
+    LOGGER.info("Updating coarse channel parallelism to %s", channels)
 
-    if telescope_demand < 512:
-        closest_power = 2**math.ceil(math.log(telescope_demand, 2))
-        channels = channel_demand_mapping[closest_power]
     # Finds scatter & gather category
     for node in lgt_dict[node_data_key]:
         if (
@@ -204,7 +200,7 @@ def eagle_to_nx(eagle_graph, workflow, file_in=True, cached_workflow=None):
         # with open(f"unrolled_{file_in}.json", 'w') as fp:
         #     json.dump(jdict, fp, indent=2)
     else:
-        LOGGER.info(f"Using cached translation of {eagle_graph} for workflow")
+        LOGGER.info(f"Using cached translation for workflow")
         jdict = cached_workflow
 
     unrolled_nx, task_dict = daliuge_to_nx(jdict, workflow)
@@ -329,15 +325,16 @@ def concatenate_workflows(
     """
     # final_graph = nx.DiGraph()
     start = workflows[0]
-    start_graph = unrolled_graphs[start]
-    curr_parent = f'{start}_End_0'
+    # start_graph = unrolled_graphs[start]
+    curr_parent = list(nx.topological_sort(unrolled_graphs[start]))[-1]
     workflows.remove(start)
     final_graph = nx.compose_all(list(unrolled_graphs.values()))
     for workflow in workflows:
-        for i in range(str(final_graph.nodes).count(f"{workflow}_ExtractLSM")):
-            curr_child = f'{workflow}_ExtractLSM_{i}'
-            final_graph.add_edge(curr_parent, curr_child, transfer_data=0)
-        curr_parent = f'{workflow}_End_0'
+        curr_child = list(nx.topological_sort(unrolled_graphs[workflow]))[0]
+        # for i in range(str(final_graph.nodes).count(f"{workflow}_ExtractLSM")):
+        #     curr_child = f'{workflow}_ExtractLSM_{i}'
+        final_graph.add_edge(curr_parent, curr_child, transfer_data=0)
+        curr_parent = list(nx.topological_sort(unrolled_graphs[workflow]))[-1]
 
     return final_graph
 
