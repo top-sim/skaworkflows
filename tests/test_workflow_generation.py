@@ -476,7 +476,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         channels = 512*128
         coarse_channels = 1
         self.obs1 = hpo.Observation(
-            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, coarse_channels,
+            'obs1', 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, coarse_channels,
             65000.0, 'low'
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
@@ -487,7 +487,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         self.telescope_max = hpo.telescope_max(total_system_sizing, self.obs1)
 
     def tearDown(self) -> None:
-        shutil.rmtree(self.config_dir)
+        shutil.rmtree(self.config_dir, ignore_errors=True)
 
     def testWorkflowFileGenerated(self):
         """

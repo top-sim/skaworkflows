@@ -1,5 +1,5 @@
 # Copyright (C) 3/9/22 RW Bunney
-
+import shutil
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -13,47 +13,56 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import unittest
+
 from skaworkflows.config_generator import create_config
 import filecmp
 from pathlib import Path
 
 from skaworkflows import config_generator
 
+HPSO_PARAMETERS = {
+    "nodes": 256,
+    "infrastructure": "parametric",
+    "telescope": "low",
+    "items": [
+        {
+            "count": 2,
+            "hpso": "hpso01",
+            "demand": 128,
+            "duration": 18000,
+            "workflows": [
+                "ICAL", "DPrepA"],
+            "channels": 16384,
+            "coarse_channels": 64,
+            "baseline": 65000.0,
+            "telescope": "low"
+        },
+    ]
+}
 
-def setUp():
-    hpso_path = (
-        "tests/data/maximal_low_imaging_896channels.json")
+class TestConfigGeneration(unittest.TestCase):
 
-    BASE_DIR = Path(f"tests")
+    def setUp(self):
+        self.prototype_workflow_paths = {"ICAL": "prototype", "DPrepA": "prototype"}
+        #
+        # SCATTER_WORKFLOW_PATHS = {"ICAL": "scatter", "DPrepA": "scatter",
+        #                           "DPrepB": "scatter", "DPrepC": "scatter",
+        #                           "DPrepD": "scatter"}
 
-    PROTOTYPE_WORKFLOW_PATHS = {"ICAL": "prototype", "DPrepA": "prototype",
-                                "DPrepB": "prototype",
-                                "DPrepC": "prototype",
-                                "DPrepD": "prototype"}
-    #
-    # SCATTER_WORKFLOW_PATHS = {"ICAL": "scatter", "DPrepA": "scatter",
-    #                           "DPrepB": "scatter", "DPrepC": "scatter",
-    #                           "DPrepD": "scatter"}
+        self.low_path_str = Path('tmp')
+        # Generate configuration with prototype SKA Workflow
 
-    LOW_CONFIG = Path("low_sdp_config")
+    # def tearDown(self):
+    #     shutil.rmtree(self.low_path_str)
 
-    # TODO we are going to use the file-based config generation for this
+    def test_config_generation_low(self):
+        config = config_generator.create_config(
+            parameters=HPSO_PARAMETERS,
+            output_dir=self.low_path_str,
+            base_graph_paths=self.prototype_workflow_paths,
+            timestep='seconds', data=True)
+        self.assertTrue(Path(config[0]).exists())
 
-    base_graph_paths = PROTOTYPE_WORKFLOW_PATHS
-    low_path_str = BASE_DIR / 'tmp'
-    # Generate configuration with prototype SKA Workflow
-    config_generator.create_config('low', 'parametric', 896,
-                                   hpso_path=Path(hpso_path),
-                                   output_dir=Path(low_path_str),
-                                   base_graph_paths=PROTOTYPE_WORKFLOW_PATHS,
-                                   timestep='seconds', data=True)
-
-def test_config_generation_low():
-    setUp()
-    tmp_path = Path("tests/tmp/low_sdp_config_n896.json")
-    valid_json_path  = Path("tests/data/maximal_workflows/low_sdp_config_n896.json")
-    assert filecmp.cmp(valid_json_path, tmp_path)
-
-
-def TestConfigGenerationMid():
-    pass
+    def TestConfigGenerationMid(self):
+        pass

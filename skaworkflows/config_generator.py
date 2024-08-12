@@ -27,22 +27,23 @@ from skaworkflows.hpconfig.specs.sdp import (
 )
 LOGGER = logging.getLogger(__name__)
 
+LOGGER.setLevel('DEBUG')
+
 
 def create_config(
-        telescope,
-        infrastructure,
-        nodes,
-        hpso_path: Path,
+        parameters: dict,
         output_dir: Path,
         base_graph_paths,
         timestep='seconds',
         data=False,
         overwrite=False,
-        data_distribution='standard'
+        data_distribution='standard',
+        multiple_plans=False
 ):
     """
     Parameters
     ----------
+    parameters
     output_dir : pathlib.Path
         Path where the 'config' folder will be created
 
@@ -55,14 +56,12 @@ def create_config(
     Path where observation config is stored
     """
     dt = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    cfg_name = Path(f"skaworkflows_{dt}.json")
+    cfg_name = Path(f"skaworkflows_{dt}")
     LOGGER.info("Generating %s...", cfg_name.name)
 
-    # Set defaults to SKA Low
-    if data:
-        data_suffix = ''
-    else:
-        data_suffix = 'no_data_'
+    telescope = parameters["telescope"]
+    nodes = parameters["nodes"]
+    infrastructure = parameters["infrastructure"]
 
     if 'data_distribution' in data_distribution:
         data_distribution = True
@@ -74,9 +73,12 @@ def create_config(
 
     component = common.LOW_COMPONENT_SIZING
     system = common.LOW_TOTAL_SIZING
+
     telescope_max = common.MAX_TEL_DEMAND_LOW
+
     cluster = SDP_LOW_CDR()
 
+    # Set defaults to SKA Low
     if telescope == "low":
         if infrastructure == "parametric":
             cluster = SDP_PAR_MODEL_LOW()
@@ -112,29 +114,38 @@ def create_config(
     component_sizing = pd.read_csv(component)
     system_sizing = pd.read_csv(system)
     cluster_dict = cluster.to_topsim_dictionary()
-    observations = hto.process_hpso_from_spec(hpso_path)
+    observations = hto.process_hpso_from_spec(parameters)
 
     if not observations:
         RuntimeError('Observations do not exist!')
     LOGGER.debug(f"Creating an observation plan with {observations}")
-    observation_plan = hto.create_observation_plan(
-        observations, telescope_max
-    )
-    LOGGER.debug(f"Observation plan: {observation_plan}")
+    all_plans = [hto.create_basic_plan(
+        observations, telescope_max, with_concurrent=True
+    )]
+    LOGGER.debug(f"Observation plan: {all_plans}")
 
+    all_plans = hto.alternate_plan_composition(all_plans.pop(), telescope_max)
+    for i, plan in enumerate(all_plans):
+        LOGGER.debug("Plan %d of %d: %s", i, len(all_plans), plan)
+    if not multiple_plans:
+        # Take the middle plan
+        all_plans = [all_plans[int(len(all_plans)/2)]]
+        LOGGER.info("Selected plan: %s", all_plans)
     LOGGER.info("Producing the instrument config")
-    final_instrument_config = hto.generate_instrument_config(
-        telescope,
-        telescope_max,
-        observation_plan,
-        output_dir,
-        component_sizing,
-        system_sizing,
-        cluster_dict,
-        base_graph_paths,
-        data,
-        data_distribution
-    )
+    final_instrument_config = []
+    for observation_plan in all_plans:
+        final_instrument_config.append(hto.generate_instrument_config(
+            telescope,
+            telescope_max,
+            observation_plan,
+            output_dir,
+            component_sizing,
+            system_sizing,
+            cluster_dict,
+            base_graph_paths,
+            data,
+            data_distribution
+        ))
 
     LOGGER.info(f"Producing buffer config")
     final_buffer_config = hto.create_buffer_config(
@@ -142,23 +153,28 @@ def create_config(
     )
     final_cluster = cluster_dict
 
+    file_paths = []
     LOGGER.info(f"Putting it all together...")
-    final_config = {
-        "instrument": final_instrument_config,
-        "cluster": final_cluster,
-        "buffer": final_buffer_config,
-        "timestep": timestep
-    }
+    for i, cfg in enumerate(final_instrument_config):
+        final_config = {
+            "instrument": cfg,
+            "cluster": final_cluster,
+            "buffer": final_buffer_config,
+            "timestep": timestep
+        }
 
-    if not file_path.parent.exists():
-        file_path.parent.mkdir(parents=True)
-    with file_path.open('w') as fp:
-        LOGGER.info(f'Writing final config to {file_path}')
-        json.dump(final_config, fp, indent=2)
+        if not file_path.parent.exists():
+            file_path.parent.mkdir(parents=True)
+        file_path_cfg = file_path.parent / (file_path.name + f"_{i}" + ".json")
+        with file_path_cfg.open('w') as fp:
+            LOGGER.info(f'Writing final config to {file_path}')
+            json.dump(final_config, fp, indent=2)
+            file_paths.append(file_path_cfg)
+
 
     LOGGER.info(f'Configuration generation complete!')
 
-    return file_path
+    return file_paths
 
 
 def config_to_shadow(cfg_path: Path) -> dict:

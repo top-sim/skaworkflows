@@ -42,7 +42,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
 
     """
 
-    nodes = 896
+    total_nodes = 896
 
     buffer_ratio = (1, 5)
 
@@ -65,8 +65,10 @@ class SDP_LOW_CDR(ARCHITECTURE):
     maximal_use_case = 1.5 * (10 ** 21)
     maximal_obs_time = 6 * 3600  # 6 hours, in seconds
 
+    used_nodes = total_nodes
+
     def set_nodes(self, nodes):
-        self.nodes = nodes
+        self.used_nodes = nodes
 
     def to_df(self, human_readable=True):
         """
@@ -101,7 +103,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
         }
 
         if human_readable:
-            low = np.array(['Low', self.nodes, self.gpu_per_node,
+            low = np.array(['Low', self.total_nodes, self.gpu_per_node,
                             self.memory_per_node // SI.giga,
                             self.storage_per_node // SI.tera,
                             self.gpu_peak_flops // SI.tera,
@@ -110,7 +112,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
 
             df = pd.DataFrame([low], columns=cols.values())
         else:
-            low = ['Low', self.nodes, self.gpu_per_node,
+            low = ['Low', self.total_nodes, self.gpu_per_node,
                    self.memory_per_node, self.storage_per_node,
                    self.gpu_peak_flops,
                    self.total_storage, self.total_compute]
@@ -143,7 +145,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
         if expected:
             efficiency = self.estimated_efficiency
         return int(
-            self.nodes * self.gpu_per_node * self.gpu_peak_flops * efficiency
+            self.total_nodes * self.gpu_per_node * self.gpu_peak_flops * efficiency
         )
 
     @property
@@ -159,7 +161,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
         -------
 
         """
-        return int(self.nodes * self.storage_per_node)
+        return int(self.total_nodes * self.storage_per_node)
 
     @property
     def total_bandwidth(self):
@@ -174,7 +176,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
         -------
 
         """
-        return int(self.nodes * self.ethernet)
+        return int(self.total_nodes * self.ethernet)
 
     @property
     def input_transfer_rate(self):
@@ -224,7 +226,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
         """
         node_dict = {}
         # system = {"system": {"resources": {}}}
-        for i in range(0, self.nodes):
+        for i in range(0, self.used_nodes):
             node_dict[f"GenericSDP_m{i}"] = {
                 f"flops": self.gpu_peak_flops * self.gpu_per_node,
                 f"compute_bandwidth": self.ethernet,
@@ -304,7 +306,7 @@ class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
         **Should** be 6747312499999.0
         Returns
         -------
-
+        6747312499999
         """
         compute_buffer_rate = (
                 self.total_compute_buffer * self.compute_buffer_rate
@@ -351,7 +353,7 @@ class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
 
         """
         return (
-                self.nodes * self.gpu_per_node * self.gpu_peak_flops
+                self.total_nodes * self.gpu_per_node * self.gpu_peak_flops
                 * self.architecture_efficiency
         )
 
@@ -369,10 +371,10 @@ class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
         """
         node_dict = {}
         # system = {"system": {"resources": {}}}
-        for i in range(0, self.nodes):
+        for i in range(0, self.used_nodes):
             node_dict[f"GenericSDP_m{i}"] = {
                 f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
-                f"compute_bandwidth": int(self.total_compute_buffer_rate / self.nodes),
+                f"compute_bandwidth": int(self.total_compute_buffer_rate / self.total_nodes),
                 f"memory": self.memory_per_node
             }
         cluster = {
@@ -388,6 +390,19 @@ class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
         }
         return cluster
 
+
+class SDP_LOW_HETEROGENEOUS(SDP_PAR_MODEL_LOW):
+    """
+    Build on the existing SDP parametric model numbers, creating a system that uses a
+    system with better memory for IO intensive tasks.
+    """
+
+    # produce generic with less nodes
+    node_dict = {
+
+    }
+
+    # extend node dict with higher-memory nodes
 
 class SDP_MID_CDR(ARCHITECTURE):
     """
@@ -408,7 +423,7 @@ class SDP_MID_CDR(ARCHITECTURE):
     gpu_peak_flops = 31 * SI.tera  # Double precision
     memory_per_node = 320 * SI.giga
 
-    nodes = 786
+    total_nodes = 786
     storage_per_node = 147 * SI.tera
     storage_per_island = 7.7 * SI.peta
 
@@ -421,8 +436,10 @@ class SDP_MID_CDR(ARCHITECTURE):
     maximal_use_case = 1.5 * (10 ** 21)
     maximal_obs_time = 6 * 3600  # 6 hours, in seconds
 
+    used_nodes = total_nodes
+
     def set_nodes(self, nodes):
-        self.nodes = nodes
+        self.used_nodes = nodes
 
     @property
     def total_storage(self):
@@ -439,7 +456,7 @@ class SDP_MID_CDR(ARCHITECTURE):
         int : Total data of combined nodes in SDP
         """
 
-        return self.nodes * self.storage_per_node
+        return self.total_nodes * self.storage_per_node
 
     @property
     def total_compute(self, expected=False):
@@ -465,7 +482,7 @@ class SDP_MID_CDR(ARCHITECTURE):
         if expected:
             efficiency = self.estimated_efficiency
         return int(
-            self.nodes * self.gpu_per_node * self.gpu_peak_flops * efficiency
+            self.total_nodes * self.gpu_per_node * self.gpu_peak_flops * efficiency
         )
 
     @property
@@ -481,7 +498,7 @@ class SDP_MID_CDR(ARCHITECTURE):
         -------
 
         """
-        return int(self.nodes * self.ethernet)
+        return int(self.total_nodes * self.ethernet)
 
     def to_topsim_dictionary(self):
         """
@@ -513,7 +530,7 @@ class SDP_MID_CDR(ARCHITECTURE):
         }
 
         if human_readable:
-            mid = np.array(['Mid', self.nodes, self.gpu_per_node,
+            mid = np.array(['Mid', self.total_nodes, self.gpu_per_node,
                             self.memory_per_node // SI.giga,
                             self.total_storage // SI.tera,
                             self.gpu_peak_flops // SI.tera,
@@ -522,7 +539,7 @@ class SDP_MID_CDR(ARCHITECTURE):
 
             df = pd.DataFrame([mid], columns=cols.values())
         else:
-            mid = ['mid', self.nodes, self.gpu_per_node,
+            mid = ['mid', self.total_nodes, self.gpu_per_node,
                    self.memory_per_node, self.storage_per_node,
                    self.gpu_peak_flops,
                    self.total_storage, self.total_compute]
@@ -611,7 +628,7 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
 
         """
         # Calculate the global read rate and then distribute across nodes
-        return int(self._global_io_rate / self.nodes)
+        return int(self._global_io_rate / self.total_nodes)
 
     @property
     def total_compute(self, expected=False):
@@ -624,7 +641,7 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
 
         """
         return (
-                self.nodes * self.gpu_per_node * self.gpu_peak_flops
+                self.total_nodes * self.gpu_per_node * self.gpu_peak_flops
                 * self.architecture_efficiency
         )
 
@@ -642,10 +659,10 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
         """
         node_dict = {}
         # system = {"system": {"resources": {}}}
-        for i in range(0, self.nodes):
+        for i in range(0, self.used_nodes):
             node_dict[f"GenericSDP_m{i}"] = {
                 f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
-                f"compute_bandwidth": int(self.total_compute_buffer_rate / self.nodes),
+                f"compute_bandwidth": int(self.total_compute_buffer_rate / self.total_nodes),
                 f"memory": self.memory_per_node
             }
         cluster = {

@@ -324,17 +324,16 @@ def concatenate_workflows(
 
     """
     # final_graph = nx.DiGraph()
-    start = workflows[0]
+    wfs = [w for w in workflows]
+    start = wfs[0]
     # start_graph = unrolled_graphs[start]
     curr_parent = list(nx.topological_sort(unrolled_graphs[start]))[-1]
-    workflows.remove(start)
+    wfs.remove(start)
     final_graph = nx.compose_all(list(unrolled_graphs.values()))
-    for workflow in workflows:
-        curr_child = list(nx.topological_sort(unrolled_graphs[workflow]))[0]
-        # for i in range(str(final_graph.nodes).count(f"{workflow}_ExtractLSM")):
-        #     curr_child = f'{workflow}_ExtractLSM_{i}'
+    for w in wfs:
+        curr_child = list(nx.topological_sort(unrolled_graphs[w]))[0]
         final_graph.add_edge(curr_parent, curr_child, transfer_data=0)
-        curr_parent = list(nx.topological_sort(unrolled_graphs[workflow]))[-1]
+        curr_parent = list(nx.topological_sort(unrolled_graphs[w]))[-1]
 
     return final_graph
 
