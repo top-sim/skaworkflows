@@ -448,9 +448,9 @@ def alternate_plan_composition(observation_plan: list, max_telescope_usage,
 
     lol = []
     lol.append(copy.deepcopy(observation_plan))
-    largest = sorted(observation_plan, key=lambda x: x.demand)[-1]
+    largest = sorted(observation_plan, key=lambda x: (x.demand, x.channels))[-1]
     observation_plan = [o for o in observation_plan if o != largest]
-    for i in range(len(observation_plan) + 1):
+    for i in range(1, len(observation_plan) + 1):
         new_plan = copy.deepcopy(observation_plan)
         large_copy = copy.deepcopy(largest)
         new_plan.insert(i, large_copy)
@@ -463,7 +463,7 @@ def alternate_plan_composition(observation_plan: list, max_telescope_usage,
             max_telescope_usage=max_telescope_usage,
             with_concurrent=with_concurrent,
             existing_plan=new_plan)
-        if new_plan not in lol:
+        if new_plan not in lol and i%3 == 0:
             lol.append(new_plan)
 
     return lol

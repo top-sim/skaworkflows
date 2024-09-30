@@ -333,7 +333,7 @@ def calculate_parametric_runtime_estimates(csv_path, scenario, hpsos, pipeline_s
 if __name__ == "__main__":
     random.seed(0)
     LONG_SYSTEM_SIZING = Path(
-        "skaworkflows/data/sdp-par-model_output/ParametricOutput_Low_antenna-512_channels-65536.csv"
+        "skaworkflows/data/sdp-par-model_output/ParametricOutput_Low_antenna-512_channels-32768.csv"
     )
     # hpsos = [HPSOs.hpso02a, HPSOs.hpso01, HPSOs.hpso02b]
     hpsos = [HPSOs.hpso01]

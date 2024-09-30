@@ -60,13 +60,13 @@ MAX_CHANNELS = 512
 
 # System sizing data paths
 DATA_PANDAS_SIZING = imp_res.files("skaworkflows.data.pandas_sizing")
-LOW_TOTAL_SIZING = DATA_PANDAS_SIZING.joinpath("total_compute_SKA1_Low_2024-03-25.csv")
+LOW_TOTAL_SIZING = DATA_PANDAS_SIZING.joinpath("total_compute_SKA1_Low_2024-08-20.csv")
 LOW_COMPONENT_SIZING = Path(
-    DATA_PANDAS_SIZING.joinpath("component_compute_SKA1_Low_2024-03-25.csv")
+    DATA_PANDAS_SIZING.joinpath("component_compute_SKA1_Low_2024-08-20.csv")
 )
-MID_TOTAL_SIZING = Path(DATA_PANDAS_SIZING.joinpath("total_compute_SKA1_Mid_2024-03-25.csv"))
+MID_TOTAL_SIZING = Path(DATA_PANDAS_SIZING.joinpath("total_compute_SKA1_Mid_2024-08-20.csv"))
 MID_COMPONENT_SIZING = Path(
-    DATA_PANDAS_SIZING.joinpath("component_compute_SKA1_Mid_2024-03-25.csv")
+    DATA_PANDAS_SIZING.joinpath("component_compute_SKA1_Mid_2024-08-20.csv")
 )
 
 # Bytes per obseved visibility
