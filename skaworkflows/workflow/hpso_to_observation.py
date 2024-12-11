@@ -445,7 +445,7 @@ def alternate_plan_composition(observation_plan: list, max_telescope_usage,
     -------
 
     """
-
+    # TODO use the shuffle function
     lol = []
     lol.append(copy.deepcopy(observation_plan))
     largest = sorted(observation_plan, key=lambda x: (x.demand, x.channels))[-1]
@@ -465,6 +465,10 @@ def alternate_plan_composition(observation_plan: list, max_telescope_usage,
             existing_plan=new_plan)
         if new_plan not in lol and i%3 == 0:
             lol.append(new_plan)
+
+    with open("/tmp/plans.txt", "w") as fp:
+        for l in lol:
+            fp.write(f"{str(l)}\n")
 
     return lol
 

@@ -21,10 +21,16 @@ Included in this modules are the following class definitions:
     - SI
 """
 
+import sdp_par_model
+
 from pathlib import Path
 from enum import Enum, IntEnum
 import importlib_resources as imp_res
 from skaworkflows import __version__
+
+from sdp_par_model.parameters.definitions import HPSOs, apply_hpso_parameters
+
+hpso = HPSOs.hpso01
 
 
 class LOWBaselines(Enum):

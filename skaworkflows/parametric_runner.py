@@ -321,7 +321,9 @@ def calculate_total_offline_flops(csv, scenario, hpso, pipeline_set):
     return result
 
 
-def calculate_parametric_runtime_estimates(csv_path, scenario, hpsos, pipeline_set):
+def calculate_parametric_runtime_estimates(
+        csv_path: str, scenario: str, hpsos: list, pipeline_set: list
+):
     csv = reports.read_csv(csv_path)
     results = {}
     for h in hpsos:
@@ -345,5 +347,5 @@ if __name__ == "__main__":
     for hpso in result:
         print(
             hpso,
-            result[hpso]["total_flops"] / (result[hpso]["batch_flops"]) / 3600,
+            result[hpso]["total_flops"] / (result[hpso]["batch_flops"]),
         )

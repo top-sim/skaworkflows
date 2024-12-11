@@ -29,7 +29,6 @@ LOGGER = logging.getLogger(__name__)
 
 LOGGER.setLevel('DEBUG')
 
-
 def create_config(
         parameters: dict,
         output_dir: Path,
@@ -38,7 +37,8 @@ def create_config(
         data=False,
         overwrite=False,
         data_distribution='standard',
-        multiple_plans=False
+        multiple_plans=False,
+        max_num_plans=5
 ):
     """
     Parameters
@@ -119,20 +119,26 @@ def create_config(
     if not observations:
         RuntimeError('Observations do not exist!')
     LOGGER.debug(f"Creating an observation plan with {observations}")
-    all_plans = [hto.create_basic_plan(
-        observations, telescope_max, with_concurrent=True
-    )]
+    all_plans = hto.create_basic_plan(
+        observations, telescope_max, with_concurrent=False
+    )
     LOGGER.debug(f"Observation plan: {all_plans}")
-
-    all_plans = hto.alternate_plan_composition(all_plans.pop(), telescope_max)
-    for i, plan in enumerate(all_plans):
-        LOGGER.debug("Plan %d of %d: %s", i, len(all_plans), plan)
-    if not multiple_plans:
-        # Take the middle plan
-        all_plans = [all_plans[int(len(all_plans)/2)]]
-        LOGGER.info("Selected plan: %s", all_plans)
+    # all_plans = hto.alternate_plan_composition(all_plans.pop(), telescope_max)
+    import random
+    random.shuffle(all_plans)
+    # exit()
+    # for i, plan in enumerate(all_plans):
+    #     print(f"Plan {i} of {len(all_plans)}: {all_plans}")
+        # print()
+    # if not multiple_plans:
+    #     # Take the middle plan
+    #     all_plans = [all_plans[int(len(all_plans)/2)]]
+    #     LOGGER.info("Selected plan: %s", all_plans)
+    LOGGER.debug("Plans: %s", all_plans)
+    LOGGER.info("Final number of plan permutations is: %d", len(all_plans))
     LOGGER.info("Producing the instrument config")
     final_instrument_config = []
+    all_plans = [all_plans]
     for observation_plan in all_plans:
         final_instrument_config.append(hto.generate_instrument_config(
             telescope,
