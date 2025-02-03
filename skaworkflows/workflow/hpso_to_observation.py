@@ -31,6 +31,7 @@ import json
 import os
 import logging
 import datetime
+import random
 import sys
 
 import pandas as pd
@@ -383,7 +384,7 @@ def create_basic_plan(hpsos, max_telescope_usage, with_concurrent=False,
         observations = [o for o in existing_plan]
     else:
         observations = [o for o in hpsos]
-
+    random.shuffle(observations)
     while observations:
         if with_concurrent:
             for observation in observations:
