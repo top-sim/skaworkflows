@@ -1,4 +1,4 @@
-# Copyright (C) 25/4/21 RW Bunney
+# Copyright (C) 2022 RW Bunney
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,3 +12,9 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+"""
+Workflow generation from EAGLE and HPSO specs.
+
+Use either with CLI or embed in scripts for ease of replication.
+"""

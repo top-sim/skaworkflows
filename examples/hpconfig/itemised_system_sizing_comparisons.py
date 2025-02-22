@@ -74,7 +74,7 @@ def calculate_equivalent_time_sdp(adjusted=True, telescope='low'):
         additional_nodes = math.ceil(
             (total_system_flops - sdpc.total_compute) / compute_per_node
         )
-        total_nodes = additional_nodes+sdpc.nodes
+        total_nodes = additional_nodes+sdpc.total_nodes
 
     df = sdpc.to_df(human_readable=True)
     row = dict(df.iloc[0])

@@ -501,7 +501,7 @@ def compile_sizing(data_paths: list, total=True, component=True):
 
 if __name__ == '__main__':
 
-    if(len(sys.argv) > 1):
+    if len(sys.argv) > 1:
         x=1
     else:
         sys.exit()
@@ -511,7 +511,7 @@ if __name__ == '__main__':
     logging.basicConfig(level='INFO')
     
     SKA_Low_antenna = [32, 64, 128, 256, 512]
-    SKA_channels = [128, 256, 512]
+    SKA_channels = [64, 128, 256, 512]
 
     SKA_Mid_antenna = [64, 102, 140, 197]
 

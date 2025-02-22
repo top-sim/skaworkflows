@@ -31,10 +31,12 @@ import json
 import os
 import logging
 import datetime
+import random
+import sys
+
 import pandas as pd
 import networkx as nx
 import numpy as np
-
 
 from typing import List, Dict
 from enum import Enum
@@ -66,7 +68,7 @@ class HPSO(Enum):
     hpso2a = ["ingest"]
 
 
-def process_hpso_from_spec(path: Path):
+def process_hpso_from_spec(hpsos: dict):
     """
     Pass a JSON dictionary of observations we want to process
 
@@ -82,8 +84,8 @@ def process_hpso_from_spec(path: Path):
 
     """
     final_obs = []
-    with path.open() as fp:
-        hpsos = json.load(fp)
+    # with path.open() as fp:
+    #     hpsos = json.load(fp)
 
     offset = 0
     for h in hpsos["items"]:
@@ -143,16 +145,16 @@ class Observation:
     """
 
     def __init__(
-        self,
-        name,
-        hpso,
-        workflows,
-        demand,
-        duration,
-        channels,
-        coarse_channels,
-        baseline,
-        telescope,
+            self,
+            name,
+            hpso,
+            workflows,
+            demand,
+            duration,
+            channels,
+            coarse_channels,
+            baseline,
+            telescope,
     ):
         """
         Parameters
@@ -208,7 +210,7 @@ class Observation:
 
         """
         return hash(
-            self.hpso + (str(self.demand + self.coarse_channels + hash(self.baseline)))
+            self.name + (str(self.demand + self.coarse_channels + int(self.baseline)))
         )
 
     def __repr__(self):
@@ -369,6 +371,109 @@ def create_observation_plan(hpsos, max_telescope_usage):
     return plan
 
 
+def create_basic_plan(hpsos, max_telescope_usage, with_concurrent=False,
+                      existing_plan=None):
+    plan = []
+
+    current_tel_usage = 0
+    loop_count = 0
+    start = 0
+    finish = -1
+    LOGGER.debug(f"{hpsos=}")
+    if existing_plan:
+        observations = [o for o in existing_plan]
+    else:
+        observations = [o for o in hpsos]
+    random.shuffle(observations)
+    while observations:
+        if with_concurrent:
+            for observation in observations:
+                if observation.demand > max_telescope_usage:
+                    LOGGER.warning("Observation demand exceeds telescope; review config.")
+                    sys.exit(1)
+                LOGGER.debug(f"{observation=}")
+                if observation.planned:
+                    continue
+                if current_tel_usage + observation.demand <= max_telescope_usage:
+                    observation.add_start_time(start)
+                    observation.planned = True
+                    plan.append(observation)
+                    LOGGER.debug(f"{plan=}")
+                    current_tel_usage += observation.demand
+                    if finish < start + observation.duration:
+                        finish = start + observation.duration
+            start = finish
+            finish = -1
+            current_tel_usage = 0
+        else:
+            for observation in observations:
+                observation.add_start_time(start)
+                observation.planned = True
+                plan.append(observation)
+                LOGGER.debug(f"{plan=}")
+                current_tel_usage += max_telescope_usage
+                if finish < start + observation.duration:
+                    finish = start + observation.duration
+                start = finish
+                finish = -1
+            # current_tel_usage = 0
+        observations = [
+            observation for observation in observations if not observation.planned
+        ]
+
+    return plan
+
+
+# def reset_observation_plan_times(observation_plan: list, with_concurrent=False):
+
+
+import copy
+
+
+def alternate_plan_composition(observation_plan: list, max_telescope_usage,
+                               with_concurrent=False):
+    """
+    Pick the largest ¨n" observations, where n is passed as a parameter
+    create two lists, one without the observation, and one with only the observation
+    iterate through the list, inserting the observation at each index throughout the
+    plan.
+
+    Parameters
+    ----------
+    observation_plan
+
+    Returns
+    -------
+
+    """
+    # TODO use the shuffle function
+    lol = []
+    lol.append(copy.deepcopy(observation_plan))
+    largest = sorted(observation_plan, key=lambda x: (x.demand, x.channels))[-1]
+    observation_plan = [o for o in observation_plan if o != largest]
+    for i in range(1, len(observation_plan) + 1):
+        new_plan = copy.deepcopy(observation_plan)
+        large_copy = copy.deepcopy(largest)
+        new_plan.insert(i, large_copy)
+        # reset plan
+        for o in new_plan:
+            o.planned = False
+            o.start = 0
+        new_plan = create_basic_plan(
+            hpsos=None,
+            max_telescope_usage=max_telescope_usage,
+            with_concurrent=with_concurrent,
+            existing_plan=new_plan)
+        if new_plan not in lol and i%3 == 0:
+            lol.append(new_plan)
+
+    with open("/tmp/plans.txt", "w") as fp:
+        for l in lol:
+            fp.write(f"{str(l)}\n")
+
+    return lol
+
+
 def create_buffer_config(itemised_spec):
     """
     Generate the buffer configuration from spec, given the provided ratio of
@@ -380,7 +485,7 @@ def create_buffer_config(itemised_spec):
     ratio : tuple
         ratio of buffer size (HotBuffer:ColdBuffer)
 
-    Returns
+    Return  s
     -------
     spec : dict
         Dictionary
@@ -397,7 +502,7 @@ def create_buffer_config(itemised_spec):
         spec["cold"]["capacity"] = int(itemised_spec.total_storage * (1 - (hot / cold)))
         spec["hot"]["max_ingest_rate"] = int(itemised_spec.ingest_rate)
         spec["cold"]["max_data_rate"] = int(
-            itemised_spec.input_transfer_rate / itemised_spec.nodes
+            itemised_spec.input_transfer_rate / itemised_spec.total_nodes
         )
     else:
         spec["hot"]["capacity"] = int(itemised_spec.total_input_buffer)
@@ -413,6 +518,7 @@ def telescope_max(system_sizing, observation):
 
     Parameters
     ----------
+    observation
     system_sizing : pd.DataFrame
         Dataframe using our translated system sizing data produced by
         `data.pandas_system_sizing`a
@@ -430,7 +536,7 @@ def telescope_max(system_sizing, observation):
 
 
 def assign_observation_ingest_demands(
-    observation_plan, cluster, system_sizing
+        observation_plan, cluster, system_sizing
 ):
     """
 
@@ -520,6 +626,7 @@ def generate_instrument_config(
     LOGGER.debug(f"{observation_plan=}")
 
     for o in observation_plan:
+        use_existing_file = False
         if not o.planned:
             raise RuntimeError(
                 "Please ensure you run 'create_observation_plan' "
@@ -532,9 +639,16 @@ def generate_instrument_config(
         wf_file_name = Path(_create_workflow_path_name(o))
 
         wf_file_path = config_dir_path / "workflows" / wf_file_name
-        if not config_dir_path.exists():
+        if not wf_file_path.exists():
             wf_file_path.parent.mkdir(parents=True, exist_ok=True)
-        if not os.path.exists(wf_file_path):
+
+        possible_file_name = _find_existing_workflow(config_dir_path / "workflows",
+                                                     o, data, data_distribution)
+        if possible_file_name:
+            use_existing_file = True
+            wf_file_path = config_dir_path / "workflows" / possible_file_name
+
+        if not os.path.exists(wf_file_path) or not use_existing_file:
             wf_file_path = generate_workflow_from_observation(
                 o,
                 maximum_telescope,
@@ -580,6 +694,47 @@ def generate_instrument_config(
     return telescope_dict
 
 
+def _find_existing_workflow(dirname, observation, data, data_distribution):
+    """
+    "parameters": {
+        "max_arrays": 512,
+        "channels": 512,
+        "arrays": 256,
+        "baseline": 65000.0,
+        "duration": 18000
+    },
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
+    pathname = ""
+    header = {"parameters": {}}
+    header["parameters"]["coarse_channels"] = observation.coarse_channels
+    header["parameters"]["channels"] = observation.channels
+    header["parameters"]["arrays"] = observation.demand
+    header["parameters"]["baseline"] = observation.baseline
+    header["parameters"]["duration"] = observation.duration
+    header["parameters"]["workflows"] = observation.workflows
+    header["parameters"]["hpso"] = observation.hpso
+    header["parameters"]["max_arrays"] = MAX_TEL_DEMAND_LOW
+    header["parameters"]["data"] = data
+    header["parameters"]["data_distribution"] = data_distribution
+
+    for wf in os.listdir(dirname):
+        if ".csv" not in wf:
+            with open(dirname / wf) as fp:
+                wf_dict = json.load(fp)
+                if header["parameters"] == wf_dict["header"]["parameters"]:
+                    pathname = wf
+                    break
+
+    return pathname
+
+
 def _create_workflow_path_name(
         observation
 ):
@@ -618,15 +773,15 @@ def create_single_observation_for_instrument(observation, workflow_path):
 
 
 def generate_workflow_from_observation(
-    observation,
-    telescope_max,
-    config_dir,
-    component_sizing,
-    workflow_path_name,
-    base_graph_paths,
-    concat=True,
-    data=True,
-    data_distribution="standard",
+        observation,
+        telescope_max,
+        config_dir,
+        component_sizing,
+        workflow_path_name,
+        base_graph_paths,
+        concat=True,
+        data=True,
+        data_distribution="standard",
 ):
     """
     Given a pipeline and observation specification, generate a workflow file
@@ -708,7 +863,7 @@ def generate_workflow_from_observation(
     write_workflow_stats_to_csv(workflow_stats, final_path)
     final_workflow = edt.concatenate_workflows(final_graphs, observation.workflows)
     final_json = produce_final_workflow_structure(
-        final_workflow, observation, time=False
+        final_workflow, observation, data, data_distribution, time=False
     )
 
     with open(final_path, "w") as fp:
@@ -744,14 +899,14 @@ def _match_graph_options(graph_type: str):
 
 
 def generate_cost_per_product(
-    nx_graph,
-    task_dict,
-    observation,
-    workflow,
-    component_sizing,
-    data=True,
-    data_distribution="standard",
-    final_path=None,
+        nx_graph,
+        task_dict,
+        observation,
+        workflow,
+        component_sizing,
+        data=True,
+        data_distribution="standard",
+        final_path=None,
 ):
     """
     Produce a cost value per node within the workflow graph for the given
@@ -1143,7 +1298,8 @@ def retrieve_workflow_cost(observation, workflow, system_sizing):
     return flops
 
 
-def produce_final_workflow_structure(nx_final, observation, time=False):
+def produce_final_workflow_structure(nx_final, observation, data, data_distribution,
+                                     time=False):
     """
     For a given logical graph template, produce a workflow with the specific
     number of channels and return it as a JSON serialisable dictionary.
@@ -1163,16 +1319,21 @@ def produce_final_workflow_structure(nx_final, observation, time=False):
 
     header = WORKFLOW_HEADER
     header["time"] = time
-    header["parameters"]["channels"] = observation.coarse_channels
+    header["parameters"]["coarse_channels"] = observation.coarse_channels
+    header["parameters"]["channels"] = observation.channels
     header["parameters"]["arrays"] = observation.demand
     header["parameters"]["baseline"] = observation.baseline
     header["parameters"]["duration"] = observation.duration
+    header["parameters"]["workflows"] = observation.workflows
+    header["parameters"]["hpso"] = observation.hpso
+    header["parameters"]["data"] = data
+    header["parameters"]["data_distribution"] = data_distribution
     jgraph = {"header": header, "graph": nx.readwrite.node_link_data(nx_final)}
     return jgraph
 
 
 def write_workflow_stats_to_csv(
-        workflow_stats: List[Dict],
+        workflow_stats: Dict,
         workflow_path_name
 ):
     """
