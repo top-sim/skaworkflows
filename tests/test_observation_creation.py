@@ -75,21 +75,33 @@ class TestObservationPlan(unittest.TestCase):
 
     import copy
     def testBasicPlan(self):
+        """
+        This confirms the basic functionality of generating a basic plan, with and without
+        concurrent observations enables.
+
+        This is confirmed by checking the start times in the plan:
+            * For with_concurrent=False, we would expect the set of start times to
+            contain all different start times from the observation list
+            * For with_concurrent=True, we would expect that as may observations as can
+            be run concurrently will be (based on telescope demand), so we would expect
+            the set to be smaller.
+
+        """
         plan = hto.create_basic_plan(copy.deepcopy(SMALL_OBS_LIST), max_telescope_usage=512,
                                      with_concurrent=False)
 
-        plan_obs = [o.name for o in plan]
-        self.assertListEqual(['A', 'B', 'C', 'D'], plan_obs)
-
+        plan_obs = [o.start for o in plan]
+        self.assertEqual(4, len(set(plan_obs)))
+        # Confirm that concurrent plan has A, C, D all scheduled together
         plan = hto.create_basic_plan(copy.deepcopy(SMALL_OBS_LIST),
                                            max_telescope_usage=256, with_concurrent=True)
-        plan_obs = [o.name for o in plan]
-        self.assertListEqual(['A', 'C', 'D', 'B'], plan_obs)
+        plan_obs = [o.start for o in plan if o.name != 'B']
+        self.assertEqual(1, len(set(plan_obs)))
 
     def testAlternatePlans(self):
         plan = hto.create_basic_plan(copy.deepcopy(SMALL_OBS_LIST),
                                      max_telescope_usage=256, with_concurrent=False)
-        alternates = hto.alternate_plan_composition(plan)
+        alternates = hto.alternate_plan_composition(plan, 512)
         print(alternates)
         # self.assertListEqual(['A', 'C', 'D', 'B'], plan_obs)
 
