@@ -25,8 +25,8 @@ import networkx as nx
 
 LOGGER = logging.getLogger(__name__)
 
-
-def update_number_of_channels(lgt_path, channels, telescope_demand=512):
+# TODO change "channels" to "parallelism"
+def update_graph_parallelism(lgt_path, channels, telescope_demand=512):
     """
     Update the number of channels in an EAGLE graph
 
@@ -45,7 +45,6 @@ def update_number_of_channels(lgt_path, channels, telescope_demand=512):
     This is upsettingly hacky, as any bespoke/post-hoc alteration of the
     EAGLE LGT structure has to be edited locally by reading and manipulating
     the raw JSON data.
-
 
     Returns
     -------

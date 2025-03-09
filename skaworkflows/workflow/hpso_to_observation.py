@@ -49,6 +49,7 @@ from skaworkflows.common import (
     CONT_IMG_MVP_GRAPH,
     BASIC_PROTOTYPE_GRAPH,
     SCATTER_GRAPH,
+    PULSAR_GRAPH,
     BYTES_PER_VIS,
     MAX_CHANNELS,
     MAX_TEL_DEMAND_LOW,
@@ -577,6 +578,7 @@ def generate_instrument_config(
         base_graph_paths,
         data=True,
         data_distribution: str = "standard",
+        **kwargs,
 ) -> dict:
     """
     Produce the `instrument level configuration for a TopSim compatible
@@ -654,6 +656,7 @@ def generate_instrument_config(
                 maximum_telescope,
                 config_dir_path,
                 component_sizing,
+                system_sizing,
                 wf_file_name,
                 base_graph_paths,
                 data=data,
@@ -777,6 +780,7 @@ def generate_workflow_from_observation(
         telescope_max,
         config_dir,
         component_sizing,
+        system_sizing,
         workflow_path_name,
         base_graph_paths,
         concat=True,
@@ -835,7 +839,7 @@ def generate_workflow_from_observation(
         if base_graph not in cached_base_graph:
             cached_base_graph[base_graph] = None
         LOGGER.debug(f"Using {base_graph} as base workflow.")
-        channel_lgt = edt.update_number_of_channels(
+        channel_lgt = edt.update_graph_parallelism(
             base_graph, channels, observation.demand
         )
         intermed_graph, task_dict, cached_base_graph[base_graph] = (
@@ -848,18 +852,24 @@ def generate_workflow_from_observation(
         )
 
         final_path = f"{workflow_dir}/" + f"{workflow_path_name}"
-
-        intermed_graph, task_dict = generate_cost_per_product(
-            intermed_graph,
-            task_dict,
-            observation,
-            workflow,
-            component_sizing,
-            data=data,
-            data_distribution=data_distribution,
-        )
-        final_graphs[workflow] = intermed_graph
+        if base_graph_type == "pulsar":
+            intermed_graph, task_dict = generate_cost_per_total_workflow(intermed_graph,
+                                                                         observation,
+                                                                         system_sizing)
+            final_graphs[workflow] = intermed_graph
+        else:
+            intermed_graph, task_dict = generate_cost_per_product(
+                intermed_graph,
+                task_dict,
+                observation,
+                workflow,
+                component_sizing,
+                data=data,
+                data_distribution=data_distribution,
+            )
+            final_graphs[workflow] = intermed_graph
         workflow_stats[workflow] = task_dict
+
     write_workflow_stats_to_csv(workflow_stats, final_path)
     final_workflow = edt.concatenate_workflows(final_graphs, observation.workflows)
     final_json = produce_final_workflow_structure(
@@ -891,6 +901,8 @@ def _match_graph_options(graph_type: str):
         return CONT_IMG_MVP_GRAPH
     elif graph_type == "scatter":
         return SCATTER_GRAPH
+    elif graph_type == "pulsar":
+        return PULSAR_GRAPH
     else:
         raise RuntimeError(
             f"graph_type {graph_type} unsupported\n"
@@ -1038,6 +1050,29 @@ def generate_cost_per_product(
                     nx_graph[producer][node]["transfer_data"] = data_cost / num_edges
                 else:
                     nx_graph[producer][node]["transfer_data"] = 0
+
+    return nx_graph, task_dict
+
+
+def generate_cost_per_total_workflow(
+        nx_graph,
+        observation,
+        system_sizing,
+):
+    # Retrieve workflow cost for system sizing
+    # Use real time pipeline cost and evaluation mechanism for number of machines
+    # allocated
+
+    cost = calc_pulsar_demand(observation,  system_sizing)
+    cost_per_task = cost / len(nx_graph.nodes)
+    task_dict = {"pulsar": {"total_cost": cost, "cost_per_task": cost_per_task}}
+    # Translate this to all
+    for node in nx_graph.nodes:
+        nx_graph.nodes[node]["comp"] = cost_per_task
+        nx_graph.nodes[node]["task_data"] = 0
+
+        for producer in nx_graph.predecessors(node):
+            nx_graph[producer][node]["transfer_data"] = 0
 
     return nx_graph, task_dict
 
@@ -1293,7 +1328,7 @@ def retrieve_workflow_cost(observation, workflow, system_sizing):
         & (system_sizing["Channels"] == observation.channels)
         & (system_sizing["Stations"] == observation.demand)
         ]
-    flops = float(obs_frame[workflow])
+    flops = float(obs_frame[workflow].iloc[0])
 
     return flops
 
@@ -1355,6 +1390,11 @@ def write_workflow_stats_to_csv(
     None:
         This produces a csv file.
     """
+
+    if 'Pulsar' in workflow_stats:
+        pd.DataFrame(workflow_stats["Pulsar"]).to_csv(f"{workflow_path_name}.csv")
+        return
+
     columns = ['workflow_type', 'product', "total_compute",
                "fraction_compute_cost", 'node',
                'total_data', 'fraction_data_cost']
@@ -1372,73 +1412,6 @@ def write_workflow_stats_to_csv(
     df = df.rename(columns={"node": "num_tasks"})
     workflow_data_path = f"{workflow_path_name}.csv"
     df.to_csv(workflow_data_path, index=False)
-
-
-#
-# def assign_costs_to_workflow(workflow, costs, observation, system_sizing):
-#     """
-#     For a given set of costs, calculate the amount per-task in the workflow
-#     is necessary.
-#     Parameters
-#     ----------
-#     workflow : dictionary
-#         Dictionary representation of JSON object that is converted from EAGLE
-#         LGT through DALiuGE
-#     costs : dict
-#         product-compute costs (petaflops/s) pairs for each component in the
-#         workflow
-#     observation : dict
-#         This is a list of requirements associated with the observation,
-#         which we use to determine the amount of compute associated with it
-#         e.g. length (max 5 hours), number of baselines (max 512) etc.
-#
-#     Notes
-#     -----
-#     The idea is that for a given component (e.g. Grid) there is a set compute
-#
-#     Returns
-#     -------
-#
-#     """
-#     pipelines = {
-#         "pipelines": {}
-#     }
-#
-#     # generate pipeline total ingest costs:
-#     # max_ingest = system_sizing[
-#     #     system_sizing['HPSO'] == 'hpso01'
-#     #     ]['Total Compute Requirement [PetaFLOP/s]']
-#
-#     observation_ingest = tel_pecentage * (float(max_ingest) * SI.peta)
-#     tel_pecentage = channels / float(MAX_CHANNELS)
-#
-#     ingest_cluster_demand = _find_ingest_demand(cluster, observation_ingest)
-#
-#     final_workflow = []
-#     ecounter = {}
-#
-#     # count prevalence of each component in the workflow
-#     for element in workflow:
-#         if 'outputs' in element.keys():
-#             if element['nm'] in ecounter:
-#                 ecounter[element['nm']] += 1
-#             else:
-#                 ecounter[element['nm']] = 1
-#
-#     for element in workflow:
-#         if 'outputs' in element.keys():
-#             name = element['nm']
-#             if name in ecounter:
-#                 if costs[name] == -1:
-#                     continue
-#                 else:
-#                     individual_cost = costs[name] / ecounter[name] * SI.peta
-#                     element['tw'] = individual_cost
-#                     final_workflow.append(element)
-#         else:
-#             final_workflow.append(element)
-#
-#     return final_workflow
 
 
 def calc_ingest_demand(observation, system_sizing, cluster):
@@ -1469,6 +1442,22 @@ def calc_ingest_demand(observation, system_sizing, cluster):
 
     return num_machines, ingest_flops, ingest_bytes
 
+def calc_pulsar_demand(observation, system_sizing):
+    """
+    Get the average compute over teh CPUs in the cluster and determine the
+    number of resources necessary for the current ingest_flops
+
+    """
+
+    pulsar_workflows = ["RCAL [Pflop/s]", "FastImg [Pflop/s]"]
+
+    pulsar_flops =0
+    for pw in pulsar_workflows:
+        pulsar_flops += (
+                retrieve_workflow_cost(observation, pw, system_sizing)
+            ) * SI.peta
+
+    return pulsar_flops
 
 def compile_observations_and_workflows(
         input_dir="./", output_dir="out/", itemised_spec=None, buffer_ratio=None

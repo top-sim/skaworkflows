@@ -28,6 +28,8 @@ import os
 import unittest
 import pandas as pd
 
+from pathlib import Path
+
 from skaworkflows.datagen import pandas_system_sizing as pss
 
 sys.path.insert(0, os.path.abspath('../sdp-par-model'))
@@ -38,11 +40,11 @@ from sdp_par_model.parameters.definitions import *
 # As we want to ensure our system sizing is accurate, these tests operate 
 # directly on the system sizing data
 DATA_DIR = 'skaworkflows/data/sdp-par-model_output/tests'
-SHORT = f'{DATA_DIR}/2023-03-19_short_HPSOs.csv'
-MID = f'{DATA_DIR}/2023-03-19_mid_HPSOs.csv'
+SHORT = Path(f'skaworkflows/data/sdp-par-model_output/ParametricOutput_Low_antenna-512_channels-32768-baseline_4.0625.csv')
+MID = Path(f"skaworkflows/data/sdp-par-model_output/ParametricOutput_Low_antenna-512_channels-32768-baseline_32.5.csv")
 # LONG = f'{DATA_DIR}/2023-03-25_long_HPSOs.csv'
-LONG_LOW = f'skaworkflows/data/sdp-par-model_output/ParametricOutput_Low_antenna-512_channels-32768.csv'
-LONG_MID = f'skaworkflows/data/sdp-par-model_output/ParametricOutput_Mid_antenna-197_channels-65536.csv'
+LONG_LOW = Path(f"skaworkflows/data/sdp-par-model_output/ParametricOutput_Low_antenna-512_channels-32768-baseline_65.csv")
+LONG_MID = Path(f"skaworkflows/data/sdp-par-model_output/ParametricOutput_Mid_antenna-197_channels-65536_baseline-150.csv")
 
 # LONG = f'{DATA_DIR}/2023-03-25_long_HPSOs.csv'
 # Copied from sdp-par-model repository; to make sure our self-generated
@@ -293,7 +295,7 @@ class TestSystemPandasOutputCompute(unittest.TestCase):
         # )
 
 # Skipping these as we do not currently have multi-baseline data sets
-@unittest.skip
+# @unittest.skip
 class TestSystemSizingBackwardsCompatibility(unittest.TestCase):
 
     def setUp(self):
@@ -313,7 +315,7 @@ class TestSystemSizingBackwardsCompatibility(unittest.TestCase):
     def test_baseline_comparisons(self):
         short = pd.read_csv(SHORT, index_col=0)
         sflag_val = 0.0003936331841155408
-        scolumn = 'hpso01 (Ingest) [Bmax=4062.5]'
+        scolumn = 'hpso01 (Ingest) [Na=512] [Bmax=4062.5]'
         data = float(
             short[scolumn].loc['-> Flag [''PetaFLOP/s]']
         )
@@ -322,7 +324,7 @@ class TestSystemSizingBackwardsCompatibility(unittest.TestCase):
         mid = pd.read_csv(MID, index_col=0)
         mflag_val = 0.006281068530030465
         data = float(
-            mid['hpso01 (Ingest) [Bmax=32500]'].loc['-> Flag [''PetaFLOP/s]']
+            mid['hpso01 (Ingest) [Na=512] [Bmax=32500.0]'].loc['-> Flag [''PetaFLOP/s]']
         )
         self.assertAlmostEqual(mflag_val, data, places=10)
         # Mid-length baseline should have greater compute.
@@ -330,7 +332,7 @@ class TestSystemSizingBackwardsCompatibility(unittest.TestCase):
 
         long = pd.read_csv(LONG_LOW, index_col=0)
         lflag_val = 0.01063407058944
-        data = float(long['hpso01 (Ingest) []'].loc['-> Flag [PetaFLOP/s]'])
+        data = float(long['hpso01 (Ingest) [Na=512]'].loc['-> Flag [PetaFLOP/s]'])
         self.assertAlmostEqual(lflag_val, data, places=10)
         # Ensure that lflag is greater than mflag
         self.assertGreater(lflag_val, mflag_val)

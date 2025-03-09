@@ -86,6 +86,8 @@ GRAPH_DIR = imp_res.files("skaworkflows.data.hpsos")
 BASIC_PROTOTYPE_GRAPH = GRAPH_DIR.joinpath("dprepa.graph")
 CONT_IMG_MVP_GRAPH = GRAPH_DIR.joinpath("cont_img_mvp_skaworkflows_updated.graph")
 SCATTER_GRAPH = GRAPH_DIR.joinpath("dprepa_parallel_updated.graph")
+PULSAR_GRAPH = GRAPH_DIR.joinpath("pulsar.graph")
+
 
 # Default JSON "header" elemetn used when generating workflow files
 WORKFLOW_HEADER = {
