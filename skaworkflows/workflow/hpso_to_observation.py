@@ -677,8 +677,9 @@ def generate_instrument_config(
             "channels": o.channels,
             "coarse_channels": o.coarse_channels,
             "demand": o.demand,
-            "workflow_type": list(set(base_graph_paths.values())),
-            "graph_type": list(set(base_graph_paths.keys())),
+            "baseline": o.baseline,
+            "workflow_type": list(set(base_graph_paths.values())), # TODO convert to set of strings?
+            "graph_type": list(set(base_graph_paths.keys())), # TODO As above
             "data": data,
             "data_distribution": data_distribution
         }
@@ -727,6 +728,7 @@ def _find_existing_workflow(dirname, observation, data, data_distribution):
     header["parameters"]["data"] = data
     header["parameters"]["data_distribution"] = data_distribution
 
+    # TODO consider caching this information
     for wf in os.listdir(dirname):
         if ".csv" not in wf:
             with open(dirname / wf) as fp:
@@ -1065,10 +1067,10 @@ def generate_cost_per_total_workflow(
 
     cost = calc_pulsar_demand(observation,  system_sizing)
     cost_per_task = cost / len(nx_graph.nodes)
-    task_dict = {"pulsar": {"total_cost": cost, "cost_per_task": cost_per_task}}
+    task_dict = {"workflow":["pulsar"], "total_cost": [cost], "cost_per_task": [cost_per_task]}
     # Translate this to all
     for node in nx_graph.nodes:
-        nx_graph.nodes[node]["comp"] = cost_per_task
+        nx_graph.nodes[node]["comp"] = cost_per_task * observation.duration * (10**15)
         nx_graph.nodes[node]["task_data"] = 0
 
         for producer in nx_graph.predecessors(node):
@@ -1455,7 +1457,7 @@ def calc_pulsar_demand(observation, system_sizing):
     for pw in pulsar_workflows:
         pulsar_flops += (
                 retrieve_workflow_cost(observation, pw, system_sizing)
-            ) * SI.peta
+            )
 
     return pulsar_flops
 
