@@ -28,15 +28,27 @@ from skaworkflows import __version__
 
 def create_topsim_machine_dict(name: str, num_machines: int, machine_data: dict):
     """
-    Produce the dictionary structure for a machine to go into the TopSim config format
+     Produce the dictionary structure for a machine to go into the TopSim config format
 
     Parameters
     ----------
+    name: Name of the machine type
+    num_machines: Number of machines
+    machine_data: The machine 'specs'.
+
+    Notes
+    -----
+    The machine_data spec is a dictionary with the following keys:
+
+        - "flops"
+        - "compute_bandwidth"
+        - "memory"
 
     Returns
     -------
-
+    machine: dict with the aforementioned specs
     """
+
     machine = {name: {
         "count": num_machines,
     }}
