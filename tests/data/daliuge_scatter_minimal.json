@@ -644,7 +644,7 @@
     ],
     "outputs": [
       {
-        "1_0ac0d699-1f66-4aba-a2d4-b9289c69ed32_0/0": "event"
+        "1_0ac0d699-1f66-4aba-a2d4-b9289c69ed32_0/0": "output"
       }
     ]
   },
@@ -1207,7 +1207,7 @@
     ],
     "outputs": [
       {
-        "1_12a28856-2332-4fc3-b8f8-4b666c1f8a94_0/0/0": "event"
+        "1_12a28856-2332-4fc3-b8f8-4b666c1f8a94_0/0/0": "relationship"
       }
     ]
   },
@@ -1484,7 +1484,7 @@
     "lg_key": "fd69889f-56eb-4f20-b3e9-ac688e7fe420",
     "outputs": [
       {
-        "1_f134c465-1899-4fa6-bf27-0d5c1bf82284_0/0/0": "event"
+        "1_f134c465-1899-4fa6-bf27-0d5c1bf82284_0/0/0": "relationship"
       }
     ],
     "inputs": [
@@ -1771,7 +1771,7 @@
     ],
     "outputs": [
       {
-        "1_0bd1aa81-d572-485f-b5ec-8234b471e935_0/0/0": "event"
+        "1_0bd1aa81-d572-485f-b5ec-8234b471e935_0/0/0": "relationship"
       }
     ]
   },
@@ -2054,7 +2054,7 @@
     ],
     "outputs": [
       {
-        "1_9fa4a1dc-65a8-49ee-8064-efabec01c591_0/0/0/0": "event"
+        "1_9fa4a1dc-65a8-49ee-8064-efabec01c591_0/0/0/0": "relationship"
       }
     ]
   },
@@ -2332,7 +2332,7 @@
     "lg_key": "39a1a3a6-5c56-4c14-ab47-022d07b25197",
     "outputs": [
       {
-        "1_483daa57-023c-40e9-a7de-1178e4339d36_0/0/0/0": "event"
+        "1_483daa57-023c-40e9-a7de-1178e4339d36_0/0/0/0": "relationship"
       }
     ],
     "inputs": [
@@ -2587,6 +2587,9 @@
         "1_39a1a3a6-5c56-4c14-ab47-022d07b25197_0/0/0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_cf4f2492-2f60-41e3-b108-a24a32a83fd1_0/0/0/0": "relationship"
@@ -2843,7 +2846,10 @@
       {
         "1_cf4f2492-2f60-41e3-b108-a24a32a83fd1_0/0/0/0": "relationship"
       }
-    ]
+    ],
+    "port_map": {
+      "relationship": "relationship"
+    }
   },
   {
     "oid": "1_9fa4a1dc-65a8-49ee-8064-efabec01c591_0/0/0/0",
@@ -3091,6 +3097,9 @@
         "1_54d54a36-3dce-4cd1-bdb5-d1868ab79898_0/0/0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_e6b346f8-c5fa-4f47-8b80-2472c7b735e4_0/0/0": "relationship"
@@ -3630,7 +3639,7 @@
     ],
     "outputs": [
       {
-        "1_280153f9-1ce2-4644-8e51-1c01f048cf4e_0/0/0": "event"
+        "1_280153f9-1ce2-4644-8e51-1c01f048cf4e_0/0/0": "relationship"
       }
     ]
   },
@@ -3907,7 +3916,7 @@
     "lg_key": "839d42e5-e581-46d5-8d71-5ff536a8bb30",
     "outputs": [
       {
-        "1_d018c8e2-9d9b-45b8-8ed5-3d12d2bce9c4_0/0/0": "event"
+        "1_d018c8e2-9d9b-45b8-8ed5-3d12d2bce9c4_0/0/0": "relationship"
       }
     ],
     "inputs": [
@@ -4161,6 +4170,9 @@
         "1_fd69889f-56eb-4f20-b3e9-ac688e7fe420_0/0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_b083dede-5c79-4500-84b5-1cbaeb811e8c_0/0/0": "relationship"
@@ -4416,7 +4428,10 @@
       {
         "1_b083dede-5c79-4500-84b5-1cbaeb811e8c_0/0/0": "relationship"
       }
-    ]
+    ],
+    "port_map": {
+      "relationship": "relationship"
+    }
   },
   {
     "oid": "1_0bd1aa81-d572-485f-b5ec-8234b471e935_0/0/0",
@@ -4663,6 +4678,9 @@
         "1_0e094334-117b-48e1-a48d-b9e086a9cc88_0/0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_af8580b3-a5c1-4c70-8910-f886f7de83df_0/0/0": "relationship"
@@ -4914,6 +4932,9 @@
         "1_839d42e5-e581-46d5-8d71-5ff536a8bb30_0/0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_fd69889f-56eb-4f20-b3e9-ac688e7fe420_0/0/0": "relationship"
@@ -5165,6 +5186,9 @@
         "1_af8580b3-a5c1-4c70-8910-f886f7de83df_0/0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_e6b346f8-c5fa-4f47-8b80-2472c7b735e4_0/0/0": "relationship"
@@ -5416,6 +5440,9 @@
         "1_e6b346f8-c5fa-4f47-8b80-2472c7b735e4_0/0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_64e5556e-d94b-4dde-a1bd-f7425e91b69e_0/0": "relationship"
@@ -5950,7 +5977,7 @@
     ],
     "outputs": [
       {
-        "1_ea2d6979-1e2c-47b3-b33b-d965bea2cf87_0/0": "event"
+        "1_ea2d6979-1e2c-47b3-b33b-d965bea2cf87_0/0": "relationship"
       }
     ]
   },
@@ -6231,7 +6258,7 @@
     ],
     "outputs": [
       {
-        "1_7abdde30-9873-41b7-8d2b-dda58fcb0c21_0/0": "event"
+        "1_7abdde30-9873-41b7-8d2b-dda58fcb0c21_0/0": "relationship"
       }
     ]
   },
@@ -6507,7 +6534,7 @@
     "lg_key": "adb8c03a-64c6-49e6-adfb-de7e9c6dfc90",
     "outputs": [
       {
-        "1_e7990302-79e9-477d-81d0-7f42c4646a9d_0/0": "event"
+        "1_e7990302-79e9-477d-81d0-7f42c4646a9d_0/0": "relationship"
       }
     ],
     "inputs": [
@@ -6788,7 +6815,7 @@
     "lg_key": "95565872-54e4-405d-ae94-693d68736c2a",
     "outputs": [
       {
-        "1_eb642bb6-4c9f-4c50-82fe-c2a426092faf_0/0": "event"
+        "1_eb642bb6-4c9f-4c50-82fe-c2a426092faf_0/0": "relationship"
       }
     ],
     "inputs": [
@@ -7327,7 +7354,7 @@
     ],
     "outputs": [
       {
-        "1_50207c98-b5e4-42b1-9177-a9f60762e462_0/0": "event"
+        "1_50207c98-b5e4-42b1-9177-a9f60762e462_0/0": "relationship"
       }
     ]
   },
@@ -7608,7 +7635,7 @@
     ],
     "outputs": [
       {
-        "1_0d1ca4cf-4993-46ba-a667-9f1c43629610_0/0": "event"
+        "1_0d1ca4cf-4993-46ba-a667-9f1c43629610_0/0": "relationship"
       }
     ]
   },
@@ -7856,6 +7883,9 @@
         "1_adb8c03a-64c6-49e6-adfb-de7e9c6dfc90_0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_229692c1-e068-4db9-aec1-e2e11d67bdee_0/0": "relationship"
@@ -8199,6 +8229,9 @@
         "1_229692c1-e068-4db9-aec1-e2e11d67bdee_0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_f117c000-344c-4c25-82c7-278cfe9917b2_0/0": "relationship"
@@ -8449,6 +8482,9 @@
         "1_f117c000-344c-4c25-82c7-278cfe9917b2_0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_dfaf2ec3-f447-488c-b7f7-1025cd458803_0/0": "relationship"
@@ -8699,6 +8735,9 @@
         "1_95565872-54e4-405d-ae94-693d68736c2a_0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_dfaf2ec3-f447-488c-b7f7-1025cd458803_0/0": "relationship"
@@ -9194,6 +9233,9 @@
         "1_86d8a3ba-0466-4a19-9789-22f92b715cc7_0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_839d42e5-e581-46d5-8d71-5ff536a8bb30_0/0/0": "relationship"
@@ -9447,6 +9489,9 @@
         "1_64e5556e-d94b-4dde-a1bd-f7425e91b69e_0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_64b9adf8-3e28-4fcb-b930-5cdc7ccfdfad_0/0": "relationship"
@@ -9697,6 +9742,9 @@
         "1_64b9adf8-3e28-4fcb-b930-5cdc7ccfdfad_0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_e022f724-ea81-4ad7-aba1-22302890da17_0/0": "relationship"
@@ -10040,6 +10088,9 @@
         "1_e022f724-ea81-4ad7-aba1-22302890da17_0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_2be73cd7-a38d-4053-9262-41d25ee1077a_0/0": "relationship"
@@ -10512,6 +10563,9 @@
         "1_dfaf2ec3-f447-488c-b7f7-1025cd458803_0/0": "relationship"
       }
     ],
+    "port_map": {
+      "relationship": "relationship"
+    },
     "consumers": [
       {
         "1_86d8a3ba-0466-4a19-9789-22f92b715cc7_0/0": "relationship"
@@ -10731,6 +10785,9 @@
         "1_3eb6e654-0f15-4801-836f-ef41492e2227_0": "event"
       }
     ],
+    "port_map": {
+      "event": "event"
+    },
     "consumers": [
       {
         "1_adb8c03a-64c6-49e6-adfb-de7e9c6dfc90_0/0": "event"
@@ -10984,6 +11041,9 @@
         "1_2be73cd7-a38d-4053-9262-41d25ee1077a_0/0": "output"
       }
     ],
+    "port_map": {
+      "output": "output"
+    },
     "consumers": [
       "1_f27a9a58-b1ae-4c87-a0c6-a484e14c33b7_0/0"
     ]

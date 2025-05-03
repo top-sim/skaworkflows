@@ -71,10 +71,9 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         result = edt.unroll_logical_graph(
             'tests/data/eagle_lgt_scatter_minimal.graph')
         jdict = json.loads(result)
-        print(json.dumps(jdict, indent=2))
         with open('tests/data/daliuge_scatter_minimal.json') as f:
             test_dict = json.load(f)
-        self.assertListEqual(jdict, test_dict)
+        self.assertListEqual(test_dict, jdict)
 
     def test_lgt_to_pgt_with_channel_update(self):
         number_channels = 4
@@ -433,8 +432,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         nx_graph, task_dict, cached_workflow_dict = edt.eagle_to_nx(PUlSAR_PATH, "PSS")
         # self.assertTrue('' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_total_workflow(
-            nx_graph, task_dict, pulsar,"PSS", self.system_sizing, data=True,
-            data_distribution='edges'
+            nx_graph, pulsar,self.system_sizing
         )
         self.assertTrue(final_workflow != 0)
 
@@ -592,7 +590,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
             test_workflow = json.load(fp)
 
         self.assertDictEqual(header, test_workflow['header'])
-        nx_graph = nx.readwrite.node_link_graph(test_workflow['graph'])
+        nx_graph = nx.readwrite.node_link_graph(test_workflow['graph'], edges="links")
         # Divide by 2 due to 2 major loops
         self.assertAlmostEqual(
             (0.09119993316954411 * self.obs1.duration * SI.peta) / 2,

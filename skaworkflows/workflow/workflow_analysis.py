@@ -39,7 +39,7 @@ def generate_workflow_stats(wf_path):
     with open(wf_path) as fp:
         jgraph = json.load(fp)
 
-    graph = nx.readrwite.node_link_graph(jgraph['graph'])
+    graph = nx.readrwite.node_link_graph(jgraph['graph'], edges="links")
 
 
 def calculate_total_flops(wf_path):
@@ -63,7 +63,7 @@ def calculate_total_flops(wf_path):
         jgraph = json.load(fp)
 
     total_flops = 0
-    graph = nx.readwrite.node_link_graph(jgraph['graph'])
+    graph = nx.readwrite.node_link_graph(jgraph['graph'], edges="links")
     for node in graph:
         total_flops += graph.nodes[node]['comp']
 

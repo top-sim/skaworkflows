@@ -27,20 +27,21 @@ information
         - Multiple-pipelines per HPSO
 """
 
-import json
-import os
-import logging
 import datetime
+import json
+import logging
+import math
+import os
 import random
 import sys
 
 import pandas as pd
 import networkx as nx
-import numpy as np
 
 from typing import List, Dict
 from enum import Enum
 from pathlib import Path
+
 import skaworkflows.workflow.eagle_daliuge_translation as edt
 
 from skaworkflows.common import (
@@ -1295,9 +1296,9 @@ def retrieve_component_cost(observation, workflow, component, component_sizing):
     if workflow not in component_sizing["Pipeline"].values:
         raise RuntimeError(f"HPSO does not require {workflow} - check HPSO config.")
 
-    compute = float(obs_frame[obs_frame["Pipeline"] == workflow][component])
+    compute = float(obs_frame[obs_frame["Pipeline"] == workflow][component].iloc[0])
 
-    data = float(obs_frame[obs_frame["Pipeline"] == f"{workflow}_data"][component])
+    data = float(obs_frame[obs_frame["Pipeline"] == f"{workflow}_data"][component].iloc[0])
 
     return compute, data
 
@@ -1365,7 +1366,7 @@ def produce_final_workflow_structure(nx_final, observation, data, data_distribut
     header["parameters"]["hpso"] = observation.hpso
     header["parameters"]["data"] = data
     header["parameters"]["data_distribution"] = data_distribution
-    jgraph = {"header": header, "graph": nx.readwrite.node_link_data(nx_final)}
+    jgraph = {"header": header, "graph": nx.readwrite.node_link_data(nx_final, edges="links")}
     return jgraph
 
 
@@ -1416,7 +1417,7 @@ def write_workflow_stats_to_csv(
     df.to_csv(workflow_data_path, index=False)
 
 
-def calc_ingest_demand(observation, system_sizing, cluster):
+def calc_ingest_demand(observation: Observation, system_sizing: pd.DataFrame, cluster: dict):
     """
     Get the average compute over teh CPUs in the cluster and determine the
     number of resources necessary for the current ingest_flops
@@ -1427,14 +1428,9 @@ def calc_ingest_demand(observation, system_sizing, cluster):
                 observation, "Ingest [Pflop/s]", system_sizing
             ) * SI.peta
     )
-    resources = cluster["system"]["resources"]
-    m = 0
-    num_machines = 0
-    for machine in resources:
-        m += resources[machine]["flops"]
-        num_machines += 1
-        if m > ingest_flops:
-            break
+    for name, machine_data in cluster["system"]["resources"].items():
+        flops_per_machine = machine_data["flops"]
+        num_machines = math.ceil(ingest_flops / flops_per_machine)
 
     ingest_bytes = (
             retrieve_workflow_cost(
