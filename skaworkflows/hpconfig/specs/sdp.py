@@ -26,6 +26,24 @@ from skaworkflows.hpconfig.utils.classes import ARCHITECTURE
 from skaworkflows import __version__
 
 
+def create_topsim_machine_dict(name: str, num_machines: int, machine_data: dict):
+    """
+    Produce the dictionary structure for a machine to go into the TopSim config format
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
+    machine = {name: {
+        "count": num_machines,
+    }}
+    machine[name].update(machine_data)
+    return machine
+
+
 class SDP_LOW_CDR(ARCHITECTURE):
     """
     Itemised description of the SKA Low Science Data Processor architecture,
@@ -190,8 +208,8 @@ class SDP_LOW_CDR(ARCHITECTURE):
         -------
 
         """
-        input_transfer_rate = 1 - self.total_storage*(self.buffer_ratio[
-                                                          0]/self.buffer_ratio[1])
+        input_transfer_rate = 1 - self.total_storage * (self.buffer_ratio[
+                                                            0] / self.buffer_ratio[1])
         return input_transfer_rate - self.ingest_rate
 
     def to_topsim_dictionary(self):
@@ -224,15 +242,15 @@ class SDP_LOW_CDR(ARCHITECTURE):
         -------
 
         """
-        node_dict = {}
-        # system = {"system": {"resources": {}}}
-        for i in range(0, self.used_nodes):
-            node_dict[f"GenericSDP_m{i}"] = {
-                f"flops": self.gpu_peak_flops * self.gpu_per_node,
-                f"compute_bandwidth": self.ethernet,
-                f"memory": self.memory_per_node
-            }
-            cluster = {
+        machine_data = {f"flops": self.gpu_peak_flops * self.gpu_per_node,
+                        f"compute_bandwidth": int(self.total_bandwidth / self.total_nodes),
+                        f"memory": self.memory_per_node}
+
+        node_dict = create_topsim_machine_dict(name="GenericSDP_LOW_CDR",
+                                               num_machines=self.used_nodes,
+                                               machine_data=machine_data)
+
+        cluster = {
             "header": {
                 "time": False,
                 "generator": "hpconfig",
@@ -260,6 +278,7 @@ class SDP_LOW_CDR(ARCHITECTURE):
         # gpu_per_node = 2
         # gpu_peak_flops = 31 * SI.tera  # Double precision
         # memory_per_node = 31 * SI.giga
+        # TODO make this a class attribute
         hot_rate_per_size = 3 * SI.giga / 10 / SI.tera  # 3 GB/s per 10 TB
         # [NVMe SSD]
         cold_rate_per_size = 0.5 * SI.giga / 16 / SI.tera  # 0.5 GB/s per
@@ -312,9 +331,9 @@ class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
                 self.total_compute_buffer * self.compute_buffer_rate
         )
         return int(
-                compute_buffer_rate
-                - self.input_transfer_rate
-                - self.total_output_transfer_rate
+            compute_buffer_rate
+            - self.input_transfer_rate
+            - self.total_output_transfer_rate
         )
 
     @property
@@ -369,14 +388,16 @@ class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
         -------
 
         """
-        node_dict = {}
         # system = {"system": {"resources": {}}}
-        for i in range(0, self.used_nodes):
-            node_dict[f"GenericSDP_m{i}"] = {
-                f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
-                f"compute_bandwidth": int(self.total_compute_buffer_rate / self.total_nodes),
-                f"memory": self.memory_per_node
-            }
+        machine_data = {
+            f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
+            f"compute_bandwidth": int(self.total_compute_buffer_rate / self.total_nodes),
+            f"memory": self.memory_per_node}
+
+        node_dict = create_topsim_machine_dict(name="GenericSDP_LOW_CDR",
+                                               num_machines=self.used_nodes,
+                                               machine_data=machine_data)
+
         cluster = {
             "header": {
                 "time": False,
@@ -403,6 +424,7 @@ class SDP_LOW_HETEROGENEOUS(SDP_PAR_MODEL_LOW):
     }
 
     # extend node dict with higher-memory nodes
+
 
 class SDP_MID_CDR(ARCHITECTURE):
     """
@@ -565,7 +587,6 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
     total_compute_buffer = int(40.531 * SI.peta)
     total_output_buffer = int(1.103 * SI.peta)
 
-
     @property
     def total_compute_buffer_rate(self):
         """
@@ -580,9 +601,9 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
                 self.total_compute_buffer * self.compute_buffer_rate
         )
         return int(
-                compute_buffer_rate
-                - self.input_transfer_rate
-                - self.total_output_transfer_rate
+            compute_buffer_rate
+            - self.input_transfer_rate
+            - self.total_output_transfer_rate
         )
 
     @property
@@ -607,7 +628,6 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
                 - self.delivery_rate
         )
         return output_rate
-
 
     @property
     def memory_bandwidth(self):
@@ -657,14 +677,14 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
         -------
 
         """
-        node_dict = {}
-        # system = {"system": {"resources": {}}}
-        for i in range(0, self.used_nodes):
-            node_dict[f"GenericSDP_m{i}"] = {
-                f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
-                f"compute_bandwidth": int(self.total_compute_buffer_rate / self.total_nodes),
-                f"memory": self.memory_per_node
-            }
+        machine_data = {f"flops": self.gpu_peak_flops * self.gpu_per_node * self.architecture_efficiency,
+                        f"compute_bandwidth": int(self.total_compute_buffer_rate / self.total_nodes),
+                        f"memory": self.memory_per_node}
+
+        node_dict = create_topsim_machine_dict(name="GenericSDP_PAR_MODEL_MID",
+                                               num_machines=self.used_nodes,
+                                               machine_data=machine_data)
+
         cluster = {
             "header": {
                 "time": False,

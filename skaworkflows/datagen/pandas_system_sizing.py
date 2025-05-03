@@ -217,7 +217,7 @@ def _isolate_total_sizing(df_tel, hpso_dict, hpso):
             rt_flop_total += compute
 
         ingest_rate = float(
-            df_tel.loc[['Total buffer ingest rate [TeraBytes/s]'], col]
+            df_tel.loc[['Total buffer ingest rate [TeraBytes/s]'], col].iloc[0]
         )
         # Select the maximum ingest rate from our HPSO's columns
         if "Ingest Rate [TB/s]" in hpso_dict:
