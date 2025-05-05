@@ -30,6 +30,7 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel('DEBUG')
 
 def create_config(
+        # TODO define what parameters means!
         parameters: dict,
         output_dir: Path,
         base_graph_paths,
@@ -200,6 +201,15 @@ def config_to_shadow(cfg_path: Path) -> dict:
     cluster = {'system': cfg["cluster"]["system"]}
     return cluster
 
+def generate_parameters():
+    """
+    Parameters for the configuration include:
+
+
+    Returns
+    -------
+
+    """
 
 def cli_generic_mid():
     """
