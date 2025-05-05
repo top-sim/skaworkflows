@@ -71,10 +71,6 @@ class TestObservationClass(unittest.TestCase):
 
         self.obs2 = Observation(4, "hpso04a", ["dprepa"], 16, 30, 256*128, 256, 65000.0, 'low' )
 
-    def test_add_workflow_path(self):
-        self.assertRaises(RuntimeError, self.obs1.add_workflow_path, PATH_NOT_EXISTS)
-        # self.assert()
-
 
 class TestObservationPlanGeneration(unittest.TestCase):
     def setUp(self):

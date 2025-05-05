@@ -1,4 +1,4 @@
-# Copyright (C) 27/4/22 RW Bunney
+# Copyright (C) 2025 RW Bunney
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,12 +12,3 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-"""
-Prototype a process for producing multiple shadow vs parametric model
-scheduling runs with variable EAGLE graphs.
-"""
-
-from skaworkflows.config_generator import create_config
-from skaworkflows.parametric_runner import calculate_parametric_runtime_estimates
-
