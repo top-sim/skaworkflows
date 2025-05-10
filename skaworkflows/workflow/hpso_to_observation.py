@@ -78,7 +78,7 @@ def process_hpso_from_spec(hpsos: dict):
     #     hpsos = json.load(fp)
 
     offset = 0
-    for h in hpsos["hpsos"]: # TODO change this to 'hpsos' or something more obvious
+    for h in hpsos["hpsos"]:
         LOGGER.debug(f"{h=}")
         obslist = create_observation_from_hpso(**h, offset=offset)
         offset += len(obslist)
