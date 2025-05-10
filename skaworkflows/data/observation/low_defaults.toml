@@ -1,0 +1,38 @@
+telescope="low"
+nodes = 896
+infrastructure = "parametric"
+
+[[hpsos]]
+hpso = "hpso01"
+duration = 18000
+baseline = 65000
+workflows = ["ICAL", "DPrepA", "DPrepB", "DPrepC", "DPrepD"]
+observing_ratio = 1
+
+[[hpsos]]
+hpso = "hpso02a"
+duration = 18000
+baseline = 65000
+workflows = ["ICAL", "DPrepA", "DPrepB", "DPrepC", "DPrepD"]
+observing_ratio = 1
+
+[[hpsos]]
+hpso = "hpso02b"
+duration = 18000
+baseline = 65000
+workflows = ["ICAL", "DPrepA", "DPrepB", "DPrepC", "DPrepD"]
+observing_ratio = 1
+
+[[hpsos]]
+hpso = "hpso04a"
+duration = 2400
+baseline = 65000
+workflows = ["Pulsar"]
+observing_ratio = 5
+
+[[hpsos]]
+hpso = "hpso05a"
+duration = 2400
+baseline = 65000
+workflows = ["Pulsar"]
+observing_ratio = 2

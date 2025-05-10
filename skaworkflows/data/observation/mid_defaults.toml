@@ -1,0 +1,31 @@
+telescope="mid"
+nodes = 786
+infrastructure = "parametric"
+
+[[hpsos]]
+hpso = "hpso13"
+duration = 28800
+baseline = 35000
+workflows = ["ICAL", "DPrepA", "DPrepB", "DPrepC"]
+ratio = 1
+
+[[hpsos]]
+hpso = "hpso15"
+duration = 15840
+baseline = 15000
+workflows = ["ICAL", "DPrepA", "DPrepB", "DPrepC"]
+ratio = 2
+
+[[hpsos]]
+hpso = "hpso22"
+duration = 28800
+baseline = 150000
+workflows = ["ICAL", "DPrepA", "DPrepB"]
+ratio = 2
+
+[[hpsos]]
+hpso = "hpso32"
+duration = 7920
+baseline = 20000
+workflows = ["ICAL", "DPrepB"]
+ratio = 4

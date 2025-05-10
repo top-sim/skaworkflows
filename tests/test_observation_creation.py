@@ -22,8 +22,6 @@ from pathlib import Path
 import skaworkflows.workflow.hpso_to_observation as hto
 from skaworkflows.workflow.hpso_to_observation import Observation
 
-from skaworkflows.common import LOWBaselines
-
 
 @unittest.skip("Legacy test cases")
 class OldTests(unittest.TestCase):

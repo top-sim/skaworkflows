@@ -46,15 +46,13 @@ import skaworkflows.workflow.eagle_daliuge_translation as edt
 
 from skaworkflows.common import (
     SI,
-    WORKFLOW_HEADER,
+    create_workflow_header,
     CONT_IMG_MVP_GRAPH,
     BASIC_PROTOTYPE_GRAPH,
     SCATTER_GRAPH,
     PULSAR_GRAPH,
     BYTES_PER_VIS,
-    MAX_CHANNELS,
-    MAX_TEL_DEMAND_LOW,
-    MAX_TEL_DEMAND_MID,
+    Telescope
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -80,7 +78,7 @@ def process_hpso_from_spec(hpsos: dict):
     #     hpsos = json.load(fp)
 
     offset = 0
-    for h in hpsos["items"]: # TODO change this to 'hpsos' or something more obvious
+    for h in hpsos["hpsos"]: # TODO change this to 'hpsos' or something more obvious
         LOGGER.debug(f"{h=}")
         obslist = create_observation_from_hpso(**h, offset=offset)
         offset += len(obslist)
@@ -95,13 +93,14 @@ def create_observation_from_hpso(
         demand,
         duration,
         channels,
-        coarse_channels,
+        workflow_parallelism,
         baseline,
         telescope,
         offset):
     """
-     objects store the number of observations that will appear
+     objects store the number of observations that willappear
     in the mid-term plan
+
 
     Parameters
     -----------
@@ -123,7 +122,7 @@ def create_observation_from_hpso(
             demand,
             duration,
             channels,
-            coarse_channels,
+            workflow_parallelism,
             baseline,
             telescope,
         )
@@ -144,7 +143,7 @@ class Observation:
             demand,
             duration,
             channels,
-            coarse_channels,
+            workflow_parallelism,
             baseline,
             telescope,
     ):
@@ -162,7 +161,7 @@ class Observation:
         channels : int
             Number of channels that are being observed. This is to search the
             'database' of channels
-        coarse_channels : int
+        workflow_parallelism : int
             The nunber of averaged channels expected to make up a workflow.
             This is used as a proxy for the parallelism of the workflow
         baseline: float
@@ -176,7 +175,7 @@ class Observation:
         self.duration = duration
         self.workflows = workflows
         self.channels = channels
-        self.coarse_channels = coarse_channels
+        self.workflow_parallelism = workflow_parallelism
         self.baseline = baseline
         self.workflow_path = None
         self.planned = False
@@ -202,7 +201,7 @@ class Observation:
 
         """
         return hash(
-            self.name + (str(self.demand + self.coarse_channels + int(self.baseline)))
+            self.name + (str(self.demand + self.workflow_parallelism + int(self.baseline)))
         )
 
     def __repr__(self):
@@ -648,7 +647,7 @@ def generate_instrument_config(
             "ingest_demand": o.ingest_compute_demand,
             "duration": o.duration,
             "channels": o.channels,
-            "coarse_channels": o.coarse_channels,
+            "workflow_parallelism": o.workflow_parallelism,
             "demand": o.demand,
             "baseline": o.baseline,
             "workflow_type": list(set(base_graph_paths.values())), # TODO convert to set of strings?
@@ -690,7 +689,7 @@ def _find_existing_workflow(dirname, observation, data, data_distribution):
     """
     pathname = ""
     header = {"parameters": {}}
-    header["parameters"]["coarse_channels"] = observation.coarse_channels
+    header["parameters"]["workflow_parallelism"] = observation.workflow_parallelism
     header["parameters"]["channels"] = observation.channels
     header["parameters"]["arrays"] = observation.demand
     header["parameters"]["baseline"] = observation.baseline
@@ -698,7 +697,7 @@ def _find_existing_workflow(dirname, observation, data, data_distribution):
     header["parameters"]["workflows"] = observation.workflows
     header["parameters"]["hpso"] = observation.hpso
     # TODO Fix this so it is based on telescope
-    header["parameters"]["max_arrays"] = MAX_TEL_DEMAND_LOW
+    header["parameters"]["max_arrays"] = Telescope(observation.telescope).max_stations
     header["parameters"]["data"] = data
     header["parameters"]["data_distribution"] = data_distribution
 
@@ -804,7 +803,7 @@ def generate_workflow_from_observation(
 
     telescope_frac = observation.demand / telescope_max
 
-    channels = observation.coarse_channels
+    channels = observation.workflow_parallelism
     # Unroll the graph
     final_graphs = {}
     cached_base_graph = {}
@@ -1328,9 +1327,9 @@ def produce_final_workflow_structure(nx_final, observation, data, data_distribut
 
     """
 
-    header = WORKFLOW_HEADER
+    header = create_workflow_header(observation.telescope)
     header["time"] = time
-    header["parameters"]["coarse_channels"] = observation.coarse_channels
+    header["parameters"]["workflow_parallelism"] = observation.workflow_parallelism
     header["parameters"]["channels"] = observation.channels
     header["parameters"]["arrays"] = observation.demand
     header["parameters"]["baseline"] = observation.baseline
