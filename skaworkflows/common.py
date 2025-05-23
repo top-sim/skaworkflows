@@ -94,6 +94,7 @@ class SKALow:
     channels_multiplier = 128
 
     default_compute_nodes = 896
+    low_realtime_resources = 164
 
     observation_defaults = imp_res.files("skaworkflows.data.observation") / "low_defaults.toml"
 
@@ -131,6 +132,8 @@ class SKAMid:
     default_compute_nodes = 786
 
     observation_defaults = imp_res.files("skaworkflows.data.observation") / "mid_defaults.toml"
+
+    mid_realtime_resources = 281
 
     def __str__(self):
         return self.name
