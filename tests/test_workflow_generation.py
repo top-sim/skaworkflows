@@ -197,10 +197,10 @@ class TestWorkflowFromObservation(unittest.TestCase):
         demand = 512
         duration = 3600
         channels = 512*128
-        coarse_channels = 1
+        workflow_parallelism = 1
         self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
         self.obs1 = hpo.Observation(
-            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, coarse_channels,
+            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, workflow_parallelism,
             65000.0, 'low'
         )
 
@@ -308,9 +308,9 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         # TODO Figure out how we do coarse grained channels and fine grained channels
         # e.g. in this example, we are splitting on 64 channels but we have been using 512*128 channels worth of compute/data
         channels = 512*128
-        coarse_channels = 64 # historically we've used smaller numbers because our parallelism is coarse-grained all channels by 128 to get their actual value
+        workflow_parallelism = 64 # historically we've used smaller numbers because our parallelism is coarse-grained all channels by 128 to get their actual value
         self.obs1 = hpo.Observation(
-            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, coarse_channels,
+            1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, workflow_parallelism,
             65000.0, 'low'
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
@@ -361,7 +361,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         """
         wf = self.obs1.workflows[0]
         # generate a workflow without updating channels
-        channels = self.obs1.coarse_channels
+        channels = self.obs1.workflow_parallelism
         nx_graph, task_dict, cached_workflow_dict = edt.eagle_to_nx(LGT_PATH, wf)
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_product(
@@ -428,7 +428,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         )
 
         # generate a workflow without updating channels
-        channels = pulsar.coarse_channels
+        channels = pulsar.workflow_parallelism
         nx_graph, task_dict, cached_workflow_dict = edt.eagle_to_nx(PUlSAR_PATH, "PSS")
         # self.assertTrue('' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_total_workflow(
@@ -492,9 +492,9 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         demand = 512
         duration = 60  # seconds
         channels = 512*128
-        coarse_channels = 1
+        workflow_parallelism = 1
         self.obs1 = hpo.Observation(
-            'obs1', 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, coarse_channels,
+            'obs1', 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, workflow_parallelism,
             65000.0, 'low'
         )
         self.component_system_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
@@ -578,7 +578,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
                 'arrays': 512,
                 'baseline': 65000.0,
                 'duration': 60,
-                "coarse_channels": 1,
+                "workflow_parallelism": 1,
                 "workflows": ['DPrepA', 'DPrepB'],
                 "hpso": "hpso01",
                 "data": True,

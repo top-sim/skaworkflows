@@ -25,7 +25,7 @@ HPSO_PARAMETERS = {
     "nodes": 256,
     "infrastructure": "parametric",
     "telescope": "low",
-    "items": [
+    "hpsos": [
         {
             "count": 2,
             "hpso": "hpso01",
@@ -34,7 +34,7 @@ HPSO_PARAMETERS = {
             "workflows": [
                 "ICAL", "DPrepA"],
             "channels": 16384,
-            "coarse_channels": 64,
+            "workflow_parallelism": 64,
             "baseline": 65000.0,
             "telescope": "low"
         },
@@ -66,3 +66,6 @@ class TestConfigGeneration(unittest.TestCase):
 
     def TestConfigGenerationMid(self):
         pass
+
+    def tearDown(self):
+        shutil.rmtree('tmp')

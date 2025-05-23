@@ -21,6 +21,7 @@ from pathlib import Path
 
 import skaworkflows.common as common
 import skaworkflows.workflow.hpso_to_observation as hto
+from skaworkflows.common import SKALow
 
 from skaworkflows.hpconfig.specs.sdp import (
     SDP_LOW_CDR, SDP_MID_CDR, SDP_PAR_MODEL_LOW, SDP_PAR_MODEL_MID
@@ -58,11 +59,17 @@ def create_config(
     """
     dt = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     cfg_name = Path(f"skaworkflows_{dt}")
-    LOGGER.info("Generating %s...", cfg_name.name)
+    LOGGER.info("Generating %s...", cfg_name)
 
-    telescope = parameters["telescope"]
-    nodes = parameters["nodes"]
-    infrastructure = parameters["infrastructure"]
+    telescope = None
+    try:
+        telescope = common.Telescope(parameters["telescope"])
+    except ValueError:
+        LOGGER.warning("Unable to create observation plan due to unsupported telescope.\n"
+                       "Please use either SKALow or SKAMid as your selection.")
+
+    compute_nodes = parameters["nodes"]
+    hpc_infrastructure_model = parameters["infrastructure"]
 
     if 'data_distribution' in data_distribution:
         data_distribution = True
@@ -72,35 +79,28 @@ def create_config(
         LOGGER.info("Config %s exists, skipping instruction...", file_path)
         return file_path
 
-    component = common.LOW_COMPONENT_SIZING
-    system = common.LOW_TOTAL_SIZING
-
-    telescope_max = common.MAX_TEL_DEMAND_LOW
-
-    cluster = SDP_LOW_CDR()
-
-    # Set defaults to SKA Low
-    if telescope == "low":
-        if infrastructure == "parametric":
+    if telescope.name == SKALow().name:
+        component = common.LOW_COMPONENT_SIZING
+        system = common.LOW_TOTAL_SIZING
+        if hpc_infrastructure_model == "parametric":
             cluster = SDP_PAR_MODEL_LOW()
-            cluster.set_nodes(nodes)
-        elif infrastructure == "cdr":
-            cluster.set_nodes(nodes)
+            cluster.set_nodes(compute_nodes)
+        elif hpc_infrastructure_model == "cdr":
+            cluster = SDP_LOW_CDR()
+            cluster.set_nodes(compute_nodes)
         else:
-            raise RuntimeError(f"{infrastructure} not supported")
-    elif telescope == "mid":
+            raise RuntimeError(f"{hpc_infrastructure_model} not supported")
+    else:
         component = common.MID_COMPONENT_SIZING
         system = common.MID_TOTAL_SIZING
-        telescope_max = common.MAX_TEL_DEMAND_MID
-        if infrastructure == "parametric":
+        if hpc_infrastructure_model == "parametric":
             cluster = SDP_PAR_MODEL_MID()
-            cluster.set_nodes(nodes)
-        elif infrastructure == "cdr":
+            cluster.set_nodes(compute_nodes)
+        elif hpc_infrastructure_model == "cdr":
             cluster = SDP_MID_CDR()
-            cluster.set_nodes(nodes)
-            raise RuntimeError(f"{infrastructure} not supported")
-    else:
-        raise RuntimeError(f"No telescope {telescope} found")
+            cluster.set_nodes(compute_nodes)
+            raise RuntimeError(f"{hpc_infrastructure_model} not supported")
+
 
     LOGGER.info(
         f"\tTelescope: \n"
@@ -121,16 +121,15 @@ def create_config(
         RuntimeError('Observations do not exist!')
     LOGGER.debug(f"Creating an observation plan with {observations}")
     all_plans = hto.create_basic_plan(
-        observations, telescope_max, with_concurrent=False
+        observations, telescope.max_stations, with_concurrent=False
     )
     LOGGER.debug(f"Observation plan: {all_plans}")
+
     # all_plans = hto.alternate_plan_composition(all_plans.pop(), telescope_max)
     import random
     random.shuffle(all_plans)
-    # exit()
     # for i, plan in enumerate(all_plans):
     #     print(f"Plan {i} of {len(all_plans)}: {all_plans}")
-        # print()
     # if not multiple_plans:
     #     # Take the middle plan
     #     all_plans = [all_plans[int(len(all_plans)/2)]]
@@ -142,8 +141,8 @@ def create_config(
     all_plans = [all_plans]
     for observation_plan in all_plans:
         final_instrument_config.append(hto.generate_instrument_config(
-            telescope,
-            telescope_max,
+            telescope.name,
+            telescope.max_stations,
             observation_plan,
             output_dir,
             component_sizing,
@@ -200,39 +199,3 @@ def config_to_shadow(cfg_path: Path) -> dict:
         cfg = json.load(fp)
     cluster = {'system': cfg["cluster"]["system"]}
     return cluster
-
-def generate_parameters():
-    """
-    Parameters for the configuration include:
-
-
-    Returns
-    -------
-
-    """
-
-def cli_generic_mid():
-    """
-    For the CLI interface, generate a generic SKA mid using
-    single_hpso_low.json
-
-    Returns
-    -------
-
-    """
-    return None
-
-
-def create_config_from_file(path: Path):
-    """
-    Generate TopSim-compatible configuration from JSON specification
-    ----------
-    path : Path to the configuration
-
-    Returns
-    -------
-    Path names for the created config
-    """
-
-    with path.open() as f:
-        configuration_dict = json.loads(f)

@@ -64,7 +64,7 @@ class TestObservationClass(unittest.TestCase):
             demand=32,
             duration=60,
             channels=256*128,
-            coarse_channels=256,
+            workflow_parallelism=256,
             baseline=65000.0,
             telescope='low'
         )
@@ -121,7 +121,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             duration=60,
             workflows=["DPrepA"],
             channels=256*128,
-            coarse_channels=256,
+            workflow_parallelism=256,
             baseline=65000.0,
             telescope='low'
         )
@@ -133,7 +133,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             duration=60,
             workflows=["DPrepA"],
             channels=256*128,
-            coarse_channels=256,
+            workflow_parallelism=256,
             baseline=65000.0,
             telescope='low',
             offset=0,
@@ -151,7 +151,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             demand=32,
             duration=60,
             channels=256*128,
-            coarse_channels=256,
+            workflow_parallelism=256,
             baseline=65000.0,
             telescope='low'
         )

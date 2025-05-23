@@ -1,5 +1,5 @@
 {
-	"items": [
+	"hpsos": [
 		{
 			"count": 2,
 			"hpso": "hpso01",
@@ -9,7 +9,7 @@
 				"DPrepA"
 			],
 			"channels": 256,
-			"coarse_channels": 256,
+			"workflow_parallelism": 256,
 			"baseline": 65000.0,
 			"telescope": "low"
 		},
@@ -24,7 +24,7 @@
 				"ICAL"
 			],
 			"channels": 128,
-			"coarse_channels": 128,
+			"workflow_parallelism": 128,
 			"baseline": 65000.0,
 			"telescope": "low"
 		}
