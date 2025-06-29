@@ -866,13 +866,14 @@ def _match_graph_options(graph_type: str):
         Which base graph options we have
 
     Returns
-    -------
+    -------:
+
 
     """
 
     if graph_type == "prototype":
         return BASIC_PROTOTYPE_GRAPH
-    elif graph_type == "cont_img_mvp_graph":
+    elif graph_type == "cont_img_mvp":
         return CONT_IMG_MVP_GRAPH
     elif graph_type == "scatter":
         return SCATTER_GRAPH

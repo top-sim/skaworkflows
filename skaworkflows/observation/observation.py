@@ -40,7 +40,7 @@ class ObservationPlan:
         self.telescope = Telescope(telescope)
         self._plan = {"nodes": self.telescope.default_compute_nodes,
                       "infrastructure": "parametric",
-                      "telescope": str(self.telescope),
+                      "telescope": self.telescope.name,
                       "hpsos": []
                       }
 
