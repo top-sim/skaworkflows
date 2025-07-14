@@ -25,7 +25,7 @@ import numpy as np
 
 import json
 from pathlib import Path
-from enum import Enum, IntEnum, StrEnum, auto
+from enum import Enum, IntEnum, auto
 try:
     import importlib.resources as imp_res
 except: 
