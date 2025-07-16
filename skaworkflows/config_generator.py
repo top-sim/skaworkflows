@@ -200,5 +200,17 @@ def config_to_shadow(cfg_path: Path) -> dict:
     """
     with cfg_path.open() as fp:
         cfg = json.load(fp)
-    cluster = {'system': cfg["cluster"]["system"]}
-    return cluster
+    cluster = cfg["cluster"]["system"]
+    machines_types = cluster['resources']
+    example_key = list(machines_types.keys())[0]
+    if not machines_types[example_key].get("count"):
+        return {"system": cluster}
+
+    # If we are using the new style, change it to the shadow-compatible style.
+    resources = {}
+    for machine, spec in machines_types.items():
+        for i in range(spec["count"]):
+            resources[f"{machine}_{i}"] = spec
+    cfg['cluster']['system']['resources'] = resources
+    return {'system': cfg["cluster"]["system"]}
+
