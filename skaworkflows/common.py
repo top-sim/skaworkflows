@@ -90,6 +90,7 @@ class SKALow:
 
     stations = [64, 128, 256, 512]
     max_stations = max(stations)
+    max_baseline = max(baselines)
 
     max_compute_nodes = 896
 
@@ -116,7 +117,9 @@ class SKAMid:
     """
 
     name = 'mid'
+
     baselines = [5, 10, 15, 25, 75, 110, 150]
+    max_baseline = max(baselines)
 
     hpso01 = "hpso01"
     hpso02a = "hpso02a"
@@ -126,7 +129,6 @@ class SKAMid:
 
     stations = [64, 102, 140, 197] # antenna
     max_stations = max(stations)
-
     max_compute_nodes = 786
 
     workflow_parallelism = [64, 128, 256, 512]
