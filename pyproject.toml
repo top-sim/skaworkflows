@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "skaworkflows"
-version = "0.10.0"
+version = "0.1.0"
 description = "Workflows for experiments with SKA Science Data Processor"
 authors = [
     { name = "Ryan Bunney", email = "ryan.bunney@icrar.org" },
