@@ -1,11 +1,6 @@
 name: Python package
 
-on:
-  push:
-    branches:
-      - master  #  Only run on pushes to master
-  pull_request:
-    types: [ opened, synchronize ]  # Run on PRs from any branch
+on: [push]
 
 jobs:
   unittests:
