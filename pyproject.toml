@@ -26,7 +26,18 @@ dependencies = [
     "daliuge-engine",
     "daliuge-translator",
     "sdp-par-model @ git+https://github.com/top-sim/sdp-par-model",
+    "ipywidgets",
+    "scipy",
+    "sympy",
+    "notebook",
+    "ipywidgets",
+    "graphviz",
+    "pymp-pypi",
+    "pylru",
+    "sortedcontainers",
+    "pyyaml"
 ]
+
 [project.urls]
 Homepage = "https://github.com/top-sim/skaworkflows"
 
