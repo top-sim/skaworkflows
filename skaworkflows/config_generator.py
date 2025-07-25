@@ -40,7 +40,8 @@ def create_config(
         overwrite=False,
         data_distribution='standard',
         multiple_plans=False,
-        max_num_plans=5
+        max_num_plans=5,
+        **kwargs
 ):
     """
     Parameters
@@ -79,28 +80,30 @@ def create_config(
         LOGGER.info("Config %s exists, skipping instruction...", file_path)
         return file_path
 
+    data_rate_multiplier = kwargs.get("data_multiplier", 1)
+
     if telescope.name == SKALow().name:
         component = common.LOW_COMPONENT_SIZING
         system = common.LOW_TOTAL_SIZING
         if hpc_infrastructure_model == "parametric":
             cluster = SDP_PAR_MODEL_LOW()
-            cluster.set_nodes(compute_nodes)
         elif hpc_infrastructure_model == "cdr":
             cluster = SDP_LOW_CDR()
-            cluster.set_nodes(compute_nodes)
         else:
             raise RuntimeError(f"{hpc_infrastructure_model} not supported")
+        cluster.data_rate_multiplier = data_rate_multiplier
+        cluster.set_nodes(compute_nodes)
     else:
         component = common.MID_COMPONENT_SIZING
         system = common.MID_TOTAL_SIZING
         if hpc_infrastructure_model == "parametric":
             cluster = SDP_PAR_MODEL_MID()
-            cluster.set_nodes(compute_nodes)
         elif hpc_infrastructure_model == "cdr":
             cluster = SDP_MID_CDR()
-            cluster.set_nodes(compute_nodes)
+        else:
             raise RuntimeError(f"{hpc_infrastructure_model} not supported")
-
+        cluster.data_rate_multiplier = data_rate_multiplier
+        cluster.set_nodes(compute_nodes)
 
     LOGGER.info(
         f"\tTelescope: \n"
@@ -197,5 +200,17 @@ def config_to_shadow(cfg_path: Path) -> dict:
     """
     with cfg_path.open() as fp:
         cfg = json.load(fp)
-    cluster = {'system': cfg["cluster"]["system"]}
-    return cluster
+    cluster = cfg["cluster"]["system"]
+    machines_types = cluster['resources']
+    example_key = list(machines_types.keys())[0]
+    if not machines_types[example_key].get("count"):
+        return {"system": cluster}
+
+    # If we are using the new style, change it to the shadow-compatible style.
+    resources = {}
+    for machine, spec in machines_types.items():
+        for i in range(spec["count"]):
+            resources[f"{machine}_{i}"] = spec
+    cfg['cluster']['system']['resources'] = resources
+    return {'system': cfg["cluster"]["system"]}
+

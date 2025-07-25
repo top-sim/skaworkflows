@@ -335,13 +335,13 @@ def calculate_parametric_runtime_estimates(
 if __name__ == "__main__":
     random.seed(0)
     LONG_SYSTEM_SIZING = Path(
-        "skaworkflows/data/sdp-par-model_output/ParametricOutput_Low_antenna-512_channels-32768.csv"
+        "skaworkflows/data/sdp-par-model_output/ParametricOutput_Mid_antenna-197_channels-65536_baseline-150.csv"
     )
     # hpsos = [HPSOs.hpso02a, HPSOs.hpso01, HPSOs.hpso02b]
-    hpsos = [HPSOs.hpso01]
-    scenario = "low-adjusted"
+    hpsos = [HPSOs.hpso13] # , HPSOs.hpso15]
+    scenario = "mid-adjusted"
     result = calculate_parametric_runtime_estimates(
-        LONG_SYSTEM_SIZING, scenario, hpsos, ["ICAL", "DPrepA"]
+        LONG_SYSTEM_SIZING, scenario, hpsos, ["ICAL", "DPrepA", "DPrepB", "DPrepC"]
     )
     print(result)
     for hpso in result:

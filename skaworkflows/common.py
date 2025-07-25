@@ -25,7 +25,7 @@ import numpy as np
 
 import json
 from pathlib import Path
-from enum import Enum, IntEnum, StrEnum, auto
+from enum import Enum, IntEnum, auto
 try:
     import importlib.resources as imp_res
 except: 
@@ -46,6 +46,9 @@ class SI(IntEnum):
     peta = 10 ** 15
 
 class Telescope:
+    """
+    Generator class for a telescope based on the telescope parameter
+    """
 
     def __init__(self, telescope: str):
         if not self._contains_low(telescope) and not self._contains_mid(telescope):
@@ -53,7 +56,7 @@ class Telescope:
 
         self._telescope = SKALow() if self._contains_low(telescope) else SKAMid()
 
-    def _contains_low(self, param):
+    def _contains_low(self, param: str):
         return "low" in param.lower()
 
     def _contains_mid(self, param):
@@ -65,6 +68,29 @@ class Telescope:
 
     def __instancecheck__(self, instance):
         isinstance(self._telescope, instance)
+
+    def __repr__(self):
+        return self._telescope.name
+
+    def is_hpso_for_telescope(self, hpso:str)-> bool: 
+        """
+        Used to determine if HPSO can be run on this telescope. 
+
+        Typically used as helper function if the HPSO is present but telescope information is not.  
+
+        Parameters
+        ----------
+        hpso : str
+            String representation of HPSO
+
+        Returns
+        -------
+        bool
+            True if the telescope can run the HPSO
+        """
+
+                
+        return hasattr(self._telescope, hpso)
 
 
 class SKALow:
@@ -87,6 +113,7 @@ class SKALow:
 
     stations = [64, 128, 256, 512]
     max_stations = max(stations)
+    max_baseline = max(baselines)
 
     max_compute_nodes = 896
 
@@ -113,17 +140,17 @@ class SKAMid:
     """
 
     name = 'mid'
-    baselines = [5, 10, 15, 25, 75, 110, 150]
 
-    hpso01 = "hpso01"
-    hpso02a = "hpso02a"
-    hpso02b = "hpso02b"
-    hpso4A = "hpso04a"
-    hpso05a = "hpso5b"
+    baselines = [5, 10, 15, 25, 75, 110, 150]
+    max_baseline = max(baselines)
+
+    hpso13 = "hpso13"
+    hpso15 = "hpso15"
+    hpso22 = "hpso22"
+    hpso33 = "hpso032"
 
     stations = [64, 102, 140, 197] # antenna
     max_stations = max(stations)
-
     max_compute_nodes = 786
 
     workflow_parallelism = [64, 128, 256, 512]
@@ -171,7 +198,7 @@ BYTES_PER_VIS = 12.0
 
 GRAPH_DIR = imp_res.files("skaworkflows.data.hpsos")
 BASIC_PROTOTYPE_GRAPH = GRAPH_DIR.joinpath("dprepa.graph")
-CONT_IMG_MVP_GRAPH = GRAPH_DIR.joinpath("cont_img_mvp_skaworkflows_updated.graph")
+CONT_IMG_MVP_GRAPH = GRAPH_DIR.joinpath("cont_img_mvp.graph")
 SCATTER_GRAPH = GRAPH_DIR.joinpath("dprepa_parallel_updated.graph")
 PULSAR_GRAPH = GRAPH_DIR.joinpath("pulsar.graph")
 

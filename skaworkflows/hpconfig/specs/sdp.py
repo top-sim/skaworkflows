@@ -315,6 +315,8 @@ class SDP_LOW_CDR(ARCHITECTURE):
 class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
     buffer_ratio = None
 
+    data_rate_multiplier = 1
+
     # Assumptions about read-rate. This is how we calulcate runtime I/O costs
     # From Scheduling.ipynb in SDP: 3 GB/s per 10 TB [NVMe SSD]
 
@@ -346,7 +348,7 @@ class SDP_PAR_MODEL_LOW(SDP_LOW_CDR):
             compute_buffer_rate
             - self.input_transfer_rate
             - self.total_output_transfer_rate
-        )
+        ) * self.data_rate_multiplier
 
     @property
     def input_transfer_rate(self):
@@ -452,6 +454,7 @@ class SDP_MID_CDR(ARCHITECTURE):
     - SDP Memo 025: Updated SDP Cost Basis of Estimate June 2016
     - SDP Parametric Model: https://github.com/ska-telescope/sdp-par-model
     """
+
 
     gpu_per_node = 2
     gpu_peak_flops = 31 * SI.tera  # Double precision
@@ -584,6 +587,9 @@ class SDP_MID_CDR(ARCHITECTURE):
 
 
 class SDP_PAR_MODEL_MID(SDP_MID_CDR):
+
+    data_rate_multiplier = 1
+
     architecture_efficiency = 0.121
     # We don't use buffer ratio for parametric model
     buffer_ratio = None
@@ -616,7 +622,7 @@ class SDP_PAR_MODEL_MID(SDP_MID_CDR):
             compute_buffer_rate
             - self.input_transfer_rate
             - self.total_output_transfer_rate
-        )
+        ) * self.data_rate_multiplier
 
     @property
     def input_transfer_rate(self):
