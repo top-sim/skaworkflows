@@ -811,6 +811,7 @@ def generate_workflow_from_observation(
     for workflow in observation.workflows:
         base_graph_type = base_graph_paths[workflow]
         base_graph = _match_graph_options(base_graph_type)
+        LOGGER.info("Using Base Graph: %s", base_graph)
         if base_graph not in cached_base_graph:
             cached_base_graph[base_graph] = None
         LOGGER.debug(f"Using {base_graph} as base workflow.")

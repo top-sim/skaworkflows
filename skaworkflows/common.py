@@ -46,6 +46,9 @@ class SI(IntEnum):
     peta = 10 ** 15
 
 class Telescope:
+    """
+    Generator class for a telescope based on the telescope parameter
+    """
 
     def __init__(self, telescope: str):
         if not self._contains_low(telescope) and not self._contains_mid(telescope):
@@ -53,7 +56,7 @@ class Telescope:
 
         self._telescope = SKALow() if self._contains_low(telescope) else SKAMid()
 
-    def _contains_low(self, param):
+    def _contains_low(self, param: str):
         return "low" in param.lower()
 
     def _contains_mid(self, param):
@@ -68,6 +71,26 @@ class Telescope:
 
     def __repr__(self):
         return self._telescope.name
+
+    def is_hpso_for_telescope(self, hpso:str)-> bool: 
+        """
+        Used to determine if HPSO can be run on this telescope. 
+
+        Typically used as helper function if the HPSO is present but telescope information is not.  
+
+        Parameters
+        ----------
+        hpso : str
+            String representation of HPSO
+
+        Returns
+        -------
+        bool
+            True if the telescope can run the HPSO
+        """
+
+                
+        return hasattr(self._telescope, hpso)
 
 
 class SKALow:
@@ -121,11 +144,10 @@ class SKAMid:
     baselines = [5, 10, 15, 25, 75, 110, 150]
     max_baseline = max(baselines)
 
-    hpso01 = "hpso01"
-    hpso02a = "hpso02a"
-    hpso02b = "hpso02b"
-    hpso4A = "hpso04a"
-    hpso05a = "hpso5b"
+    hpso13 = "hpso13"
+    hpso15 = "hpso15"
+    hpso22 = "hpso22"
+    hpso33 = "hpso032"
 
     stations = [64, 102, 140, 197] # antenna
     max_stations = max(stations)
