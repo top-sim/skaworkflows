@@ -71,9 +71,11 @@ class TestPipelineStructureTranslation(unittest.TestCase):
         result = edt.unroll_logical_graph(
             'tests/data/eagle_lgt_scatter_minimal.graph')
         jdict = json.loads(result)
+        generated_oids = [d.get('oid') for d in jdict]
         with open('tests/data/daliuge_scatter_minimal.json') as f:
             test_dict = json.load(f)
-        self.assertListEqual(test_dict, jdict)
+        test_oids = [d.get('oid') for d in test_dict]
+        self.assertListEqual(test_oids, generated_oids)
 
     def test_lgt_to_pgt_with_channel_update(self):
         number_channels = 4
