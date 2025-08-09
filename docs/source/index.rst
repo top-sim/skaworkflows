@@ -22,8 +22,12 @@ http://github/top-sim/ organisation.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
 
+   quickstart
    data/origins
    telescope/telescope_overview
    generating_config
+   comparisons
+   observations/observations_overview
+   workflows/workflow_origins

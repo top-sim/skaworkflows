@@ -1,2 +1,0 @@
-.. _system_sizing:
-
