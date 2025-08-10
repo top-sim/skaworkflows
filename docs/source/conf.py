@@ -2,7 +2,7 @@
 #
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+# http://www.sphinx-doc.org/en/master/config
 
 # -- Path setup --------------------------------------------------------------
 
@@ -13,27 +13,28 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../../../'))
+
 import sphinx
 
 # -- Project information -----------------------------------------------------
 
-project = 'TopSim Pipelines'
-copyright = '2021, RW Bunney'
+project = 'SKAWorkflows'
+copyright = '2019-2025, RW Bunney'
 author = 'RW Bunney'
 
 master_doc = 'index'
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon',
-              'sphinx.ext.autosummary',
-              'sphinx.ext.viewcode']
+extensions = [
+    'sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx.ext.autosummary',
+    'sphinx.ext.viewcode'
+]
 
-# Add any paths that contain templates here, relative to this directory.
+# Add any paths that contain templates here, relative to this sdirectory.
 templates_path = ['_templates']
 
 # List of patterns, relative to source directory, that match files and
@@ -44,15 +45,23 @@ exclude_patterns = []
 autodoc_member_order = 'bysource'
 autosummary_generate = True
 
-
-# -- Options for HTML output -------------------------------------------------
+# -- Options for HTML output ---------------------q----------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
 
+# html_theme_options = {"full_logo":"true"}
+html_theme_options = {
+    # "show_toc_level": True,
+    # "collapse_navigation": False,
+    # "navigation_depth": 2
+}
+html_logo = '' #'new_logo.svg'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = []
+
+html_title = 'SKAWorkflows'
