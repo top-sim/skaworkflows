@@ -10,19 +10,19 @@ focus on the workflows, and have the telescope act as a 'logical instrument'
 rather than a significant component of its own. The main details of the
 telescope in the characterisation of workflows, and in the configuration, is
 in the maximum number arrays that are available, and the maximum ingest rate
-expected from observations.
+expected from observations::
 
-"telescope": {
-	"total_arrays": 36,
-	max_ingest_resources
-	"pipelines:{
-		"hpso4a_0": {
-			"workflow": "test/data/config/workflow_config.json",
-			"ingest_demand": 64
-		},
-	...
-	}
-	...
+	"telescope": {
+		"total_arrays": 36,
+		max_ingest_resources
+		"pipelines:{
+			"hpso4a_0": {
+				"workflow": "test/data/config/workflow_config.json",
+				"ingest_demand": 64
+			},
+		...
+		}
+		...
 
 
 Arrays
