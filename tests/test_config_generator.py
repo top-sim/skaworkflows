@@ -61,7 +61,7 @@ class TestConfigGeneration(unittest.TestCase):
             parameters=HPSO_PARAMETERS,
             output_dir=self.low_path_str,
             base_graph_paths=self.prototype_workflow_paths,
-            timestep='seconds', data=True)
+            timestep='seconds')
         self.assertTrue(Path(config[0]).exists())
 
     def TestConfigGenerationMid(self):
