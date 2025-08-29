@@ -1,3 +1,6 @@
+# v0.11.0
+- [Changed]: No longer specify `data` or `data_distribution` when generating simulation config: https://github.com/top-sim/skaworkflows/pull/52 
+
 # v0.10.1 
 - [Fixed]: pyproject.toml needs to have updated version number
 
