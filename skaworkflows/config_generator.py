@@ -152,8 +152,6 @@ def create_config(
             system_sizing,
             cluster_dict,
             base_graph_paths,
-            data,
-            data_distribution
         ))
 
     LOGGER.info(f"Producing buffer config")

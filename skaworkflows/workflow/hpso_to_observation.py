@@ -39,7 +39,6 @@ import pandas as pd
 import networkx as nx
 
 from typing import List, Dict
-from enum import Enum
 from pathlib import Path
 
 import skaworkflows.workflow.eagle_daliuge_translation as edt
@@ -48,7 +47,7 @@ from skaworkflows.common import (
     SI,
     create_workflow_header,
     CONT_IMG_MVP_GRAPH,
-    BASIC_PROTOTYPE_GRAPH,
+BASIC_PROTOTYPE_GRAPH,
     SCATTER_GRAPH,
     PULSAR_GRAPH,
     BYTES_PER_VIS,
@@ -548,8 +547,6 @@ def generate_instrument_config(
         system_sizing,
         cluster,
         base_graph_paths,
-        data=True,
-        data_distribution: str = "standard",
         **kwargs,
 ) -> dict:
     """
@@ -617,7 +614,7 @@ def generate_instrument_config(
             wf_file_path.parent.mkdir(parents=True, exist_ok=True)
 
         possible_file_name = _find_existing_workflow(config_dir_path / "workflows",
-                                                     o, data, data_distribution)
+                                                     o)
         if possible_file_name:
             use_existing_file = True
             wf_file_path = config_dir_path / "workflows" / possible_file_name
@@ -631,8 +628,6 @@ def generate_instrument_config(
                 system_sizing,
                 wf_file_name,
                 base_graph_paths,
-                data=data,
-                data_distribution=data_distribution,
             )
         else:
             wf_file_path = wf_file_path
@@ -652,8 +647,6 @@ def generate_instrument_config(
             "baseline": o.baseline,
             "workflow_type": list(set(base_graph_paths.values())), # TODO convert to set of strings?
             "graph_type": list(set(base_graph_paths.keys())), # TODO As above
-            "data": data,
-            "data_distribution": data_distribution
         }
         telescope_observations.append(o.to_json())
 
@@ -670,7 +663,7 @@ def generate_instrument_config(
     return telescope_dict
 
 
-def _find_existing_workflow(dirname, observation, data, data_distribution):
+def _find_existing_workflow(dirname, observation):
     """
     "parameters": {
         "max_arrays": 512,
@@ -698,8 +691,6 @@ def _find_existing_workflow(dirname, observation, data, data_distribution):
     header["parameters"]["hpso"] = observation.hpso
     # TODO Fix this so it is based on telescope
     header["parameters"]["max_arrays"] = Telescope(observation.telescope).max_stations
-    header["parameters"]["data"] = data
-    header["parameters"]["data_distribution"] = data_distribution
 
     # TODO consider caching this information
     for wf in os.listdir(dirname):
@@ -759,8 +750,6 @@ def generate_workflow_from_observation(
         workflow_path_name,
         base_graph_paths,
         concat=True,
-        data=True,
-        data_distribution="standard",
 ):
     """
     Given a pipeline and observation specification, generate a workflow file
@@ -840,8 +829,6 @@ def generate_workflow_from_observation(
                 observation,
                 workflow,
                 component_sizing,
-                data=data,
-                data_distribution=data_distribution,
             )
             final_graphs[workflow] = intermed_graph
         workflow_stats[workflow] = task_dict
@@ -849,7 +836,7 @@ def generate_workflow_from_observation(
     write_workflow_stats_to_csv(workflow_stats, final_path)
     final_workflow = edt.concatenate_workflows(final_graphs, observation.workflows)
     final_json = produce_final_workflow_structure(
-        final_workflow, observation, data, data_distribution, time=False
+        final_workflow, observation, time=False
     )
 
     with open(final_path, "w") as fp:
@@ -893,8 +880,6 @@ def generate_cost_per_product(
         observation,
         workflow,
         component_sizing,
-        data=True,
-        data_distribution="standard",
         final_path=None,
 ):
     """
@@ -1005,7 +990,7 @@ def generate_cost_per_product(
                 nx_graph.nodes[node]["comp"] = compute
             else:
                 nx_graph.nodes[node]["comp"] = observation.duration
-            if data_cost > 0 and data:
+            if data_cost > 0:
                 nx_graph.nodes[node]["task_data"] = data_cost
             else:
                 nx_graph.nodes[node]["task_data"] = 0
@@ -1023,10 +1008,7 @@ def generate_cost_per_product(
                         * SI.mega
                         * BYTES_PER_VIS
                 )
-                if data_distribution == "edges":
-                    nx_graph[producer][node]["transfer_data"] = data_cost / num_edges
-                else:
-                    nx_graph[producer][node]["transfer_data"] = 0
+                nx_graph[producer][node]["transfer_data"] = data_cost / num_edges
 
     return nx_graph, task_dict
 
@@ -1161,73 +1143,6 @@ def identify_component_cost(
     return total_cost, total_data
 
 
-def calculate_major_loop_data(
-        task_dict, component_sizing, hpso, baseline, workflow, data_distribution
-):
-    """
-    If we want to take data into account in the way that the parametric model does,
-    we use their visibility read rate (Rio) value in their model.
-
-    This is supposed to 'be read' only once per major cycle, but there is
-    ambiguity around whether that is allocated to a single task, once per
-    'set' of major cycle tasks, or once per major cycle & minor cycle tasks.
-
-    The following tasks are in the major cycle (but not in the minor cycle):
-
-        * DeGrid
-        * Subtract
-        * Flag
-        * Grid
-
-    By default we assign the data to the DeGrid as part of its compute task,
-    and then to the edges of each subsequent node as a potential 'transfer'
-    cost. If `distribute` is `True`, then we average the data across each
-    major-loop task above, to determine if it has any impact on the runtime.
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-    task_dict : `dict`
-        Modified task dictionary - keeps the functionality pure.
-    """
-    data = 0
-    data_dict = {"Degrid": {}, "Subtract": {}, "Flag": {}, "Grid": {}}
-    obs_frame = component_sizing[
-        (component_sizing["hpso"] == hpso) & (component_sizing["Baseline"] == baseline)
-        ]
-
-    if data_distribution == "distribute":
-        raise NotImplementedError(
-            "Current functionality does not support distributed data costs"
-        )
-    elif data_distribution == "standard":
-        data = float(
-            obs_frame[obs_frame["Pipeline"] == f"{workflow}"]["Visibility read rate"]
-        )
-        data_dict["Degrid"]["total_io_cost"] = data
-        data_dict["Degrid"]["fraction_io_cost"] = data / task_dict["Degrid"]["node"]
-        for component in data_dict:
-            if component == "Degrid":
-                data_dict[component]["total_io_cost"] = data
-                data_dict[component]["fraction_io_cost"] = (
-                        data / task_dict["Degrid"]["node"]
-                )
-            else:
-                data_dict[component]["total_io_cost"] = 0
-                data_dict[component]["fraction_io_cost"] = 0
-
-            data_dict[component]["total_data_cost"] = data
-            data_dict[component]["fraction_data_cost"] = (
-                    data / task_dict[component]["node"]
-            )
-    else:
-        raise RuntimeError("Passing incorrect data distribution method")
-
-    return data_dict
-
-
 def retrieve_component_cost(observation, workflow, component, component_sizing):
     """
 
@@ -1310,8 +1225,7 @@ def retrieve_workflow_cost(observation, workflow, system_sizing):
     return flops
 
 
-def produce_final_workflow_structure(nx_final, observation, data, data_distribution,
-                                     time=False):
+def produce_final_workflow_structure(nx_final, observation, time=False):
     """
     For a given logical graph template, produce a workflow with the specific
     number of channels and return it as a JSON serialisable dictionary.
@@ -1338,8 +1252,6 @@ def produce_final_workflow_structure(nx_final, observation, data, data_distribut
     header["parameters"]["duration"] = observation.duration
     header["parameters"]["workflows"] = observation.workflows
     header["parameters"]["hpso"] = observation.hpso
-    header["parameters"]["data"] = data
-    header["parameters"]["data_distribution"] = data_distribution
     jgraph = {"header": header, "graph": nx.readwrite.node_link_data(nx_final, edges="links")}
     return jgraph
 
