@@ -181,16 +181,16 @@ class TestPipelineStructureTranslation(unittest.TestCase):
 
         # with open()
 
-    # def tearDown(self) -> None:
-    #     """
-    #     Remove files generated during various test cases
-    #     Returns
-    #     -------
-    #
-    #     """
-    #     if os.path.exists(PGT_PATH_GENERATED):
-    #         os.remove(PGT_PATH_GENERATED)
-    #     self.assertFalse(os.path.exists(PGT_PATH_GENERATED))
+    def tearDown(self) -> None:
+        """
+        Remove files generated during various test cases
+        Returns
+        -------
+
+        """
+        if os.path.exists(PGT_PATH_GENERATED):
+            os.remove(PGT_PATH_GENERATED)
+        self.assertFalse(os.path.exists(PGT_PATH_GENERATED))
 
 
 class TestWorkflowFromObservation(unittest.TestCase):
@@ -367,7 +367,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         nx_graph, task_dict, cached_workflow_dict = edt.eagle_to_nx(LGT_PATH, wf)
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_product(
-            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing, data=True, data_distribution='edges'
+            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
         )
         # We want to make sure the comp cost has been updated
 
@@ -401,7 +401,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         self.assertEqual(128, task_dict['Degrid']['node'])
         self.assertTrue('DPrepA_Degrid_0' in nx_graph.nodes)
         final_workflow, task_dict = hpo.generate_cost_per_product(
-            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing, data=False, data_distribution='edges'
+            nx_graph, task_dict, self.obs1, wf, self.component_system_sizing
         )
 
         self.assertAlmostEqual(
@@ -583,8 +583,6 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
                 "workflow_parallelism": 1,
                 "workflows": ['DPrepA', 'DPrepB'],
                 "hpso": "hpso01",
-                "data": True,
-                "data_distribution": 'standard'
             },
             'time': False
         }

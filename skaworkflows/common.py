@@ -26,9 +26,10 @@ import numpy as np
 import json
 from pathlib import Path
 from enum import Enum, IntEnum, auto
+
 try:
     import importlib.resources as imp_res
-except: 
+except:
     import importlib_resources as imp_res
 
 from skaworkflows import __version__
@@ -44,6 +45,7 @@ class SI(IntEnum):
     giga = 10 ** 9
     tera = 10 ** 12
     peta = 10 ** 15
+
 
 class Telescope:
     """
@@ -65,14 +67,13 @@ class Telescope:
     def __getattr__(self, item):
         return getattr(self._telescope, item)
 
-
     def __instancecheck__(self, instance):
         isinstance(self._telescope, instance)
 
     def __repr__(self):
         return self._telescope.name
 
-    def is_hpso_for_telescope(self, hpso:str)-> bool: 
+    def is_hpso_for_telescope(self, hpso: str) -> bool:
         """
         Used to determine if HPSO can be run on this telescope. 
 
@@ -89,7 +90,6 @@ class Telescope:
             True if the telescope can run the HPSO
         """
 
-                
         return hasattr(self._telescope, hpso)
 
 
@@ -149,7 +149,7 @@ class SKAMid:
     hpso22 = "hpso22"
     hpso33 = "hpso032"
 
-    stations = [64, 102, 140, 197] # antenna
+    stations = [64, 102, 140, 197]  # antenna
     max_stations = max(stations)
     max_compute_nodes = 786
 
@@ -168,8 +168,8 @@ class SKAMid:
     def __repr__(self):
         return str(self)
 
-class Workflows:
 
+class Workflows:
     ical = "ICAL"
     drepa = "DPrepA"
     dprepb = "DPrepB"
@@ -177,21 +177,19 @@ class Workflows:
     dprepd = "DPrepD"
     pulsar = "Pulsar"
 
+
 # Amount of the telescope an observation can request
 MAX_TEL_DEMAND_LOW = 512
 MAX_TEL_DEMAND_MID = 197
 MAX_CHANNELS = 512
 
 # System sizing data paths
-DATA_PANDAS_SIZING = imp_res.files("skaworkflows.data.pandas_sizing")
-LOW_TOTAL_SIZING = DATA_PANDAS_SIZING.joinpath("total_compute_SKA1_Low_2024-08-20.csv")
-LOW_COMPONENT_SIZING = Path(
-    DATA_PANDAS_SIZING.joinpath("component_compute_SKA1_Low_2024-08-20.csv")
-)
-MID_TOTAL_SIZING = Path(DATA_PANDAS_SIZING.joinpath("total_compute_SKA1_Mid_2024-08-20.csv"))
-MID_COMPONENT_SIZING = Path(
-    DATA_PANDAS_SIZING.joinpath("component_compute_SKA1_Mid_2024-08-20.csv")
-)
+DATA_PANDAS_SIZING = Path(str(imp_res.files("skaworkflows.data.pandas_sizing")))
+LOW_TOTAL_SIZING = DATA_PANDAS_SIZING / "total_compute_SKA1_Low_2025-02-25.csv"
+LOW_COMPONENT_SIZING = DATA_PANDAS_SIZING / "component_compute_SKA1_Low_2025-02-25.csv"
+
+MID_TOTAL_SIZING = DATA_PANDAS_SIZING / "total_compute_SKA1_Mid_2025-02-25.csv"
+MID_COMPONENT_SIZING = DATA_PANDAS_SIZING / "component_compute_SKA1_Mid_2025-02-25.csv"
 
 # Bytes per obseved visibility
 BYTES_PER_VIS = 12.0
@@ -201,7 +199,6 @@ BASIC_PROTOTYPE_GRAPH = GRAPH_DIR.joinpath("dprepa.graph")
 CONT_IMG_MVP_GRAPH = GRAPH_DIR.joinpath("cont_img_mvp.graph")
 SCATTER_GRAPH = GRAPH_DIR.joinpath("dprepa_parallel_updated.graph")
 PULSAR_GRAPH = GRAPH_DIR.joinpath("pulsar.graph")
-
 
 
 def create_workflow_header(telescope: str):
@@ -229,6 +226,7 @@ def create_workflow_header(telescope: str):
         },
         "time": "False",
     }
+
 
 class NpEncoder(json.JSONEncoder):
     # My complete laziness
