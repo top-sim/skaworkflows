@@ -1,5 +1,7 @@
 
-## Features necessary to produce a TopSim configuration file
+Quickstart 
+##########
+
 
 In order to produce an observation workflow with appropriate node and edge costs (tasks and data transfer, respectively), the following is required:
 

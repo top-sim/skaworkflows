@@ -33,23 +33,12 @@ For comparative models, we use the following cumulative totals, subsequently der
     * Task transfer rates: These are described in the `graph` construction in the parametric model. These are used when determining the total offline workflow runtime.
 
 
-.. code-block::
-    :caption: A cool example
-
-        testing
-        testing
-
-
-The output of this line starts with four spaces.
-
-At :numref:`label` you can see
 
 Compute values
 ---------------
 
 Compute valuates
-
-
+----------------
 
 References
 -----------
@@ -58,4 +47,4 @@ References
 
 .. [2] https://github.com/ska-telescope/sdp-par-model/blob/master/notebooks/SKA1_Scheduling_New.ipynb
 
-.. [3] Nikolic, B. (2016). SDP Memo: Estimating the SDPComputational Efficiency (Memo SKA-TEL-SDP-0000086). http://ska-sdp.org/sites/default/files/attachments/ska-tel-sdp-0000086_c_rep_sdpmemoefficiencyprototyping_-_signed.pdf
+.. [3] Nikolic, B. (2016). SDP Memo: Estimating the SDPComputational Efficiency (Memo SKA-TEL-SDP-0000086) 
