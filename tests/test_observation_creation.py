@@ -19,8 +19,13 @@ import pytest
 import unittest
 from pathlib import Path
 
-import skaworkflows.workflow.hpso_to_observation as hto
-from skaworkflows.workflow.hpso_to_observation import Observation
+import skaworkflows.observation.observation
+import skaworkflows.workflow.observations_to_workflows as hto
+from skaworkflows.observation.observation import Observation
+
+class CreateObservationFromPermutations(unittest.TestCase):
+
+    pass
 
 
 @unittest.skip("Legacy test cases")
@@ -39,11 +44,11 @@ class OldTests(unittest.TestCase):
         return path
 
     def test_obs_list_length_from_spec(self, spec):
-        obslist = hto.process_hpso_from_spec(spec)
+        obslist = observation.observation.process_hpso_from_spec(spec)
         assert len(obslist) == 5
 
     def test_obs_list_hpso_attributes(self, spec):
-        obslist = hto.process_hpso_from_spec(spec)
+        obslist = observation.observation.process_hpso_from_spec(spec)
         o = obslist[0]
         assert o.name == 'hpso01_0'
         assert o.duration == 18000
@@ -85,21 +90,21 @@ class TestObservationPlan(unittest.TestCase):
             the set to be smaller.
 
         """
-        plan = hto.create_basic_plan(copy.deepcopy(SMALL_OBS_LIST), max_telescope_usage=512,
-                                     with_concurrent=False)
+        plan = observation.observation.create_basic_plan(copy.deepcopy(SMALL_OBS_LIST), max_stations=512,
+                                                         with_concurrent=False)
 
         plan_obs = [o.start for o in plan]
         self.assertEqual(4, len(set(plan_obs)))
         # Confirm that concurrent plan has A, C, D all scheduled together
-        plan = hto.create_basic_plan(copy.deepcopy(SMALL_OBS_LIST),
-                                           max_telescope_usage=256, with_concurrent=True)
+        plan = observation.observation.create_basic_plan(copy.deepcopy(SMALL_OBS_LIST),
+                                                         max_stations=256, with_concurrent=True)
         plan_obs = [o.start for o in plan if o.name != 'B']
         self.assertEqual(1, len(set(plan_obs)))
 
     def testAlternatePlans(self):
-        plan = hto.create_basic_plan(copy.deepcopy(SMALL_OBS_LIST),
-                                     max_telescope_usage=256, with_concurrent=False)
-        alternates = hto.alternate_plan_composition(plan, 512)
+        plan = observation.observation.create_basic_plan(copy.deepcopy(SMALL_OBS_LIST),
+                                                         max_stations=256, with_concurrent=False)
+        alternates = observation.observation.alternate_plan_composition(plan, 512)
         print(alternates)
         # self.assertListEqual(['A', 'C', 'D', 'B'], plan_obs)
 

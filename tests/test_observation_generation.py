@@ -21,13 +21,9 @@ import pandas as pd
 
 from pathlib import Path
 
-from skaworkflows.workflow.hpso_to_observation import (
-    Observation,
-    create_observation_from_hpso,
-)
+from observation.observation import create_observation_from_hpso, Observation, create_observation_plan
 
-from skaworkflows.workflow.hpso_to_observation import (
-    create_observation_plan,
+from skaworkflows.workflow.observations_to_workflows import (
     create_buffer_config,
     calc_ingest_demand,
     generate_instrument_config,

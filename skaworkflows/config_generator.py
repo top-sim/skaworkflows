@@ -20,8 +20,11 @@ import pandas as pd
 from pathlib import Path
 
 import skaworkflows.common as common
-import skaworkflows.workflow.hpso_to_observation as hto
+import skaworkflows.workflow.observations_to_workflows as hto
 from skaworkflows.common import SKALow
+
+from skaworkflows.observation.observation import (
+    process_hpso_from_spec, create_basic_plan)
 
 from skaworkflows.hpconfig.specs.sdp import (
     SDP_LOW_CDR, SDP_MID_CDR, SDP_PAR_MODEL_LOW, SDP_PAR_MODEL_MID
@@ -29,6 +32,50 @@ from skaworkflows.hpconfig.specs.sdp import (
 LOGGER = logging.getLogger(__name__)
 
 LOGGER.setLevel('DEBUG')
+
+def create_observing_plan(parameters: dict, telescope):
+    """
+    Produce the observing plans based on the observation parameters
+    created in create_observation_plans.
+    Returns
+    -------
+
+    """
+
+
+    observations = process_hpso_from_spec(parameters)
+
+    if not observations:
+        RuntimeError('Observations do not exist!')
+    LOGGER.debug(f"Creating an observation plan with {observations}")
+    all_plans = create_basic_plan(
+        observations, telescope.max_stations, with_concurrent=False
+    )
+    LOGGER.debug(f"Observation plan: {all_plans}")
+
+    # all_plans = hto.alternate_plan_composition(all_plans.pop(), telescope_max)
+    import random
+    random.shuffle(all_plans)
+    return all_plans
+
+def create_telescope_infrastructure(telescope):
+    """
+    Create the HPCConfig dictionary based on the specified infrastructure.
+
+    Supports:
+    - SKALow CDR, SKALow Parameteric Model
+    - SKAMid CDR, SKALow Parameteric Model
+
+    Parameters
+    ----------
+    telescope, infrastructure
+
+    Returns
+    -------
+    dict, computing machine dictionary
+    """
+
+    pass
 
 def create_config(
         # TODO define what parameters means!
@@ -118,25 +165,9 @@ def create_config(
     component_sizing = pd.read_csv(component)
     system_sizing = pd.read_csv(system)
     cluster_dict = cluster.to_topsim_dictionary()
-    observations = hto.process_hpso_from_spec(parameters)
 
-    if not observations:
-        RuntimeError('Observations do not exist!')
-    LOGGER.debug(f"Creating an observation plan with {observations}")
-    all_plans = hto.create_basic_plan(
-        observations, telescope.max_stations, with_concurrent=False
-    )
-    LOGGER.debug(f"Observation plan: {all_plans}")
+    all_plans = create_observing_plan(parameters, telescope)
 
-    # all_plans = hto.alternate_plan_composition(all_plans.pop(), telescope_max)
-    import random
-    random.shuffle(all_plans)
-    # for i, plan in enumerate(all_plans):
-    #     print(f"Plan {i} of {len(all_plans)}: {all_plans}")
-    # if not multiple_plans:
-    #     # Take the middle plan
-    #     all_plans = [all_plans[int(len(all_plans)/2)]]
-    #     LOGGER.info("Selected plan: %s", all_plans)
     LOGGER.debug("Plans: %s", all_plans)
     LOGGER.info("Final number of plan permutations is: %d", len(all_plans))
     LOGGER.info("Producing the instrument config")
