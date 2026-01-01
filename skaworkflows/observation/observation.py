@@ -17,11 +17,13 @@ import logging
 import random
 import sys
 
-
-from pprint import pformat
-
-from skaworkflows.common import Telescope
+from collections import Counter
 from dataclasses import dataclass, asdict
+from pprint import pformat
+from string import ascii_letters
+
+from skaworkflows.common import Telescope, FIXED_LOW_CHANNELS_DEMAND
+from skaworkflows.observation.parameters import load_observation_defaults
 
 LOGGER = logging.getLogger(__name__)
 
@@ -180,7 +182,7 @@ class Observation:
         }
 
 
-def process_hpso_from_spec(hpsos: dict):
+def process_hpso_from_spec(hpsos: dict, telescope='low'):
     """
     Pass a JSON dictionary of observations we want to process
 
@@ -189,22 +191,38 @@ def process_hpso_from_spec(hpsos: dict):
 
     Parameters
     ----------
-    path
+    hpsos: dict
+    telescope: str
 
     Returns
     -------
-
+    final_obs: list
     """
     final_obs = []
-    # with path.open() as fp:
-    #     hpsos = json.load(fp)
-
+    telescope = Telescope(telescope)
+    LOGGER.info("Translating HPSO permutations to observing plan")
+    low_observation_defaults = load_observation_defaults("skalow")
     offset = 0
-    for h in hpsos["hpsos"]:
-        LOGGER.debug(f"{h=}")
-        obslist = create_observation_from_hpso(**h, offset=offset)
-        offset += len(obslist)
-        final_obs += obslist
+    for hpso, items in hpsos.items():
+        counter = dict(Counter(items))
+        for pair, count in counter.items():
+            baseline, stations = pair
+            obslist = create_observation_from_hpso(
+                count=count,
+                hpso=hpso,
+                duration=low_observation_defaults["hpsos"][hpso]["duration"],
+                workflows=low_observation_defaults["hpsos"][hpso]["workflows"],
+                demand=stations,
+                channels=FIXED_LOW_CHANNELS_DEMAND * telescope.channels_multiplier,
+                workflow_parallelism=stations,
+                baseline=baseline,
+                # *1000, # convert to meters
+                telescope=str(telescope),
+                offset=offset
+            )
+            offset += len(obslist)
+            final_obs += obslist
+
     return final_obs
 
 
@@ -406,6 +424,63 @@ def create_basic_plan(hpsos: list, max_stations: int,
             observation for observation in observations if not observation.planned
         ]
     return plan
+
+
+def create_concurrent_plan(hpsos: list, max_stations: int, concurrent_demand_limit: int):
+    """
+    Randomly shuffle the observations to create a sequence of HPSOS of different
+    sizes, _with_ concurrent observations.
+
+
+    hpsos : list
+        List of :py:obj:`~pipelines.observations_to_workflows.Observations`
+
+    max_stations: int
+        The maximum percentage of the telescope to be occupied at any given
+        time. For some simulations, it may be necessary to only 'simulate' a
+        smaller demand on the telescope.
+
+    return: plan : list()
+        A list of strings that details the order of HPSOs that will be running
+        for a given plan. These HPSOs will be derived from what is in the
+        provided system-sizing dictionary.
+
+        These strings are HPSOs - we need to link them to a pipeline as well
+        (RCAL/Ingest we can consume together as 'real-time' pipelines,
+        and so promote these as the range of compute required for real-time
+        execution).
+    """
+
+    plan = []
+
+    start = 0
+    finish = -1
+    LOGGER.debug("%s", pformat(hpsos, indent=4, depth=1))
+    observations = [o for o in hpsos]
+    random.shuffle(observations)
+    while observations:
+        for observation in observations:
+            stations = observation.stations
+            num_concurrent = 1
+            if stations <= concurrent_demand_limit:
+                num_concurrent = int(max_stations / stations)
+
+            concurrent_observations = [observation] * num_concurrent
+            for i, co in enumerate(concurrent_observations):
+                co.name = f"{co.name}{ascii_letters[i]}"
+            for obs in concurrent_observations:
+                observation.add_start_time(start)
+                observation.planned = True
+                plan.append(observation)
+                if finish < start + observation.duration:
+                    finish = start + observation.duration
+            start = finish
+            finish = -1
+        observations = [
+            observation for observation in observations if not observation.planned
+        ]
+    return plan
+
 
 def alternate_plan_composition(observation_plan: list, max_telescope_usage,
                                with_concurrent=False):

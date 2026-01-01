@@ -60,7 +60,7 @@ class TestConfigGeneration(unittest.TestCase):
         config = config_generator.create_config(
             parameters=HPSO_PARAMETERS,
             output_dir=self.low_path_str,
-            base_graph_paths=self.prototype_workflow_paths,
+            imaging_graph_base=self.prototype_workflow_paths,
             timestep='seconds')
         self.assertTrue(Path(config[0]).exists())
 

@@ -21,17 +21,13 @@ import logging
 import numpy as np
 import pandas as pd
 
-from collections import Counter
 from pathlib import Path
 
-from sympy.simplify.simplify import sum_add
 
-from skaworkflows.common import SKALow
 from skaworkflows.common import (SKALOW_SMALL_PAIRS, SKALOW_MED_PAIRS,
                                  SKALOW_LARGE_PAIRS)
 
 from skaworkflows.observation.observation import HPSOParameter, ObservationPlan
-from skaworkflows.config_generator import create_config
 from skaworkflows import common
 from skaworkflows.observation.parameters import load_observation_defaults
 
@@ -327,7 +323,7 @@ def generate_multiple_plans(telescope: str, days: int = 1,
     -------
 
     """
-
+    # TODO support SKA Mid
     hpso_counts, total_obs = create_hpso_counts_from_ratios(days)
     step = int(total_obs / (total_obs * percent_experiments))
     experiments = make_ternary_experiment(N=total_obs, step=step, max_large_percentage=0.25)
@@ -341,60 +337,6 @@ def generate_multiple_plans(telescope: str, days: int = 1,
                       observation_sizes))
     return plans
 
-
-def create_hpso_plan(telescope: str, plan_duration: int = 1,
-                     max_large_percentage: float = 0.25, percent_experiments: float = 1.0,
-                     num_plans: int = 0, seed: int = 100):
-    """
-    Create a week's worth of observations
-
-    Parameters
-    ----------
-    telescope : str
-        Which telescope to create plans for ('low' or 'mid')
-    max_large_percentage : float
-        Maximum percentage of large observations allowed (default 0.25)
-    percent_experiments : float 
-        Percentage of generated permutations to randomly select (default 1.0)
-    """
-
-    # one day
-    random.seed(seed)
-    duration = plan_duration * 24 * 3600
-    if telescope == "low":
-
-        permutations = allocate_observations(observation_amounts,
-                                             total_obs,
-                                             experiment_lattice)
-        # Use percentage experiments unless num_observations is set
-        if num_plans > 0:
-            k = num_plans
-        else:
-            k = int(len(permutations) * percent_experiments)
-
-        # Randomly select k experiments from permutations
-        selected_keys = random.sample(list(permutations.keys()), k=k)
-
-        selected_permutations = {key: permutations[key] for key in
-                                 selected_keys}
-        return selected_permutations
-
-
-    elif telescope == "mid":
-        ratio_multiplier = get_ratio_multiplier_from_seconds(duration,
-                                                             values_to_nparray(
-                                                                 mid_observations_defaults[
-                                                                     "hpsos"],
-                                                                 "duration"),
-                                                             values_to_nparray(
-                                                                 mid_observations_defaults[
-                                                                     "hpsos"],
-                                                                 "observing_ratio"), )
-        logger.info("creating %d iterations of observations")
-        return standard_mid_obs_plan(
-            permute_mid_observation_plan(ratio_multiplier))
-    else:
-        return None
 
 
 def permute_mid_observation_plan(n=1):
@@ -456,150 +398,3 @@ def permute_mid_observation_plan(n=1):
                     tmp[hpso].append({"demand": antenna, "num_obs": obs})
             final_set[demand_ratio] = tmp
 
-
-def standard_mid_obs_plan(num_obs_repeats: dict):
-    """
-    currently, this is a placeholder method to generate one of a couple different
-    observation plans.
-
-    expect this method to be a) renamed in the future and b) improved upon
-
-    'hpso13': {'duration': 28800, 'workflows': ["ical", "dprepa", "dprepb", "dprepc"]},
-    'hpso15': {'duration': 15840, 'workflows': ["ical", "dprepa", "dprepb", "dprepc"]},
-    'hpso22': {'duration': 28800, 'workflows': ["ical", "dprepa", "dprepb"]},
-    'hpso32': {'duration': 7920, 'workflows': ["ical", "dprepb"]}
-
-
-    returns
-    -------
-
-    """
-    params = []
-    # permutations = permute_mid_observation_plan()
-    telescope = common.skamid
-    for demand, hpso_numbers in num_obs_repeats.items():
-        plan = telescope.initialise_plan()
-        for hpso, items in hpso_numbers.items():
-            for el in items:
-                plan.add_observation(
-                    HPSOParameter(count=el["num_obs"], hpso=hpso, duration=
-                    mid_observations_defaults["hpsos"][hpso]["duration"],
-                                  workflows=
-                                  mid_observations_defaults["hpsos"][hpso][
-                                      "workflows"], demand=el["demand"],
-                                  channels=FIXED_LOW_CHANNELS_DEMAND * plan.telescope.channel_multiplier,
-                                  workflow_parallelism=el["demand"], baseline=
-                                  mid_observations_defaults["hpsos"][hpso][
-                                      "baseline"],
-                                  telescope=str(plan.telescope)))
-        params.append(plan)
-
-    if verbose:
-        print(json.dumps(params, indent=2, cls=common.npencoder))
-
-    return params
-
-
-def convert_low_plan_to_json(selection: dict, verbose: bool = False):
-    """
-    currently, this is a placeholder method to generate one of a couple different
-    observation plans.
-
-    expect this method to be a) renamed in the future and b) improved upon
-
-    parameters
-    ----------
-
-    returns
-    -------
-
-    """
-    # observation_numbers = permute_low_observation_plans(days)
-
-    params = {}
-    from collections import Counter
-    for name, combination in selection.items():
-        plan = ObservationPlan("low")
-        logger.info("generating plan for: %s", name)
-        for hpso, items in combination.items():
-            counter = dict(Counter(items))
-            for pair, count in counter.items():
-                baseline, stations = pair
-                plan.add_observation(HPSOParameter(count=count, hpso=hpso,
-                                                   duration=
-                                                   low_observation_defaults[
-                                                       "hpsos"][hpso][
-                                                       "duration"], workflows=
-                                                   low_observation_defaults[
-                                                       "hpsos"][hpso][
-                                                       "workflows"],
-                                                   stations=stations,
-                                                   channels=FIXED_LOW_CHANNELS_DEMAND * plan.telescope.channels_multiplier,
-                                                   workflow_parallelism=stations,
-                                                   baseline=baseline,
-                                                   # *1000, # convert to meters
-                                                   telescope=str(
-                                                       plan.telescope)))
-        params[name] = plan.to_json()
-
-    if verbose:
-        print(
-            json.dumps(params, indent=2, cls=common.npencoder, sort_keys=True))
-
-    logger.info("Plans created:")
-    for key in params:
-        logger.info("\t %s", key)
-    return params
-
-
-import argparse
-
-if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(Path(__file__).name, )
-    parser.add_argument("path")
-    parser.add_argument("telescope", help="choose from 'low' or 'mid'")
-    parser.add_argument("graph_type", help="prototype, parallel")
-    parser.add_argument("--test", default=False, action="store_true")
-    parser.add_argument("--tables", default=False, action="store_true",
-                        help='Generate tables and do not run config generation')
-
-    # parser.add_argument() # todo num_observation_repeats, seed
-    args = parser.parse_args()
-
-    workflow_type_map = {"ICAL": args.graph_type, "DPrepA": args.graph_type,
-                         "DPrepB": args.graph_type, "DPrepC": args.graph_type,
-                         "DPrepD": args.graph_type, "Pulsar": "pulsar", }
-
-    random.seed(2)
-    if args.test:
-        verbose = True
-        random.seed(0)
-        n = get_ratio_multiplier_from_seconds(7 * 24 * 3600, values_to_nparray(
-            low_observation_defaults, "duration"), values_to_nparray(
-            low_observation_defaults, "ratio"), )
-        params = convert_low_plan_to_json(days=7)
-        json.dumps(params, indent=2, cls=common.npencoder)
-
-        sys.exit(0)
-
-    all_params = convert_low_plan_to_json(create_hpso_plan(args.telescope))
-    if args.tables:
-        sys.exit(0)
-
-    low_path = Path(args.path) / args.telescope
-
-    print("creating config")
-    # sys.exit()
-    print(f"total plans: {len(all_params)}")
-    # for ap in all_params:
-    # sorted_keys = sorted(ap)
-    # for multiplier in [1, 2, 5]:
-    for name, plan in all_params.items():
-        print(f"creating plan with demand: {name}")
-        create_config(plan, low_path, workflow_type_map, timestep=5, data=False,
-                      data_distribution="standard", multiple_plans=False, )
-        create_config(plan, low_path, workflow_type_map, timestep=5, data=True,
-                      data_distribution="standard", multiple_plans=False, )
-        create_config(plan, low_path, workflow_type_map, timestep=5, data=True,
-                      data_distribution="edges", multiple_plans=False, )

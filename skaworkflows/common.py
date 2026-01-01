@@ -182,7 +182,7 @@ class Workflows:
 MAX_TEL_DEMAND_LOW = 512
 MAX_TEL_DEMAND_MID = 197
 MAX_CHANNELS = 512
-
+FIXED_LOW_CHANNELS_DEMAND = 128
 # System sizing data paths
 DATA_PANDAS_SIZING = Path(str(imp_res.files("skaworkflows.data.pandas_sizing")))
 LOW_TOTAL_SIZING = DATA_PANDAS_SIZING / "total_compute_SKA1_Low_2025-02-25.csv"
@@ -197,7 +197,7 @@ BYTES_PER_VIS = 12.0
 GRAPH_DIR = imp_res.files("skaworkflows.data.hpsos")
 BASIC_PROTOTYPE_GRAPH = GRAPH_DIR.joinpath("dprepa.graph")
 CONT_IMG_MVP_GRAPH = GRAPH_DIR.joinpath("cont_img_mvp.graph")
-SCATTER_GRAPH = GRAPH_DIR.joinpath("dprepa_parallel_updated.graph")
+PARALLEL_GRAPH = GRAPH_DIR.joinpath("dprepa_parallel_updated.graph")
 PULSAR_GRAPH = GRAPH_DIR.joinpath("pulsar.graph")
 
 all_pairs = list(itertools.product(SKALow.baselines, SKALow.stations))

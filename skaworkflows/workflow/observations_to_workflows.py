@@ -46,8 +46,8 @@ from skaworkflows.common import (
     SI,
     create_workflow_header,
     CONT_IMG_MVP_GRAPH,
-BASIC_PROTOTYPE_GRAPH,
-    SCATTER_GRAPH,
+    BASIC_PROTOTYPE_GRAPH,
+    PARALLEL_GRAPH,
     PULSAR_GRAPH,
     BYTES_PER_VIS,
     Telescope
@@ -466,10 +466,10 @@ def _match_graph_options(graph_type: str):
 
     if graph_type == "prototype":
         return BASIC_PROTOTYPE_GRAPH
-    elif graph_type == "cont_img_mvp":
+    elif graph_type == "complex_img_mvp":
         return CONT_IMG_MVP_GRAPH
-    elif graph_type == "scatter":
-        return SCATTER_GRAPH
+    elif graph_type == "parallel":
+        return PARALLEL_GRAPH
     elif graph_type == "pulsar":
         return PULSAR_GRAPH
     else:
