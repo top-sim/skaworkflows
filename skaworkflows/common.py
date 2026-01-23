@@ -200,10 +200,17 @@ CONT_IMG_MVP_GRAPH = GRAPH_DIR.joinpath("cont_img_mvp.graph")
 PARALLEL_GRAPH = GRAPH_DIR.joinpath("dprepa_parallel_updated.graph")
 PULSAR_GRAPH = GRAPH_DIR.joinpath("pulsar.graph")
 
+ 
+
 all_pairs = list(itertools.product(SKALow.baselines, SKALow.stations))
 SKALOW_LARGE_PAIRS = [(65000, 256), (32500, 512), (65000, 512)]
 SKALOW_MED_PAIRS = [(65000, 64), (65000, 128),(32500, 128), (32500, 256), (16250, 512), (16250, 256), (8125, 512)]
 SKALOW_SMALL_PAIRS = list(set(all_pairs) - set(SKALOW_MED_PAIRS) - set(SKALOW_LARGE_PAIRS))
+
+# def newfun(value: int):
+#
+#     if (hasattr(value, test) == 5:
+#         return False
 
 
 def create_workflow_header(telescope: str):

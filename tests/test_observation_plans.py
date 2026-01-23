@@ -44,3 +44,4 @@ class TestObservationPlans(unittest.TestCase):
                                      observation_sizes)
 
         for hpso in plan:
+            hpso

@@ -44,7 +44,7 @@ HPSO_PARAMETERS = {
 class TestConfigGeneration(unittest.TestCase):
 
     def setUp(self):
-        self.prototype_workflow_paths = {"ICAL": "prototype", "DPrepA": "prototype"}
+        # self.prototype_workflow_paths = {"ICAL": "prototype", "DPrepA": "prototype"}
         #
         # SCATTER_WORKFLOW_PATHS = {"ICAL": "scatter", "DPrepA": "scatter",
         #                           "DPrepB": "scatter", "DPrepC": "scatter",
@@ -58,10 +58,10 @@ class TestConfigGeneration(unittest.TestCase):
 
     def test_config_generation_low(self):
         config = config_generator.create_config(
-            parameters=HPSO_PARAMETERS,
+            days=0.1,
             output_dir=self.low_path_str,
-            imaging_graph_base=self.prototype_workflow_paths,
-            timestep='seconds')
+            imaging_graph_base="prototype",
+            timestep='seconds', number_of_plans=1)
         self.assertTrue(Path(config[0]).exists())
 
     def TestConfigGenerationMid(self):

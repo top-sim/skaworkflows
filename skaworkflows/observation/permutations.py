@@ -167,7 +167,7 @@ def ternary_coordinates(df, N):
 
 def allocate_observations(hpso_counts: dict,
                           total_obs: int,
-                          observation_sizes: pd.DataFrame) -> dict:
+                          observation_sizes: pd.Series) -> dict:
     """
     Create observation pairs by randomly assigning large/medium/small baseline pairs to HPSOs.
 
@@ -181,8 +181,8 @@ def allocate_observations(hpso_counts: dict,
         Dictionary mapping HPSO IDs to their required observation counts
     total_obs : int 
         Total number of observations that must be allocated
-    observation_sizes : pd.DataFrame
-        DataFrame containing counts of small/medium/large observations to generate
+    observation_sizes : pd.Series
+        Series containing counts of small/medium/large observations to generate
 
     Returns
     -------
@@ -271,8 +271,10 @@ def allocate_observations(hpso_counts: dict,
 def get_ratio_multiplier_from_seconds(time: int, durations: np.array,
                                       ratios: np.array):
     """
-    determine the 'ratio' multiplier for a given set of hpso ratios and durations,
+    Determine the 'ratio' multiplier for a given set of hpso ratios and durations,
     such that n * ratios gives a total observation plan of at least 'time' length.
+
+
     """
     total = 0
     n = 0
@@ -295,7 +297,7 @@ def create_hpso_counts_from_ratios(days: int =1):
     -------
 
     """
-    plan_duration = days * 24 * 3600
+    plan_duration = int(days * 24 * 3600)
     observing_ratio_multiplier = get_ratio_multiplier_from_seconds(
             plan_duration,
             values_to_nparray(low_observation_defaults['hpsos'], "duration"),
@@ -321,7 +323,7 @@ def generate_multiple_plans(telescope: str, days: int = 1,
 
     Returns
     -------
-
+    List of permutations
     """
     # TODO support SKA Mid
     hpso_counts, total_obs = create_hpso_counts_from_ratios(days)
@@ -333,8 +335,7 @@ def generate_multiple_plans(telescope: str, days: int = 1,
 
         plans.append((allocate_observations(hpso_counts,
                                             total_obs,
-                                            observation_sizes),
-                      observation_sizes))
+                                            observation_sizes), observation_sizes))
     return plans
 
 

@@ -1,6 +1,8 @@
 """
 Calculate metrics and useful summative information for observation plans
 """
+import copy
+
 import numpy as np
 from skaworkflows.common import SKALOW_LARGE_PAIRS, SKALOW_MED_PAIRS, \
     SKALOW_SMALL_PAIRS
@@ -54,11 +56,11 @@ def get_observation_weight(obs):
     baseline = obs.baseline
     stations = obs.stations
     if (baseline, stations) in SKALOW_LARGE_PAIRS:
-        return 9  # 3^2
+        return 8  # 3^2
     elif (baseline, stations) in SKALOW_MED_PAIRS:
         return 4  # 2^2
     else:
-        return 1  # 1^2
+        return 2  # 1^2
 
 
 def observation_weighting(plan: list):
@@ -79,8 +81,8 @@ def observation_weighting(plan: list):
     'weighted' observation demand across that window. The goal is to move this
     through the entire plan to identify the largest weighted window.
 
-    To take into account an observing plan is not run in isolation,
-    as it both follows and precedes another, we pre- and append the plan to
+    To take into account that an observing plan is not run in isolation,
+    as it both follows and precedes another, we prepend and append the plan to
     itself, starting the first 24 hour period with 18 hours in the previous
     plan, and continuing to 18 hours into the following plan. This is to
     reduce the bias that may be associated with a plan that on the face of it
@@ -91,32 +93,89 @@ def observation_weighting(plan: list):
         return 0
 
     # Constants
-    DAY_SECONDS = 24 * 3600
-    WINDOW_STEP = 18000
-
+    step = 21600
+    window = 86400
+    spillover = 2*3600
     # Create extended plan (pre and post append)
-    extended_plan = plan + plan + plan
+    # The beginning of the plan is what will appear just after the end of this plan
+    total = 0
+    i = 0
+    post_plan = []
+    while total < step:
+        o = copy.deepcopy(plan[i])
+        total += o.duration
+        post_plan.append(o)
+        i+=1
+    # The beginning of the plan is what will appear just before the start of this plan
+    total = 0
+    i = 1
+    pre_plan = []
+    while total < step:
+        o = copy.deepcopy(plan[-i])
+        total += o.duration
+        pre_plan.append(o)
+        i+=1
+
+    pre_plan.reverse()
+    extended_plan = pre_plan + plan + post_plan
+
     max_weighted_window = 0
 
-    # Slide window through extended plan
-    start_time = extended_plan[
-                     0].start_time + DAY_SECONDS * 0.75  # Start at 18 hours into first plan
-    end_plan = extended_plan[
-                   -1].start_time - DAY_SECONDS * 0.75  # End 18 hours before last plan ends
+    elapsed = 0
+    left = 0
+    right = 0
+    start_time = 0  # NEW: cumulative time at left
+    total_duration = sum(obs.duration for obs in extended_plan)
 
-    current_time = start_time
-    while current_time < end_plan:
-        window_end = current_time + DAY_SECONDS
-        window_weight = 0
+    while start_time + window <= total_duration:  # CHANGED: hard stop
 
-        # Calculate weights for observations in current window
-        for obs in extended_plan:
-            if current_time <= obs.start_time < window_end:
-                weight = get_observation_weight(obs)
-                window_weight += weight * obs.duration
+        spillover_used = False
+        window_duration = 0
+        total_weight = 0
 
-        max_weighted_window = max(max_weighted_window, window_weight)
-        current_time += WINDOW_STEP
+        # Expand window to the right until we have at least 24h (+ optional spillover)
+        while right < len(extended_plan):
 
-    return int(max_weighted_window)
+            obs = extended_plan[right]
+            dur = obs.duration
+
+            if window_duration + dur <= window:
+                window_duration += dur
+                total_weight += get_observation_weight(obs) * dur
+                right += 1
+
+            elif not spillover_used:
+                # allow ONE spillover event
+                window_duration += dur
+                total_weight += get_observation_weight(obs) * dur
+                right += 1
+                break
+
+            else:
+                break
+
+        if window_duration == 0:
+            break
+        # At this point we KNOW we have >= 24h (guaranteed by outer while)
+        weighted_window = total_weight / window_duration
+        max_weighted_window = max(weighted_window, max_weighted_window)
+
+        # Slide window forward by 6h
+        step_remaining = step
+
+        while left < right and step_remaining > 0:
+            dur = extended_plan[left].duration
+
+            if dur <= step_remaining:
+                step_remaining -= dur
+                window_duration -= dur
+                start_time += dur  # NEW: advance absolute time
+                left += 1
+            else:
+                # we don't allow partial events on the left
+                break
+
+        max_weighted_window = max(weighted_window, max_weighted_window)
+
+    return max_weighted_window
 

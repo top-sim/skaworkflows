@@ -24,7 +24,7 @@ import networkx as nx
 import pandas as pd
 from pathlib import Path
 
-import observation.observation
+from skaworkflows import observation
 from skaworkflows import __version__
 from skaworkflows.common import SI, BYTES_PER_VIS
 import skaworkflows.workflow.observations_to_workflows as hpo
@@ -567,8 +567,8 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
 
         result = hpo.generate_workflow_from_observation(
             self.obs1, self.telescope_max, self.config_dir,
-            self.component_system_sizing, self.total_system_sizing, workflow_path_name,
-            base_graph_paths
+            self.component_system_sizing, self.total_system_sizing,
+            workflow_path_name, base_graph_paths
         )
 
         header = {

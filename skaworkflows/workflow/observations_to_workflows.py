@@ -171,7 +171,7 @@ def generate_instrument_config(
     compute of an observation. Based on the parametric model, both
     ingest and FLOPs are functions of frequency channels and the number of
     stations. For an :py:object:`skaworkflows.workflow.hpso_to_workflow
-    .Observation`, the stations used is observation.demand.
+    .Observation`, the stations used is observation.stations.
 
     Parameters
     ----------
@@ -248,7 +248,7 @@ def generate_instrument_config(
             "duration": o.duration,
             "channels": o.channels,
             "workflow_parallelism": o.workflow_parallelism,
-            "demand": o.demand,
+            "demand": o.stations,
             "baseline": o.baseline,
             "workflow_type": list(set(base_graph_paths.values())), # TODO convert to set of strings?
             "graph_type": list(set(base_graph_paths.keys())), # TODO As above
@@ -289,7 +289,7 @@ def _find_existing_workflow(dirname, observation):
     header = {"parameters": {}}
     header["parameters"]["workflow_parallelism"] = observation.workflow_parallelism
     header["parameters"]["channels"] = observation.channels
-    header["parameters"]["arrays"] = observation.demand
+    header["parameters"]["arrays"] = observation.stations
     header["parameters"]["baseline"] = observation.baseline
     header["parameters"]["duration"] = observation.duration
     header["parameters"]["workflows"] = observation.workflows
@@ -315,35 +315,6 @@ def _create_workflow_path_name(
     str_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     return f"{hash(observation)}_{str_date}"
 
-
-def create_single_observation_for_instrument(observation, workflow_path):
-    """
-    Given an observation, generate the following two components for the
-    telescope configuration:
-
-    * pipeline:
-
-    >>>   {{
-    >>>         "observation": {
-    >>>             "workflow": "path/to/workflow"
-    >>>             "ingest_demand": number_of_machines_needed_for_ingest
-    >>>         }
-    >>> }
-
-    * Observation:
-    >>> {{
-    >>>     "name" : observation.hpso + count
-    >>>     "start": observation.start
-    >>>     "duration" : length_of_observation
-    >>>     "demand" :
-    >>>     "data_product_rate": ingest_rate
-    >>> }
-
-
-    Returns
-    -------
-
-    """
 
 
 def generate_workflow_from_observation(
@@ -395,7 +366,7 @@ def generate_workflow_from_observation(
     if not os.path.exists(f"{config_dir}/workflows"):
         os.mkdir(f"{config_dir}/workflows")
 
-    telescope_frac = observation.demand / telescope_max
+    telescope_frac = observation.stations / telescope_max
 
     channels = observation.workflow_parallelism
     # Unroll the graph
@@ -410,7 +381,7 @@ def generate_workflow_from_observation(
             cached_base_graph[base_graph] = None
         LOGGER.debug(f"Using {base_graph} as base workflow.")
         channel_lgt = edt.update_graph_parallelism(
-            base_graph, channels, observation.demand
+            base_graph, channels, observation.stations
         )
         intermed_graph, task_dict, cached_base_graph[base_graph] = (
             edt.eagle_to_nx(
@@ -777,7 +748,7 @@ def retrieve_component_cost(observation, workflow, component, component_sizing):
         (component_sizing["hpso"] == observation.hpso)
         & (component_sizing["Baseline"] == baseline)
         & (component_sizing["Channels"] == observation.channels)
-        & (component_sizing["Antenna stations"] == observation.demand)
+        & (component_sizing["Antenna stations"] == observation.stations)
         ]
 
     if obs_frame.empty:
@@ -823,7 +794,7 @@ def retrieve_workflow_cost(observation, workflow, system_sizing):
         (system_sizing["HPSO"] == observation.hpso)
         & (system_sizing["Baseline"] == baseline)
         & (system_sizing["Channels"] == observation.channels)
-        & (system_sizing["Stations"] == observation.demand)
+        & (system_sizing["Stations"] == observation.stations)
         ]
     flops = float(obs_frame[workflow].iloc[0])
 
@@ -852,7 +823,7 @@ def produce_final_workflow_structure(nx_final, observation, time=False):
     header["time"] = time
     header["parameters"]["workflow_parallelism"] = observation.workflow_parallelism
     header["parameters"]["channels"] = observation.channels
-    header["parameters"]["arrays"] = observation.demand
+    header["parameters"]["arrays"] = observation.stations
     header["parameters"]["baseline"] = observation.baseline
     header["parameters"]["duration"] = observation.duration
     header["parameters"]["workflows"] = observation.workflows

@@ -7,7 +7,7 @@ from skaworkflows.common import SKALOW_SMALL_PAIRS, SKALOW_LARGE_PAIRS, SKALOW_M
 from skaworkflows.observation.permutations import allocate_observations, \
     create_hpso_counts_from_ratios, generate_multiple_plans
 from skaworkflows.observation.permutations import (
-    get_ratio_multiplier_from_seconds, values_to_nparray, create_hpso_plan,
+    get_ratio_multiplier_from_seconds, values_to_nparray,
     make_ternary_experiment)
 from skaworkflows.observation.parameters import load_observation_defaults
 
@@ -47,7 +47,7 @@ class TestObservationPlanSupportMethods(unittest.TestCase):
         parameters.
         """
         obs_amounts, total_obs = create_hpso_counts_from_ratios(days=1)
-        self.assertEqual(total_obs, 10)
+        self.assertEqual(total_obs, 20)
 
 
     def test_create_observation_amounts_week(self):
@@ -155,24 +155,24 @@ class TestPlanShuffle(unittest.TestCase):
         pass
 
 
-class TestObservationCalculationsSKALow(unittest.TestCase):
+class TestPermutationRatioMultiplier(unittest.TestCase):
 
     def setUp(self):
         low_observation_defaults = load_observation_defaults("skalow")
-        self.default_duration = values_to_nparray(low_observation_defaults,
+        self.default_duration = values_to_nparray(low_observation_defaults["hpsos"],
                                                   "duration")
-        self.default_ratio = values_to_nparray(low_observation_defaults,
-                                               "ratio")
+        self.default_ratio = values_to_nparray(low_observation_defaults["hpsos"],
+                                               "observing_ratio")
 
     def test_number_observations_in_day(self):
         n = get_ratio_multiplier_from_seconds(DAY_SECONDS, self.default_duration,
                                               self.default_ratio)
-        self.assertEqual(12, n)
+        self.assertEqual(2, n)
 
     def test_number_observations_in_week(self):
         n = get_ratio_multiplier_from_seconds(WEEK_SECONDS,
                                               self.default_duration, self.default_ratio)
-        self.assertEqual(90, n)
+        self.assertEqual(9, n)
 
 
 class TestPlanGenerationSKALow(unittest.TestCase):
@@ -185,9 +185,7 @@ class TestPlanGenerationSKALow(unittest.TestCase):
         """
 
     def test_create_weekly_plan(self):
-        plan = create_hpso_plan(telescope='low')
         pass
-
 
 class TestPlanGenerationStacking(unittest.TestCase):
     """

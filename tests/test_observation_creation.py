@@ -20,7 +20,7 @@ import unittest
 import pandas as pd
 from pathlib import Path
 
-import skaworkflows.observation.observation
+from skaworkflows import observation
 import skaworkflows.workflow.observations_to_workflows as hto
 from skaworkflows.common import Telescope
 from skaworkflows.observation.observation import Observation, process_hpso_from_spec, create_basic_plan, \
@@ -77,10 +77,11 @@ class CreateObservationPlanTimeAllocations(unittest.TestCase):
         self.assertEqual(start, so.start)
         for o in odp:
             if so.stations == 64 and o.stations == 64:
-                self.assertEqual(start, o.start)
+                self.assertEqual(so.start, o.start)
             else:
                 self.assertEqual(start + so.duration, o.start)
                 start = start + so.duration
+                so = o
 
 
 @unittest.skip("Legacy test cases")
@@ -107,10 +108,10 @@ class OldTests(unittest.TestCase):
         o = obslist[0]
         assert o.name == 'hpso01_0'
         assert o.duration == 18000
-        assert o.demand == 512
+        assert o.stations == 512
         o = obslist[2]
         assert o.name == 'hpso01_2'
-        assert o.demand == 256
+        assert o.stations == 256
         assert o.baseline == 65000.0
 
 

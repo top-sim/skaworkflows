@@ -150,7 +150,7 @@ class Observation:
 
         """
         return hash(
-            self.name + (str(self.demand + self.workflow_parallelism + int(self.baseline)))
+            self.name + (str(self.stations + self.workflow_parallelism + int(self.baseline)))
         )
 
     def __repr__(self):
@@ -176,13 +176,13 @@ class Observation:
             "name": self.name,
             "start": self.start,
             "duration": self.duration,
-            "instrument_demand": self.demand,
+            "instrument_demand": self.stations,
             "type": self.hpso,
             "data_product_rate": self.ingest_data_rate,
         }
 
 
-def process_hpso_from_spec(hpsos: dict, telescope='low'):
+def process_hpso_from_spec(hpsos: dict, telescope='low')->list:
     """
     Pass a JSON dictionary of observations we want to process
 
@@ -269,111 +269,7 @@ def create_observation_from_hpso(
         obslist.append(obs)
     return obslist
 
-
-def create_observation_plan(hpsos, max_telescope_usage):
-    """
-    Given a sequence of HPSOs that are present in the system sizing
-    dictionary, generate a plan. of observations from which we can create
-    telescope config.
-
-
-    Parameters
-    ----------
-
-
-    Notes
-    -----
-    Observation scheduling is normally a challenging process and quite
-    bespoke. The observation schedules we generate are therefore going to be
-    made according to the following heuristic:
-
-        * Start with the largest observation (size) in the list
-            * This is tie broken on duration
-        * If there are any more observations that fit on the telescope at the
-        the same time, we add these to the plan too.
-        * The longest observation should be followed by at least one small
-        observation
-        * observations that are small are selected until they reach the limit
-        * at least 2 smaller observed until the next larger observations are
-        selected
-
-
-    Returns
-    -------
-    plan : list()
-        A list of strings that details the order of HPSOs that will be running
-        for a given plan. These HPSOs will be derived from what is in the
-        provided system-sizing dictionary.
-
-        These strings are HPSOs - we need to link them to a pipeline as well
-        (RCAL/Ingest we can consume together as 'real-time' pipelines,
-        and so promote these as the range of compute required for real-time
-        execution).
-    """
-
-    plan = []
-
-    current_tel_usage = 0
-    loop_count = 0
-    start = 0
-    finish = -1
-    LOGGER.debug("%s" ,{pformat(hpsos, indent=4, depth=1)})
-    observations = [o for o in hpsos]
-    while observations:
-        LOGGER.info("Generating observing plan")
-        # observations = sorted(
-        #     observations, key=lambda obs: (obs.baseline, obs.duration)
-        # )
-        if (len(observations) > 1) and (loop_count % len(observations) == 0):
-            if finish == -1:  # Then we are the first with this time
-                # plan.pop()
-                largest_observation.add_start_time(start)
-                largest_observation.planned = True
-                plan.append(largest_observation)
-                current_tel_usage += largest_observation.demand
-                # observations.remove(largest_observation)
-                loop_count += 1
-                finish = start + largest_observation.duration
-            else:  # We have to check the telescope capacity
-                if current_tel_usage + largest_observation.demand > max_telescope_usage:
-                    loop_count += 1
-                else:
-                    largest_observation.add_start_time(start)
-                    largest_observation.planned = True
-                    plan.append(largest_observation)
-                    current_tel_usage += largest_observation.demand
-                    # observations.remove(largest_observation)
-                    loop_count += 1
-                    finish = start + largest_observation.duration
-
-        else:  # we are not looking to add the largest:
-            # See if we can squeeze in a few observations
-            for observation in observations:
-                LOGGER.debug(f"{observation=}")
-                if observation.planned:
-                    continue
-                if current_tel_usage + observation.demand <= max_telescope_usage:
-                    observation.add_start_time(start)
-                    observation.planned = True
-                    plan.append(observation)
-                    LOGGER.debug(f"{plan=}")
-                    current_tel_usage += observation.demand
-                    # observations.remove(observation)
-                    loop_count += 1
-                    if finish < start + observation.duration:
-                        finish = start + observation.duration
-            start = finish
-            finish = -1
-            current_tel_usage = 0
-        observations = [
-            observation for observation in observations if not observation.planned
-        ]
-
-    LOGGER.debug(f"{plan=}")
-    return plan
-
-
-def create_basic_plan(hpsos: list, max_stations: int,
+def create_basic_plan(hpsos: list, shuffle=True,
                       existing_plan=None):
     """
     Randomly shuffle the observations to create a sequence of HPSOS of different
@@ -408,7 +304,8 @@ def create_basic_plan(hpsos: list, max_stations: int,
         observations = [o for o in existing_plan]
     else:
         observations = [o for o in hpsos]
-    random.shuffle(observations)
+    if shuffle:
+        random.shuffle(observations)
 
     while observations:
         for observation in observations:
@@ -426,7 +323,8 @@ def create_basic_plan(hpsos: list, max_stations: int,
     return plan
 
 
-def create_concurrent_plan(hpsos: list, max_stations: int, concurrent_demand_limit: int):
+def create_concurrent_plan(hpsos: list, max_stations: int, concurrent_demand_limit: int,
+                           seed=1):
     """
     Randomly shuffle the observations to create a sequence of HPSOS of different
     sizes, _with_ concurrent observations.
@@ -450,7 +348,7 @@ def create_concurrent_plan(hpsos: list, max_stations: int, concurrent_demand_lim
         and so promote these as the range of compute required for real-time
         execution).
     """
-
+    random.seed(seed)
     plan = []
 
     start = 0
@@ -465,19 +363,19 @@ def create_concurrent_plan(hpsos: list, max_stations: int, concurrent_demand_lim
             if stations <= concurrent_demand_limit:
                 num_concurrent = int(max_stations / stations)
 
-            concurrent_observations = [observation] * num_concurrent
+            concurrent_observations = [copy.deepcopy(observation) for i in range(num_concurrent)]
             for i, co in enumerate(concurrent_observations):
                 co.name = f"{co.name}{ascii_letters[i]}"
             for obs in concurrent_observations:
-                observation.add_start_time(start)
-                observation.planned = True
-                plan.append(observation)
-                if finish < start + observation.duration:
-                    finish = start + observation.duration
+                obs.add_start_time(start)
+                obs.planned = True
+                plan.append(obs)
+                if finish < start + obs.duration:
+                    finish = start + obs.duration
             start = finish
             finish = -1
         observations = [
-            observation for observation in observations if not observation.planned
+            observation for observation in observations if not obs.planned
         ]
     return plan
 
