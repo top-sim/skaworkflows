@@ -183,8 +183,8 @@ def csv_to_pandas_total_compute(csv_path):
         rflop_total, rt_flop_total, tmp_dict = (
             _isolate_total_sizing(df_tel, tmp_dict, hpso)
         )
-        df_from_hpso_dict = df_from_hpso_dict._append(
-            tmp_dict, ignore_index=True)
+        df_from_hpso_dict = pd.concat([df_from_hpso_dict, pd.DataFrame([tmp_dict])],
+                                      ignore_index=True)
     final_dict[telescope] = df_from_hpso_dict
     return final_dict
 
@@ -321,7 +321,7 @@ def csv_to_pandas_pipeline_components(csv_path):
         df.insert(0, 'hpso', newcol)
         # basecol = [max_baseline for x in range(0, len(df))]
         # df.insert(1, 'Baseline', basecol)
-        pipeline_df = pipeline_df._append(df, sort=False)
+        pipeline_df = pd.concat([pipeline_df, df], sort=False)
     final_dict[telescope] = pipeline_df
     return final_dict
 
@@ -485,24 +485,17 @@ def compile_sizing(data_paths: list, total=True, component=True):
         )
         for tel in total_dict:
             if tel in total_sizing:
-                total_sizing[tel] = total_sizing[tel]._append(
-                    total_dict[tel]
-                )
+                total_sizing[tel] = pd.concat([total_sizing[tel],
+                                               total_dict[tel]], ignore_index=True)
             else:
                 total_sizing[tel] = pd.DataFrame()
-                total_sizing[tel] = total_sizing[tel]._append(
-                    total_dict[tel]
-                )
+                total_sizing[tel] = pd.concat([total_sizing[tel],total_dict[tel]], ignore_index=True)
             if tel in component_sizing:
-                component_sizing[tel] = component_sizing[tel]._append(
-                    pipe_dict[tel]
-                )
+                component_sizing[tel] = pd.concat([component_sizing[tel],
+                                                   pipe_dict[tel]], ignore_index=True)
             else:
                 component_sizing[tel] = pd.DataFrame()
-                component_sizing[tel] = component_sizing[tel]._append(
-                    pipe_dict[tel]
-                )
-                # LOGGER.info(")
+                component_sizing[tel] = pd.concat([component_sizing[tel],pipe_dict[tel]], ignore_index=True)
     return total_sizing, component_sizing
 
 
