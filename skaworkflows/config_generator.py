@@ -16,6 +16,9 @@ import json
 import logging
 import datetime
 import pandas as pd
+import random
+
+from string import ascii_letters
 
 from pathlib import Path
 
@@ -51,13 +54,17 @@ def create_observing_plans(
     """
     all_plans = []
     LOGGER.info("Generating observing plan permutations for %d days of observations", days)
+    LOGGER.info("Using concurrent demand: %d", concurrent_demand)
+    LOGGER.info("Generating %d plans", num_shuffled_plans)
     plans = generate_multiple_plans('low',
                                     days,
                                     percent_experiments=percent_experiments)
     if number_of_plans > 0:
-        plans = plans[:number_of_plans]
-    LOGGER.info("Generated %d plans for %d days", len(plans), days)
-    for plan, _ in plans:
+        plans = random.sample(plans, min(number_of_plans, len(plans)))
+        # plans = plans[:number_of_plans]
+    
+    for i, tup in enumerate(plans):
+        plan, _ = tup
         current_permutation = []
         for i in range(0, num_shuffled_plans):
             observations = process_hpso_from_spec(plan)
@@ -65,8 +72,10 @@ def create_observing_plans(
                 RuntimeError('Observations do not exist!')
             LOGGER.debug(f"Creating an observation plan with {observations}")
             if concurrent_demand > 0 :
+                LOGGER.debug("Creating concurrent observing plan with concurrent demand of: %d", concurrent_demand)
                 current_permutation.append(create_concurrent_plan(observations,telescope.max_stations, concurrent_demand))
             else:
+                LOGGER.debug("Creating non-concurrent observing plan", concurrent_demand)
                 current_permutation.append(create_basic_plan(observations))
         all_plans.append(current_permutation)
     return all_plans
@@ -186,8 +195,9 @@ def create_config(
     all_plans = create_observing_plans(
         days,
         telescope,
-        num_shuffled_plans=1, concurrent_demand=0,
-        number_of_plans=kwargs.get('number_of_plans')
+        num_shuffled_plans=1, 
+        concurrent_demand=kwargs.get('concurrent_demand', 0),
+        number_of_plans=kwargs.get('number_of_plans',1)
     )
 
     LOGGER.debug("Plans: %s", all_plans)
@@ -195,19 +205,24 @@ def create_config(
     LOGGER.info("Producing the instrument config")
     final_instrument_config = []
     # all_plans = [all_plans]
+    if not file_path.parent.exists():
+        file_path.parent.mkdir(parents=True)
     base_workflow_graphs = get_base_graph_paths(imaging_graph_base)
-    for shuffled_plans in all_plans:
-        for plan in shuffled_plans:
-            final_instrument_config.append(hto.generate_instrument_config(
-                telescope.name,
-                telescope.max_stations,
-                plan,
-                output_dir,
-                component_sizing,
-                system_sizing,
-                cluster_dict,
-                base_workflow_graphs,
-            ))
+    for i, shuffled_plans in enumerate(all_plans):
+        for j, plan in enumerate(shuffled_plans):
+            cfg_file_path = file_path.parent / (file_path.name + f"_{i}-{ascii_letters[j]}" + ".json")
+            final_instrument_config.append((
+                cfg_file_path,
+                hto.generate_instrument_config(
+                    telescope.name,
+                    telescope.max_stations,
+                    plan,
+                    output_dir,
+                    component_sizing,
+                    system_sizing,
+                    cluster_dict,
+                    base_workflow_graphs,
+            )))
 
     LOGGER.info(f"Producing buffer config")
     final_buffer_config = hto.create_buffer_config(
@@ -217,21 +232,18 @@ def create_config(
 
     file_paths = []
     LOGGER.info(f"Putting it all together...")
-    for i, cfg in enumerate(final_instrument_config):
+    for cfg_file_path, cfg in final_instrument_config:
         final_config = {
             "instrument": cfg,
             "cluster": final_cluster,
             "buffer": final_buffer_config,
             "timestep": timestep
         }
-
-        if not file_path.parent.exists():
-            file_path.parent.mkdir(parents=True)
-        file_path_cfg = file_path.parent / (file_path.name + f"_{i}" + ".json")
-        with file_path_cfg.open('w') as fp:
-            LOGGER.info(f'Writing final config to {file_path}')
+        
+        with cfg_file_path.open('w') as fp:
+            LOGGER.info(f'Writing final config to {cfg_file_path}')
             json.dump(final_config, fp, indent=2)
-            file_paths.append(file_path_cfg)
+            file_paths.append(cfg_file_path)
 
     LOGGER.info(f'Configuration generation complete!')
 

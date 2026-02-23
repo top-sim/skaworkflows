@@ -351,6 +351,7 @@ def create_concurrent_plan(hpsos: list, max_stations: int, concurrent_demand_lim
     random.seed(seed)
     plan = []
 
+    LOGGER.info("Creating a concurrent plan...")
     start = 0
     finish = -1
     LOGGER.debug("%s", pformat(hpsos, indent=4, depth=1))
