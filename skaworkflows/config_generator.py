@@ -15,6 +15,8 @@
 import json
 import logging
 import datetime
+import uuid
+
 import pandas as pd
 import random
 
@@ -42,7 +44,7 @@ def create_observing_plans(
         days,
         telescope: Telescope,
         percent_experiments=0.5,
-        number_of_plans=0,
+        num_of_plans=0,
         num_shuffled_plans=1,
         concurrent_demand=0
 ):
@@ -59,14 +61,14 @@ def create_observing_plans(
     plans = generate_multiple_plans('low',
                                     days,
                                     percent_experiments=percent_experiments)
-    if number_of_plans > 0:
-        plans = random.sample(plans, min(number_of_plans, len(plans)))
-        # plans = plans[:number_of_plans]
+    if num_of_plans > 0:
+        plans = random.sample(plans, min(num_of_plans, len(plans)))
+        # plans = plans[:num_of_plans]
     
     for i, tup in enumerate(plans):
         plan, _ = tup
         current_permutation = []
-        for i in range(0, num_shuffled_plans):
+        for j in range(0, num_shuffled_plans):
             observations = process_hpso_from_spec(plan)
             if not observations:
                 RuntimeError('Observations do not exist!')
@@ -77,7 +79,7 @@ def create_observing_plans(
             else:
                 LOGGER.debug("Creating non-concurrent observing plan", concurrent_demand)
                 current_permutation.append(create_basic_plan(observations))
-        all_plans.append(current_permutation)
+        all_plans.append({'obs_plan_id':uuid.uuid4().hex, 'plan_permutation':current_permutation})
     return all_plans
 
 
@@ -113,7 +115,7 @@ def create_config(
         days=1,
         telescope='low',
         infrastructure='parametric',
-        output_dir: Path='.',
+        output_dir: Path=Path.cwd(),
         imaging_graph_base='prototype',
         timestep='seconds',
         overwrite=False,
@@ -195,9 +197,9 @@ def create_config(
     all_plans = create_observing_plans(
         days,
         telescope,
-        num_shuffled_plans=1, 
+        num_shuffled_plans=kwargs.get('num_shuffled_plans', 1),
         concurrent_demand=kwargs.get('concurrent_demand', 0),
-        number_of_plans=kwargs.get('number_of_plans',1)
+        num_of_plans=kwargs.get('num_of_plans',1)
     )
 
     LOGGER.debug("Plans: %s", all_plans)
@@ -209,7 +211,10 @@ def create_config(
         file_path.parent.mkdir(parents=True)
     base_workflow_graphs = get_base_graph_paths(imaging_graph_base)
     for i, shuffled_plans in enumerate(all_plans):
-        for j, plan in enumerate(shuffled_plans):
+        j = 0
+        obs_plan_id = shuffled_plans.get('obs_plan_id')
+        plans = shuffled_plans.get('plan_permutation')
+        for j, plan in enumerate(plans):
             cfg_file_path = file_path.parent / (file_path.name + f"_{i}-{ascii_letters[j]}" + ".json")
             final_instrument_config.append((
                 cfg_file_path,
@@ -222,7 +227,9 @@ def create_config(
                     system_sizing,
                     cluster_dict,
                     base_workflow_graphs,
+                    obs_plan_id=obs_plan_id
             )))
+            j+=1
 
     LOGGER.info(f"Producing buffer config")
     final_buffer_config = hto.create_buffer_config(

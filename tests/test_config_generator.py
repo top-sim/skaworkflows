@@ -50,7 +50,7 @@ class TestConfigGeneration(unittest.TestCase):
         #                           "DPrepB": "scatter", "DPrepC": "scatter",
         #                           "DPrepD": "scatter"}
 
-        self.low_path_str = Path('tmp')
+        self.low_path_str = Path('/tmp/skaworkflows/')
         # Generate configuration with prototype SKA Workflow
 
     # def tearDown(self):
@@ -61,11 +61,11 @@ class TestConfigGeneration(unittest.TestCase):
             days=0.1,
             output_dir=self.low_path_str,
             imaging_graph_base="prototype",
-            timestep='seconds', number_of_plans=1)
+            timestep='seconds', num_of_plans=1)
         self.assertTrue(Path(config[0]).exists())
 
     def TestConfigGenerationMid(self):
         pass
 
     def tearDown(self):
-        shutil.rmtree('tmp')
+        shutil.rmtree('/tmp/skaworkflows/')

@@ -265,6 +265,10 @@ def generate_instrument_config(
             "observations": telescope_observations,
         }
     }
+
+    if kwargs.get("obs_plan_id", None):
+        telescope_dict["telescope"]["obs_plan_id"] = kwargs.get("obs_plan_id")
+
     return telescope_dict
 
 
