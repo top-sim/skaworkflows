@@ -61,10 +61,12 @@ def create_observing_plans(
     plans = generate_multiple_plans('low',
                                     days,
                                     percent_experiments=percent_experiments)
+    print(f"Number of observation permutations generated: {len(plans)}")
     if num_of_plans > 0:
         plans = random.sample(plans, min(num_of_plans, len(plans)))
         # plans = plans[:num_of_plans]
     
+    print(f"Number of observation permutations selected for this run: {len(plans)}")
     for i, tup in enumerate(plans):
         plan, _ = tup
         current_permutation = []
@@ -76,10 +78,12 @@ def create_observing_plans(
             if concurrent_demand > 0 :
                 LOGGER.debug("Creating concurrent observing plan with concurrent demand of: %d", concurrent_demand)
                 current_permutation.append(create_concurrent_plan(observations,telescope.max_stations, concurrent_demand))
+                print(f"Number of observations in permutation {len(current_permutation[0])}")
             else:
                 LOGGER.debug("Creating non-concurrent observing plan", concurrent_demand)
                 current_permutation.append(create_basic_plan(observations))
         all_plans.append({'obs_plan_id':uuid.uuid4().hex, 'plan_permutation':current_permutation})
+    print(f"Finished producing all plans: {len(all_plans)}")
     return all_plans
 
 
@@ -216,6 +220,7 @@ def create_config(
         plans = shuffled_plans.get('plan_permutation')
         for j, plan in enumerate(plans):
             cfg_file_path = file_path.parent / (file_path.name + f"_{i}-{ascii_letters[j]}" + ".json")
+            LOGGER.info("Config: %d/%d",i+1, len(all_plans))
             final_instrument_config.append((
                 cfg_file_path,
                 hto.generate_instrument_config(
