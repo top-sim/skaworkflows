@@ -26,6 +26,8 @@ from skaworkflows.common import Telescope
 from skaworkflows.observation.observation import Observation, process_hpso_from_spec, create_basic_plan, \
     create_concurrent_plan
 from skaworkflows.observation.permutations import allocate_observations, create_hpso_counts_from_ratios
+from skaworkflows.observation.statistics import observation_weighting
+
 
 def create_one_day_plan():
     """
@@ -82,6 +84,18 @@ class CreateObservationPlanTimeAllocations(unittest.TestCase):
                 self.assertEqual(start + so.duration, o.start)
                 start = start + so.duration
                 so = o
+
+    def test_multiple_plans_factor(self):
+        plan = create_one_day_plan()
+        telescope = Telescope("low")
+        plans = []
+        for i in range(50):
+            observation_plan = process_hpso_from_spec(plan)
+            plans.append(create_concurrent_plan(observation_plan, telescope.max_stations,
+                                64, seed=i))
+        weights = [observation_weighting(plan) for plan in plans]
+        print(f"{min(weights)=}")
+        print(f"{max(weights)=}")
 
 
 @unittest.skip("Legacy test cases")

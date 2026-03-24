@@ -52,6 +52,18 @@ def run():
                           num_shuffled_plans=3,
                           concurrent_demand=64)
 
+def create_maximal_plans():
+    """
+    Generate maximal plans for selected SKA-Low and SKA-Mid HPSOs.
+
+    This is how we tested the workflows on their own.
+
+    Returns
+    -------
+    Two sets of plans and workflows, one for SKA-Low and one for SKA-Mid.
+    """
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Tool to create plans using either a custom config or an experiment configuration."

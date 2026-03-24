@@ -27,6 +27,7 @@ from pathlib import Path
 import skaworkflows.common as common
 import skaworkflows.workflow.observations_to_workflows as hto
 from skaworkflows.common import SKALow, Telescope
+from skaworkflows.observation.statistics import observation_weighting
 
 from skaworkflows.observation.observation import (
     process_hpso_from_spec, create_basic_plan, create_concurrent_plan)
@@ -37,6 +38,7 @@ from skaworkflows.hpconfig.specs.sdp import (
 from skaworkflows.observation.permutations import generate_multiple_plans
 
 LOGGER = logging.getLogger(__name__)
+MAX_SHUFFLED_PLANS = 100
 
 LOGGER.setLevel('DEBUG')
 
@@ -65,25 +67,40 @@ def create_observing_plans(
     if num_of_plans > 0:
         plans = random.sample(plans, min(num_of_plans, len(plans)))
         # plans = plans[:num_of_plans]
-    
+
     print(f"Number of observation permutations selected for this run: {len(plans)}")
     for i, tup in enumerate(plans):
         plan, _ = tup
         current_permutation = []
-        for j in range(0, num_shuffled_plans):
+
+        weighted_plans = []
+        # Generate MAX_SHUFFLED_PLANS that have different variations of the same Observation specs
+        # This helps us select an even range of plan weights.
+        random.seed(i)
+        concurrent_observation_probability = random.random()
+        for j in range(MAX_SHUFFLED_PLANS):
             observations = process_hpso_from_spec(plan)
-            if not observations:
-                RuntimeError('Observations do not exist!')
-            LOGGER.debug(f"Creating an observation plan with {observations}")
-            if concurrent_demand > 0 :
-                LOGGER.debug("Creating concurrent observing plan with concurrent demand of: %d", concurrent_demand)
-                current_permutation.append(create_concurrent_plan(observations,telescope.max_stations, concurrent_demand))
-                print(f"Number of observations in permutation {len(current_permutation[0])}")
+            if concurrent_demand > 0:
+                LOGGER.debug("Creating concurrent observing plan with concurrent demand: %d", concurrent_demand)
+                weighted_plans.append(create_concurrent_plan(observations, telescope.max_stations,
+                                                             64,
+                                                             concurrent_observation_probability=concurrent_observation_probability,
+                                                             seed=j))
+                print(f"Number of observations in permutation {len(weighted_plans[0])}")
             else:
-                LOGGER.debug("Creating non-concurrent observing plan", concurrent_demand)
-                current_permutation.append(create_basic_plan(observations))
-        all_plans.append({'obs_plan_id':uuid.uuid4().hex, 'plan_permutation':current_permutation})
-    print(f"Finished producing all plans: {len(all_plans)}")
+                LOGGER.debug("Creating non-concurrent observing plan")
+                weighted_plans.append(create_basic_plan(observations))
+                print(f"Number of observations in permutation {len(weighted_plans[0])}")
+
+        plan_weights = [(p, observation_weighting(p)) for p in weighted_plans]
+        plan_weights.sort(key=lambda x: x[1])
+        # Get equally spaced indices between 0 and MAX_SHUFFLED_PLANS
+        indices = [round(i * (MAX_SHUFFLED_PLANS - 1) / (num_shuffled_plans - 1)) for i in range(num_shuffled_plans)]
+        selected_plans = [plan_weights[i][0] for i in indices]
+
+        all_plans.append({'obs_plan_id':uuid.uuid4().hex, 'plan_permutation':selected_plans})
+
+    LOGGER.info("Finished producing %d plans",  len(all_plans))
     return all_plans
 
 
@@ -113,6 +130,16 @@ def get_base_graph_paths(workflow_graph_map: str = "prototype"):
                   "DPrepC": workflow_graph_map,
                   "DPrepD": workflow_graph_map,
                   "Pulsar": "pulsar"}
+
+def create_maximal_config(
+        infrastructure='parametric',
+        output_dir: Path=Path.cwd(),
+        imaging_graph_base='prototype',
+        timestep='seconds',
+        overwrite=False,
+        **kwargs
+):
+    pass
 
 
 def create_config(

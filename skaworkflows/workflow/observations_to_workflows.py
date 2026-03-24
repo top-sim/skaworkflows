@@ -748,6 +748,11 @@ def retrieve_component_cost(observation, workflow, component, component_sizing):
     baseline = min(list(hpso_sizing["Baseline"]),
                    key=lambda x: abs(x - observation.baseline))
 
+    if baseline != observation.baseline:
+        LOGGER.debug(
+            "Specified baseline: %d / Chosen baseline: %d",
+            observation.baseline, baseline
+        )
     obs_frame = component_sizing[
         (component_sizing["hpso"] == observation.hpso)
         & (component_sizing["Baseline"] == baseline)

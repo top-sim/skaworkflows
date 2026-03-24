@@ -3,15 +3,18 @@ import unittest
 
 import pandas as pd
 
-from skaworkflows.common import SKALOW_SMALL_PAIRS, SKALOW_LARGE_PAIRS, SKALOW_MED_PAIRS
+from skaworkflows.common import (SKALOW_SMALL_PAIRS,
+                                 SKALOW_LARGE_PAIRS,
+                                 SKALOW_MED_PAIRS,
+                                 MAX_TEL_DEMAND_LOW,
+                                 MAX_TEL_DEMAND_MID)
 from skaworkflows.observation.permutations import allocate_observations, \
     create_hpso_counts_from_ratios, generate_multiple_plans
 from skaworkflows.observation.permutations import (
     get_ratio_multiplier_from_seconds, values_to_nparray,
     make_ternary_experiment)
 from skaworkflows.observation.parameters import load_observation_defaults
-
-from skaworkflows.observation.observation import process_hpso_from_spec
+from skaworkflows.observation.observation import process_hpso_from_spec, create_basic_plan
 from skaworkflows.observation.statistics import count_observation_instances
 
 DAY_SECONDS = 24 * 3600
@@ -148,6 +151,24 @@ class TestPermuteObservationPlans(unittest.TestCase):
             self.assertEqual(expected_counts['large'], actual_counts['large'])
 
             prev = plan
+
+class TestMaximalIndividual(unittest.TestCase):
+
+    def test_low_maximal(self):
+        low_observation_defaults = load_observation_defaults("skalow")
+        # Baseline/station pairs
+        plan = {hpso:[(items['baseline'], MAX_TEL_DEMAND_LOW)] for hpso, items in low_observation_defaults["hpsos"].items()}
+        observations = process_hpso_from_spec(plan)
+        plan = create_basic_plan(observations)
+        pass
+
+    def test_mid_maximal(self):
+        mid_observation_defaults = load_observation_defaults("skamid")
+        # Baseline/station pairs
+        plan = {hpso:[(items['baseline'], MAX_TEL_DEMAND_MID)] for hpso, items in mid_observation_defaults["hpsos"].items()}
+        observations = process_hpso_from_spec(plan, telescope='mid')
+        plan = create_basic_plan(observations)
+        pass
 
 class TestPlanShuffle(unittest.TestCase):
 

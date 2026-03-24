@@ -22,10 +22,11 @@ from dataclasses import dataclass, asdict
 from pprint import pformat
 from string import ascii_letters
 
-from skaworkflows.common import Telescope, FIXED_LOW_CHANNELS_DEMAND
+from skaworkflows.common import Telescope, FIXED_LOW_CHANNELS_DEMAND, MAX_LOW_CHANNELS, MAX_MID_CHANNELS
 from skaworkflows.observation.parameters import load_observation_defaults
 
 LOGGER = logging.getLogger(__name__)
+CONCURRENT_PROBABILITY = 0.5
 
 
 @dataclass
@@ -182,7 +183,7 @@ class Observation:
         }
 
 
-def process_hpso_from_spec(hpsos: dict, telescope='low')->list:
+def process_hpso_from_spec(hpsos: dict, telescope='low', maximal=True)->list:
     """
     Pass a JSON dictionary of observations we want to process
 
@@ -201,7 +202,12 @@ def process_hpso_from_spec(hpsos: dict, telescope='low')->list:
     final_obs = []
     telescope = Telescope(telescope)
     LOGGER.info("Translating HPSO permutations to observing plan")
-    low_observation_defaults = load_observation_defaults("skalow")
+    if telescope.name == "low":
+        observation_defaults = load_observation_defaults("skalow")
+        channel_demand = MAX_LOW_CHANNELS if maximal else FIXED_LOW_CHANNELS_DEMAND
+    else:
+        observation_defaults = load_observation_defaults("skamid")
+        channel_demand = MAX_MID_CHANNELS if maximal else FIXED_LOW_CHANNELS_DEMAND
     offset = 0
     for hpso, items in hpsos.items():
         counter = dict(Counter(items))
@@ -210,10 +216,10 @@ def process_hpso_from_spec(hpsos: dict, telescope='low')->list:
             obslist = create_observation_from_hpso(
                 count=count,
                 hpso=hpso,
-                duration=low_observation_defaults["hpsos"][hpso]["duration"],
-                workflows=low_observation_defaults["hpsos"][hpso]["workflows"],
+                duration=observation_defaults["hpsos"][hpso]["duration"],
+                workflows=observation_defaults["hpsos"][hpso]["workflows"],
                 demand=stations,
-                channels=FIXED_LOW_CHANNELS_DEMAND * telescope.channels_multiplier,
+                channels=channel_demand * telescope.channels_multiplier,
                 workflow_parallelism=stations,
                 baseline=baseline,
                 # *1000, # convert to meters
@@ -323,16 +329,14 @@ def create_basic_plan(hpsos: list, shuffle=True,
     return plan
 
 
-def create_concurrent_plan(hpsos: list, max_stations: int, concurrent_demand_limit: int,
-                           seed=1):
+def create_concurrent_plan(hpsos: list, max_stations: int, concurrent_demand_limit: int, concurrent_observation_probability=1, seed=1):
     """
     Randomly shuffle the observations to create a sequence of HPSOS of different
     sizes, _with_ concurrent observations.
 
-
     hpsos : list
         List of :py:obj:`~pipelines.observations_to_workflows.Observations`
-
+[
     max_stations: int
         The maximum percentage of the telescope to be occupied at any given
         time. For some simulations, it may be necessary to only 'simulate' a
@@ -348,7 +352,6 @@ def create_concurrent_plan(hpsos: list, max_stations: int, concurrent_demand_lim
         and so promote these as the range of compute required for real-time
         execution).
     """
-    random.seed(seed)
     plan = []
 
     LOGGER.info("Creating a concurrent plan...")
@@ -356,13 +359,16 @@ def create_concurrent_plan(hpsos: list, max_stations: int, concurrent_demand_lim
     finish = -1
     LOGGER.debug("%s", pformat(hpsos, indent=4, depth=1))
     observations = [o for o in hpsos]
+    random.seed(seed)
     random.shuffle(observations)
+    # We want the shuffle to be random but the number of random observations to be the same
     while observations:
         for observation in observations:
             stations = observation.stations
             num_concurrent = 1
-            if stations <= concurrent_demand_limit:
-                num_concurrent = int(max_stations / stations)
+            if (stations <= concurrent_demand_limit
+                    and concurrent_observation_probability < CONCURRENT_PROBABILITY):
+                num_concurrent = int(max_stations / stations) // 2
 
             concurrent_observations = [copy.deepcopy(observation) for i in range(num_concurrent)]
             for i, co in enumerate(concurrent_observations):

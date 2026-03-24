@@ -181,7 +181,8 @@ class Workflows:
 # Amount of the telescope an observation can request
 MAX_TEL_DEMAND_LOW = 512
 MAX_TEL_DEMAND_MID = 197
-MAX_CHANNELS = 512
+MAX_MID_CHANNELS = 512
+MAX_LOW_CHANNELS = 256
 FIXED_LOW_CHANNELS_DEMAND = 128
 # System sizing data paths
 DATA_PANDAS_SIZING = Path(str(imp_res.files("skaworkflows.data.pandas_sizing")))
