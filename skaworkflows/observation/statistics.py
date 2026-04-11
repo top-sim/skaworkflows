@@ -56,14 +56,14 @@ def get_observation_weight(obs):
     baseline = obs.baseline
     stations = obs.stations
     if (baseline, stations) in SKALOW_LARGE_PAIRS:
-        return 8  # 3^2
+        return 8  # 2^2
     elif (baseline, stations) in SKALOW_MED_PAIRS:
         return 4  # 2^2
     else:
-        return 2  # 1^2
+        return 2  # 2^1
 
 
-def observation_weighting(plan: list):
+def observation_weighting(plan: list, post_run=False):
     """
     This metric determines how far apart 'large' observations are from small
     this observaitons in a given plan, based on the small/medium/large pairs

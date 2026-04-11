@@ -79,6 +79,13 @@ def create_observing_plans(
         random.seed(i)
         concurrent_observation_probability = random.random()
         for j in range(MAX_SHUFFLED_PLANS):
+            # It's important to note here that we use 2 different seed values because we want the concurrent observation
+            # probability for each set of observations to be the same, so the composition of each plan is the same.
+            # That is to say, the number of each concurrent HPSO permutations is the same.
+
+            # However, when creating shuffled plans, we want _different_ permutations of the same set of observations,
+            # so we use the j counter to change the seed for each shuffled plan.
+            # This is why one seed is set above this loop, and another seed passed to plan creation.
             observations = process_hpso_from_spec(plan)
             if concurrent_demand > 0:
                 LOGGER.debug("Creating concurrent observing plan with concurrent demand: %d", concurrent_demand)
@@ -86,10 +93,10 @@ def create_observing_plans(
                                                              64,
                                                              concurrent_observation_probability=concurrent_observation_probability,
                                                              seed=j))
-                print(f"Number of observations in permutation {len(weighted_plans[0])}")
+                LOGGER.debug(f"Number of observations in permutation %d", len(weighted_plans[0]))
             else:
                 LOGGER.debug("Creating non-concurrent observing plan")
-                weighted_plans.append(create_basic_plan(observations))
+                weighted_plans.append(create_basic_plan(observations, seed=j))
                 print(f"Number of observations in permutation {len(weighted_plans[0])}")
 
         plan_weights = [(p, observation_weighting(p)) for p in weighted_plans]
@@ -98,7 +105,11 @@ def create_observing_plans(
         indices = [round(i * (MAX_SHUFFLED_PLANS - 1) / (num_shuffled_plans - 1)) for i in range(num_shuffled_plans)]
         selected_plans = [plan_weights[i][0] for i in indices]
 
-        all_plans.append({'obs_plan_id':uuid.uuid4().hex, 'plan_permutation':selected_plans})
+        all_plans.append(
+            {'obs_plan_id':uuid.uuid4().hex,
+             'plan_permutation':selected_plans,
+             'plan_weights':[plan_weights[i][1] for i in indices]}
+        )
 
     LOGGER.info("Finished producing %d plans",  len(all_plans))
     return all_plans

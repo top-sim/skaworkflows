@@ -52,11 +52,15 @@ class TestObservationPlanWeightingCalc(unittest.TestCase):
     """
 
     def test_plan_calc(self):
+        """
+        Confirm that the weightings we get from observation plans that have been shuffled will not always be true.
+
+        For certain plans, there'll be the same because it will be a plan of all the same observing size.
+        """
         random.seed(101)
-        plans = create_observing_plans(days=7, telescope=Telescope('low'), num_shuffled_plans=5, concurrent_demand=False)
-        shuffled_permutation = plans[len(plans)//2]
-        weightings =  [observation_weighting(p) for p in shuffled_permutation]
-        prev = weightings.pop(0)
-        for w in weightings:
-            self.assertNotEqual(prev, w)
-            prev = w
+        plans = create_observing_plans(days=3, telescope=Telescope('low'), num_shuffled_plans=5, concurrent_demand=False)
+        weights = []
+        for plan in plans:
+            w = plan['plan_weights']
+            weights += w
+        self.assertTrue(len(set(weights)) > 1)

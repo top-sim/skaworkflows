@@ -84,6 +84,51 @@ class Observation:
     Helper-class to store information for when generating observation schedule
     """
 
+    @classmethod
+    def from_dict(cls, spec_dict, telescope='low'):
+        """
+        Create an Observation instance from a dictionary specification.
+
+        Parameters
+        ----------
+        name : str
+            The observation name (typically the HPSO identifier)
+        spec_dict : dict
+            Dictionary containing observation parameters with keys:
+            - workflow: str
+            - ingest_demand: int
+            - duration: int
+            - channels: int
+            - workflow_parallelism: int
+            - demand: int
+            - baseline: float
+            - workflow_type: list
+            - graph_type: list
+        telescope : str
+            Telescope name (default: 'low')
+
+        Returns
+        -------
+        Observation
+            New Observation instance
+        """
+        # Extract HPSO name from the observation name (before underscore if present)
+        name = spec_dict.get('name')
+        hpso = name.split('_')[0] if '_' in name else name
+
+        return cls(
+            name=name,
+            hpso=hpso,
+            workflows=spec_dict.get('workflow_type', []),
+            demand=spec_dict.get('demand', spec_dict.get('ingest_demand')),
+            duration=spec_dict.get('duration'),
+            channels=spec_dict.get('channels'),
+            workflow_parallelism=spec_dict.get('workflow_parallelism'),
+            baseline=spec_dict.get('baseline'),
+            telescope=telescope,
+            start=spec_dict.get('start', 0)
+        )
+
     def __init__(
             self,
             name,
@@ -95,6 +140,7 @@ class Observation:
             workflow_parallelism,
             baseline,
             telescope,
+            start=0
     ):
         """
         Parameters
@@ -120,7 +166,7 @@ class Observation:
         self.telescope = telescope
         self.hpso = hpso
         self.stations = demand
-        self.start = 0
+        self.start = start
         self.duration = duration
         self.workflows = workflows
         self.channels = channels
@@ -182,6 +228,8 @@ class Observation:
             "data_product_rate": self.ingest_data_rate,
         }
 
+
+     
 
 def process_hpso_from_spec(hpsos: dict, telescope='low', maximal=True)->list:
     """
@@ -276,7 +324,7 @@ def create_observation_from_hpso(
     return obslist
 
 def create_basic_plan(hpsos: list, shuffle=True,
-                      existing_plan=None):
+                      existing_plan=None, seed=1):
     """
     Randomly shuffle the observations to create a sequence of HPSOS of different
     sizes.
@@ -311,6 +359,7 @@ def create_basic_plan(hpsos: list, shuffle=True,
     else:
         observations = [o for o in hpsos]
     if shuffle:
+        random.seed(seed)
         random.shuffle(observations)
 
     while observations:
