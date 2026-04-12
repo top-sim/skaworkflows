@@ -21,25 +21,6 @@ from pathlib import Path
 
 from skaworkflows import config_generator
 
-HPSO_PARAMETERS = {
-    "nodes": 256,
-    "infrastructure": "parametric",
-    "telescope": "low",
-    "hpsos": [
-        {
-            "count": 2,
-            "hpso": "hpso01",
-            "demand": 128,
-            "duration": 18000,
-            "workflows": [
-                "ICAL", "DPrepA"],
-            "channels": 16384,
-            "workflow_parallelism": 64,
-            "baseline": 65000.0,
-            "telescope": "low"
-        },
-    ]
-}
 
 class TestConfigGeneration(unittest.TestCase):
 
@@ -51,10 +32,9 @@ class TestConfigGeneration(unittest.TestCase):
         #                           "DPrepD": "scatter"}
 
         self.low_path_str = Path('/tmp/skaworkflows/')
+        self.low_path_str.mkdir(exist_ok=True)
         # Generate configuration with prototype SKA Workflow
 
-    # def tearDown(self):
-    #     shutil.rmtree(self.low_path_str)
 
     def test_config_generation_low(self):
         config = config_generator.create_config(

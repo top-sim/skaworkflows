@@ -97,12 +97,12 @@ def create_observing_plans(
             else:
                 LOGGER.debug("Creating non-concurrent observing plan")
                 weighted_plans.append(create_basic_plan(observations, seed=j))
-                print(f"Number of observations in permutation {len(weighted_plans[0])}")
+                LOGGER.debug(f"Number of observations in permutation %d", len(weighted_plans[0]))
 
         plan_weights = [(p, observation_weighting(p)) for p in weighted_plans]
         plan_weights.sort(key=lambda x: x[1])
         # Get equally spaced indices between 0 and MAX_SHUFFLED_PLANS
-        indices = [round(i * (MAX_SHUFFLED_PLANS - 1) / (num_shuffled_plans - 1)) for i in range(num_shuffled_plans)]
+        indices = [round(i * (MAX_SHUFFLED_PLANS - 1) / max(1,(num_shuffled_plans - 1))) for i in range(num_shuffled_plans)]
         selected_plans = [plan_weights[i][0] for i in indices]
 
         all_plans.append(
