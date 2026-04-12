@@ -32,8 +32,6 @@ import json
 import logging
 import math
 import os
-import random
-import sys
 
 import pandas as pd
 import networkx as nx
@@ -42,408 +40,20 @@ from typing import List, Dict
 from pathlib import Path
 
 import skaworkflows.workflow.eagle_daliuge_translation as edt
+from skaworkflows.observation.observation import Observation
 
 from skaworkflows.common import (
     SI,
     create_workflow_header,
     CONT_IMG_MVP_GRAPH,
-BASIC_PROTOTYPE_GRAPH,
-    SCATTER_GRAPH,
+    BASIC_PROTOTYPE_GRAPH,
+    PARALLEL_GRAPH,
     PULSAR_GRAPH,
     BYTES_PER_VIS,
     Telescope
 )
 
 LOGGER = logging.getLogger(__name__)
-
-
-def process_hpso_from_spec(hpsos: dict):
-    """
-    Pass a JSON dictionary of observations we want to process
-
-    Easier to edit and cleaner to generate multiple observations (doesn't
-    rely on
-
-    Parameters
-    ----------
-    path
-
-    Returns
-    -------
-
-    """
-    final_obs = []
-    # with path.open() as fp:
-    #     hpsos = json.load(fp)
-
-    offset = 0
-    for h in hpsos["hpsos"]:
-        LOGGER.debug(f"{h=}")
-        obslist = create_observation_from_hpso(**h, offset=offset)
-        offset += len(obslist)
-        final_obs += obslist
-    return final_obs
-
-
-def create_observation_from_hpso(
-        count,
-        hpso,
-        workflows,
-        demand,
-        duration,
-        channels,
-        workflow_parallelism,
-        baseline,
-        telescope,
-        offset):
-    """
-     objects store the number of observations that willappear
-    in the mid-term plan
-
-
-    Parameters
-    -----------
-
-    offset : int
-        id offset used for when unrolling multiple observations of same hpso
-        with different specs (e.g. duration or channels).
-
-    Returns
-    -------
-
-    """
-    obslist = []
-    for i in range(count):
-        obs = Observation(
-            f"{hpso}_{i + offset}",
-            hpso,
-            workflows,
-            demand,
-            duration,
-            channels,
-            workflow_parallelism,
-            baseline,
-            telescope,
-        )
-        obslist.append(obs)
-    return obslist
-
-
-class Observation:
-    """
-    Helper-class to store information for when generating observation schedule
-    """
-
-    def __init__(
-            self,
-            name,
-            hpso,
-            workflows,
-            demand,
-            duration,
-            channels,
-            workflow_parallelism,
-            baseline,
-            telescope,
-    ):
-        """
-        Parameters
-        -----------
-        name : str
-            The name of the observation
-        hpso : str
-            The high-priority science project the observation is associated with
-        duration : int
-            The duration of the observation in minutes
-        workflows : list()
-            List of paths to imaging pipelines for process the observation data
-        channels : int
-            Number of channels that are being observed. This is to search the
-            'database' of channels
-        workflow_parallelism : int
-            The nunber of averaged channels expected to make up a workflow.
-            This is used as a proxy for the parallelism of the workflow
-        baseline: float
-            The length of the baseline used in observation.
-        """
-        self.name = name
-        self.telescope = telescope
-        self.hpso = hpso
-        self.demand = demand
-        self.start = 0
-        self.duration = duration
-        self.workflows = workflows
-        self.channels = channels
-        self.workflow_parallelism = workflow_parallelism
-        self.baseline = baseline
-        self.workflow_path = None
-        self.planned = False
-        self.ingest_compute_demand = None
-        self.ingest_flop_rate = None
-        self.ingest_data_rate = None
-
-    def __hash__(self):
-        """
-        Construct a hash of observation parameters to determine if one is
-        equivalent to another
-
-        If an observation has the same:
-        * HPSO
-        * Demand
-        * Duration
-        * Baseline
-
-        It is the same workflow
-
-        Returns
-        -------
-
-        """
-        return hash(
-            self.name + (str(self.demand + self.workflow_parallelism + int(self.baseline)))
-        )
-
-    def __repr__(self):
-        return self.name
-
-    def __eq__(self, other):
-        return self.__hash__() == other.__hash__()
-
-    def add_start_time(self, start):
-        self.start = start
-
-    def to_json(self):
-        """
-        Produce TOPSIM compatible JSON dictionary
-
-        Returns
-        -------
-        final_dict : dict
-            Dictionary of components
-        """
-
-        return {
-            "name": self.name,
-            "start": self.start,
-            "duration": self.duration,
-            "instrument_demand": self.demand,
-            "type": self.hpso,
-            "data_product_rate": self.ingest_data_rate,
-        }
-
-
-def create_observation_plan(hpsos, max_telescope_usage):
-    """
-    Given a sequence of HPSOs that are present in the system sizing
-    dictionary, generate a plan. of observations from which we can create
-    telescope config.
-
-
-    Parameters
-    ----------
-    hpsos : list
-        List of :py:obj:`~pipelines.hpso_to_observations.Observations`
-
-    max_telescope_usage: float
-        The maximum percentage of the telescope to be occupied at any given
-        time. For some simulations, it may be necessary to only 'simulate' a
-        smaller demand on the telescope.
-
-    Notes
-    -----
-    Observation scheduling is normally a challenging process and quite
-    bespoke. The observation schedules we generate are therefore going to be
-    made according to the following heuristic:
-
-        * Start with the largest observation (size) in the list
-            * This is tie broken on duration
-        * If there are any more observations that fit on the telescope at the
-        the same time, we add these to the plan too.
-        * The longest observation should be followed by at least one small
-        observation
-        * observations that are small are selected until they reach the limit
-        * at least 2 smaller observed until the next larger observations are
-        selected
-
-
-    Returns
-    -------
-    plan : list()
-        A list of strings that details the order of HPSOs that will be running
-        for a given plan. These HPSOs will be derived from what is in the
-        provided system-sizing dictionary.
-
-        These strings are HPSOs - we need to link them to a pipeline as well
-        (RCAL/Ingest we can consume together as 'real-time' pipelines,
-        and so promote these as the range of compute required for real-time
-        execution).
-    """
-
-    plan = []
-
-    current_tel_usage = 0
-    loop_count = 0
-    start = 0
-    finish = -1
-    LOGGER.debug(f"{hpsos=}")
-    observations = [o for o in hpsos]
-    while observations:
-        LOGGER.debug("Planning observations")
-        observations = sorted(
-            observations, key=lambda obs: (obs.baseline, obs.duration)
-        )
-        if (len(observations) > 1) and (loop_count % len(observations) == 0):
-            largest_observation = observations[-1]
-            LOGGER.debug(f"{largest_observation=}")
-            if finish == -1:  # Then we are the first with this time
-                # plan.pop()
-                largest_observation.add_start_time(start)
-                largest_observation.planned = True
-                plan.append(largest_observation)
-                current_tel_usage += largest_observation.demand
-                # observations.remove(largest_observation)
-                loop_count += 1
-                finish = start + largest_observation.duration
-            else:  # We have to check the telescope capacity
-                if current_tel_usage + largest_observation.demand > max_telescope_usage:
-                    loop_count += 1
-                else:
-                    largest_observation.add_start_time(start)
-                    largest_observation.planned = True
-                    plan.append(largest_observation)
-                    current_tel_usage += largest_observation.demand
-                    # observations.remove(largest_observation)
-                    loop_count += 1
-                    finish = start + largest_observation.duration
-
-        else:  # we are not looking to add the largest:
-            # See if we can squeeze in a few observations
-            for observation in observations:
-                LOGGER.debug(f"{observation=}")
-                if observation.planned:
-                    continue
-                if current_tel_usage + observation.demand <= max_telescope_usage:
-                    observation.add_start_time(start)
-                    observation.planned = True
-                    plan.append(observation)
-                    LOGGER.debug(f"{plan=}")
-                    current_tel_usage += observation.demand
-                    # observations.remove(observation)
-                    loop_count += 1
-                    if finish < start + observation.duration:
-                        finish = start + observation.duration
-            start = finish
-            finish = -1
-            current_tel_usage = 0
-        observations = [
-            observation for observation in observations if not observation.planned
-        ]
-
-    LOGGER.debug(f"{plan=}")
-    return plan
-
-
-def create_basic_plan(hpsos, max_telescope_usage, with_concurrent=False,
-                      existing_plan=None):
-    plan = []
-
-    current_tel_usage = 0
-    loop_count = 0
-    start = 0
-    finish = -1
-    LOGGER.debug(f"{hpsos=}")
-    if existing_plan:
-        observations = [o for o in existing_plan]
-    else:
-        observations = [o for o in hpsos]
-    random.shuffle(observations)
-    while observations:
-        if with_concurrent:
-            for observation in observations:
-                if observation.demand > max_telescope_usage:
-                    LOGGER.warning("Observation demand exceeds telescope; review config.")
-                    sys.exit(1)
-                LOGGER.debug(f"{observation=}")
-                if observation.planned:
-                    continue
-                if current_tel_usage + observation.demand <= max_telescope_usage:
-                    observation.add_start_time(start)
-                    observation.planned = True
-                    plan.append(observation)
-                    LOGGER.debug(f"{plan=}")
-                    current_tel_usage += observation.demand
-                    if finish < start + observation.duration:
-                        finish = start + observation.duration
-            start = finish
-            finish = -1
-            current_tel_usage = 0
-        else:
-            for observation in observations:
-                observation.add_start_time(start)
-                observation.planned = True
-                plan.append(observation)
-                LOGGER.debug(f"{plan=}")
-                current_tel_usage += max_telescope_usage
-                if finish < start + observation.duration:
-                    finish = start + observation.duration
-                start = finish
-                finish = -1
-            # current_tel_usage = 0
-        observations = [
-            observation for observation in observations if not observation.planned
-        ]
-
-    return plan
-
-
-# def reset_observation_plan_times(observation_plan: list, with_concurrent=False):
-
-
-import copy
-
-
-def alternate_plan_composition(observation_plan: list, max_telescope_usage,
-                               with_concurrent=False):
-    """
-    Pick the largest ¨n" observations, where n is passed as a parameter
-    create two lists, one without the observation, and one with only the observation
-    iterate through the list, inserting the observation at each index throughout the
-    plan.
-
-    Parameters
-    ----------
-    observation_plan
-
-    Returns
-    -------
-
-    """
-    # TODO use the shuffle function
-    lol = []
-    lol.append(copy.deepcopy(observation_plan))
-    largest = sorted(observation_plan, key=lambda x: (x.demand, x.channels))[-1]
-    observation_plan = [o for o in observation_plan if o != largest]
-    for i in range(1, len(observation_plan) + 1):
-        new_plan = copy.deepcopy(observation_plan)
-        large_copy = copy.deepcopy(largest)
-        new_plan.insert(i, large_copy)
-        # reset plan
-        for o in new_plan:
-            o.planned = False
-            o.start = 0
-        new_plan = create_basic_plan(
-            hpsos=None,
-            max_telescope_usage=max_telescope_usage,
-            with_concurrent=with_concurrent,
-            existing_plan=new_plan)
-        if new_plan not in lol and i%3 == 0:
-            lol.append(new_plan)
-
-    with open("/tmp/plans.txt", "w") as fp:
-        for l in lol:
-            fp.write(f"{str(l)}\n")
-
-    return lol
 
 
 def create_buffer_config(itemised_spec):
@@ -561,7 +171,7 @@ def generate_instrument_config(
     compute of an observation. Based on the parametric model, both
     ingest and FLOPs are functions of frequency channels and the number of
     stations. For an :py:object:`skaworkflows.workflow.hpso_to_workflow
-    .Observation`, the stations used is observation.demand.
+    .Observation`, the stations used is observation.stations.
 
     Parameters
     ----------
@@ -574,11 +184,6 @@ def generate_instrument_config(
     system_sizing
     cluster
     base_graph_paths
-    data
-    data_distribution: str
-        Describes where data is allocated on the workflow.
-        "standard" will apply data to tasks only.
-        "edges" will apply data to both tasks and esges.
 
 
     Returns 
@@ -643,7 +248,7 @@ def generate_instrument_config(
             "duration": o.duration,
             "channels": o.channels,
             "workflow_parallelism": o.workflow_parallelism,
-            "demand": o.demand,
+            "demand": o.stations,
             "baseline": o.baseline,
             "workflow_type": list(set(base_graph_paths.values())), # TODO convert to set of strings?
             "graph_type": list(set(base_graph_paths.keys())), # TODO As above
@@ -660,6 +265,10 @@ def generate_instrument_config(
             "observations": telescope_observations,
         }
     }
+
+    if kwargs.get("obs_plan_id", None):
+        telescope_dict["telescope"]["obs_plan_id"] = kwargs.get("obs_plan_id")
+
     return telescope_dict
 
 
@@ -684,7 +293,7 @@ def _find_existing_workflow(dirname, observation):
     header = {"parameters": {}}
     header["parameters"]["workflow_parallelism"] = observation.workflow_parallelism
     header["parameters"]["channels"] = observation.channels
-    header["parameters"]["arrays"] = observation.demand
+    header["parameters"]["arrays"] = observation.stations
     header["parameters"]["baseline"] = observation.baseline
     header["parameters"]["duration"] = observation.duration
     header["parameters"]["workflows"] = observation.workflows
@@ -711,35 +320,6 @@ def _create_workflow_path_name(
     return f"{hash(observation)}_{str_date}"
 
 
-def create_single_observation_for_instrument(observation, workflow_path):
-    """
-    Given an observation, generate the following two components for the
-    telescope configuration:
-
-    * pipeline:
-
-    >>>   {{
-    >>>         "observation": {
-    >>>             "workflow": "path/to/workflow"
-    >>>             "ingest_demand": number_of_machines_needed_for_ingest
-    >>>         }
-    >>> }
-
-    * Observation:
-    >>> {{
-    >>>     "name" : observation.hpso + count
-    >>>     "start": observation.start
-    >>>     "duration" : length_of_observation
-    >>>     "demand" :
-    >>>     "data_product_rate": ingest_rate
-    >>> }
-
-
-    Returns
-    -------
-
-    """
-
 
 def generate_workflow_from_observation(
         observation,
@@ -758,7 +338,7 @@ def generate_workflow_from_observation(
 
     Parameters
     ----------
-    observation : :py:obj:`~hpso_to_observation.Observation`.
+    observation : :py:obj:`~observations_to_workflows.Observation`.
         Observation descriptor object
     telescope_max: int
         The maximum number of arrays used on the telescope
@@ -790,7 +370,7 @@ def generate_workflow_from_observation(
     if not os.path.exists(f"{config_dir}/workflows"):
         os.mkdir(f"{config_dir}/workflows")
 
-    telescope_frac = observation.demand / telescope_max
+    telescope_frac = observation.stations / telescope_max
 
     channels = observation.workflow_parallelism
     # Unroll the graph
@@ -805,7 +385,7 @@ def generate_workflow_from_observation(
             cached_base_graph[base_graph] = None
         LOGGER.debug(f"Using {base_graph} as base workflow.")
         channel_lgt = edt.update_graph_parallelism(
-            base_graph, channels, observation.demand
+            base_graph, channels, observation.stations
         )
         intermed_graph, task_dict, cached_base_graph[base_graph] = (
             edt.eagle_to_nx(
@@ -861,10 +441,10 @@ def _match_graph_options(graph_type: str):
 
     if graph_type == "prototype":
         return BASIC_PROTOTYPE_GRAPH
-    elif graph_type == "cont_img_mvp":
+    elif graph_type == "complex_img_mvp":
         return CONT_IMG_MVP_GRAPH
-    elif graph_type == "scatter":
-        return SCATTER_GRAPH
+    elif graph_type == "parallel":
+        return PARALLEL_GRAPH
     elif graph_type == "pulsar":
         return PULSAR_GRAPH
     else:
@@ -902,7 +482,7 @@ def generate_cost_per_product(
     nx_graph : :py:object:`networkx.DiGraph`
         Topsim-compliant that forms the basis of the workflow
 
-    observation : :py:object:`hpso_to_observation.Observation`
+    observation : :py:object:`observations_to_workflows.Observation`
         the HPSO we are generating.
 
     component_sizing : pd.DataFrame
@@ -1168,11 +748,16 @@ def retrieve_component_cost(observation, workflow, component, component_sizing):
     baseline = min(list(hpso_sizing["Baseline"]),
                    key=lambda x: abs(x - observation.baseline))
 
+    if baseline != observation.baseline:
+        LOGGER.debug(
+            "Specified baseline: %d / Chosen baseline: %d",
+            observation.baseline, baseline
+        )
     obs_frame = component_sizing[
         (component_sizing["hpso"] == observation.hpso)
         & (component_sizing["Baseline"] == baseline)
         & (component_sizing["Channels"] == observation.channels)
-        & (component_sizing["Antenna stations"] == observation.demand)
+        & (component_sizing["Antenna stations"] == observation.stations)
         ]
 
     if obs_frame.empty:
@@ -1218,7 +803,7 @@ def retrieve_workflow_cost(observation, workflow, system_sizing):
         (system_sizing["HPSO"] == observation.hpso)
         & (system_sizing["Baseline"] == baseline)
         & (system_sizing["Channels"] == observation.channels)
-        & (system_sizing["Stations"] == observation.demand)
+        & (system_sizing["Stations"] == observation.stations)
         ]
     flops = float(obs_frame[workflow].iloc[0])
 
@@ -1247,7 +832,7 @@ def produce_final_workflow_structure(nx_final, observation, time=False):
     header["time"] = time
     header["parameters"]["workflow_parallelism"] = observation.workflow_parallelism
     header["parameters"]["channels"] = observation.channels
-    header["parameters"]["arrays"] = observation.demand
+    header["parameters"]["arrays"] = observation.stations
     header["parameters"]["baseline"] = observation.baseline
     header["parameters"]["duration"] = observation.duration
     header["parameters"]["workflows"] = observation.workflows

@@ -20,10 +20,10 @@ Included in this modules are the following class definitions:
     - LowBaselines
     - SI
 """
-
+import json
+import itertools
 import numpy as np
 
-import json
 from pathlib import Path
 from enum import Enum, IntEnum, auto
 
@@ -103,7 +103,7 @@ class SKALow:
     """
     name = "low"
 
-    baselines = [4.0625, 8.125, 16.25, 32.5, 65]
+    baselines = [4062.5, 8125, 16250, 3250, 65000]
 
     hpso01 = "hpso01"
     hpso02a = "hpso02a"
@@ -141,7 +141,7 @@ class SKAMid:
 
     name = 'mid'
 
-    baselines = [5, 10, 15, 25, 75, 110, 150]
+    baselines = [5000, 10000, 15000, 25000, 75000, 110000, 150000]
     max_baseline = max(baselines)
 
     hpso13 = "hpso13"
@@ -181,8 +181,9 @@ class Workflows:
 # Amount of the telescope an observation can request
 MAX_TEL_DEMAND_LOW = 512
 MAX_TEL_DEMAND_MID = 197
-MAX_CHANNELS = 512
-
+MAX_MID_CHANNELS = 512
+MAX_LOW_CHANNELS = 256
+FIXED_LOW_CHANNELS_DEMAND = 128
 # System sizing data paths
 DATA_PANDAS_SIZING = Path(str(imp_res.files("skaworkflows.data.pandas_sizing")))
 LOW_TOTAL_SIZING = DATA_PANDAS_SIZING / "total_compute_SKA1_Low_2025-02-25.csv"
@@ -191,14 +192,26 @@ LOW_COMPONENT_SIZING = DATA_PANDAS_SIZING / "component_compute_SKA1_Low_2025-02-
 MID_TOTAL_SIZING = DATA_PANDAS_SIZING / "total_compute_SKA1_Mid_2025-02-25.csv"
 MID_COMPONENT_SIZING = DATA_PANDAS_SIZING / "component_compute_SKA1_Mid_2025-02-25.csv"
 
-# Bytes per obseved visibility
+# Bytes per observed visibility; see SDP PAR Model
 BYTES_PER_VIS = 12.0
 
 GRAPH_DIR = imp_res.files("skaworkflows.data.hpsos")
 BASIC_PROTOTYPE_GRAPH = GRAPH_DIR.joinpath("dprepa.graph")
 CONT_IMG_MVP_GRAPH = GRAPH_DIR.joinpath("cont_img_mvp.graph")
-SCATTER_GRAPH = GRAPH_DIR.joinpath("dprepa_parallel_updated.graph")
+PARALLEL_GRAPH = GRAPH_DIR.joinpath("dprepa_parallel_updated.graph")
 PULSAR_GRAPH = GRAPH_DIR.joinpath("pulsar.graph")
+
+ 
+
+all_pairs = list(itertools.product(SKALow.baselines, SKALow.stations))
+SKALOW_LARGE_PAIRS = [(65000, 256), (32500, 512), (65000, 512)]
+SKALOW_MED_PAIRS = [(65000, 64), (65000, 128),(32500, 128), (32500, 256), (16250, 512), (16250, 256), (8125, 512)]
+SKALOW_SMALL_PAIRS = list(set(all_pairs) - set(SKALOW_MED_PAIRS) - set(SKALOW_LARGE_PAIRS))
+
+# def newfun(value: int):
+#
+#     if (hasattr(value, test) == 5:
+#         return False
 
 
 def create_workflow_header(telescope: str):
