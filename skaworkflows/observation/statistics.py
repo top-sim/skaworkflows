@@ -55,12 +55,15 @@ def get_observation_weight(obs):
     """Helper function to determine observation weight based on baseline-station pairs"""
     baseline = obs.baseline
     stations = obs.stations
+    if obs.hpso == 'hpso04a' or obs.hpso == 'hpso05a':
+        return 0
     if (baseline, stations) in SKALOW_LARGE_PAIRS:
-        return 8  # 2^2
+        return 9 # 3^2
     elif (baseline, stations) in SKALOW_MED_PAIRS:
         return 4  # 2^2
     else:
-        return 2  # 2^1
+        return 1  # 1^2
+
 
 
 def observation_weighting(plan: list, post_run=False):

@@ -62,7 +62,7 @@ def create_observing_plans(
     LOGGER.info("Generating %d plans", num_shuffled_plans)
     plans = generate_multiple_plans('low',
                                     days,
-                                    percent_experiments=percent_experiments)
+                                    percent_experiments=percent_experiments,max_large_percentage=0.1)
     print(f"Number of observation permutations generated: {len(plans)}")
     if num_of_plans > 0:
         plans = random.sample(plans, min(num_of_plans, len(plans)))

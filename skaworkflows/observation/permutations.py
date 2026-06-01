@@ -328,7 +328,7 @@ def generate_multiple_plans(telescope: str, days: int = 1,
     # TODO support SKA Mid
     hpso_counts, total_obs = create_hpso_counts_from_ratios(days)
     step = int(total_obs / (total_obs * percent_experiments))
-    experiments = make_ternary_experiment(N=total_obs, step=step, max_large_percentage=0.25)
+    experiments = make_ternary_experiment(N=total_obs, step=step, max_large_percentage=max_large_percentage)
     plans = []
     valid_experiments = experiments[experiments["status"] == "valid"]
     for i, observation_sizes in valid_experiments.iterrows():
