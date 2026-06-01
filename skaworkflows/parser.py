@@ -1,5 +1,6 @@
 import argparse
 
+from skaworkflows.config_generator import create_observing_plans, create_config
 
 """
 Run time directive for generating observing plans
@@ -31,7 +32,9 @@ b. Users use an 'experiment' create that provides defaults as well as support fo
 
 """
 
+from skaworkflows.common import Telescope
 from skaworkflows.observation import parameters
+
 
 parameters = parameters.load_observation_defaults("skalow")
 
@@ -42,6 +45,24 @@ parser.add_argument("--create-base",
 
 
 import argparse
+
+def run():
+     return create_config(days=1,
+                          num_of_plans=5,
+                          num_shuffled_plans=3,
+                          concurrent_demand=64)
+
+def create_maximal_plans():
+    """
+    Generate maximal plans for selected SKA-Low and SKA-Mid HPSOs.
+
+    This is how we tested the workflows on their own.
+
+    Returns
+    -------
+    Two sets of plans and workflows, one for SKA-Low and one for SKA-Mid.
+    """
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -112,6 +133,9 @@ def parse_args():
     return args
 
 if __name__ == "__main__":
-    args = parse_args()
+
+    plans=run()
+    parser.parse_args()
+    # args = parse_args()
     # print("Parsed arguments:", vars(args))
 

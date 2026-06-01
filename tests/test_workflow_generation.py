@@ -23,9 +23,11 @@ import logging
 import networkx as nx
 import pandas as pd
 from pathlib import Path
+
+from skaworkflows import observation
 from skaworkflows import __version__
 from skaworkflows.common import SI, BYTES_PER_VIS
-import skaworkflows.workflow.hpso_to_observation as hpo
+import skaworkflows.workflow.observations_to_workflows as hpo
 import skaworkflows.workflow.eagle_daliuge_translation as edt
 
 logging.disable(logging.INFO)
@@ -201,7 +203,7 @@ class TestWorkflowFromObservation(unittest.TestCase):
         channels = 512*128
         workflow_parallelism = 1
         self.component_sizing = pd.read_csv(COMPONENT_SYSTEM_SIZING)
-        self.obs1 = hpo.Observation(
+        self.obs1 = observation.observation.Observation(
             1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, workflow_parallelism,
             65000.0, 'low'
         )
@@ -311,7 +313,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         # e.g. in this example, we are splitting on 64 channels but we have been using 512*128 channels worth of compute/data
         channels = 512*128
         workflow_parallelism = 64 # historically we've used smaller numbers because our parallelism is coarse-grained all channels by 128 to get their actual value
-        self.obs1 = hpo.Observation(
+        self.obs1 = observation.observation.Observation(
             1, 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, workflow_parallelism,
             65000.0, 'low'
         )
@@ -424,7 +426,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
         -------
         """
 
-        pulsar = hpo.Observation(
+        pulsar = observation.observation.Observation(
             "hpso04_0", 'hpso04a', ['PSS'], 512, 2400,
             256*128, 256, 65000.0, 'low'
         )
@@ -465,7 +467,7 @@ class TestCostGenerationAndAssignment(unittest.TestCase):
 class TestSKAMidCosts(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.observation = hpo.Observation(
+        self.observation = observation.observation.Observation(
             1, 'hpso13', ['DPrepA', 'DPrepB'], 197, 3600, 512*128, 256,
             35000.0, telescope="mid"
         )
@@ -495,7 +497,7 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
         duration = 60  # seconds
         channels = 512*128
         workflow_parallelism = 1
-        self.obs1 = hpo.Observation(
+        self.obs1 = observation.observation.Observation(
             'obs1', 'hpso01', ['DPrepA', 'DPrepB'], demand, duration, channels, workflow_parallelism,
             65000.0, 'low'
         )
@@ -565,8 +567,8 @@ class TestFileGenerationAndAssignment(unittest.TestCase):
 
         result = hpo.generate_workflow_from_observation(
             self.obs1, self.telescope_max, self.config_dir,
-            self.component_system_sizing, self.total_system_sizing, workflow_path_name,
-            base_graph_paths
+            self.component_system_sizing, self.total_system_sizing,
+            workflow_path_name, base_graph_paths
         )
 
         header = {

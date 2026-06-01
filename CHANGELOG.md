@@ -1,3 +1,7 @@
+# v0.12.0
+- [Added]:  Add observation plan creation to SKAWorkflows: https://github.com/top-sim/skaworkflows/pull/54
+- [Changed]: Fix documentation building: https://github.com/top-sim/skaworkflows/pull/49
+
 # v0.11.0
 - [Changed]: No longer specify `data` or `data_distribution` when generating simulation config: https://github.com/top-sim/skaworkflows/pull/52 
 

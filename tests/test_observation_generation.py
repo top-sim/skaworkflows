@@ -21,13 +21,10 @@ import pandas as pd
 
 from pathlib import Path
 
-from skaworkflows.workflow.hpso_to_observation import (
-    Observation,
-    create_observation_from_hpso,
-)
+from skaworkflows.observation.observation import create_observation_from_hpso, Observation, process_hpso_from_spec, \
+    create_basic_plan
 
-from skaworkflows.workflow.hpso_to_observation import (
-    create_observation_plan,
+from skaworkflows.workflow.observations_to_workflows import (
     create_buffer_config,
     calc_ingest_demand,
     generate_instrument_config,
@@ -72,46 +69,6 @@ class TestObservationClass(unittest.TestCase):
         self.obs2 = Observation(4, "hpso04a", ["dprepa"], 16, 30, 256*128, 256, 65000.0, 'low' )
 
 
-class TestObservationPlanGeneration(unittest.TestCase):
-    def setUp(self):
-        # low_compute_data = "csv/SKA1_Low_COMPUTE.csv"
-        # self.observations = convert_systemsizing_csv_to_dict(low_compute_data)
-        self.obs1 = Observation(2, "hpso01", ["dprepa"], 32, 60, 256*128, 256, 65000.0,'low')
-        self.obslist1 = create_observation_from_hpso(
-            2, "hpso01", ["dprepa"], 32, 60, 256*128, 256, 65000.0, 'low', offset=0
-        )
-        self.obslist2 = create_observation_from_hpso(
-            4, "hpso04a", ["dprepa"], 16, 30, 256*128, 128, 65000.0, 'low', offset=0
-        )
-        self.obs3 = Observation(3, "hpso01", ["dprepa"], 32, 30, 256*128, 256, 65000.0,'low')
-        self.system_sizing = pd.read_csv(TOTAL_SYSTEM_SIZING)
-        self.max_telescope_usage = 32  # 1/16th of the telescope
-
-    def test_create_observation_plan_notiebreaks(self):
-        """
-        create_observation_plan takes the set of observations and generates a sequence
-        and produces a dictionary from this.
-        (0, 60, 32, 'hpso01', 'dprepa', 256)
-        (60, 90, 16, 'hpso04a', 'dprepa',256)
-        (60, 90, 16, 'hpso04a', 'dprepa',256)
-        (90, 150, 32, 'hpso01', 'dprepa',256)
-        (150, 180, 16, 'hpso04a', 'dprepa',256)
-        (180, 210, 16, 'hpso04a', 'dprepa',256)
-
-        There are a number of constraints on observations plans
-        Returns
-        -------
-        """
-        random.seed(0)
-        # obslist = (self.obs1.unroll_observations()
-        #            + self.obs2.unroll_observations())
-        obslist = self.obslist1 + self.obslist2
-        plan = create_observation_plan(obslist, self.max_telescope_usage)
-        self.assertEqual("hpso01_1", plan[0].name)
-        self.assertEqual(0, plan[0].start)
-        self.assertEqual(150, plan[5].start)
-
-
 class TestObservationTopSimTranslation(unittest.TestCase):
     def setUp(self):
         self.obs1 = Observation(
@@ -138,7 +95,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
             telescope='low',
             offset=0,
         )
-        self.observation_plan = create_observation_plan(self.observation_list, 512)
+        self.observation_plan = create_basic_plan(self.observation_list, shuffle=False)
         self.max_telescope_usage = 32  # 1/16th of telescope
         self.plan = [
             (0, 60, 32, "hpso01", "dprepa", 256, 65000.0),
@@ -226,7 +183,7 @@ class TestObservationTopSimTranslation(unittest.TestCase):
         # )
         self.assertEqual(
             {
-                "name": "hpso01_1",
+                "name": "hpso01_0",
                 "start": 0,
                 "duration": 60,
                 "instrument_demand": 512,

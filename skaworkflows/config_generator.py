@@ -15,32 +15,152 @@
 import json
 import logging
 import datetime
+import uuid
+
 import pandas as pd
+import random
+
+from string import ascii_letters
 
 from pathlib import Path
 
 import skaworkflows.common as common
-import skaworkflows.workflow.hpso_to_observation as hto
-from skaworkflows.common import SKALow
+import skaworkflows.workflow.observations_to_workflows as hto
+from skaworkflows.common import SKALow, Telescope
+from skaworkflows.observation.statistics import observation_weighting
+
+from skaworkflows.observation.observation import (
+    process_hpso_from_spec, create_basic_plan, create_concurrent_plan)
 
 from skaworkflows.hpconfig.specs.sdp import (
     SDP_LOW_CDR, SDP_MID_CDR, SDP_PAR_MODEL_LOW, SDP_PAR_MODEL_MID
 )
+from skaworkflows.observation.permutations import generate_multiple_plans
+
 LOGGER = logging.getLogger(__name__)
+MAX_SHUFFLED_PLANS = 100
 
 LOGGER.setLevel('DEBUG')
 
-def create_config(
-        # TODO define what parameters means!
-        parameters: dict,
-        output_dir: Path,
-        base_graph_paths,
+def create_observing_plans(
+        days,
+        telescope: Telescope,
+        percent_experiments=0.5,
+        num_of_plans=0,
+        num_shuffled_plans=1,
+        concurrent_demand=0
+):
+    """
+    Produce the observing plans based on the observation parameters.
+    Returns
+    -------
+
+    """
+    all_plans = []
+    LOGGER.info("Generating observing plan permutations for %d days of observations", days)
+    LOGGER.info("Using concurrent demand: %d", concurrent_demand)
+    LOGGER.info("Generating %d plans", num_shuffled_plans)
+    plans = generate_multiple_plans('low',
+                                    days,
+                                    percent_experiments=percent_experiments)
+    print(f"Number of observation permutations generated: {len(plans)}")
+    if num_of_plans > 0:
+        plans = random.sample(plans, min(num_of_plans, len(plans)))
+        # plans = plans[:num_of_plans]
+
+    print(f"Number of observation permutations selected for this run: {len(plans)}")
+    for i, tup in enumerate(plans):
+        plan, _ = tup
+        current_permutation = []
+
+        weighted_plans = []
+        # Generate MAX_SHUFFLED_PLANS that have different variations of the same Observation specs
+        # This helps us select an even range of plan weights.
+        random.seed(i)
+        concurrent_observation_probability = random.random()
+        for j in range(MAX_SHUFFLED_PLANS):
+            # It's important to note here that we use 2 different seed values because we want the concurrent observation
+            # probability for each set of observations to be the same, so the composition of each plan is the same.
+            # That is to say, the number of each concurrent HPSO permutations is the same.
+
+            # However, when creating shuffled plans, we want _different_ permutations of the same set of observations,
+            # so we use the j counter to change the seed for each shuffled plan.
+            # This is why one seed is set above this loop, and another seed passed to plan creation.
+            observations = process_hpso_from_spec(plan)
+            if concurrent_demand > 0:
+                LOGGER.debug("Creating concurrent observing plan with concurrent demand: %d", concurrent_demand)
+                weighted_plans.append(create_concurrent_plan(observations, telescope.max_stations,
+                                                             64,
+                                                             concurrent_observation_probability=concurrent_observation_probability,
+                                                             seed=j))
+                LOGGER.debug(f"Number of observations in permutation %d", len(weighted_plans[0]))
+            else:
+                LOGGER.debug("Creating non-concurrent observing plan")
+                weighted_plans.append(create_basic_plan(observations, seed=j))
+                LOGGER.debug(f"Number of observations in permutation %d", len(weighted_plans[0]))
+
+        plan_weights = [(p, observation_weighting(p)) for p in weighted_plans]
+        plan_weights.sort(key=lambda x: x[1])
+        # Get equally spaced indices between 0 and MAX_SHUFFLED_PLANS
+        indices = [round(i * (MAX_SHUFFLED_PLANS - 1) / max(1,(num_shuffled_plans - 1))) for i in range(num_shuffled_plans)]
+        selected_plans = [plan_weights[i][0] for i in indices]
+
+        all_plans.append(
+            {'obs_plan_id':uuid.uuid4().hex,
+             'plan_permutation':selected_plans,
+             'plan_weights':[plan_weights[i][1] for i in indices]}
+        )
+
+    LOGGER.info("Finished producing %d plans",  len(all_plans))
+    return all_plans
+
+
+def create_telescope_infrastructure(telescope):
+    """
+    Create the HPCConfig dictionary based on the specified infrastructure.
+
+    Supports:
+    - SKALow CDR, SKALow Parameteric Model
+    - SKAMid CDR, SKALow Parameteric Model
+
+    Parameters
+    ----------
+    telescope, infrastructure
+
+    Returns
+    -------
+    dict, computing machine dictionary
+    """
+
+    pass
+
+def get_base_graph_paths(workflow_graph_map: str = "prototype"):
+        return   {"ICAL":  workflow_graph_map,
+                  "DPrepA": workflow_graph_map,
+                  "DPrepB": workflow_graph_map,
+                  "DPrepC": workflow_graph_map,
+                  "DPrepD": workflow_graph_map,
+                  "Pulsar": "pulsar"}
+
+def create_maximal_config(
+        infrastructure='parametric',
+        output_dir: Path=Path.cwd(),
+        imaging_graph_base='prototype',
         timestep='seconds',
-        data=False,
         overwrite=False,
-        data_distribution='standard',
-        multiple_plans=False,
-        max_num_plans=5,
+        **kwargs
+):
+    pass
+
+
+def create_config(
+        days=1,
+        telescope='low',
+        infrastructure='parametric',
+        output_dir: Path=Path.cwd(),
+        imaging_graph_base='prototype',
+        timestep='seconds',
+        overwrite=False,
         **kwargs
 ):
     """
@@ -62,18 +182,16 @@ def create_config(
     cfg_name = Path(f"skaworkflows_{dt}")
     LOGGER.info("Generating %s...", cfg_name)
 
-    telescope = None
     try:
-        telescope = common.Telescope(parameters["telescope"])
+        telescope = common.Telescope(telescope)
     except ValueError:
         LOGGER.warning("Unable to create observation plan due to unsupported telescope.\n"
                        "Please use either SKALow or SKAMid as your selection.")
 
-    compute_nodes = parameters["nodes"]
-    hpc_infrastructure_model = parameters["infrastructure"]
+    num_nodes =  kwargs.get("compute_nodes")
 
-    if 'data_distribution' in data_distribution:
-        data_distribution = True
+    compute_nodes = num_nodes if num_nodes else telescope.default_compute_nodes
+    hpc_infrastructure_model = infrastructure
 
     file_path = output_dir / cfg_name
     if file_path.exists() and not overwrite:
@@ -111,48 +229,50 @@ def create_config(
         f"\tOutput Directory: {output_dir}\n"
         f"\tBuffer ratio: {cluster.buffer_ratio}\n"
         f"\tTimestep: {timestep}\n"
-        f"\tData: {data}"
     )
 
     LOGGER.info("Reading system sizing...")
     component_sizing = pd.read_csv(component)
     system_sizing = pd.read_csv(system)
     cluster_dict = cluster.to_topsim_dictionary()
-    observations = hto.process_hpso_from_spec(parameters)
 
-    if not observations:
-        RuntimeError('Observations do not exist!')
-    LOGGER.debug(f"Creating an observation plan with {observations}")
-    all_plans = hto.create_basic_plan(
-        observations, telescope.max_stations, with_concurrent=False
+    all_plans = create_observing_plans(
+        days,
+        telescope,
+        num_shuffled_plans=kwargs.get('num_shuffled_plans', 1),
+        concurrent_demand=kwargs.get('concurrent_demand', 0),
+        num_of_plans=kwargs.get('num_of_plans',1)
     )
-    LOGGER.debug(f"Observation plan: {all_plans}")
 
-    # all_plans = hto.alternate_plan_composition(all_plans.pop(), telescope_max)
-    import random
-    random.shuffle(all_plans)
-    # for i, plan in enumerate(all_plans):
-    #     print(f"Plan {i} of {len(all_plans)}: {all_plans}")
-    # if not multiple_plans:
-    #     # Take the middle plan
-    #     all_plans = [all_plans[int(len(all_plans)/2)]]
-    #     LOGGER.info("Selected plan: %s", all_plans)
     LOGGER.debug("Plans: %s", all_plans)
     LOGGER.info("Final number of plan permutations is: %d", len(all_plans))
     LOGGER.info("Producing the instrument config")
     final_instrument_config = []
-    all_plans = [all_plans]
-    for observation_plan in all_plans:
-        final_instrument_config.append(hto.generate_instrument_config(
-            telescope.name,
-            telescope.max_stations,
-            observation_plan,
-            output_dir,
-            component_sizing,
-            system_sizing,
-            cluster_dict,
-            base_graph_paths,
-        ))
+    # all_plans = [all_plans]
+    if not file_path.parent.exists():
+        file_path.parent.mkdir(parents=True)
+    base_workflow_graphs = get_base_graph_paths(imaging_graph_base)
+    for i, shuffled_plans in enumerate(all_plans):
+        j = 0
+        obs_plan_id = shuffled_plans.get('obs_plan_id')
+        plans = shuffled_plans.get('plan_permutation')
+        for j, plan in enumerate(plans):
+            cfg_file_path = file_path.parent / (file_path.name + f"_{i}-{ascii_letters[j]}" + ".json")
+            LOGGER.info("Config: %d/%d",i+1, len(all_plans))
+            final_instrument_config.append((
+                cfg_file_path,
+                hto.generate_instrument_config(
+                    telescope.name,
+                    telescope.max_stations,
+                    plan,
+                    output_dir,
+                    component_sizing,
+                    system_sizing,
+                    cluster_dict,
+                    base_workflow_graphs,
+                    obs_plan_id=obs_plan_id
+            )))
+            j+=1
 
     LOGGER.info(f"Producing buffer config")
     final_buffer_config = hto.create_buffer_config(
@@ -162,22 +282,18 @@ def create_config(
 
     file_paths = []
     LOGGER.info(f"Putting it all together...")
-    for i, cfg in enumerate(final_instrument_config):
+    for cfg_file_path, cfg in final_instrument_config:
         final_config = {
             "instrument": cfg,
             "cluster": final_cluster,
             "buffer": final_buffer_config,
             "timestep": timestep
         }
-
-        if not file_path.parent.exists():
-            file_path.parent.mkdir(parents=True)
-        file_path_cfg = file_path.parent / (file_path.name + f"_{i}" + ".json")
-        with file_path_cfg.open('w') as fp:
-            LOGGER.info(f'Writing final config to {file_path}')
+        
+        with cfg_file_path.open('w') as fp:
+            LOGGER.info(f'Writing final config to {cfg_file_path}')
             json.dump(final_config, fp, indent=2)
-            file_paths.append(file_path_cfg)
-
+            file_paths.append(cfg_file_path)
 
     LOGGER.info(f'Configuration generation complete!')
 
