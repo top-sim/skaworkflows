@@ -1,22 +1,12 @@
-from skaworkflows.observation.observation import Observation
+from skaworkflows.utils.analysis import (
+    heatmap_computing_permutations,
+    plan_weighting_demonstration,
+)
 
-def create_observations_from_config(cfg) -> list[Observation]:
-    """
-    Merge cfg['instrument']['telescope']['pipelines'] and
-    cfg['instrument']['telescope']['observations'] into a single list.
 
-    Each unified record includes:
-    - name
-    - start
-    - end
-    - duration
-    - all pipeline fields
-    - all observation fields
+def create_observations_from_config(cfg) -> list:
+    from skaworkflows.observation.observation import Observation
 
-    Returns
-    -------
-    list[dict]
-    """
     telescope = cfg.get("instrument", {}).get("telescope", {})
     pipelines = telescope.get("pipelines", {})
     observations = telescope.get("observations", [])
@@ -48,7 +38,6 @@ def create_observations_from_config(cfg) -> list[Observation]:
         if isinstance(obs_data, dict):
             merged.update(obs_data)
 
-        # Re-apply normalized timing fields after update
         merged["name"] = name
         merged["start"] = start
         merged["duration"] = duration
@@ -57,11 +46,10 @@ def create_observations_from_config(cfg) -> list[Observation]:
 
     updated_observations = []
     for record in unified:
-        name = record["name"]
-        hpso = record.get("type") or name.split("_")[0]
+        hpso = record.get("type") or record["name"].split("_")[0]
 
         obs = Observation(
-            name=name,
+            name=record["name"],
             hpso=hpso,
             workflows=record.get("workflow_type", []),
             demand=record.get("instrument_demand", record.get("demand")),
@@ -73,7 +61,6 @@ def create_observations_from_config(cfg) -> list[Observation]:
             start=record.get("start", 0),
         )
 
-        # Optional extra fields if you want to preserve them
         obs.workflow_path = record.get("workflow")
         obs.ingest_compute_demand = record.get("ingest_demand")
         obs.ingest_data_rate = record.get("data_product_rate")

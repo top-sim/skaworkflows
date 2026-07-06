@@ -56,11 +56,11 @@ def get_observation_weight(obs):
     baseline = obs.baseline
     stations = obs.stations
     if (baseline, stations) in SKALOW_LARGE_PAIRS:
-        return 8  # 2^2
+        return 9  # 2^2
     elif (baseline, stations) in SKALOW_MED_PAIRS:
         return 4  # 2^2
     else:
-        return 2  # 2^1
+        return 1  # 2^1
 
 
 def observation_weighting(plan: list, post_run=False):

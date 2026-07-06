@@ -41,6 +41,9 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/top-sim/skaworkflows"
 
+[project.scripts]
+skaworkflows = "skaworkflows.cli:main"
+
 [tool.setuptools]
 include-package-data = true
 
